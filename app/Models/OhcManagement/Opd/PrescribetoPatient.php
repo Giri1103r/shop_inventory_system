@@ -18,7 +18,7 @@ class PrescribetoPatient extends Model
         'is_outside_employee',
         'unit_id',
         'department_id',
-        'company_name',
+        'company_id',
         'emp_id',
         'emp_name',
         'mobile_no',
@@ -86,7 +86,7 @@ class PrescribetoPatient extends Model
         }
         if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || in_array(ROLE_EHS_HEAD, $userRole)) {
             $query->orderBy('ohc_management_opd_patient.id', 'DESC');
-        } else {
+        }  else {
             $query->where('ohc_management_opd_patient.created_by', Auth::id());
         }
 
@@ -162,13 +162,13 @@ class PrescribetoPatient extends Model
         if ($request->is_outside_employee == 0) {
 
             $employee = Employee::where('emp_id', $request->emp_id)
-                ->select('unit', 'department')
+                ->select('unit', 'department', 'company')
                 ->first();
 
 
             if (!$employee) {
                 $employee = Work::where('emp_id', $request->emp_id)
-                    ->select('unit', 'department')
+                    ->select('unit', 'department', 'company')
                     ->first();
             }
 
@@ -176,6 +176,7 @@ class PrescribetoPatient extends Model
             if ($employee) {
                 $unit = $employee->unit;
                 $department = $employee->department;
+                $company = $employee->company;
             }
         }
 
@@ -183,7 +184,7 @@ class PrescribetoPatient extends Model
             'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
             'unit_id' =>  $unit ?? Auth::user()->unit_id,
             'department_id' =>  $department  ?? $request->department_id,
-            'company_name' => $request->company_name,
+            'company_id' =>  $company ?? Auth::user()->company_id,
             'emp_id' => $employeeId,
             'gender' => $request->gender,
             'emp_name' => $request->emp_name,
@@ -239,13 +240,13 @@ class PrescribetoPatient extends Model
         if ($request->is_outside_employee == 0) {
 
             $employee = Employee::where('emp_id', $request->emp_id)
-                ->select('unit', 'department')
+                ->select('unit', 'department', 'company')
                 ->first();
 
 
             if (!$employee) {
                 $employee = Work::where('emp_id', $request->emp_id)
-                    ->select('unit', 'department')
+                    ->select('unit', 'department', 'company')
                     ->first();
             }
 
@@ -253,6 +254,7 @@ class PrescribetoPatient extends Model
             if ($employee) {
                 $unit = $employee->unit;
                 $department = $employee->department;
+                $company = $employee->company;
             }
         }
 
@@ -260,7 +262,7 @@ class PrescribetoPatient extends Model
             'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
             'unit_id' =>  $unit ?? Auth::user()->unit_id,
             'department_id' =>  $department  ?? $request->department_id,
-            'company_name' => $request->company_name,
+            'company_id' =>  $company ?? Auth::user()->company_id,
             'emp_id' =>   $employeeId,
             'gender' => $request->gender,
             'emp_name' => $request->emp_name,

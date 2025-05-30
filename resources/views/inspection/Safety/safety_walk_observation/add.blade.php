@@ -47,9 +47,17 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
-                                                    <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date"
-                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+
+
+                                                    <div class="input-group date form-input  custom-height">
+                                                        <input type="text" name="issue_date" id = "issue_date"
+                                                            class="form-control" placeholder="Issued Date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                     @error('issue_date')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
@@ -128,20 +136,21 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.safety_walk_taken_by') }}</label>
-                                                    <input type="text" name="safety_walk_taken_by"
-                                                        id = "safety_walk_taken_by" class="form-control"
-                                                        value="{{ old('safety_walk_taken_by') }}">
-                                                    @error('safety_walk_taken_by')
-                                                        <div class="error">{{ $message }}</div>
-                                                    @enderror
+                                                    <input type="text" value="{{ getUserName(Auth::id()) }}"
+                                                        name="safety_walk_taken_by" class="form-control" readonly>
+                                                    <input type="text" hidden name="safety_walk_taken_by"
+                                                        value="{{ encryptId(Auth::id()) }}">
                                                 </div>
+                                                @error('safety_walk_taken_by')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                        alt="Signature Upload" style="width: 100px; margin-top:-10px">
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
                                                         <label class="form-label require">Signature</label>
@@ -152,28 +161,22 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         <hr>
                                         {{-- Current Month Observation --}}
                                         <div class="form-wrapper-current">
+                                            <div class="card-header-inner d-flex justify-content-between">
+                                                <h4 class="text-white ms-2">
+                                                    {{ __('inspection.current_month_observation') }}</h4>
+                                                <button class="btn btn-primary add-row-current mb-2 " type="button"
+                                                    id="add-row-current"
+                                                    style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                    Add
+                                                </button>
+                                            </div>
                                             <div class="row mt-4 form-set-current">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">
-                                                        {{ __('inspection.current_month_observation') }}
-                                                    </h4>
-                                                </div>
 
-                                                <div class="d-flex justify-content-end gap-0 m-2">
-                                                    <button class="btn btn-primary add-row me-3" type="button"
-                                                        id="add-row-current" style="width: 84px;">
-                                                        Add
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger remove-row-current">
-                                                        <i class="fa-solid fa-trash"></i> Remove
-                                                    </button>
-
-                                                </div>
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -299,7 +302,12 @@
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
+                                                <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row-current" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                </div>
+                                                <hr>
                                             </div>
                                         </div>
 
@@ -390,10 +398,10 @@
                             rev_date: {
                                 required: true,
                             },
-                            signature_image: {
-                                required: true,
-                                filesize: 15728640,
-                            },
+                            // signature_image: {
+                            //     required: true,
+                            //     filesize: 15728640,
+                            // },
                             "inspection_date": {
                                 required: true,
                             },
@@ -408,12 +416,10 @@
                             },
                             "safety_walk_taken_by": {
                                 required: true,
-                                minlength:3,
-                                maxlength:30,
                             },
                             "checklist_file[1]": {
                                 required: true,
-                               filesize: 15728640,
+                                filesize: 15728640,
                             },
 
 
@@ -425,8 +431,8 @@
 
                             "observation[1]": {
                                 required: true,
-                                minlength:3,
-                                maxlength:30,
+                                minlength: 3,
+                                maxlength: 30,
                             },
                             "date_of_observation[1]": {
                                 required: true,
@@ -434,8 +440,8 @@
 
                             "recomended_action[1]": {
                                 required: true,
-                                minlength:3,
-                                maxlength:30,
+                                minlength: 3,
+                                maxlength: 30,
                             },
 
                             "date_of_compliance[1]": {
@@ -448,8 +454,8 @@
 
                             "remarks[1]": {
                                 required: true,
-                                minlength:3,
-                                maxlength:600,
+                                minlength: 3,
+                                maxlength: 600,
                             },
 
                             "emp_id[1]": {
@@ -469,10 +475,10 @@
                             rev_date: {
                                 required: "Revision Date required",
                             },
-                            signature_image: {
-                                required: "Signature is required",
-                                 filesize: "File size must be less than 15MB."
-                            },
+                            // signature_image: {
+                            //     required: "Signature is required",
+                            //     filesize: "File size must be less than 15MB."
+                            // },
                             "inspection_date": {
                                 required: "Inspection Date is required",
                             },
@@ -487,13 +493,7 @@
                             },
                             "safety_walk_taken_by": {
                                 required: "Safety Walk Taken By is required",
-                                minlength: "Minimum 3 characters required",
-                                maxlength: "Maximum character should not exceed the 30",
                             },
-
-
-
-
                             "location[1]": {
                                 required: "Location is required",
 
@@ -534,7 +534,7 @@
                             },
                             "checklist_file[1]": {
                                 required: "Image is Required",
-                                 filesize: "File size must be less than 15MB."
+                                filesize: "File size must be less than 15MB."
                             },
 
                             "emp_id[1]": {
@@ -592,6 +592,7 @@
                     dropdownCssClass: 'form-control',
                     selectionCssClass: 'form-control'
                 });
+
             });
             let form_set_count = 2;
             let formIndex = 1;
@@ -624,20 +625,7 @@
 
                 var newCurrentFormSet = `
                         <div class="row mt-4 form-set-current">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">{{ __('inspection.current_month_observation') }}</h4>
-                                                </div>
 
-                                                <div class="d-flex justify-content-end gap-0 m-2">
-                                                    <button class="btn btn-primary add-row-current me-3" type="button"
-                                                        id="add-row-current" style="width: 84px;">
-                                                        Add
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger remove-row-current">
-                                                        <i class="fa-solid fa-trash"></i> Remove
-                                                    </button>
-
-                                                </div>
 
 
                                                 <div class="col-md-4 mb-2">
@@ -722,6 +710,13 @@
 
                                                     </div>
                                                 </div>
+
+                                                 <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row-current" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
+
+                                                </div>
+                                                <hr>
                                             </div>
                     `;
 
@@ -744,15 +739,15 @@
                     filesize: 15728640,
                     messages: {
                         required: 'Image is Required',
-                         filesize: "File size must be less than 15MB."
+                        filesize: "File size must be less than 15MB."
                     }
                 });
 
-                 $("input[name='observation[" + form_set_current_count + "]']").rules('add', {
+                $("input[name='observation[" + form_set_current_count + "]']").rules('add', {
                     required: true,
                     uniqueItemCode: true,
-                    minlength:3,
-                    maxlength:30,
+                    minlength: 3,
+                    maxlength: 30,
                     messages: {
                         required: 'Please Enter the Observation',
                         minlength: "Minimum 3 characters required",
@@ -768,8 +763,8 @@
                 });
                 $("input[name='recomended_action[" + form_set_current_count + "]']").rules('add', {
                     required: true,
-                    minlength:3,
-                    maxlength:30,
+                    minlength: 3,
+                    maxlength: 30,
                     messages: {
                         required: 'Please Enter the Recomended Action',
                         minlength: "Minimum 3 characters required",
@@ -794,8 +789,8 @@
 
                 $("textarea[name='remarks[" + form_set_current_count + "]']").rules('add', {
                     required: true,
-                    minlength:3,
-                    maxlength:600,
+                    minlength: 3,
+                    maxlength: 600,
                     messages: {
                         required: 'Please Enter the Remarks',
                         minlength: "Minimum 3 characters required",
@@ -895,8 +890,8 @@
                 if (currentFormSets <= minFormCurrentSets) {
                     Swal.fire({
                         icon: 'warning',
-                        title: 'Minimum  Observtion Required',
-                        text: 'At least one Observation is required.',
+                        title: 'Minimum Safety Walk  Observation Required',
+                        text: 'At least one Safety Walk  Observation is required.',
                         confirmButtonColor: '#3085d6'
                     });
                     return;

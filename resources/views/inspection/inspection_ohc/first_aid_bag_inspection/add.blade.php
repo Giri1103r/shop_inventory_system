@@ -38,9 +38,15 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                    <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control inspection_date"
-                                                        value="{{ old('inspection_date') }}">
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="inspection_date" id = "inspection_date"
+                                                            class="form-control inspection_date"
+                                                            value="{{ old('inspection_date') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 @error('inspection_date')
                                                     <div class="error">{{ $message }}</div>
@@ -51,8 +57,14 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                    <input type="text" name="next_due" id = "next_due"
-                                                        class="form-control next_due" value="{{ old('next_due') }}">
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="next_due" id = "next_due"
+                                                            class="form-control next_due" value="{{ old('next_due') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 @error('next_due')
                                                     <div class="error">{{ $message }}</div>
@@ -79,8 +91,20 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label require">{{ __('inspection.shifts') }}</label>
+                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit</option>
+
+                                                    </select>
+                                                </div>
+                                                @error('unit_id')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">{{ __('inspection.shifts') }}</label>
                                                     <select name="shift_id" id="shift_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select {{ __('inspection.shifts') }}
@@ -96,23 +120,7 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($units as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}"
-                                                                {{ old('unit_id') == encryptId($unit->id) ? 'selected' : '' }}>
-                                                                {{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                @error('unit_id')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
-                                            </div>
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -163,7 +171,8 @@
 
                                                                 <td>
                                                                     <div class="form-input">
-                                                                        <input class="form-control" type="number" min="1"
+                                                                        <input class="form-control" type="number"
+                                                                            min="1"
                                                                             name="available_quantity[{{ $medicines->id }}]"
                                                                             value="{{ old('available_quantity.' . $loop->iteration) }}" />
                                                                     </div>
@@ -174,10 +183,18 @@
 
                                                                 <td>
                                                                     <div class="form-input">
-                                                                        <input class="form-control expired_date"
-                                                                            type="date"
-                                                                            name="expired_date[{{ $medicines->id }}]"
-                                                                            value="{{ old('expired_date.' . $loop->iteration) }}" />
+
+                                                                        <div
+                                                                            class="input-group date form-input custom-height">
+                                                                            <input class="form-control expired_date"
+                                                                                type="date"
+                                                                                name="expired_date[{{ $medicines->id }}]"
+                                                                                value="{{ old('expired_date.' . $loop->iteration) }}" />
+                                                                            <div
+                                                                                class="input-group-addon input-group-text">
+                                                                                <span class="fa fa-calendar"></span>
+                                                                            </div>
+                                                                        </div>
                                                                         @error('expired_date.' . $loop->iteration)
                                                                             <div class="error">{{ $message }}</div>
                                                                         @enderror
@@ -188,6 +205,7 @@
                                                                     <div class="form-input">
                                                                         <select name="emp_id[{{ $medicines->id }}]"
                                                                             id="emp_id[{{ $loop->iteration }}]"
+                                                                            style="width: 100%"
                                                                             class="form-select single-select emp_id">
                                                                             <option value="">Select Employee Name
                                                                             </option>
@@ -214,13 +232,13 @@
 
 
                                             </div>
-                                            <div class="row m-2">
+                                            {{-- <div class="row m-2">
                                                 <div class="col-md-4 form-group form-input mb-2">
                                                     @if (isset(Auth::user()->signature_upload))
                                                         <label class="form-label"
                                                             style="display: block; ">{{ __('inspection.signature') }}</label>
                                                         <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                            alt="Signature Upload" style="width: 150px; margin-top:-10px">
+                                                            alt="Signature Upload" style="width: 100px; margin-top:-10px">
                                                     @else
                                                         <div class="form-input col-md-12 mb-2">
                                                             <label class="form-label require">Signature</label>
@@ -232,7 +250,7 @@
                                                         </div>
                                                     @endif
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
 
 
@@ -258,6 +276,31 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
+            $(document).on('change', '#location_id', function() {
+                var locationId = $(this).val();
+                if (locationId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append(
+                                '<option value="">Select Unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#unit_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                    $('#unit_id').trigger('change.');
+                }
+            });
             $(document).ready(function() {
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();
@@ -276,7 +319,7 @@
 
                 $('.emp_id').select2({
                     ajax: {
-                        url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
+                        url: '{{ admin_url('ohc/prescribe-to-patient/employeename') }}',
                         dataType: 'json',
                         delay: 250,
                         data: function(params) {
@@ -309,20 +352,20 @@
                         next_due: {
                             required: true,
                         },
-                        signature_image: {
-                            required: true,
-                            filesize: 15728640,
-                        },
-                        frequency_id:{
-                            required: true,
-                        },
-                        location_id:{
+                        // signature_image: {
+                        //     required: true,
+                        //     filesize: 15728640,
+                        // },
+                        frequency_id: {
                             required: true,
                         },
-                        unit_id:{
+                        location_id: {
                             required: true,
                         },
-                        shift_id:{
+                        unit_id: {
+                            required: true,
+                        },
+                        shift_id: {
                             required: true,
                         },
                     },
@@ -333,10 +376,10 @@
                         next_due: {
                             required: "Next Due Date is required",
                         },
-                        signature_image: {
-                            required: "Signature is required",
-                            filesize: "File size must be less than 15MB."
-                        },
+                        // signature_image: {
+                        //     required: "Signature is required",
+                        //     filesize: "File size must be less than 15MB."
+                        // },
                         frequency_id: {
                             required: "Frequency is required",
                         },
@@ -414,12 +457,12 @@
                     $('textarea[name^="remarks"]').each(function() {
                         $(this).rules('add', {
                             required: true,
-                            minlength:3,
-                            maxlength:300,
+                            minlength: 3,
+                            maxlength: 300,
                             messages: {
                                 required: "Remarks is required",
-                                minlength:"Minimum 3 characters required",
-                                maxlength:"Maximum character does not exceed 300"
+                                minlength: "Minimum 3 characters required",
+                                maxlength: "Maximum character does not exceed 300"
                             }
                         });
                     });

@@ -17,12 +17,11 @@
                 type: 'pie',
                 events: {
                     dataPointSelection: function(event, chartContext, config) {
-                        var seriesIndex = config.seriesIndex;
-
-                        if (seriesIndex === 0) {
-                            redirectToPTW('', '', '', '{{ $closeStatusEncrypted }}');
-                        } else if (seriesIndex === 1) {
-                            redirectToPTW('', '', '', '{{ $openStatusEncrypted }}');
+                       var dataPointIndex = config.dataPointIndex;
+                        if (dataPointIndex === 0) {
+                            redirectToPTW('', '', '', '{{ $openStatusEncrypted }}','','');
+                        } else if (dataPointIndex === 1) {
+                            redirectToPTW('', '', '', '{{ $closeStatusEncrypted }}','','');
                         }
                     }
                 }

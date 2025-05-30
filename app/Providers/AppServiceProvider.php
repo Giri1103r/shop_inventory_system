@@ -141,6 +141,21 @@ class AppServiceProvider extends ServiceProvider
         defined('STATUS_EHS_OFFICER_UPDATED') or define('STATUS_EHS_OFFICER_UPDATED', 16);
 
 
+        // Company Management
+
+        defined('COMPANY_PNI') or define('COMPANY_PNI', 1);
+        defined('COMPANY_PNS') or define('COMPANY_PNS', 2);
+        defined('COMPANY_KPSL') or define('COMPANY_KPSL', 3);
+
+        // incident accident
+        defined('MAJOR_ACCIDENT') or define('MAJOR_ACCIDENT', 1);
+        defined('MINOR_ACCIDENT') or define('MINOR_ACCIDENT', 2);
+        defined('UNSAFE_ACT') or define('UNSAFE_ACT', 1);
+        defined('UNSAFE_CONDITION') or define('UNSAFE_CONDITION', 2);
+        defined('ALL') or define('ALL', 'ALL');
+
+
+
         // OHC Management
 
         // Medicine Approval
@@ -437,6 +452,11 @@ class AppServiceProvider extends ServiceProvider
         //KPI
         defined('LEADING')  or define('LEADING', 1);
         defined('LAGGING')  or define('LAGGING', 2);
+
+
+        //KPI LEADING CATEGORY
+        defined('LEADING_CATEGORY_1') or define('LEADING_CATEGORY_1', 1);
+        defined('LEADING_CATEGORY_2') or define('LEADING_CATEGORY_2', 2);
 
 
 

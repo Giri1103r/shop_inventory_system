@@ -32,15 +32,14 @@
                     var dataPointIndex = config.dataPointIndex;
                     var selectedUnit = unitData[dataPointIndex];
                     var unitId = selectedUnit.unit_id;
-                    redirectToPTW('', unitId, '');
+                    redirectToPTW('', unitId, '','','','');
                 }
             }
         },
         plotOptions: {
             bar: {
                 horizontal: false,
-                columnWidth: '55%',
-                endingShape: 'rounded',
+                columnWidth: '25%',
                 distributed: true
             },
         },

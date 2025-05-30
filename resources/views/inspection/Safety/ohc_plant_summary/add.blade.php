@@ -550,12 +550,8 @@
                 $('textarea[name^="fire_pump_details"]').each(function() {
                     $(this).rules("add", {
                         required: true,
-                        minlength: 3,
-                        maxlength: 255,
                         messages: {
                             required: "Fire Pump Details is required",
-                            minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 255",
                         }
                     });
                 });

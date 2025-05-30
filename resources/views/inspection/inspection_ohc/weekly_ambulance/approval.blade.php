@@ -101,7 +101,7 @@
                                             {{ getUnitname(isset($weekAmbualance->unit) ? $weekAmbualance->unit : '') }}
                                         </div>
                                     </div>
-                                    @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
+                                    {{-- @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label" style="display: block;">
@@ -111,7 +111,7 @@
                                                     alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                        @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
+                                    @elseif (!empty($signatureview) && !empty($signatureview->signature_upload))
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label" style="display: block;">
@@ -121,7 +121,7 @@
                                                     alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif --}}
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -160,9 +160,7 @@
                                             <thead class="bg-secondary text-white">
                                                 <tr>
                                                     <th colspan="3">Check Points</th>
-                                                    @foreach ($getoption as $option)
-                                                        <th>{{ $option }}</th>
-                                                    @endforeach
+                                                    <th colspan="3">Status</th>
                                                     <th colspan="3">Remarks</th>
                                                 </tr>
                                             </thead>
@@ -175,46 +173,26 @@
                                                 @endphp
 
                                                 @foreach ($checkItems as $groupId => $checkPoints)
-                                                    @php $rowCount = count($checkPoints); @endphp
-
                                                     @foreach ($checkPoints as $index => $checkPoint)
                                                         <tr>
-                                                            @if ($index == 0)
-                                                                <td rowspan="{{ $rowCount }}">
-                                                                    {{ getSubcategoryname($groupId) }}
-                                                                </td>
-                                                            @endif
-
-                                                            <td colspan="2">{{ getSubcategoryDataname($checkPoint) }}
+                                                            <td colspan="3">{{ getSubcategoryDataname($checkPoint) }}
                                                             </td>
 
-                                                            @foreach ($getoption as $option)
-                                                                <td style="text-align: center;">
-                                                                    @if ($option == 'Ok')
-                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Ok')
-                                                                            <i class="fa-solid fa-check"
-                                                                                style="color: #267709; width: 15px;"></i>
-                                                                            <!-- Green check for Ok -->
-                                                                        @else
-                                                                            <i class="fa-solid fa-times"
-                                                                                style="color: #d40a0a; width: 15px;"></i>
-                                                                            <!-- Red cross if Ok is not selected -->
-                                                                        @endif
-                                                                    @elseif ($option == 'Not-Ok')
-                                                                        @if (isset($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Not-Ok')
-                                                                            <i class="fa-solid fa-check"
-                                                                                style="color: #267709; width: 15px;"></i>
-                                                                            <!-- Red check for Not-Ok -->
-                                                                        @else
-                                                                            <i class="fa-solid fa-times"
-                                                                                style="color: #d40a0a; width: 15px;"></i>
-                                                                            <!-- Red cross if Ok is not selected -->
-                                                                        @endif
-                                                                    @endif
-                                                                </td>
-                                                            @endforeach
+                                                            @php
+                                                                $status = strtolower(
+                                                                    trim($statuses[$checkPoint] ?? ''),
+                                                                );
+                                                            @endphp
 
-
+                                                            <td colspan="3">
+                                                                @if ($status === 'ok')
+                                                                    <span>Ok</span>
+                                                                @elseif ($status === 'not ok')
+                                                                    <span>Not Ok</span>
+                                                                @else
+                                                                    <span>N/A</span>
+                                                                @endif
+                                                            </td>
 
                                                             <td colspan="3">
                                                                 {{ $remarks[$checkPoint] ?? 'No Remarks' }}
@@ -253,7 +231,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -269,7 +247,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
 
                                             <div class="col-md-12 form-input">
                                                 <label class="form-label required">Whether the Inspection has been
@@ -331,7 +309,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -340,7 +318,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             @if ($weekAmbualance->approved_by)
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -396,7 +374,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetOHCSignature(
                                                         $weekAmbualance->created_by,
                                                         $weekAmbualance->id,
@@ -412,7 +390,7 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -448,7 +426,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetOHCSignature(
                                                         $weekAmbualance->verified_by,
                                                         $weekAmbualance->id,
@@ -464,7 +442,7 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -503,7 +481,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @php
+                                            {{-- @php
                                                 $signature = GetOHCSignature(
                                                     $weekAmbualance->l1_manager_verified_by,
                                                     $weekAmbualance->id,
@@ -519,7 +497,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -554,7 +532,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @php
+                                            {{-- @php
                                                 $signature = GetOHCSignature(
                                                     $weekAmbualance->l2_manager_verified_by,
                                                     $weekAmbualance->id,
@@ -575,7 +553,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -621,7 +599,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -637,7 +615,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-12 mb-2 form-input" id="capa_remarks">
                                                 <label for="capa_remarks" class="form-label">Remarks</label>
                                                 <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
@@ -676,7 +654,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -692,7 +670,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                                 <label for="remarks" class="form-label">Remarks</label>
                                                 <textarea id="" class="form-control" rows="3" placeholder="Please Provide Remarks" name="remarks"></textarea>
@@ -729,7 +707,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -745,7 +723,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                             <label for="remarks" class="form-label">Remarks</label>
@@ -783,7 +761,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -799,7 +777,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                             <label for="remarks" class="form-label">Remarks</label>
@@ -834,7 +812,7 @@
                     },
                     signature_image: {
                         required: true,
-                       filesize: 15728640,
+                        filesize: 15728640,
                     }
                 },
                 messages: {
@@ -883,7 +861,7 @@
                     },
                     signature_image: {
                         required: true,
-                       filesize: 15728640,
+                        filesize: 15728640,
                     }
                 },
                 messages: {
@@ -939,7 +917,7 @@
                     },
                     signature_image: {
                         required: "Signature is Required",
-                         filesize: "File must be less than 15MB."
+                        filesize: "File must be less than 15MB."
                     }
                 },
                 errorElement: 'div',
@@ -973,7 +951,7 @@
                     },
                     signature_image: {
                         required: true,
-                       filesize: 15728640,
+                        filesize: 15728640,
                     }
                 },
                 messages: {

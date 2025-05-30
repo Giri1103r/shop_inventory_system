@@ -112,7 +112,7 @@ class SafetyPermit extends Model
         if (isAdmin()) {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
         } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
-            $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.company_id', $companyId);;
+            $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
         } elseif (in_array(ROLE_PLANT_HEAD, $userRole)) {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status')->where('ptw_safety.unit_id', $unit_id);
         } elseif (in_array(ROLE_EHS_HEAD, $userRole)) {
@@ -144,6 +144,7 @@ class SafetyPermit extends Model
         if ($request->has('company_id') && $request->company_id) {
 
             $company_id = decryptId($request->company_id);
+
             $query = $query->where('ptw_safety.company_id',  $company_id);
         }
         if ($request->has('location_id') && $request->location_id) {
@@ -163,9 +164,14 @@ class SafetyPermit extends Model
         }
 
         if ($request->has('status') && $request->status) {
-
             $status = decryptId($request->status);
             $query = $query->where('ptw_safety.permit_status',  $status);
+        }
+
+
+        if ($request->has('dashboard_permitStatus') && $request->dashboard_permitStatus) {
+            $dashboard_permitStatus = decryptId($request->dashboard_permitStatus);
+            $query = $query->where('ptw_safety.permit_status',  $dashboard_permitStatus);
         }
 
         if ($request->has('dashboard_openCloseStatus') && $request->dashboard_openCloseStatus) {
@@ -173,19 +179,21 @@ class SafetyPermit extends Model
             $openCloseStatus = decryptId($request->dashboard_openCloseStatus);
             if ($openCloseStatus == "1") {
                 $query = $query->whereNotIn('permit_status', [STATUS_CLOSED, STATUS_PERMIT_EXPIRED])
-                ->where('permit_status', '>=', STATUS_EHS_VERIFICATION_PENDING)
-                ->where('ptw_safety.status', 1)
-                ->where('ptw_safety.trash', 'NO');
-                
+                    ->where('permit_status', '>=', STATUS_EHS_VERIFICATION_PENDING)
+                    ->where('ptw_safety.status', 1)
+                    ->where('ptw_safety.trash', 'NO');
             } else {
-
                 $query = $query->where('permit_status', STATUS_CLOSED)->orWhere('permit_status', STATUS_PERMIT_EXPIRED);
             }
+        }
+        if ($request->has('dashboard_permitType') && $request->dashboard_permitType) {
+            $query = $query->whereRaw('FIND_IN_SET(?, ptw_safety.sub_permit)', [$request->dashboard_permitType]);
         }
 
         if ($request->has('dashboard_month') && $request->dashboard_month) {
             $query = $query->whereMonth('ptw_safety.created_at', $request->dashboard_month);
         }
+
         $data_count = $query;
         $total_records = $data_count->count();
         $query->orderBy('id', 'DESC');
@@ -372,7 +380,11 @@ class SafetyPermit extends Model
             $protective_equip[$safetydata] = $ProtectiveequipData;
         }
 
-        $existingProtectiveEquip = json_decode($safetypermit->protective_equip, true) ?? [];
+        // $existingProtectiveEquip = json_decode($safetypermit->protective_equip, true) ?? [];
+
+        $existingProtectiveEquip =   !empty($safetypermit->protective_equip)
+            ? json_decode($safetypermit->protective_equip, true)
+            : [];
 
         $update_array['protective_equip'] = !empty($protective_equip) && $protective_equip !== $existingProtectiveEquip
             ? json_encode($protective_equip)
@@ -389,7 +401,11 @@ class SafetyPermit extends Model
             $equiment_involved[$safetydata] = $equipInvoleData;
         }
 
-        $existingEquipInvolve = json_decode($safetypermit->equiment_involved, true) ?? [];
+        // $existingEquipInvolve = json_decode($safetypermit->equiment_involved, true) ?? [];
+
+        $existingEquipInvolve =   !empty($safetypermit->equiment_involved)
+            ? json_decode($safetypermit->equiment_involved, true)
+            : [];
 
         $update_array['equiment_involved'] = !empty($equiment_involved) && $equiment_involved !== $existingEquipInvolve
             ? json_encode($equiment_involved)
@@ -407,7 +423,11 @@ class SafetyPermit extends Model
             $precaution_taken[$safetydata] = $EquipPrecautionData;
         }
 
-        $existingPrecaution = json_decode($safetypermit->precaution_taken, true) ?? [];
+        // $existingPrecaution = json_decode($safetypermit->precaution_taken, true) ?? [];
+
+        $existingPrecaution =   !empty($safetypermit->precaution_taken)
+            ? json_decode($safetypermit->precaution_taken, true)
+            : [];
 
         $update_array['precaution_taken'] = !empty($precaution_taken) && $precaution_taken !== $existingPrecaution
             ? json_encode($precaution_taken)
@@ -424,7 +444,11 @@ class SafetyPermit extends Model
             $equipment_checklist[$safetydata] = $EquipChecklistData;
         }
 
-        $existingChecklistEquip = json_decode($safetypermit->equipment_checklist, true) ?? [];
+        // $existingChecklistEquip = json_decode($safetypermit->equipment_checklist, true) ?? [];
+
+        $existingChecklistEquip =   !empty($safetypermit->equipment_checklist)
+            ? json_decode($safetypermit->equipment_checklist, true)
+            : [];
 
         $update_array['equipment_checklist'] = !empty($equipment_checklist) && $equipment_checklist !== $existingChecklistEquip
             ? json_encode($equipment_checklist)
@@ -440,7 +464,11 @@ class SafetyPermit extends Model
             $safework_instruction[$safetydata] = $equipIntructionData;
         }
 
-        $existingEquip = json_decode($safetypermit->safework_instruction, true) ?? [];
+        // $existingEquip = json_decode($safetypermit->safework_instruction, true) ?? [];
+
+        $existingEquip =   !empty($safetypermit->safework_instruction)
+            ? json_decode($safetypermit->safework_instruction, true)
+            : [];
 
         $update_array['safework_instruction'] = !empty($safework_instruction) && $safework_instruction !== $existingEquip
             ? json_encode($safework_instruction)
@@ -1298,16 +1326,19 @@ class SafetyPermit extends Model
 
         foreach ($type_of_work as $type) {
             $idToWorkNameMap[$type['id']] = $type['work_name'];
-            $workCounts[$type['work_name']] = 0;
+            $workCounts[$type['id']] = [
+                'id' => $type['id'],
+                'name' => $type['work_name'],
+                'count' => 0
+            ];
         }
 
 
         foreach ($data as $details) {
             $subpermits = string_to_array($details->sub_permit);
             foreach ($subpermits as $subpermit) {
-                if ($subpermit && isset($idToWorkNameMap[$subpermit])) {
-                    $workName = $idToWorkNameMap[$subpermit];
-                    $workCounts[$workName]++;
+                if ($subpermit && isset($workCounts[$subpermit])) {
+                    $workCounts[$subpermit]['count']++;
                 }
             }
         }
@@ -1320,10 +1351,11 @@ class SafetyPermit extends Model
             ->join('masters_unit', 'ptw_safety.unit_id', '=', 'masters_unit.id')
             ->select(
                 'masters_unit.unit_name',
+                'ptw_safety.unit_id',
                 DB::raw('COUNT(*) as hold_count')
             )
             ->where('ptw_safety.permit_status', STATUS_EHS_HOLD)
-            ->groupBy('masters_unit.unit_name');
+            ->groupBy('masters_unit.unit_name', 'masters_unit.id');
 
         $company_id = $request->input('CompanyId');
         if ($company_id) {
@@ -1345,6 +1377,12 @@ class SafetyPermit extends Model
         $results = $query->get();
 
 
-        return $results->pluck('hold_count', 'unit_name')->toArray();
+        return $results->map(function ($item) {
+            return [
+                'unit_id' => $item->unit_id,
+                'unit_name' => $item->unit_name,
+                'hold_count' => $item->hold_count,
+            ];
+        })->toArray();
     }
 }

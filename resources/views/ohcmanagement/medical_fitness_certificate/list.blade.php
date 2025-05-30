@@ -43,9 +43,41 @@
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Employee Name</label>
-                                                <input type="text" name="emp_name" id="emp_name"
-                                                    class="form-control" placeholder="Employee Name" readonly>
+                                                <input type="text" name="emp_name" id="emp_name" class="form-control"
+                                                    placeholder="Employee Name" readonly>
                                             </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="company" class="form-label ">Company</label>
+                                            <select name="company_id" id="company_id" class=" form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Company</option>
+                                                @foreach ($companyList as $list)
+                                                    <option value="{{ encryptId($list->id) }}">
+                                                        {{ $list->company_name }}
+                                                    </option>
+                                                @endforeach
+
+
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="unit" class="form-label ">Unit</label>
+                                            <select name="unit_id" id="unit_id" class=" form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Unit</option>
+
+
+
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="unit" class="form-label ">Department</label>
+                                            <select name="department_id" id="department_id"
+                                                class=" form-control single-select" style="width: 100%">
+                                                <option value="">Select Department</option>
+
+                                            </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
@@ -74,7 +106,7 @@
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
                                                 <option value="{{ encryptId(2) }}">Doctor Approval Pending</option>
-                                         
+
                                                 <option value="{{ encryptId(6) }}">Doctor Rejected</option>
                                                 <option value="{{ encryptId(4) }}">EHS Head Approval Pending</option>
                                                 <option value="{{ encryptId(5) }}">EHS Approved</option>
@@ -102,6 +134,10 @@
                                         <th>Employee ID/ Worker ID</th>
                                         <th>Employee Name/ Worker Worker Name</th>
                                         <th>Date</th>
+                                        <th>{{ __('common.company') }}</th>
+                                        <th>{{ __('common.unit') }}</th>
+                                        <th>{{ __('common.department') }}</th>
+                                        <th>Cheif Complaint</th>
                                         <th>Remarks</th>
                                         <th>Approve Status</th>
                                         <th data-priority="1">Action</th>
@@ -119,6 +155,56 @@
 @stop
 @push('script')
     <script type="text/javascript" nonce="projectcab">
+        $(document).on('change', '#company_id', function() {
+            var companyId = $(this).val();
+            if (companyId) {
+                $.ajax({
+                    url: "{{ admin_url('unit/get-unit-data') }}/" + companyId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#unit_id').empty().append(
+                            '<option value="">Select Unit</option>');
+                        $.each(data, function(key, value) {
+                            $('#unit_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#unit_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching Unit. Please try again.');
+                    }
+                });
+            } else {
+                $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                $('#unit_id').trigger('change.');
+            }
+        });
+        $(document).on('change', '#unit_id', function() {
+            var unitId = $(this).val();
+            if (unitId) {
+                $.ajax({
+                    url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#department_id').empty().append(
+                            '<option value="">Select Department</option>');
+                        $.each(data, function(key, value) {
+                            $('#department_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#department_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching unit. Please try again.');
+                    }
+                });
+            } else {
+                $('#department_id').empty().append('<option value="">Select Department</option>');
+                $('#department_id').trigger('change.');
+            }
+        });
         $(document).ready(function() {
 
             $('#resetform').on('click', function(e) {
@@ -219,6 +305,8 @@
                 $('#emp_name').val('');
                 $('#from_date').val('');
                 $('#to_date').val('');
+                $('#company_id').val('');
+                $('#unit_id').val('');
                 $('#datatable-list').DataTable().draw();
             });
         });
@@ -256,6 +344,9 @@
                     d.emp_id = $('#emp_id').val();
                     d.emp_name = $('#emp_name').val();
                     d.from_date = $('#from_date').val();
+                    d.company_id = $('#company_id').val();
+                    d.unit_id = $('#unit_id').val();
+                    d.department_id = $('#department_id').val();
                     d.to_date = $('#to_date').val();
                     d.status = $('#status').val();
                 },
@@ -283,6 +374,22 @@
                 {
                     data: 'date',
                     name: 'date'
+                },
+                {
+                    data: 'company_id',
+                    name: 'company_id'
+                },
+                {
+                    data: 'unit_id',
+                    name: 'unit_id'
+                },
+                {
+                    data: 'department_id',
+                    name: 'department_id'
+                },
+                {
+                    data: 'cheif_complaint',
+                    name: 'cheif_complaint'
                 },
                 {
                     data: 'remarks',
@@ -324,6 +431,9 @@
                                 var searchValue = $('#datatable-list_filter input').val();
                                 var emp_id = $('#emp_id').val();
                                 var emp_name = $('#emp_name').val();
+                                var company_id = $('#company_id').val();
+                                var unit_id = $('#unit_id').val();
+                                var department_id = $('#department_id').val();
                                 var from_date = $('#from_date').val();
                                 var to_date = $('#to_date').val();
                                 var status = $('#status').val();
@@ -334,6 +444,9 @@
                                     '?search=' + searchValue +
                                     '&emp_id=' + emp_id +
                                     '&emp_name=' + emp_name +
+                                    '&company_id=' + company_id +
+                                    '&unit_id=' + unit_id +
+                                    '&department_id=' + department_id +
                                     '&from_date=' + from_date +
                                     '&status=' + status +
                                     '&to_date=' + to_date;
@@ -346,6 +459,9 @@
                                 var searchValue = $('#datatable-list_filter input').val();
                                 var emp_id = $('#emp_id').val();
                                 var emp_name = $('#emp_name').val();
+                                var company_id = $('#company_id').val();
+                                var unit_id = $('#unit_id').val();
+                                var department_id = $('#department_id').val();
                                 var from_date = $('#from_date').val();
                                 var to_date = $('#to_date').val();
                                 var status = $('#status').val();
@@ -357,6 +473,9 @@
                                     '?search=' + searchValue +
                                     '&emp_id=' + emp_id +
                                     '&emp_name=' + emp_name +
+                                    '&company_id=' + company_id +
+                                    '&unit_id=' + unit_id +
+                                    '&department_id=' + department_id +
                                     '&from_date=' + from_date +
                                     '&status=' + status +
                                     '&to_date=' + to_date;

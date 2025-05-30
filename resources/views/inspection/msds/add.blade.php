@@ -171,39 +171,52 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-md-4 mb-3 mt-2">
-                                                            <div class="form-group form-input">
-                                                                <label class="form-label require">NFPA Rating
-                                                                </label>
-                                                                <select name="nfa_rating[1]"
-                                                                    class="form-control single-select"
-                                                                    style="width: 100%">
-                                                                    <option value="">Select NFPA Rating
-                                                                    </option>
+
+                                                        <div class="col-md-4 mb-3 mt-2 form-group form-input">
+                                                            <div class="form-group">
+                                                                <label for="nfpa_rating" class="require form-label">NFPA
+                                                                    Rating</label>
+                                                                <div class="d-flex flex-wrap gap-2">
                                                                     @foreach ($nfaratings as $nfarating)
-                                                                        <option value="{{ encryptId($nfarating->id) }}">
-                                                                            {{ $nfarating->nfa_rating }}</option>
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input type="radio" name="nfa_rating[1]"
+                                                                                value="{{ encryptId($nfarating->id) }}"
+                                                                                class="form-check-input"
+                                                                                id="nfa_rating_{{ $loop->index }}">
+                                                                            <label class="form-check-label"
+                                                                                for="nfa_rating_{{ $loop->index }}">
+                                                                                {{ $nfarating->nfa_rating }}
+                                                                            </label>
+                                                                        </div>
                                                                     @endforeach
-                                                                </select>
+                                                                </div>
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-md-4 mb-3 mt-2 form-input">
+                                                        <div class="col-md-4 mb-3 mt-2">
                                                             <div class="form-group form-input">
-                                                                <label class="form-label require">NFPA Rating Value</label>
-                                                                <select name="value_nfa_rating[1]"
-                                                                    class="form-control single-select"
-                                                                    style="width: 100%">
-                                                                    <option value="">NFPA Rating Value
-                                                                    </option>
-                                                                    @foreach ($nfaratingvalues as $nfaratingvalue)
-                                                                        <option
-                                                                            value="{{ encryptId($nfaratingvalue->id) }}">
-                                                                            {{ $nfaratingvalue->rating_value }}</option>
-                                                                    @endforeach
-                                                                </select>
+                                                                <div class="form-group">
+                                                                    <label for="nfpa_rating"
+                                                                        class="require form-label">NFPA Rating Value</label>
+                                                                    <div class="d-flex flex-wrap gap-2">
+                                                                        @foreach ($nfaratingvalues as $nfaratingvalue)
+                                                                            <div class="form-check form-check-inline">
+                                                                                <input type="radio"
+                                                                                    name="value_nfa_rating[1]"
+                                                                                    value="{{ encryptId($nfaratingvalue->id) }}"
+                                                                                    class="form-check-input"
+                                                                                    id="value_nfa_rating_{{ $loop->index }}">
+                                                                                <label class="form-check-label"
+                                                                                    for="value_nfa_rating_{{ $loop->index }}">
+                                                                                    {{ $nfaratingvalue->rating_value }}
+                                                                                </label>
+                                                                            </div>
+                                                                        @endforeach
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
+
                                                         <div class="col-md-4 mb-3 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">MSDS Availability
@@ -541,37 +554,48 @@
                             </div>
                         </div>
 
-                        <div class="col-md-4 mb-3 mt-2 form-input">
-                            <div class="form-group ">
-                                <label class="form-label require">NFPA Rating
-                                </label>
-                                <select name="nfa_rating[${form_set_count}]"
-                                    class="form-control single-select"
-                                    style="width: 100%">
-                                <option value="">Select NFPA Rating
-                                </option>
-                                   @foreach ($nfaratings as $nfarating)
-                                        <option value="{{ encryptId($nfarating->id) }}">
-                                            {{ $nfarating->nfa_rating }}</option>
+                         <div class="col-md-4 mb-3 mt-2 form-group form-input">
+                            <div class="form-group">
+                                <label for="nfpa_rating" class="require form-label">NFPA
+                                    Rating</label>
+                                <div class="d-flex flex-wrap gap-2">
+                                    @foreach ($nfaratings as $nfarating)
+                                        <div class="form-check form-check-inline">
+                                            <input type="radio" name="nfa_rating[${form_set_count}]"
+                                                value="{{ encryptId($nfarating->id) }}"
+                                                class="form-check-input"
+                                                id="nfa_rating_{{ $loop->index }}">
+                                            <label class="form-check-label"
+                                                for="nfa_rating_{{ $loop->index }}">
+                                                {{ $nfarating->nfa_rating }}
+                                            </label>
+                                        </div>
                                     @endforeach
-                                </select>
+                                </div>
                             </div>
-                         </div>
+                        </div>
 
-                        <div class="col-md-4 mb-3 mt-2 form-input">
+                        <div class="col-md-4 mb-3 mt-2">
                             <div class="form-group form-input">
-                                 <label class="form-label require">NFPA Rating Value</label>
-                                    <select name="value_nfa_rating[${form_set_count}]"
-                                         class="form-control single-select"
-                                        style="width: 100%">
-                                    <option value="">NFPA Rating Value
-                                    </option>
-                                         @foreach ($nfaratingvalues as $nfaratingvalue)
-                                            <option
-                                             value="{{ encryptId($nfaratingvalue->id) }}">
-                                            {{ $nfaratingvalue->rating_value }}</option>
+                                <div class="form-group">
+                                    <label for="nfpa_rating"
+                                        class="require form-label">NFPA Rating Value</label>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        @foreach ($nfaratingvalues as $nfaratingvalue)
+                                            <div class="form-check form-check-inline">
+                                                <input type="radio"
+                                                    name="value_nfa_rating[${form_set_count}]"
+                                                    value="{{ encryptId($nfaratingvalue->id) }}"
+                                                    class="form-check-input"
+                                                    id="value_nfa_rating_{{ $loop->index }}">
+                                                <label class="form-check-label"
+                                                    for="value_nfa_rating_{{ $loop->index }}">
+                                                    {{ $nfaratingvalue->rating_value }}
+                                                </label>
+                                            </div>
                                         @endforeach
-                                </select>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -658,17 +682,17 @@
                     }
                 });
 
-                $("select[name='nfa_rating[" + form_set_count + "]']").rules('add', {
+                $("input[name='nfa_rating[" + form_set_count + "]']").rules('add', {
                     required: true,
                     messages: {
-                        required: 'Select NFA Rating',
+                        required: 'Select NFPA Rating',
                     }
                 });
 
-                $("select[name='value_nfa_rating[" + form_set_count + "]']").rules('add', {
+                $("input[name='value_nfa_rating[" + form_set_count + "]']").rules('add', {
                     required: true,
                     messages: {
-                        required: 'Select NFA Rating Value',
+                        required: 'Select NFPA Rating Value',
                     }
                 });
                 var $input = $("input[name='storage_capacity[" + form_set_count + "]']");
@@ -735,9 +759,9 @@
                         index + 1) + ']');
                     $(this).find('select[name^="msds_availability_status"]').attr('name',
                         'msds_availability_status[' + (index + 1) + ']');
-                    $(this).find('select[name^="nfa_rating"]').attr('name',
+                    $(this).find('input[name^="nfa_rating"]').attr('name',
                         'nfa_rating[' + (index + 1) + ']');
-                    $(this).find('select[name^="value_nfa_rating"]').attr('name',
+                    $(this).find('input[name^="value_nfa_rating"]').attr('name',
                         'value_nfa_rating[' + (index + 1) + ']');
                     $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + (index + 1) + ']');
                 });

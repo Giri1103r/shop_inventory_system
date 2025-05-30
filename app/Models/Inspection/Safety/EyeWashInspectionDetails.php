@@ -85,6 +85,51 @@ class EyeWashInspectionDetails extends Model
         return response()->json(['status' => 'success', 'message' => 'Data saved successfully.']);
     }
 
+    public function storeApi($id)
+    {
+        $request = request();
+
+        $sr_no = $request->sr_no ?? [];
+        $location = $request->location ?? [];
+        $resource_code = $request->resource_code ?? [];
+        $condition = $request->condition ?? [];
+        $value = $request->value ?? [];
+        $hfsov = $request->hfsov ?? [];
+        $foot_pedal = $request->foot_pedal ?? [];
+        $eyewash_heads = $request->eyewash_heads ?? [];
+        $water = $request->water ?? [];
+        $quality = $request->quality ?? [];
+        $pressure = $request->pressure ?? [];
+        $temperature = $request->temperature ?? [];
+        $receptacle = $request->receptacle ?? [];
+        $remarks = $request->remarks ?? [];
+
+        foreach ($sr_no as $index => $sr_no_value) {
+            $data = [
+                'inspection_id' => $id,
+                'sr_no' => $sr_no_value,
+                'location' => isset($location[$index]) ? $location[$index] : null,
+                'receptacle' => $receptacle[$index] ?? null,
+                'resource_code' => $resource_code[$index] ?? null,
+                'inspection_condition' => isset($condition[$index]) ? $condition[$index] : null,
+                'hand_free_stay_open_value' => $hfsov[$index] ?? null,
+                'foot_pedal_value' => $foot_pedal[$index] ?? null,
+                'eyewash_heads_value' => $eyewash_heads[$index] ?? null,
+                'water' => isset($water[$index]) ? $water[$index] : null,
+                'quality' => $quality[$index] ?? null,
+                'pressure' => $pressure[$index] ?? null,
+                'temperature' => $temperature[$index] ?? null,
+                'value' => $value[$index] ?? null,
+                'remarks' => $remarks[$index] ?? null,
+                'created_by' => Auth::id(),
+            ];
+
+            $this->create($data);
+        }
+
+        return response()->json(['status' => 'success', 'message' => 'Data saved successfully.']);
+    }
+
 
     public function GetDetails($id)
     {

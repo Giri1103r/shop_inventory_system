@@ -164,7 +164,7 @@
                                                         accept="image/*">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
 
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
@@ -181,7 +181,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                             <input type="hidden" name="document_reference_id"
                                                 value="{{ encryptId($document_no->id) }}">
                                         </div>

@@ -107,7 +107,6 @@
                     value: {
                         required: true,
                         minlength: 3,
-                        maxlength: 50,
                         pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
                         remote: {
                             url: '{{ admin_url('kpi/master/leading-lagging/unique') }}',
@@ -131,7 +130,6 @@
                     value: {
                         required: "{{ __('Value is Required') }}",
                         minlength: "{{ __('common.validate_min_length') }}",
-                        maxlength: "Maximum Characters should not exceed 50",
                         pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
                         remote: "{{ __('Value should be unique') }}"
                     },

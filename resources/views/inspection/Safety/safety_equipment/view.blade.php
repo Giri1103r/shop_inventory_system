@@ -80,7 +80,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
-                                                        class="form-label require">{{ __('inspection.resource_code') }}</label>
+                                                        class="form-label require">{{ __('inspection.item_code') }}</label>
                                                     <div class="view_data">
                                                         {{ $details->item_code }}
                                                     </div>

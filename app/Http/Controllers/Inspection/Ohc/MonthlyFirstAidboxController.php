@@ -134,6 +134,7 @@ class MonthlyFirstAidboxController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -170,10 +171,12 @@ class MonthlyFirstAidboxController extends Controller
             );
             return view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.add', $data);
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
+            Session::flash('error', 'Something went wrong !');
+            return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }
     }
-    // store
+
     public function Store(Request $request)
     {
         try {
@@ -182,13 +185,13 @@ class MonthlyFirstAidboxController extends Controller
             $inspection_type = OHC_TYPE_MONTHLY_FIRST_AID_BOX_AUDIT_INSPECTION_CHECKLIST;
             $monthly_first_aid_audit_checklist = $this->monthly_first_aid_audit_checklist->store($store);
             $id = $store->id;
-            $files = $this->signature->requestorsignatureUpload($inspection_type, $id);
+            // $files = $this->signature->requestorsignatureUpload($inspection_type, $id);
 
             Session::flash('success', 'Your data has been added successfully');
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         } catch (Exception $ex) {
 
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }
@@ -220,7 +223,9 @@ class MonthlyFirstAidboxController extends Controller
             ];
             return view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.view', $data);
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
+            Session::flash('error', 'Something went wrong !');
+            return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }
     }
     // general pdf
@@ -268,7 +273,7 @@ class MonthlyFirstAidboxController extends Controller
 
             return $mpdf->Output($filename, 'D');
         } catch (\Exception $ex) {
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }
@@ -328,7 +333,7 @@ class MonthlyFirstAidboxController extends Controller
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", "MONTHLY FIRST AID BOX AUDIT CHECKLIST");
-                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                $sheet->getStyle("G{$currentRow}:M{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -476,41 +481,64 @@ class MonthlyFirstAidboxController extends Controller
 
 
                 $signatureStartRow = $inspectionRow;
-                $signatureEndRow = $signatureStartRow + 3;
-                $labelRow = $signatureEndRow + 1;
-                $imageHeight = 60;
-
-                // Requestor Signature
-                $sheet->mergeCells("A{$signatureStartRow}:S{$signatureEndRow}");
-                if (file_exists($RequestorSignature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Creator Signature');
-                    $drawing->setDescription('Creator Signature');
-                    $drawing->setPath($RequestorSignature);
-                    $drawing->setCoordinates("J{$signatureStartRow}");
-                    $drawing->setOffsetX(110);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWidth($imageHeight);
-                    $drawing->setHeight($imageHeight);
-                    $drawing->setWorksheet($sheet);
-                }
-                $userName = getUsername($monthly_first_aid->created_by);
-                $sheet->mergeCells("A{$labelRow}:S{$labelRow}")->setCellValue("A{$labelRow}", "Creator Signature:{$userName}");
 
 
-                $sheet->getStyle("A{$labelRow}:S{$labelRow}")->applyFromArray([
-                    'font' => ['bold' => true],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
+                $signatureRow = $signatureStartRow;
+                $sheet->getRowDimension($signatureRow)->setRowHeight(30);
 
+                $sheet->mergeCells("A{$signatureRow}:S{$signatureRow}");
 
-
-                $sheet->getStyle("A{$signatureStartRow}:O{$signatureEndRow}")->applyFromArray([
+                $sheet->getStyle("A{$signatureRow}:S{$signatureRow}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                 ]);
+                // Prepared
+                $richText = new RichText();
+                $name = getUsername($monthly_first_aid->created_by);
 
-                $row =  $signatureStartRow+ 5;
+                if (!empty($name)) {
+                    $richText->createTextRun("CREATOR NAME : " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
+                }
+
+                $sheet->getCell("A{$signatureRow}")->setValue($richText);
+
+                // $signatureEndRow = $signatureStartRow + 3;
+                // $labelRow = $signatureEndRow + 1;
+                // $imageHeight = 60;
+
+                // // Requestor Signature
+                // $sheet->mergeCells("A{$signatureStartRow}:S{$signatureEndRow}");
+                // if (file_exists($RequestorSignature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Creator Signature');
+                //     $drawing->setDescription('Creator Signature');
+                //     $drawing->setPath($RequestorSignature);
+                //     $drawing->setCoordinates("J{$signatureStartRow}");
+                //     $drawing->setOffsetX(110);
+                //     $drawing->setOffsetY(10);
+                //     $drawing->setWidth($imageHeight);
+                //     $drawing->setHeight($imageHeight);
+                //     $drawing->setWorksheet($sheet);
+                // }
+                // $userName = getUsername($monthly_first_aid->created_by);
+                // $sheet->mergeCells("A{$labelRow}:S{$labelRow}")->setCellValue("A{$labelRow}", "Creator Signature:{$userName}");
+
+
+                // $sheet->getStyle("A{$labelRow}:S{$labelRow}")->applyFromArray([
+                //     'font' => ['bold' => true],
+                //     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                // ]);
+
+
+
+                // $sheet->getStyle("A{$signatureStartRow}:O{$signatureEndRow}")->applyFromArray([
+                //     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                // ]);
+
+                $row =  $signatureStartRow + 5;
             }
 
 
@@ -545,9 +573,8 @@ class MonthlyFirstAidboxController extends Controller
                 return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
-            foreach( $allData as $details){
+            foreach ($allData as $details) {
                 $document_no = $this->document_reference->selectOne($details->document_reference_id);
-
             }
 
 
@@ -581,7 +608,7 @@ class MonthlyFirstAidboxController extends Controller
             $filename = "Monthly First Aid Audit Checklist Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }
@@ -780,39 +807,60 @@ class MonthlyFirstAidboxController extends Controller
 
 
             $signatureStartRow = $inspectionRow;
-            $signatureEndRow = $signatureStartRow + 3;
-            $labelRow = $signatureEndRow + 1;
-            $imageHeight = 60;
 
-            // Requestor Signature
-            $sheet->mergeCells("A{$signatureStartRow}:S{$signatureEndRow}");
-            if (file_exists($RequestorSignature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Creator Signature');
-                $drawing->setDescription('Creator Signature');
-                $drawing->setPath($RequestorSignature);
-                $drawing->setCoordinates("J{$signatureStartRow}");
-                $drawing->setOffsetX(110);
-                $drawing->setOffsetY(10);
-                $drawing->setWidth($imageHeight);
-                $drawing->setHeight($imageHeight);
-                $drawing->setWorksheet($sheet);
-            }
-            $userName = getUsername($monthly_first_aid->created_by);
-            $sheet->mergeCells("A{$labelRow}:S{$labelRow}")->setCellValue("A{$labelRow}", "Creator Signature:{$userName}");
+            $signatureRow = $signatureStartRow;
+            $sheet->getRowDimension($signatureRow)->setRowHeight(30);
 
+            $sheet->mergeCells("A{$signatureRow}:S{$signatureRow}");
 
-            $sheet->getStyle("A{$labelRow}:S{$labelRow}")->applyFromArray([
-                'font' => ['bold' => true],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-            ]);
-
-
-
-            $sheet->getStyle("A{$signatureStartRow}:O{$signatureEndRow}")->applyFromArray([
+            $sheet->getStyle("A{$signatureRow}:S{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
+            // Prepared
+            $richText = new RichText();
+            $name = getUsername($monthly_first_aid->created_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("CREATOR NAME : " . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
+            }
+
+            $sheet->getCell("A{$signatureRow}")->setValue($richText);
+            // $signatureEndRow = $signatureStartRow + 3;
+            // $labelRow = $signatureEndRow + 1;
+            // $imageHeight = 60;
+
+            // // Requestor Signature
+            // $sheet->mergeCells("A{$signatureStartRow}:S{$signatureEndRow}");
+            // if (file_exists($RequestorSignature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Creator Signature');
+            //     $drawing->setDescription('Creator Signature');
+            //     $drawing->setPath($RequestorSignature);
+            //     $drawing->setCoordinates("J{$signatureStartRow}");
+            //     $drawing->setOffsetX(110);
+            //     $drawing->setOffsetY(10);
+            //     $drawing->setWidth($imageHeight);
+            //     $drawing->setHeight($imageHeight);
+            //     $drawing->setWorksheet($sheet);
+            // }
+            // $userName = getUsername($monthly_first_aid->created_by);
+            // $sheet->mergeCells("A{$labelRow}:S{$labelRow}")->setCellValue("A{$labelRow}", "Creator Signature:{$userName}");
+
+
+            // $sheet->getStyle("A{$labelRow}:S{$labelRow}")->applyFromArray([
+            //     'font' => ['bold' => true],
+            //     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            // ]);
+
+
+
+            // $sheet->getStyle("A{$signatureStartRow}:O{$signatureEndRow}")->applyFromArray([
+            //     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            // ]);
 
 
 

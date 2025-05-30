@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Incident Investigation')
-@section('pageurl', admin_url('incident/initial-incident/list'))
+@section('pageurl', admin_url('incident/initial-incident/list/all/type'))
 
 
 @section('content')
@@ -239,7 +239,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('incident/initial-incident/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('incident/initial-incident/list/all/type') }}"></x-button-back>
                                 </div>
                             </div>
                             <div class="card-body ">
@@ -471,7 +471,7 @@
                                                                 @else
                                                                     <p>No data available</p>
                                                                 @endif
-    
+
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -1132,7 +1132,7 @@
                                             <div class="row">
                                                 <div class="col-md-12 mt-3 ua_uc_yes_no">
                                                     <div class="form-group form-input">
-                                                        <label for="ua_uc" class="form-label require">UAUC</label><br>
+                                                        <label for="ua_uc" class="form-label require">Unsafe Act /Unsafe Condition</label><br>
                                                         <input type="radio" id="ua_uc_yes" name="ua_uc_yes_no"
                                                             value="1">
                                                         <label for="ua_uc_yes">Yes</label>
@@ -1213,7 +1213,7 @@
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
                                             <x-button-cancel
-                                                href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
+                                                href="{{ admin_url('incident/initial-incident/list/all/type') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>

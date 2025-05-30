@@ -21,7 +21,7 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Mail\Inspection\Safety\SafetyInspection;
-use App\Models\Inspection\Ohc\monthlyMedicineStore;
+use App\Models\Inspection\Ohc\MonthlyMedicineStore;
 use App\Mail\Inspection\Ohc\FloorStretcher as OhcFloorStretcher;
 
 class MonthlyMedicineStoreController extends Controller
@@ -33,7 +33,7 @@ class MonthlyMedicineStoreController extends Controller
 
     public function __construct()
     {
-        $this->medicine_checklist = new monthlyMedicineStore();
+        $this->medicine_checklist = new MonthlyMedicineStore();
         $this->medicine = new Medicine();
         $this->signature = new OhcSignature();
     }
@@ -80,7 +80,7 @@ class MonthlyMedicineStoreController extends Controller
                             $btn = '';
                             $btn = '<a href="' . admin_url('ohc/monthly-medicine-store/inspection/view/' . encryptId($row->id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
 
-                            if (($row->inspection_status == OBSERVATION_PENDING &&  isAdmin()) ||($row->inspection_status == OBSERVATION_PENDING &&  CheckUserRole(ROLE_EHS_OFFICER)) ) {
+                            if (($row->inspection_status == OBSERVATION_PENDING &&  isAdmin()) || ($row->inspection_status == OBSERVATION_PENDING &&  CheckUserRole(ROLE_EHS_OFFICER))) {
 
                                 $btn .= '<a href="' . admin_url('ohc/monthly-medicine-store/inspection/approval/' . encryptId($row->id)) . '" class="me-1" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
@@ -138,14 +138,7 @@ class MonthlyMedicineStoreController extends Controller
                 'expired_date.*' => 'required',
                 'emp_id.*' => 'required',
                 'remarks.*' => 'required',
-                'signature_upload.*' => [
-                    function ($attribute, $value, $fail) {
-                        $user = Auth::user();
-                        if (is_null($user->signature_upload)) {
-                            $fail('Signature is required.');
-                        }
-                    }
-                ],
+
             ];
 
             $messages = [
@@ -155,7 +148,7 @@ class MonthlyMedicineStoreController extends Controller
                 'expired_date.*.required' => 'Expired Date is required',
                 'remarks.*' => 'Remarks is required',
                 'emp_id.*' => 'Employee is required',
-                'signature_upload' => 'Signature is required.',
+
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -169,7 +162,7 @@ class MonthlyMedicineStoreController extends Controller
             $store = $this->medicine_checklist->store();
             $inspection_type = OHC_TYPE_MONTHLY_MEDICINE_STORE;
             $inspection_details = $this->medicine_checklist->selectOne($store->id);
-            $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
+            // $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
 
             $ehsOfficer = GetEHSOfficer();
             if (!empty($ehsOfficer)) {
@@ -226,14 +219,14 @@ class MonthlyMedicineStoreController extends Controller
             $inspection_details = $this->medicine_checklist->selectOne($id);
             $inspection_type = OHC_TYPE_MONTHLY_MEDICINE_STORE;
             $inspection_data = json_decode($inspection_details->inspection_data, true);
-            $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
-            $verified_by = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, $inspection_type);
+            // $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
+            // $verified_by = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, $inspection_type);
 
             $data = array(
                 'inspection_details' => $inspection_details,
-                'inspection_file' => $inspection_file,
+                // 'inspection_file' => $inspection_file,
                 'inspection_data' => $inspection_data,
-                'verified_by' => $verified_by,
+                // 'verified_by' => $verified_by,
             );
 
 
@@ -298,8 +291,8 @@ class MonthlyMedicineStoreController extends Controller
             $inspection_type = OHC_TYPE_MONTHLY_MEDICINE_STORE;
             $inspection_file = $this->signature->getFiles($id, $inspection_type);
             $inspection_data = json_decode($inspection_detail->inspection_data, true);
-            $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
-            $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
+            // $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
+            // $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
 
             $property = [
                 'tempDir' => 'public/pdf/temp/',
@@ -315,8 +308,8 @@ class MonthlyMedicineStoreController extends Controller
                 'inspection_file' => $inspection_file,
                 'pagetitle' => "Monthly Medicine Store Inspection",
                 'inspection_data' => $inspection_data,
-                'inspection_created_by' => $inspection_created_by,
-                'inspection_updated_by' => $inspection_updated_by,
+                // 'inspection_created_by' => $inspection_created_by,
+                // 'inspection_updated_by' => $inspection_updated_by,
             );
 
 
@@ -343,12 +336,12 @@ class MonthlyMedicineStoreController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->medicine_checklist->selectOne($id);
             $inspection_type = OHC_TYPE_MONTHLY_MEDICINE_STORE;
-            $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
+            // $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
             $inspection_data = json_decode($inspection_details->inspection_data, true);
 
             $data = array(
                 'inspection_details' => $inspection_details,
-                'inspection_file' => $inspection_file,
+                // 'inspection_file' => $inspection_file,
                 'inspection_data' => $inspection_data,
             );
 
@@ -370,7 +363,7 @@ class MonthlyMedicineStoreController extends Controller
             $inspection_details = $this->medicine_checklist->selectOne($id);
             $ehsOfficer = [$inspection_details->created_by];
 
-            $signature_update = $this->signature->signatureUpload(OHC_TYPE_MONTHLY_MEDICINE_STORE);
+            // $signature_update = $this->signature->signatureUpload(OHC_TYPE_MONTHLY_MEDICINE_STORE);
             if ($status == 1) {
                 $message = 'Monthly Store Medicine Checklist - APPROVED';
                 $to_status = OBSERVATION_APPROVED;
@@ -430,8 +423,8 @@ class MonthlyMedicineStoreController extends Controller
             $inspection_detail = $this->medicine_checklist->selectOne($id);
             $inspection_type = OHC_TYPE_MONTHLY_MEDICINE_STORE;
             $inspection_data = json_decode($inspection_detail->inspection_data, true);
-            $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
-            $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
+            // $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
+            // $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
 
             for ($i = 1; $i <= 200; $i++) {
                 $sheet->getRowDimension($i)->setRowHeight(25);
@@ -518,7 +511,7 @@ class MonthlyMedicineStoreController extends Controller
                 $sheet->mergeCells("D$row:F$row")->setCellValue("D$row", getMedicinename($detail['medicine_id']));
                 $sheet->mergeCells("G$row:H$row")->setCellValue("G$row", $detail['available_quantity'] ?? '');
                 $sheet->mergeCells("I$row:K$row")->setCellValue("I$row", Displaydateformat($detail['expired_date']));
-                $sheet->mergeCells("L$row:O$row")->setCellValue("L$row", getUsername($detail['emp_id']));
+                $sheet->mergeCells("L$row:O$row")->setCellValue("L$row", ($detail['emp_id']));
                 $sheet->mergeCells("P$row:S$row")->setCellValue("P$row", $detail['remarks'] ?? '');
 
                 $sheet->getStyle("A$row:S$row")->applyFromArray([
@@ -530,48 +523,54 @@ class MonthlyMedicineStoreController extends Controller
 
             $signatureRow = $row;
 
-            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+            $sheet->getRowDimension($signatureRow)->setRowHeight(20);
 
             $sheet->mergeCells("A{$signatureRow}:J{$signatureRow}");
             $sheet->getStyle("A{$signatureRow}:J{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
             ]);
-            if (file_exists($inspection_created_by)) {
-                $drawing = new Drawing();
-                $drawing->setName('Inspection and checked By');
-                $drawing->setPath($inspection_created_by);
-                $drawing->setCoordinates("D{$signatureRow}");
-                $drawing->setOffsetX(50);
-                $drawing->setOffsetY(10);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-            }
-
-            $richText = new RichText();
-            $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
-            $sheet->getCell("A{$signatureRow}")->setValue($richText);
+            // if (file_exists($inspection_created_by)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Inspection and checked By');
+            //     $drawing->setPath($inspection_created_by);
+            //     $drawing->setCoordinates("D{$signatureRow}");
+            //     $drawing->setOffsetX(50);
+            //     $drawing->setOffsetY(10);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            // }
 
             $sheet->mergeCells("K{$signatureRow}:S{$signatureRow}");
             $sheet->getStyle("K{$signatureRow}:S{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
             ]);
-            if (file_exists($inspection_updated_by)) {
-                $drawing = new Drawing();
-                $drawing->setName('Approved By');
-                $drawing->setPath($inspection_updated_by);
-                $drawing->setCoordinates("N{$signatureRow}");
-                $drawing->setOffsetX(50);
-                $drawing->setOffsetY(10);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-            }
+            // if (file_exists($inspection_updated_by)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Approved By');
+            //     $drawing->setPath($inspection_updated_by);
+            //     $drawing->setCoordinates("N{$signatureRow}");
+            //     $drawing->setOffsetX(50);
+            //     $drawing->setOffsetY(10);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            // }
+
+            $createdBy = getUsername($inspection_detail->created_by);
+            $createdByText = !empty($createdBy) ? $createdBy : "Inspection has not been prepared yet";
+
+            $approvedBy = getUsername($inspection_detail->updated_by);
+            $approvedByText = !empty($approvedBy) ? $approvedBy : "Inspection has not been approved yet";
+
+            $richText = new RichText();
+            $richText->createTextRun("Inspected and checked By: " . $createdByText)->getFont()->setBold(true);
+            $sheet->getCell("A{$signatureRow}")->setValue($richText);
 
             $richText2 = new RichText();
-            $richText2->createTextRun("Approved By: " . getUsername($inspection_detail->updated_by))->getFont()->setBold(true);
+            $richText2->createTextRun("Approved By: " . $approvedByText)->getFont()->setBold(true);
             $sheet->getCell("K{$signatureRow}")->setValue($richText2);
 
             $writer = new Xlsx($spreadsheet);
@@ -581,6 +580,7 @@ class MonthlyMedicineStoreController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
+            report($e);
             return back()->with('error', $e->getMessage());
         }
     }
@@ -713,7 +713,7 @@ class MonthlyMedicineStoreController extends Controller
                     $sheet->mergeCells("D$inspectionRow:F$inspectionRow")->setCellValue("D$inspectionRow", getMedicinename($detail['medicine_id']));
                     $sheet->mergeCells("G$inspectionRow:H$inspectionRow")->setCellValue("G$inspectionRow", $detail['available_quantity'] ?? '');
                     $sheet->mergeCells("I$inspectionRow:K$inspectionRow")->setCellValue("I$inspectionRow", Displaydateformat($detail['expired_date']));
-                    $sheet->mergeCells("L$inspectionRow:O$inspectionRow")->setCellValue("L$inspectionRow", getUsername($detail['emp_id']));
+                    $sheet->mergeCells("L$inspectionRow:O$inspectionRow")->setCellValue("L$inspectionRow", ($detail['emp_id']));
                     $sheet->mergeCells("P$inspectionRow:S$inspectionRow")->setCellValue("P$inspectionRow", $detail['remarks'] ?? '');
 
                     $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
@@ -725,41 +725,47 @@ class MonthlyMedicineStoreController extends Controller
                 }
 
                 $signatureRow = $inspectionRow;
-                $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRow)->setRowHeight(20);
 
                 $sheet->mergeCells("A$signatureRow:J$signatureRow");
                 $sheet->mergeCells("K$signatureRow:S$signatureRow");
 
-                if (file_exists($inspection_created_by)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Inspection and checked By');
-                    $drawing->setPath($inspection_created_by);
-                    $drawing->setCoordinates("D$signatureRow");
-                    $drawing->setOffsetX(50);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                }
+                // if (file_exists($inspection_created_by)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Inspection and checked By');
+                //     $drawing->setPath($inspection_created_by);
+                //     $drawing->setCoordinates("D$signatureRow");
+                //     $drawing->setOffsetX(50);
+                //     $drawing->setOffsetY(10);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                // }
+
+
+                // if (file_exists($inspection_updated_by)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Approved By');
+                //     $drawing->setPath($inspection_updated_by);
+                //     $drawing->setCoordinates("N$signatureRow");
+                //     $drawing->setOffsetX(50);
+                //     $drawing->setOffsetY(10);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                // }
+                $createdBy = getUsername($inspection_detail->created_by);
+                $createdByText = !empty($createdBy) ? $createdBy : "Inspection has not been prepared yet";
+
+                $approvedBy = getUsername($inspection_detail->updated_by);
+                $approvedByText = !empty($approvedBy) ? $approvedBy : "Inspection has not been approved yet";
 
                 $richTextSig1 = new RichText();
-                $richTextSig1->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
+                $richTextSig1->createTextRun("Inspected and checked By: " . $createdByText)->getFont()->setBold(true);
                 $sheet->getCell("A$signatureRow")->setValue($richTextSig1);
 
-                if (file_exists($inspection_updated_by)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Approved By');
-                    $drawing->setPath($inspection_updated_by);
-                    $drawing->setCoordinates("N$signatureRow");
-                    $drawing->setOffsetX(50);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                }
-
                 $richTextSig2 = new RichText();
-                $richTextSig2->createTextRun("Approved By: " . getUsername($inspection_detail->updated_by))->getFont()->setBold(true);
+                $richTextSig2->createTextRun("Approved By: " . $approvedByText)->getFont()->setBold(true);
                 $sheet->getCell("K$signatureRow")->setValue($richTextSig2);
 
                 $sheet->getStyle("A$signatureRow:J$signatureRow")->applyFromArray([
@@ -783,6 +789,7 @@ class MonthlyMedicineStoreController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
+            report($e);
             return back()->with('error', $e->getMessage());
         }
     }

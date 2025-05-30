@@ -64,21 +64,21 @@
                                                         <td class="text-center">{{ $medicines['available_quantity'] }}
                                                         <td class="text-center">
                                                             {{ Displaydateformat($medicines['expired_date']) }}
-                                                        <td class="text-center">{{ getUsername($medicines['emp_id']) }}
+                                                        <td class="text-center">{{ ($medicines['emp_id']) }}
                                                         <td class="text-center">{{ $medicines['remarks'] }}
                                                     </tr>
                                                 @endforeach
                                             </tbody>
                                         </table>
                                     </div>
-                                    <div class="row m-2">
+                                    {{-- <div class="row m-2">
                                         <div class="col-md-4 form-group form-input mb-2">
                                             <label class="form-label"
                                                 style="display: block; ">{{ __('inspection.signature') }}</label>
                                             <img src="{{ admin_url($inspection_file) }}"
                                                 alt="Signature Upload" style="width: 100px; margin-top:-10px">
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
 
                                 <div class="row card">
@@ -102,12 +102,12 @@
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
 
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
                                                     <img src="{{ admin_url(Auth::user()->signature_upload) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top:-10px">
+                                                        style="width: 100px; margin-top:-10px">
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
                                                         <label class="form-label require">Signature</label>
@@ -118,7 +118,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-12 mb-2 form-input" id="capa_remarks">
                                                 <label for="capa_remarks" class="form-label">Remarks</label>
                                                 <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
@@ -152,10 +152,10 @@
                         maxlength: 100,
                         noSpaces: true,
                     },
-                    signature_image: {
-                        required: true,
-                        filesize: 15728640,
-                    }
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
                 messages: {
                     capa_remarks: {
@@ -163,10 +163,10 @@
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 100",
                     },
-                    signature_image: {
-                        required: "Signature is Required",
-                        filesize:"File Size must be under 15 MB"
-                    }
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize:"File Size must be under 15 MB"
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {

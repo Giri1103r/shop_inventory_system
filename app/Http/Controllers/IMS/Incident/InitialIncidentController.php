@@ -100,6 +100,7 @@ class InitialIncidentController extends Controller
 
     public function index(Request $request)
     {
+
         if (Auth::check()) {
             if ($request->ajax()) {
 
@@ -169,7 +170,7 @@ class InitialIncidentController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-
+                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -177,15 +178,114 @@ class InitialIncidentController extends Controller
         $companyList = $this->company->getcompany();
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
         $status = Incidentstatus::select('id', 'status_name')->where('status', '1')->get();
+        $type = ($request->type);
+        $condition = ($request->condition);
         $data = array(
             'unitList' => $unitList,
             'companyList' => $companyList,
             'status' => $status,
             'dashboard_search' => $request,
+            'type' => $type,
+            'condition' => $condition,
         );
 
         return view('ims.initial.incident.list', $data);
     }
+
+      public function redirectindex(Request $request)
+    {
+
+        if (Auth::check()) {
+            if ($request->ajax()) {
+
+                try {
+
+                    $data =  $this->initialincident->list();
+
+
+                    $datatables = Datatables::of($data['data'])
+                        ->addIndexColumn()
+                        ->addColumn('status', function ($row) {
+                            $text = "<span style='color:red'>In-Active<span>";
+                            if ($row->status == 1) {
+                                $text = "<span style='color:green;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '1' >Active<span>";
+                            } else if ($row->status == 0) {
+                                $text = "<span style='color:red;cursor:pointer' class= 'statusChange' data-id='" . encryptId($row->id) . "' data-type = '0' >In-Active<span>";
+                            }
+                            return $text;
+                        })
+
+
+                        ->editColumn('status_batch', function ($row) {
+                            return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
+                        })
+                        ->addColumn('unit_name', function ($row) {
+                            return getUnitname($row->unit_id);
+                        })
+                        //  ->addColumn('company_id', function ($row) {
+                        //     return getCompanyname($row->company_id);
+                        // })
+                        //  ->addColumn('location_id', function ($row) {
+                        //     return getLocationname($row->location_id);
+                        // })
+                        ->addColumn('created_at', function ($row) {
+                            return Displaydateformat($row->created_at);
+                        })
+                        ->addColumn('created_by', function ($row) {
+                            return getUsername($row->created_by);
+                        })
+                        ->addColumn('action', function ($row) {
+                            $btn = '';
+                            // if (CheckUserPermission('view')) {
+                            $btn = '<a href="' . admin_url('incident/initial-incident/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            // }
+                            // if (CheckUserPermission('edit')) {
+
+                            if ($row->incident_status == 1 && $row->created_by == Auth::id()) {
+                                $btn .= '<a href="' . admin_url('incident/initial-incident/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            }
+                            // }
+
+                            if ((CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD)) && ($row->incident_status == 1)) {
+                                $btn .= '<a href="' . admin_url('incident/initial-incident/review/' . encryptId($row->id)) . '" class=" " title="Review"><i class="fa-solid fa-circle-check" style="color:rgb(0, 37, 132);"></i> ';
+                            }
+
+
+                            $btn .= '<a href="' . admin_url('incident/initial-incident/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF">
+                            <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
+                             </a>';
+
+                            return $btn;
+                        })
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'status_batch'])
+                        ->setFilteredRecords($data['filter_records'])
+                        ->setTotalRecords($data['total_records'])
+                        ->skipPaging()
+                        ->make(true);
+                    return $datatables;
+                } catch (Exception $ex) {
+                    report($ex);
+                    return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+                }
+            }
+        }
+        $companyList = $this->company->getcompany();
+        $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
+        $status = Incidentstatus::select('id', 'status_name')->where('status', '1')->get();
+        $type = ($request->type);
+        $condition = ($request->condition);
+        $data = array(
+            'unitList' => $unitList,
+            'companyList' => $companyList,
+            'status' => $status,
+            'dashboard_search' => $request,
+            'type' => $type,
+            'condition' => $condition,
+        );
+
+        return view('ims.initial.incident.list', $data);
+    }
+
 
     public function investigationList(Request $request)
     {
@@ -369,7 +469,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -746,11 +846,11 @@ class InitialIncidentController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -898,7 +998,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $error) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -950,11 +1050,11 @@ class InitialIncidentController extends Controller
             $initialincident = $this->initialincident->find($id);
             $this->injury_details->store($id, $initialincident->random_id);
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -1025,7 +1125,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -1081,7 +1181,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -1137,7 +1237,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -1264,11 +1364,11 @@ class InitialIncidentController extends Controller
 
 
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -1318,7 +1418,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $error) {
             report($error);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -1509,9 +1609,9 @@ class InitialIncidentController extends Controller
 
             return view('ims.initial.incident.riskanalysis', $data);
         } catch (Exception $error) {
-            report($ex);
+            report($error);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -1889,6 +1989,8 @@ class InitialIncidentController extends Controller
             $id = decryptId($request->id);
 
             $this->initialincident->statuschange($id);
+            $this->rcpa->statuschange($id);
+            
             return response()->json(['status' => 'success', 'msg' => 'Your status has changed successfully'], 200);
         } catch (Exception $ex) {
             report($ex);
@@ -1962,7 +2064,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -2038,7 +2140,7 @@ class InitialIncidentController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -2097,7 +2199,7 @@ class InitialIncidentController extends Controller
 
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -2157,7 +2259,7 @@ class InitialIncidentController extends Controller
 
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/initial-incident/list'));
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 

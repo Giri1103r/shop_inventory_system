@@ -165,7 +165,7 @@
                 <h3>
                     <span><b>Monthly First Aid Box Audit Checklist</b></span>
                     <br>
-                  
+
                 </h3>
             </th>
 
@@ -326,15 +326,23 @@
 
         @endphp
 
-        <tr>
+        {{-- <tr>
             <th colspan="58" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
                 <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
                     style="width: 150px; margin-top: -10px;" />
                 <div style="margin-top: 5px;">Creator Signature: {{ getUsername($monthly_first_aid->created_by) }}
                 </div>
             </th>
-
-
+        </tr> --}}
+        <tr>
+            <th colspan="58" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                @if ($monthly_first_aid->created_by != null)
+                    <div style="margin-top: 5px;">Creator Name: {{ getUsername($monthly_first_aid->created_by) }}
+                    </div>
+                @else
+                    <div style="margin-top: 5px;">Not available</div>
+                @endif
+            </th>
         </tr>
     </table>
     <br>

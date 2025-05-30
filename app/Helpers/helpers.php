@@ -72,8 +72,12 @@ use App\Models\Inspection\Safety\MonthlyPhysicalEquipmentList;
 use App\Models\Inspection\Safety\SafetyWalkObservationDetails;
 use App\Models\Inspection\Fire\EmergencyLightInspectionDetails;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
+use App\Models\Inspection\GembaWalk\GembaWalkHazard;
 use App\Models\Inspection\MSDS\Master\Chemical;
 use App\Models\Inspection\MSDS\Master\NFARating;
+use App\Models\KPI\HSCInputs;
+use App\Models\KPI\HSCInputsLagging;
+use App\Models\KPI\HSCInputsLeading;
 use App\Models\KPI\LeadingLagging;
 use App\Models\Master\PpeStockinventory;
 
@@ -2575,6 +2579,49 @@ if (!function_exists('getMonth')) {
             return 'Unknown';
         }
     }
+    if (!function_exists('getOHCStatus')) {
+        function getOHCStatus($id)
+        {
+            if ($id == CLEANER_SUBMITTED_THE_CHECKLIST) {
+                return 'Waiting For Nursing Officer Action';
+            } else if ($id == NURSING_OFFICER_REJECTED) {
+                return 'Nursing Officer Rejected';
+            } else if ($id == NURSING_OFFICER_SUBMITTED_THE_CHECKLIST) {
+                return 'Nursing Officer Submitted';
+            }
+            return 'Unknown';
+        }
+    }
+    if (!function_exists('getPhysicalConditon')) {
+        function getPhysicalConditon($id)
+        {
+            if ($id == GOOD) {
+                $physical_condition = 'Good';
+            } elseif ($id == FAIR) {
+                $physical_condition = 'Fair';
+            } elseif ($id == POOR) {
+                $physical_condition = 'Poor';
+            } else {
+                $physical_condition = 'Unknown';
+            }
+            return $physical_condition;
+        }
+    }
+    if (!function_exists('getCableCondition')) {
+        function getCableCondition($id)
+        {
+            if ($id == GOOD) {
+                $cable_condition = 'Good';
+            } elseif ($id == FAIR) {
+                $cable_condition = 'Fair';
+            } elseif ($id == POOR) {
+                $cable_condition = 'Poor';
+            } else {
+                $cable_condition = 'Unknown';
+            }
+            return $cable_condition;
+        }
+    }
 
     if (!function_exists('getLightCondition')) {
         function getLightCondition($id)
@@ -2601,6 +2648,19 @@ if (!function_exists('getMonth')) {
                 return 'Unsafe Act';
             } elseif ($type_id == 2) {
                 return 'Unsafe Condition';
+            }
+        }
+    }
+
+    if (!function_exists('getRiskCategory')) {
+        function getRiskCategory($type_id)
+        {
+            if ($type_id == 1) {
+                return 'Low';
+            } elseif ($type_id == 2) {
+                return 'High';
+            } elseif ($type_id == 3) {
+                return 'Moderate';
             }
         }
     }
@@ -2652,6 +2712,23 @@ if (!function_exists('getMonth')) {
                 return '';
             } else {
                 return $user->status_name;
+            }
+        }
+    }
+
+    if (!function_exists('getGembaWalkHazardName')) {
+
+        function getGembaWalkHazardName($id)
+        {
+
+            $user = GembaWalkHazard::select('*')
+                ->where('id', $id)
+                ->first();
+
+            if ($user == null) {
+                return '';
+            } else {
+                return $user->hazard_name;
             }
         }
     }
@@ -3270,4 +3347,176 @@ function getPPEAvailabilityChartData($form_date, $to_date, $company_id)
         'labels' => $labels,
         'series' => $series,
     ];
+}
+
+if (!function_exists('GetLeadingCount')) {
+    function GetLeadingCount(
+        $id,
+        $company,
+        $location_id,
+        $unit_id,
+        $department_id,
+        $year,
+        $month
+    ) {
+
+        $request = Request();
+        $year = $year ?: Carbon::now()->format('Y');
+
+
+        $query = HSCInputsLeading::where('leading_id', $id)
+            ->leftJoin('kpi_hsc_inputs', 'kpi_hsc_inputs_leading.hsc_inputs_id', '=', 'kpi_hsc_inputs.id')
+            ->select('kpi_hsc_inputs_leading.*', 'kpi_hsc_inputs.*')
+            ->where('calendar_year', $year);
+
+        if (!empty($company)) {
+            $query->where('kpi_hsc_inputs.company_id', decryptId($company));
+        }
+
+        if (!empty($location_id)) {
+            $query->where('kpi_hsc_inputs.location_id', decryptId($location_id));
+        }
+
+        if (!empty($unit_id)) {
+            $query->where('kpi_hsc_inputs.unit_id', decryptId($unit_id));
+        }
+
+        if (!empty($department_id)) {
+            $query->where('kpi_hsc_inputs.department_id', decryptId($department_id));
+        }
+
+
+        if (!empty($month)) {
+            $query->where('kpi_hsc_inputs.month', $month);
+        }
+
+        return $query->sum('kpi_hsc_inputs_leading.value');
+    }
+}
+
+if (!function_exists('GetLaggingCount')) {
+    function GetLaggingCount(
+        $id,
+        $company,
+        $location_id,
+        $unit_id,
+        $department_id,
+        $year,
+        $month
+    ) {
+        $year = $year ?: Carbon::now()->format('Y');
+        $request = Request();
+
+
+        $query = HSCInputsLagging::where('lagging_id', $id)
+            ->leftJoin('kpi_hsc_inputs', 'kpi_hsc_inputs_lagging.hsc_inputs_id', '=', 'kpi_hsc_inputs.id')
+            ->select('kpi_hsc_inputs_lagging.*', 'kpi_hsc_inputs.*')
+            ->where('calendar_year', $year);
+
+        if (!empty($company)) {
+            $query->where('kpi_hsc_inputs.company_id', decryptId($company));
+        }
+
+        if (!empty($location_id)) {
+            $query->where('kpi_hsc_inputs.location_id', decryptId($location_id));
+        }
+
+        if (!empty($unit_id)) {
+            $query->where('kpi_hsc_inputs.unit_id', decryptId($unit_id));
+        }
+
+        if (!empty($department_id)) {
+            $query->where('kpi_hsc_inputs.department_id', decryptId($department_id));
+        }
+
+
+        if (!empty($month)) {
+            $query->where('kpi_hsc_inputs.month', $month);
+        }
+
+        return $query->sum('kpi_hsc_inputs_lagging.value');
+    }
+}
+
+
+// API Helpers
+if (!function_exists('GetStatusValue')) {
+    function GetStatusValue($id)
+    {
+        switch ($id) {
+            case WAITING_FOR_EHS_OFFICER_VERIFICATION:
+                $text = "Waiting For EHS Officer Verification";
+                break;
+            case WAITING_FOR_CAPA_ACTION:
+                $text = "Waiting For CAPA Action";
+                break;
+            case WAITING_FOR_CAPA_VERIFICATION:
+                $text = "Waiting For CAPA Verification";
+                break;
+            case WAITING_FOR_L1_VERIFICATION:
+                $text = "Waiting For Level-1 Manager Verification";
+                break;
+            case WAITING_FOR_L2_VERIFICATION:
+                $text = "Waiting For Level-2 Manager Verification";
+                break;
+            case INSPECTION_APPROVED:
+                $text = "CLOSED";
+                break;
+            case L2_MANAGER_REJECTED:
+                $text = "LEVEL 2 OFFICER REJECTED - WAITING FOR CAPA ACTION";
+                break;
+            case L1_MANAGER_REJECTED:
+                $text = "LEVEL 1 OFFICER REJECTED - WAITING FOR CAPA ACTION";
+                break;
+            case EHS_OFFICER_REJECTED:
+                $text = "EHS OFFICER REJECTED - WAITING FOR CAPA ACTION";
+                break;
+            default:
+                $text = "Unknown";
+        }
+        return $text;
+    }
+}
+
+// Get Condition
+if (!function_exists('GetConditionName')) {
+    function GetConditionName($value)
+    {
+        switch ($value) {
+            case GOOD:
+                return 'Good';
+            case FAIR:
+                return 'Fair';
+            default:
+                return 'Poor';
+        }
+    }
+}
+
+// Get Pass or Fail
+if (!function_exists('GetPassOrFail')) {
+    function GetPassOrFail($value)
+    {
+        switch ($value) {
+            case PASS:
+                return 'Pass';
+            case FAIL:
+                return 'Fail';
+            default:
+                return 'N/a';
+        }
+    }
+}
+
+// Get Operational or Non Operational
+if (!function_exists('GetOPOrNonOP')) {
+    function GetOPOrNonOP($value)
+    {
+        switch ($value) {
+            case OPERATIONAL:
+                return 'Operational';
+            default:
+                return 'Non-Operational';
+        }
+    }
 }

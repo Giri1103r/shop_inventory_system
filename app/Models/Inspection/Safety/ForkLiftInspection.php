@@ -132,6 +132,19 @@ class ForkLiftInspection extends Model
         return $this->create($data);
     }
 
+    public function store_api()
+    {
+        $request = request();
+        $data = array(
+            'document_reference_id' => ($request->document_reference_id),
+            'inspection_date' => DBdateformat($request->inspection_date),
+            'created_by' => Auth::id(),
+            'observation_status' => OBSERVATION_PENDING,
+        );
+
+        return $this->create($data);
+    }
+
 
     public function exportdata()
     {

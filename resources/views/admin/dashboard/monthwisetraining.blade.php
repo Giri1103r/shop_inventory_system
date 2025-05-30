@@ -99,7 +99,7 @@
         plotOptions: {
             bar: {
                 horizontal: false,
-                borderRadius: 10,
+               columnWidth: '100%',
                 dataLabels: {
                     total: {
                         enabled: true,

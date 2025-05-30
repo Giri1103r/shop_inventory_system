@@ -78,13 +78,37 @@ class InitialIncident extends Model
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
             $query->where('ims_initial_incident.status', '1');
         } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
-            $query->where('ims_initial_incident.created_by', Auth::user()->id);
+            $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
         } else {
 
-            $query->where('ims_initial_incident.created_by', Auth::user()->id);
+            $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
+        }
+        $condition =  decryptId($request->condition);
+        // if ($request->has('type') && $request->type) {
+        if ($condition  == 1) {
+            $type = ($request->type);
+            if ($type != ALL) {
+                $query = $query->where('ims_injury_details.nature_of_injury', decryptId($type));
+            }
+        } else if ($condition  == 2) {
+            $type = ($request->type);
+            if ($type != ALL) {
+                $query = $query->whereRaw("FIND_IN_SET(?, ims_initial_incident.ua_or_uc)", [decryptId($type)]);
+            }
+        } else if ($condition  == 3) {
+            $type = ($request->type);
+            if ($type != ALL) {
+                $query = $query->where('ims_initial_incident.iir_type', decryptId($type));
+            }
+        } else if ($condition  == 4) {
+            $type = ($request->type);
+            if ($type != ALL) {
+                $query = $query->where('ims_initial_incident.iir_type', decryptId($type));
+            }
         }
 
 
+        // }
         /**
          * Role Based list view condition end
          */
@@ -123,7 +147,7 @@ class InitialIncident extends Model
         }
 
         if ($request->has('dash_iirtype_id') && $request->dash_iirtype_id) {
-            $query = $query->where('ims_initial_incident.nature_of_injury', ($request->dash_iirtype_id));
+            $query = $query->where('ims_initial_incident.iir_type', ($request->dash_iirtype_id));
         }
 
 
@@ -139,6 +163,7 @@ class InitialIncident extends Model
 
             $query = $query->where('ims_initial_incident.unit_id', decryptId($request->unit_id));
         }
+
 
         $data_count = $query;
         $total_records = $data_count->count();
@@ -173,7 +198,7 @@ class InitialIncident extends Model
          * Role Based list view condition start
          */
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
-            // $query->where('ims_initial_incident.status', '1');
+            $query->where('ims_initial_incident.status', '1');
         } else {
             // $userId = Auth::id();
             // $userLoginId = Auth::user()->employee_id;
@@ -186,7 +211,7 @@ class InitialIncident extends Model
             //         ->orWhereRaw("FIND_IN_SET(?, choose_assignee)", [$employeeId]);
             // });
 
-            $query->where('ims_initial_incident.investigation_reported_by', Auth::user()->id);
+            $query->where('ims_initial_incident.investigation_reported_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
         }
 
 
@@ -586,15 +611,14 @@ class InitialIncident extends Model
         /**
          * Role Based list view condition start
          */
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
+       if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
             $query->where('ims_initial_incident.status', '1');
         } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
-            $query->where('ims_initial_incident.created_by', Auth::user()->id);
+            $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
         } else {
 
-            $query->where('ims_initial_incident.created_by', Auth::user()->id);
+            $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
         }
-
 
         /**
          * Role Based list view condition end
@@ -968,6 +992,31 @@ class InitialIncident extends Model
         }
 
         return $query->get(); // returns multiple rows
+    }
+    public function getNearmiss()
+    {
+        $nearMissId = DB::table('ims_master_incident_type')
+            ->where('incident_type_name', 'LIKE', '%Near Miss%')
+            ->where(function ($query) {
+                $query->whereRaw("LOWER(REPLACE(incident_type_name, '-', '')) LIKE ?", ['%near miss%']);
+            })
+            ->where('status', 1)
+            ->value('id'); // returns a single id, not an array
+
+        return $nearMissId;
+    }
+
+    public function getFireIncidence()
+    {
+        $fireIncidence = DB::table('ims_master_incident_type')
+            ->where('incident_type_name', 'LIKE', '%Fire Incidence%')
+            ->where(function ($query) {
+                $query->whereRaw("LOWER(REPLACE(incident_type_name, '-', '')) LIKE ?", ['%near miss%']);
+            })
+            ->where('status', 1)
+            ->value('id'); // returns a single id, not an array
+
+        return $fireIncidence;
     }
 
     public function getNearMissCountData($request)

@@ -270,7 +270,7 @@
                 </td>
                 <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                     {{ __('inspection.signature') }}:
-                    <img src="{{ admin_url($inspection_file->file_path) }}" alt="Signature" style="width:70px; vertical-align: middle;">
+                    {{-- <img src="{{ admin_url($inspection_file->file_path) }}" alt="Signature" style="width:70px; vertical-align: middle;"> --}}
                 </td>
             </tr>
 

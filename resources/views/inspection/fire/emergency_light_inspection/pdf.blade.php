@@ -171,7 +171,7 @@
                 <th colspan="4" style="border:1px solid black;">
                     <h3>
                         <span><b>EMERGENCY LIGHT INSPECTION CHECKLIST</b></span>
-                       
+
                     </h3>
                 </th>
 
@@ -290,7 +290,7 @@
 
                 </tr>
             @endforeach
-            @php
+            {{-- @php
                 $checked_by = GetSignature($details->created_by, $details->id, EMERGENCY_LIGHT_INSPECTION);
                 $approved_by = GetSignature($details->approved_by, $details->id, EMERGENCY_LIGHT_INSPECTION);
                 $verified_by = GetSignature($details->verified_by, $details->id, EMERGENCY_LIGHT_INSPECTION);
@@ -323,6 +323,36 @@
                         @if (!empty($details->approved_by))
                             <img src="{{ admin_url($approved_by) }}" alt=""
                                 style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                            <p style="margin: 0;">Approved By:- {{ getUsername($details->approved_by) }}</p>
+                        @else
+                            <p style="margin: 0;">Approved By:- Not yet approved</p>
+                        @endif
+                    </div>
+                </td>
+            </tr> --}}
+
+            <tr>
+                <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                    <div class="view_data">
+                        @if (!empty($details->created_by))
+                            <p style="margin: 0;">Checked By:- {{ getUsername($details->created_by) }}</p>
+                        @else
+                            <p style="margin: 0;">Checked By:- Not yet checked</p>
+                        @endif
+                    </div>
+                </td>
+                <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                    <div class="view_data">
+                        @if (!empty($details->verified_by))
+                            <p style="margin: 0;">Verified By:- {{ getUsername($details->verified_by) }}</p>
+                        @else
+                            <p style="margin: 0;">Verified By:- Not yet verified</p>
+                        @endif
+                    </div>
+                </td>
+                <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                    <div class="view_data">
+                        @if (!empty($details->approved_by))
                             <p style="margin: 0;">Approved By:- {{ getUsername($details->approved_by) }}</p>
                         @else
                             <p style="margin: 0;">Approved By:- Not yet approved</p>

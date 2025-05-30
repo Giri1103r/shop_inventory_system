@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Gemba Walk')
-@section('pageurl', admin_url('gemba-walk/list'))
+@section('title', 'Gemba Walk Inspection (Safety Observation)')
+@section('pageurl', admin_url('inspection/gemba-walk/list'))
 
 @section('content')
     <div class="clearfix"></div>
@@ -28,7 +28,7 @@
                                 @if ($gembaWalk)
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">Gemba Walk Inspection</h4>
+                                            <h4 class="text-white">Gemba Walk Inspection (Safety Observation)</h4>
                                         </div>
                                     </div>
 
@@ -87,27 +87,43 @@
                                             </div>
                                         </div>
 
-                                        <div class="m-2">
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                        {{-- <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Responsibile Person</label>
+                                                <div class="view_data">
+                                                    {{ getUsername(isset($gembaWalk->responsible_person_id) ? $gembaWalk->responsible_person_id : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Executive Person</label>
+                                                <div class="view_data">
+                                                    {{ getUsername(isset($gembaWalk->executive_person_id) ? $gembaWalk->executive_person_id : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="mb-2 col-md-4 ">
+                                            <div class="form-group form-input mb-2">
                                                 <label class="form-label"
                                                     style="display: block; ">{{ __('inspection.signature') }}</label>
                                                 <img src="{{ admin_url($gembaWalk_approved_singnature) }}"
                                                     alt="Signature Upload" style="width: 100px; margin-top:-10px">
 
                                             </div>
-                                        </div>
+                                        </div> --}}
 
 
 
-                                    </div>
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Gemba Walk Checklist</h4>
-                                        </div>
                                     </div>
                                 @endif
 
                                 @foreach ($gembaWalk_details as $gembaWalk)
+                                    <div class="row">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">{{ __('inspection.checklist_details') }}</h4>
+                                        </div>
+                                    </div>
                                     <div class="row">
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
@@ -120,7 +136,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">Location ID</label>
+                                                <label class="form-label"> {{ __('inspection.location') }}</label>
                                                 <div class="view_data">
                                                     {{ getLocationname(isset($gembaWalk->location_id) ? $gembaWalk->location_id : '') }}
                                                 </div>
@@ -129,34 +145,66 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">Unit ID</label>
+                                                <label class="form-label">{{ __('common.unit') }}</label>
                                                 <div class="view_data">
                                                     {{ getUnitname(isset($gembaWalk->unit_id) ? $gembaWalk->unit_id : '') }}
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">{{ __('common.department') }}</label>
+                                                <div class="view_data">
+                                                    {{ getDepartment(isset($gembaWalk->department_id) ? $gembaWalk->department_id : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">{{ __('inspection.exact_location') }}</label>
+                                                <div class="view_data">
+                                                    {{ isset($gembaWalk->exact_location) ? $gembaWalk->exact_location : '' }}
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">Date of Observation</label>
+                                                <label
+                                                    class="form-label">{{ __('inspection.date_of_observation') }}</label>
                                                 <div class="view_data">
                                                     {{ displaydateformat(isset($gembaWalk->date_of_observation) ? $gembaWalk->date_of_observation : '') }}
                                                 </div>
                                             </div>
                                         </div>
-
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">Observation Type</label>
+                                                <label class="form-label">Observation Time</label>
+                                                <div class="view_data">
+                                                    {{ isset($gembaWalk->time) ? $gembaWalk->time : '' }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">{{ __('inspection.observation_type') }}</label>
                                                 <div class="view_data">
                                                     {{ getObservationType(isset($gembaWalk->observation_type_id) ? $gembaWalk->observation_type_id : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">{{ __('inspection.risk_category') }}</label>
+                                                <div class="view_data">
+                                                    {{ getRiskCategory(isset($gembaWalk->risk_category) ? $gembaWalk->risk_category : '') }}
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">Description</label>
+                                                <label class="form-label">{{ __('inspection.description') }}</label>
                                                 <div class="view_data">
                                                     {{ isset($gembaWalk->description) ? $gembaWalk->description : '' }}
                                                 </div>
@@ -165,28 +213,93 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">Hazard</label>
+                                                <label class="form-label">{{ __('inspection.hazard') }}</label>
+                                                @php
+                                                    $hazards = explode(',', $gembaWalk->hazard);
+                                                @endphp
+
                                                 <div class="view_data">
-                                                    {{ isset($gembaWalk->hazard) ? $gembaWalk->hazard : '' }}
+                                                    @foreach ($hazards as $hazardId)
+                                                        {{ getGembaWalkHazardName($hazardId) }}@if (!$loop->last)
+                                                            ,
+                                                        @endif
+                                                    @endforeach
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Recommended CAPA Action</label>
+                                                <div class="view_data">
+                                                    {{ $gembaWalk->capa_needed == '1' ? 'YES' : 'NO' }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if ($gembaWalk->capa_needed == '1')
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Evidence</label>
+                                                    <div class="view_data">
+                                                        @if ($gembaWalk)
+                                                            <a href="{{ asset($gembaWalk->file_path) }}" target="_blank">
+                                                                <img src="{{ asset('public/' . $gembaWalk->file_path) }}"
+                                                                    alt="image"
+                                                                    style="max-width: 100px; max-height: 100px;">
+                                                            </a>
+                                                        @else
+                                                            <small class="text-muted">No file uploaded yet.</small>
+                                                        @endif
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">{{ __('inspection.capa') }}</label>
+                                                    <div class="view_data">
+                                                        {{ isset($gembaWalk->capa) ? $gembaWalk->capa : '' }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @else
+                                            <div class="col-md-8 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">Remarks</label>
+                                                    <div class="view_data">
+                                                        {{ isset($gembaWalk_ehs_verificatioin_details->remarks) ? $gembaWalk_ehs_verificatioin_details->remarks : '-' }}
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
+
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">GembaWalk Status</label>
+                                                <div class="view_data">
+                                                    {{ getGembaWalkStatus(isset($gembaWalk->gemba_walk_checklist_status) ? $gembaWalk->gemba_walk_checklist_status : '') }}
                                                 </div>
                                             </div>
                                         </div>
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">CAPA</label>
-                                                <div class="view_data">
-                                                    {{ isset($gembaWalk->capa) ? $gembaWalk->capa : '' }}
-                                                </div>
-                                            </div>
-                                        </div>
+                                                <label class="form-label">{{ __('inspection.observer_person') }}</label>
 
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label">Responsibility ID</label>
+                                                @php
+                                                    $responsibility_id = explode(',', $gembaWalk->responsibility_id);
+                                                @endphp
+
                                                 <div class="view_data">
-                                                    {{ getEmployeename(isset($gembaWalk->responsibility_id) ? $gembaWalk->responsibility_id : '') }}
+                                                    @foreach ($responsibility_id as $responsibilityId)
+                                                        {{ getUsername($responsibilityId) }}@if (!$loop->last)
+                                                            ,
+                                                        @endif
+                                                    @endforeach
                                                 </div>
+
                                             </div>
                                         </div>
 
@@ -200,21 +313,30 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
+                                                <label class="form-label">Name Of the Observer</label>
+                                                <div class="view_data">
+                                                    {{ getUsername(isset($gembaWalk->created_by) ? $gembaWalk->created_by : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        {{-- <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
                                                 <label class="form-label">Date of Observation</label>
                                                 <div class="view_data">
                                                     {{ displaydateformat(isset($gembaWalk->date_of_compliance) ? $gembaWalk->date_of_compliance : '') }}
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
-                                        <div class="col-md-4 mb-2">
+                                        {{-- <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">Observation</label>
+                                                <label
+                                                    class="form-label require">Observation</label>
                                                 <div class="view_data">
                                                     {{ $gembaWalk->observation_needed == '1' ? 'YES' : 'NO' }}
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div> --}}
 
                                         {{-- <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
@@ -231,7 +353,7 @@
                                                             @endforeach
                                                         </ul>
                                                     @else
-                                                        <p>No observations recorded.</p>
+                                                        No observations recorded.
                                                     @endif
                                                 </div>
                                             </div>
@@ -240,26 +362,11 @@
 
 
 
-                                        <div class="col-md-12 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label">Uploaded File</label>
-                                                <div class="view_data">
-                                                    @if ($gembaWalk)
-                                                        <a href="{{ asset($gembaWalk->file_path) }}" target="_blank">
-                                                            <img src="{{ asset('public/' . $gembaWalk->file_path) }}"
-                                                                alt="image"
-                                                                style="max-width: 100px; max-height: 100px;">
-                                                        </a>
-                                                    @else
-                                                        <small class="text-muted">No file uploaded yet.</small>
-                                                    @endif
 
-                                                </div>
-                                            </div>
-                                        </div>
+
+
 
                                     </div>
-                                    <hr />
                                 @endforeach
 
                                 {{-- @if ($gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION)
@@ -351,13 +458,13 @@
                                     $gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION ||
                                         $gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_REJECTED)
                                     <div class="row mt-3">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">CAPA Action</h4>
-                                        </div>
+                                        {{-- <div class="card-header-inner">
+                                            <h4 class="text-white">Recommended CAPA Action</h4>
+                                        </div> --}}
 
                                         <div class="row">
 
-                                            <div class="col-md-4 mb-2">
+                                            {{-- <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">EHS Officer Name</label>
                                                     <div class="view_data">
@@ -383,7 +490,7 @@
                                                         {{ isset($gembaWalk_ehs_capa_details->remarks) ? $gembaWalk_ehs_capa_details->remarks : '' }}
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
 
 
@@ -406,20 +513,21 @@
                                                 </div>
                                             </div> --}}
 
-                                            <div class="col-md-4 mb-2">
+                                            {{-- <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">CAPA Action</label>
+                                                    <label class="form-label">Whether the Inspection has been passed
+                                                        Without the CAPA?</label>
                                                     <div class="view_data">
                                                         @if (isset($gembaWalk_ehs_capa_details->capa))
                                                             {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'YES' : 'NO' }}
                                                         @endif
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
                                             <div class="row mt-3">
                                                 <div class="card-header-inner">
-                                                    <h4 class="text-white">Floor Manager Verification</h4>
+                                                    <h4 class="text-white">Action Required</h4>
                                                 </div>
                                             </div>
                                             <form method="POST" id="floorManagerVerification"
@@ -442,7 +550,8 @@
 
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
-                                                            <label class="form-label">Floor Manager Name</label>
+                                                            <label
+                                                                class="form-label">{{ __('inspection.observer_person') }}</label>
                                                             <input type="text" name="officer_name"
                                                                 class="form-control" value="{{ Auth::user()->name }}"
                                                                 readonly>
@@ -451,7 +560,8 @@
 
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
-                                                            <label class="form-label">Date</label>
+                                                            <label
+                                                                class="form-label">{{ __('inspection.date_of_compliance') }}</label>
                                                             <input type="text" name="capa_date" id="capa_date"
                                                                 value="{{ todaydate() }}" readonly class="form-control"
                                                                 placeholder="Select Date">
@@ -461,7 +571,7 @@
 
                                                     <div class="col-md-4 mb-2" id="remarkField">
                                                         <div class="form-group form-input">
-                                                            <label class="form-label">Remark</label>
+                                                            <label class="form-label require">Remark</label>
                                                             <textarea name="capa_remark" class="form-control"></textarea>
                                                         </div>
                                                     </div>
@@ -470,8 +580,19 @@
 
                                                     <div class="col-md-4 mb-2" id="capa_recomendation">
                                                         <div class="form-group form-input">
-                                                            <label class="form-label">Upload Image</label>
+                                                            <label class="form-label require">Upload Image</label>
                                                             <input type="file" name="capa_image" class="form-control">
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label">Recommended CAPA action taken
+                                                                at</label>
+                                                            <input type="text" name="capa_action_date"
+                                                                id="capa_action_date" value="{{ todaydate() }}"
+                                                                readonly class="form-control" placeholder="Select Date">
+
                                                         </div>
                                                     </div>
 
@@ -493,8 +614,8 @@
                                         <div class="row">
 
                                             <div class="row">
-                                                <div class="card-header-inner">
-                                                    <h4 class="text-white">EHS OFFICER </h4>
+                                                {{-- <div class="card-header-inner">
+                                                    <h4 class="text-white">Recommended CAPA Action</h4>
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
@@ -523,7 +644,7 @@
                                                             {{ isset($gembaWalk_ehs_capa_details->remarks) ? $gembaWalk_ehs_capa_details->remarks : '' }}
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> --}}
 
 
 
@@ -546,28 +667,30 @@
                                                     </div>
                                                 </div> --}}
 
-                                                <div class="col-md-4 mb-2">
+                                                {{-- <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label">CAPA Action</label>
+                                                        <label class="form-label">Whether the Inspection has been passed
+                                                            Without the CAPA?</label>
                                                         <div class="view_data">
                                                             @if (isset($gembaWalk_ehs_capa_details->capa))
                                                                 {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'YES' : 'NO' }}
                                                             @endif
                                                         </div>
                                                     </div>
-                                                </div>
+                                                </div> --}}
                                             </div>
 
 
                                             <div class="row mt-3">
 
                                                 <div class="card-header-inner">
-                                                    <h4 class="text-white">Floor Manager Verification</h4>
+                                                    <h4 class="text-white">Action Taken</h4>
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label">Floor Manager Name</label>
+                                                        <label
+                                                            class="form-label">{{ __('inspection.observer_person') }}</label>
                                                         <div class="view_data">
                                                             {{ isset($gembaWalk_ehs_floor_manager_details->name) ? $gembaWalk_ehs_floor_manager_details->name : '' }}
                                                         </div>
@@ -575,7 +698,8 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label">Date</label>
+                                                        <label
+                                                            class="form-label">{{ __('inspection.date_of_compliance') }}</label>
                                                         <div class="view_data">
                                                             {{ Displaydateformat(isset($gembaWalk_ehs_floor_manager_details->date) ? $gembaWalk_ehs_floor_manager_details->date : '') }}
                                                         </div>
@@ -607,6 +731,15 @@
                                                                 <small class="text-muted">No file uploaded yet.</small>
                                                             @endif
 
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label">Recommended CAPA action taken at</label>
+                                                        <div class="view_data">
+                                                            {{ Displaydateformat(isset($gembaWalk_ehs_floor_manager_details->capa_action_date) ? $gembaWalk_ehs_floor_manager_details->capa_action_date : '') }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -650,7 +783,7 @@
                                                                 </div>
                                                             </div>
 
-                                                            <div class="col-md-4 mb-2" id="remarkField">
+                                                            <div class="col-md-12 mb-2" id="remarkField">
                                                                 <div class="form-group form-input">
                                                                     <label class="form-label">Remark</label>
                                                                     <textarea name="capa_remark" class="form-control"></textarea>
@@ -659,12 +792,10 @@
 
 
 
-                                                            <div class="col-md-4 form-group form-input mb-2">
+                                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                                 @if (isset(Auth::user()->signature_upload))
                                                                     <label class="form-label"
                                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                                    {{-- <img src="{{ admin_url('public/' . Auth::user()->signature_upload) }}"
-                                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px"> --}}
                                                                     <img src="{{ admin_url(Auth::user()->signature_upload) }}"
                                                                         alt="Signature Upload"
                                                                         style="width: 150px; margin-top:-10px">
@@ -682,7 +813,7 @@
                                                                             class="text-danger"></div>
                                                                     </div>
                                                                 @endif
-                                                            </div>
+                                                            </div> --}}
 
 
 
@@ -786,7 +917,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 100,
-                        customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+
                     },
                     is_passed: {
                         required: true
@@ -814,7 +945,7 @@
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
                         maxlength: "Maximum 100 characters",
-                        customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+
                     },
                     is_passed: {
                         required: "Please select an option"
@@ -862,7 +993,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 100,
-                        customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+
                     },
                     capa_image: {
                         required: true,
@@ -877,7 +1008,7 @@
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
                         maxlength: "Maximum 100 characters",
-                        customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+
                     },
                     capa_image: {
                         required: "Image is required",
@@ -917,11 +1048,11 @@
                         required: true,
                         minlength: 3,
                         maxlength: 100,
-                        customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+
                     },
                     gemba_walk_verified_by: {
                         required: true,
-                         filesize: 15728640,
+                        filesize: 15728640,
                     }
                 },
                 messages: {
@@ -932,7 +1063,7 @@
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
                         maxlength: "Maximum 100 characters",
-                        customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+
                     },
                     gemba_walk_verified_by: {
                         required: "Signature is required",

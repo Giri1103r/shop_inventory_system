@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Ohc Floor Strecther Checklist')
+@section('title', 'Ohc Floor Stretcher Checklist')
 @section('pageurl', admin_url('ohc/floor_stretcher/checklist/list'))
 @section('content')
     <div class="container-fluid">
@@ -21,12 +21,13 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-                                        <div class="col-md-3 mb-3 form-input">
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="issue_date"
                                                 class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                             <input type="text" name="issue_date" id="issue_date" class="form-control">
+
                                         </div>
-                                        <div class="col-md-3 form-input">
+                                        <div class="col-md-4 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('inspection.shifts') }}</label>
                                             <select name="shift_id" id="shift_id" class="form-control single-select"
@@ -38,7 +39,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-3 form-input">
+                                        <div class="col-md-4 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('inspection.frequency') }}</label>
                                             <select name="frequency" id="frequency" class="form-control single-select"
@@ -50,7 +51,7 @@
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-md-3 form-input">
+                                        <div class="col-md-4 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('inspection.unit') }}</label>
                                             <select name="unit" id="unit" class="form-control single-select"
@@ -83,7 +84,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-3 mt-3">
+                                        <div class="col-md-4 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 

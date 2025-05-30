@@ -29,7 +29,6 @@ class TaskMasterController extends Controller
     {
         $this->audit_task = new Task();
         $this->uploadlog = new UploadLog();
-
     }
 
     public function Index(Request $request)
@@ -60,10 +59,8 @@ class TaskMasterController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             $btn = '<a href="' . admin_url('audit/master/task/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            // if (CheckUserRole(ROLE_SUPERADMIN)) {
+
                             $btn .= '<a href="' . admin_url('audit/master/task/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
-                            $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
-                            // }
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -116,12 +113,12 @@ class TaskMasterController extends Controller
                 $this->audit_task->store();
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
-   report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
             return redirect(admin_url('audit/master/task/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('audit/master/task/list'));
         }
@@ -198,7 +195,6 @@ class TaskMasterController extends Controller
                 );
             }
             return view('inspection.inspection_audit.master.view', $data);
-
         } catch (Exception $ex) {
             report($ex);
         }
@@ -373,8 +369,8 @@ class TaskMasterController extends Controller
                     "path" => $path,
                 ];
 
-                // dispatch(new ImportAuditTaskJob($details));
-                dispatch((new ImportAuditTaskJob($details))->onQueue('task'));
+                dispatch(new ImportAuditTaskJob($details));
+                // dispatch((new ImportAuditTaskJob($details))->onQueue('task'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -415,6 +411,24 @@ class TaskMasterController extends Controller
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Something went wrong, Please try after sometimes!'], 406);
+        }
+    }
+
+    public function Uniquecheck(Request $request)
+    {
+        if ($request->ajax()) {
+            $task_name = $request->task_name;
+            $id = $request->id;
+            if ($id == '') {
+                $record = $this->audit_task->uniqueCheck($task_name);
+            } else {
+                $id = decryptId($id);
+                $record = $this->audit_task->ExistuniqueCheck($task_name, $id);
+            }
+            if ($record->count()) {
+                return Response::json(false);
+            }
+            return Response::json(true);
         }
     }
 }

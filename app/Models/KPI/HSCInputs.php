@@ -3,6 +3,8 @@
 namespace App\Models\KPI;
 
 use App\Scopes\TrashScope;
+use Google\Rpc\Context\AttributeContext\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 
@@ -225,6 +227,71 @@ class HSCInputs extends Model
     public function selectOne($id)
     {
         return   $this->where('id', $id)->first();
+    }
+
+    public function LaggingLine()
+    {
+        $request = request();
+
+        $query = DB::table('kpi_hsc_inputs as hsc')
+            ->select(
+                'hsc.*',
+                'lagging.*',
+                'master.*',
+                'lagging.value as lagging_value',
+                'master.value as lagging_label',
+                'hsc.created_at as created_at',
+                DB::raw('YEAR(hsc.created_at) as created_year'),
+                DB::raw('(SELECT COUNT(*) FROM kpi_hsc_inputs_lagging WHERE lagging_id = lagging.lagging_id) as lagging_count')
+            )
+            ->leftJoin('kpi_hsc_inputs_lagging as lagging', 'hsc.id', '=', 'lagging.hsc_inputs_id')
+            ->leftJoin('kpi_master_leading_lagging as master', 'lagging.lagging_id', '=', 'master.id')
+            ->where('master.status', 1)
+            ->where('master.trash', 'NO');
+
+
+        if ($request->CompanyId != null) {
+            $company_id = decryptId($request->CompanyId);
+            $query->where('ims_initial_incident.company_id', $company_id);
+        }
+
+        // Date Filters
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('ims_initial_incident.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate) . ' 23:59:59'
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('ims_initial_incident.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('ims_initial_incident.created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
+        }
+
+        $results = $query->get();
+
+        if (count($results) > 0) {
+            $dataByYear = [];
+
+            foreach ($results as $data) {
+                $year = $data->calendar_year;
+                $label = $data->lagging_label;
+                $value = $data->lagging_value;
+
+                if (!isset($dataByYear[$label])) {
+                    $dataByYear[$label] = [];
+                }
+
+                if (!isset($dataByYear[$label][$year])) {
+                    $dataByYear[$label][$year] = 0;
+                }
+
+                $dataByYear[$label][$year] += $value;
+            }
+
+            return $dataByYear;
+        }
+
+        return false;
     }
 
     protected static function booted()

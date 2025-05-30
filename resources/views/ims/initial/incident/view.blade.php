@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Initial Incident/Accident Report')
-@section('pageurl', admin_url('incident/initial-incident/list'))
+@section('pageurl', admin_url('incident/initial-incident/list/all/type'))
 
 
 @section('content')
@@ -156,7 +156,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('incident/initial-incident/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('incident/initial-incident/list/all/type') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -384,13 +385,14 @@
                                                                 @if (isset($imgMapDataDecoded['map']['total']) && is_array($imgMapDataDecoded['map']['total']))
                                                                     <ul>
                                                                         @foreach ($imgMapDataDecoded['map']['total'] as $key => $value)
-                                                                            <li>{{ ucfirst($key) }}: {{ $value }}</li>
+                                                                            <li>{{ ucfirst($key) }}: {{ $value }}
+                                                                            </li>
                                                                         @endforeach
                                                                     </ul>
                                                                 @else
                                                                     <p>No data available</p>
                                                                 @endif
-    
+
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -829,7 +831,7 @@
                                     </div>
                                     <div class="row">
                                         <div class="mb-3 col-md-12 form-input">
-                                            <label for="name" class="form-label">UAUC</label>
+                                            <label for="name" class="form-label">Unsafe Act/Unsafe Condition</label>
                                             <div class="view_data">
                                                 @if ($incident_report->ua_uc_yes_no == 1)
                                                     Yes
@@ -841,11 +843,25 @@
 
                                         @if ($incident_report->ua_uc_yes_no == 1)
                                             <div class="mb-3 col-md-12 form-input">
-                                                <label for="name" class="form-label">UA/UC</label>
+                                                <label for="name" class="form-label">Unsafe Act/Unsafe Condition</label>
                                                 <div class="view_data">
                                                     @php
                                                         $ua_uc_values = explode(',', $incident_report->ua_or_uc);
                                                     @endphp
+                                                    @if (in_array('1', $ua_uc_values))
+                                                        <span>Unsafe Act: <i
+                                                                class="fas fa-check text-success"></i></span><br>
+                                                    @endif
+
+                                                    @if (in_array('2', $ua_uc_values))
+                                                        <span>Unsafe Condition: <i
+                                                                class="fas fa-check text-success"></i></span><br>
+                                                    @endif
+
+                                                    @if (in_array('3', $ua_uc_values))
+                                                        <span>Natural Causes: <i
+                                                                class="fas fa-check text-success"></i></span><br>
+                                                    @endif
 
                                                     <span>Unsafe Act: {!! in_array('1', $ua_uc_values)
                                                         ? '<i class="fas fa-check text-success"></i>'

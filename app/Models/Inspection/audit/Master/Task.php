@@ -3,8 +3,9 @@
 namespace App\Models\Inspection\audit\Master;
 
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Model;
+use App\Scopes\TrashScope;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Model;
 
 class Task extends Model
 {
@@ -89,11 +90,57 @@ class Task extends Model
         return $datas;
     }
 
+    public function listApi()
+    {
+        $request = request();
+        $per_page = $perPage = $request->input('per_page', 10);
+        $search = '';
+        $query = $this->select('inspection_audit_master_task.*')->where('status', 1)->where('trash', 'NO');
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
+
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('inspection_audit_master_task.task_auto_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_audit_master_task.task_name', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        $paginatedData = $query->orderBy('inspection_audit_master_task.id')->paginate($per_page);
+
+        $inspection_data = $paginatedData->toArray();
+
+        $task_data = [];
+        $refined_data = [];
+
+        foreach ($inspection_data['data'] as $index => $data) {
+            $task_data['id'] = $data['id'];
+            $task_data['task_auto_id'] = $data['task_auto_id'];
+            $task_data['task_name'] = $data['task_name'];
+            $refined_data[$index] = $task_data;
+        }
+
+        $response = [
+            'per_page' => $paginatedData->perPage(),
+            'current_page' => $paginatedData->currentPage(),
+            'from' => $paginatedData->firstItem(),
+            'to' => $paginatedData->lastItem(),
+            'total' => $paginatedData->total(),
+            'total_page' => $paginatedData->lastPage(),
+            'list' => $refined_data,
+        ];
+
+        return $response;
+    }
+
     public function store()
     {
         $request = request();
         $insert_array = array(
-            'task_auto_id' => getsequence('audit_task'),
+            // 'task_auto_id' => getsequence('audit_task'),
             'task_name' => $request->task_name,
             'created_by' => Auth::id()
         );
@@ -104,7 +151,6 @@ class Task extends Model
     {
         $request = request();
         $update_array = array(
-            'task_auto_id' => $request->task_id,
             'task_name' => $request->task_name,
             'updated_by' => Auth::id()
         );
@@ -192,9 +238,33 @@ class Task extends Model
         return $this->where('id', $id)->update($update_data);
     }
 
+    public function UniqueCheck($data)
+    {
+
+        return $this->where('task_name',  $data)->get();
+    }
+
+    public function ExistuniqueCheck($data, $id)
+    {
+        return $this->where('task_name',  $data)
+            ->where('id', '!=', $id)
+            ->get();
+    }
+
 
     public function getAuditTask()
     {
         return $this->where('trash', 'NO')->where('status', '!=', 0)->get();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_audit_master_task'));
+
+        static::created(function ($model) {
+
+            $uniqueId = 'AUDIT-TASK-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
+            $model->update(['task_auto_id' => $uniqueId]);
+        });
     }
 }

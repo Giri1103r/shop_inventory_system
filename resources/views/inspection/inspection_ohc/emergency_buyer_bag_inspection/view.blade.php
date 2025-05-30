@@ -39,7 +39,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        
+
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
@@ -114,18 +114,18 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    
-                                    <div class="row m-2">
+
+                                    {{-- <div class="row m-2">
                                         <div class="col-md-4 form-group form-input mb-2">
                                             <label class="form-label"
                                                 style="display: block; ">{{ __('inspection.signature') }}</label>
                                                 <img src="{{ admin_url($inspection_file) }}"
                                                 alt="Signature Upload" style="width: 100px; margin-top:-10px">
-                                           
-                                        </div>
-                                    </div>
 
-                                    <div class="col-md-4 mb-2">
+                                        </div>
+                                    </div> --}}
+
+                                    <div class="col-md-4 mt-3 mb-2">
                                         <div class="form-group form-input">
                                             <label class="form-label">Remark By</label>
                                             <div class="view_data">
@@ -140,7 +140,7 @@
                 </div>
             </div>
         </div>
-    </div>    
+    </div>
 
 
 @stop

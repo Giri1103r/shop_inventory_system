@@ -201,12 +201,12 @@
                         style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
                         Remarks
                     </th>
-                    @if($details->verified_by != null)
+                    @if ($details->verified_by != null)
                         <th rowspan="2"
                             style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
                             Nursing Officer Remarks
                         </th>
-                   @endif
+                    @endif
                 </tr>
                 <tr>
                     <td style="border: 1px solid black; text-align: center; padding: 12px; background-color: #ccc;">
@@ -242,30 +242,17 @@
                             <span style="color: red;">X</span>
                         </td>
                     @endif
-                    @php
-                        $cleaner_signature = GetOHCSignature(
-                            $details->checked_by,
-                            $details->inspection_id,
-                            DAILY_OHC_HYGIENE_CLEANING_CHECKLIST,
-                        );
-                        $nursing_signature = GetOHCSignature(
-                            $details->verified_by,
-                            $details->inspection_id,
-                            DAILY_OHC_HYGIENE_CLEANING_CHECKLIST,
-                        );
-                    @endphp
+
                     <td colspan="1"
                         style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                        <img src="{{ admin_url($cleaner_signature) }}" alt="Checked By Signature"
-                            style="height: 50px; margin-top:2px;">
+                        <p>{{ getUsername($details->created_by) }}</p>
 
                     </td>
 
                     <td colspan="1"
                         style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                         @if ($details->verified_by != null)
-                            <img src="{{ admin_url($nursing_signature) }}" alt="Verified By Signature"
-                                style="height: 50px;">
+                            <p>{{ getUsername($details->updated_by) }}</p>
                         @else
                             <p>Inspection has not been Verified Yet</p>
                         @endif

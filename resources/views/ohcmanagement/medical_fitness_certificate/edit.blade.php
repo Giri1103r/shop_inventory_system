@@ -77,6 +77,29 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label require">Unit Name</label>
+                                                    <input type="text" name="unit_id" id="unit_id" class="form-control"
+                                                        value="{{ getUnitname($medicalfitness->unit_id) }}"
+                                                        placeholder="Enter the Unit Name" readonly>
+                                                    @error('company_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Department Name</label>
+                                                    <input type="text" name="department_id" id="department_id"
+                                                        class="form-control"
+                                                        value="{{ getDepartment($medicalfitness->department_id) }}"
+                                                        placeholder="Enter the Department Name" readonly>
+                                                    @error('company_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">Date
                                                     </label>
                                                     <div class="input-group date form-input custom-height">
@@ -113,7 +136,15 @@
                                                     @endif
                                                 </div>
                                             </div>
-
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Chief Complaint</label>
+                                                    <textarea name="cheif_complaint" id="cheif_complaint" class="form-control " cols="30" rows="5">{{ $medicalfitness->cheif_complaint }}</textarea>
+                                                    @error('cheif_complaint')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Remarks</label>
@@ -194,6 +225,13 @@
         });
         $(document).on('change', '#emp_id', function() {
             var empId = $(this).val();
+
+            // Clear all fields initially to avoid retaining old data
+            $('#emp_name').val('').prop('readonly', true);
+            $('#company_id').val('').prop('readonly', true);
+            $('#unit_id').val('').prop('readonly', true);
+            $('#department_id').val('').prop('readonly', true);
+
             if (empId) {
                 $.ajax({
                     url: "{{ admin_url('ohc/employee-cum-patient/employeename') }}",
@@ -205,25 +243,29 @@
                     success: function(response) {
                         if (response.employee) {
                             $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
+
                             if (response.company) {
                                 $('#company_id').val(response.company.company_name).prop('readonly',
                                     true);
-                            } else {
-                                $('#company_id').val('').prop('readonly', true);
                             }
-                        } else {
-                            $('#emp_name').val('').prop('readonly', true);
-                            $('#company_id').val('').prop('readonly', true);
+
+                            if (response.unit) {
+                                $('#unit_id').val(response.unit.unit_name).prop('readonly', true);
+                            }
+
+                            if (response.department) {
+                                $('#department_id').val(response.department.department_name).prop(
+                                    'readonly', true);
+                            }
                         }
                     },
-                    error: function(xhr) {
-                        alert('Error fetching employee name and company name. Please try again.');
+                    error: function() {
+                        alert('Error fetching employee details. Please try again.');
                     }
                 });
-            } else {
-                $('#emp_name').val('').prop('readonly', true);
             }
         });
+
         $(function() {
 
             $.validator.addMethod(
@@ -253,9 +295,20 @@
                         extension: "pdf|doc|docx"
                     },
                     company_id: {
-                        required: true
+                        required: true,
+                    },
+                    unit_id: {
+                        required: true,
+                    },
+                    department_id: {
+                        required: true,
                     },
                     remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600
+                    },
+                    cheif_complaint: {
                         required: true,
                         minlength: 3,
                         maxlength: 600
@@ -269,7 +322,13 @@
                         required: "Please select the Employee Name."
                     },
                     company_id: {
-                        required: "Please Enter the Company name."
+                        required: "Please Enter the Company name.",
+                    },
+                    unit_id: {
+                        required: "Please Enter the Unit name.",
+                    },
+                    department_id: {
+                        required: "Please Enter the department name.",
                     },
                     date: {
                         required: "Please select the date."
@@ -282,6 +341,11 @@
                         required: 'Remarks is required',
                         minlength: 'Remarks must be at least 3 characters.',
                         maxlength: 'Remarks cannot exceed 600 characters.'
+                    },
+                    cheif_complaint: {
+                        required: 'Chief Complaint is required',
+                        minlength: 'Chief Complaint must be at least 3 characters.',
+                        maxlength: 'Chief Complaint cannot exceed 600 characters.'
                     }
                 },
                 errorElement: 'span',

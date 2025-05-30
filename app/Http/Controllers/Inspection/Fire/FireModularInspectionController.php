@@ -160,7 +160,7 @@ class FireModularInspectionController extends Controller
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
 
-                    $btn .= '<a href="' . admin_url('fire/fire-modular-inspection/checklist/generalExcel/' . encryptId($row->fire_detector_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
+                            $btn .= '<a href="' . admin_url('fire/fire-modular-inspection/checklist/generalExcel/' . encryptId($row->fire_detector_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
 
                             return $btn;
                         })
@@ -303,7 +303,7 @@ class FireModularInspectionController extends Controller
 
             $inspection_details = $this->detector_details->store($id);
             $inspection_file = $this->files->file_upload($inspection_type, $id);
-            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
+            // $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -319,7 +319,7 @@ class FireModularInspectionController extends Controller
                     'id' => $id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($id). '/ehs'),
+                'web_link' =>  admin_url('fire/fire-modular-inspection/checklist/verification/' . encryptId($id) . '/ehs'),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
@@ -383,7 +383,7 @@ class FireModularInspectionController extends Controller
             );
             return view('inspection.fire.fire_modular_inspection.view', $data);
         } catch (Exception $ex) {
-           report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
         }
@@ -424,7 +424,7 @@ class FireModularInspectionController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->detector->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(FIRE_MODULAR_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(FIRE_MODULAR_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'Detector Inspeciton Approved Successfully';
@@ -494,7 +494,7 @@ class FireModularInspectionController extends Controller
             $id = decryptId($request->id);
             $safety_gallery_inspection = $this->detector->capaSubmit($id);
             $inspection_details = $this->detector->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(FIRE_MODULAR_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(FIRE_MODULAR_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -555,7 +555,7 @@ class FireModularInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $safety_gallery_inspection = $this->detector->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(FIRE_MODULAR_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(FIRE_MODULAR_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -629,7 +629,7 @@ class FireModularInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $safety_gallery_inspection = $this->detector->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(FIRE_MODULAR_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(FIRE_MODULAR_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -703,7 +703,7 @@ class FireModularInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $safety_gallery_inspection = $this->detector->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(FIRE_MODULAR_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(FIRE_MODULAR_INSPECTION);
             $inspection_details = $this->detector->selectOne($id);
             if ($status == 1) {
                 $message = 'detector Inspeciton Approved Successfully!';
@@ -919,10 +919,10 @@ class FireModularInspectionController extends Controller
                 }
 
                 $signatureRowStart = $dataRow;
-                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
 
                 $signatureRowStart = $dataRow;
-                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
 
                 // Prepared By
                 $sheet->mergeCells("A{$signatureRowStart}:E{$signatureRowStart}");
@@ -935,20 +935,8 @@ class FireModularInspectionController extends Controller
                     ],
                 ]);
 
-                if (file_exists($prepared_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Prepared Signature');
-                    $drawing->setDescription('Prepared By');
-                    $drawing->setPath($prepared_by_signature);
-                    $drawing->setCoordinates("C{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->created_by));
-                } else {
-                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
-                }
+
+
 
                 // Verified By
                 $sheet->mergeCells("F{$signatureRowStart}:I{$signatureRowStart}");
@@ -959,22 +947,9 @@ class FireModularInspectionController extends Controller
                         'vertical' => Alignment::VERTICAL_CENTER,
                         'wrapText' => true
                     ],
+
                 ]);
 
-                if (file_exists($verified_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Verified Signature');
-                    $drawing->setDescription('Verified By');
-                    $drawing->setPath($verified_by_signature);
-                    $drawing->setCoordinates("G{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("F{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->verified_by));
-                } else {
-                    $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
-                }
 
                 // Approved By
                 $sheet->mergeCells("J{$signatureRowStart}:M{$signatureRowStart}");
@@ -987,20 +962,56 @@ class FireModularInspectionController extends Controller
                     ],
                 ]);
 
-                if (file_exists($approved_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Approved Signature');
-                    $drawing->setDescription('Approved By');
-                    $drawing->setPath($approved_by_signature);
-                    $drawing->setCoordinates("K{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("J{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection_detail->approved_by));
-                } else {
-                    $sheet->setCellValue("J{$signatureRowStart}", "Approved By:\nApproval pending");
-                }
+                $preparedBy = getUsername($inspection_detail->created_by);
+                $verifiedBy = getUsername($inspection_detail->verified_by);
+                $approvedBy = getUsername($inspection_detail->approved_by);
+
+                $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\n" . (!empty($preparedBy) ? $preparedBy : "INSPECTION HAS NOT BEEN PREPARED YET"));
+                $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\n" . (!empty($verifiedBy) ? $verifiedBy : "INSPECTION HAS NOT BEEN VERIFIED YET"));
+                $sheet->setCellValue("J{$signatureRowStart}", "Approved By:\n" . (!empty($approvedBy) ? $approvedBy : "INSPECTION HAS NOT BEEN APPROVED YET"));
+
+
+                // if (file_exists($prepared_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Prepared Signature');
+                //     $drawing->setDescription('Prepared By');
+                //     $drawing->setPath($prepared_by_signature);
+                //     $drawing->setCoordinates("C{$signatureRowStart}");
+                //     $drawing->setOffsetX(5);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+                // } else {
+                //     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                // }
+
+                // if (file_exists($verified_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Verified Signature');
+                //     $drawing->setDescription('Verified By');
+                //     $drawing->setPath($verified_by_signature);
+                //     $drawing->setCoordinates("G{$signatureRowStart}");
+                //     $drawing->setOffsetX(5);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+                // } else {
+                //     $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+                // }
+
+                // if (file_exists($approved_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Approved Signature');
+                //     $drawing->setDescription('Approved By');
+                //     $drawing->setPath($approved_by_signature);
+                //     $drawing->setCoordinates("K{$signatureRowStart}");
+                //     $drawing->setOffsetX(5);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+                // } else {
+                //     $sheet->setCellValue("J{$signatureRowStart}", "Approved By:\nApproval pending");
+                // }
 
 
                 $row = $signatureRowStart + 6;
@@ -1182,13 +1193,13 @@ class FireModularInspectionController extends Controller
             $sheet->setCellValue("L{$row}", "Doc. No.");
             $sheet->setCellValue("M{$row}", $document_no->doc_no ?? '');
 
-            $sheet->setCellValue("L" . ($row+1), "Issue Dt.");
-            $sheet->setCellValue("M" . ($row+1), Displaydateformat($document_no->issue_date ?? ''));
+            $sheet->setCellValue("L" . ($row + 1), "Issue Dt.");
+            $sheet->setCellValue("M" . ($row + 1), Displaydateformat($document_no->issue_date ?? ''));
 
-            $sheet->setCellValue("L" . ($row+2), "Rev. & Dt.");
-            $sheet->setCellValue("M" . ($row+2), $document_no->rev_dt ?? '');
+            $sheet->setCellValue("L" . ($row + 2), "Rev. & Dt.");
+            $sheet->setCellValue("M" . ($row + 2), $document_no->rev_dt ?? '');
 
-            $sheet->getStyle("L{$row}:M" . ($row+2))->applyFromArray([
+            $sheet->getStyle("L{$row}:M" . ($row + 2))->applyFromArray([
                 'font' => ['bold' => true],
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -1269,67 +1280,64 @@ class FireModularInspectionController extends Controller
 
 
             $signatureRow = $row;
-            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+            $sheet->getRowDimension($signatureRow)->setRowHeight(30);
 
             $sheet->mergeCells("A{$signatureRow}:E{$signatureRow}");
             $sheet->getStyle("A{$signatureRow}:E{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
-            if (file_exists($prepared_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Prepared Signature');
-                $drawing->setDescription('Prepared By');
-                $drawing->setPath($prepared_by_signature);
-                $drawing->setCoordinates("C{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("A{$signatureRow}", "\n\n\nPrepared By:\n" . getUsername($fire_modular->created_by));
-            } else {
-                $sheet->setCellValue("A{$signatureRow}", "Prepared By:\nInspection not yet started");
-            }
+
+            $preparedBy = getUsername($fire_modular->created_by);
+            $verifiedBy = getUsername($fire_modular->verified_by);
+            $approvedBy = getUsername($fire_modular->approved_by);
+
+            $sheet->setCellValue("A{$signatureRow}", "Prepared By: " . (!empty($preparedBy) ? $preparedBy : "INSPECTION HAS NOT BEEN PREPARED YET"));
 
             $sheet->mergeCells("F{$signatureRow}:I{$signatureRow}");
             $sheet->getStyle("F{$signatureRow}:I{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'wrapText' => true,
             ]);
-            if (file_exists($verified_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Verified Signature');
-                $drawing->setDescription('Verified By');
-                $drawing->setPath($verified_by_signature);
-                $drawing->setCoordinates("G{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("F{$signatureRow}", "\n\n\nVerified By:\n" . getUsername($fire_modular->verified_by));
-            } else {
-                $sheet->setCellValue("F{$signatureRow}", "Verified By:\nInspection not yet completed");
-            }
+            $sheet->setCellValue("F{$signatureRow}", "Verified By: " . (!empty($verifiedBy) ? $verifiedBy : "INSPECTION HAS NOT BEEN VERIFIED YET"));
 
             $sheet->mergeCells("J{$signatureRow}:M{$signatureRow}");
             $sheet->getStyle("J{$signatureRow}:M{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'wrapText' => true,
             ]);
-            if (file_exists($approved_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Approved Signature');
-                $drawing->setDescription('Approved By');
-                $drawing->setPath($approved_by_signature);
-                $drawing->setCoordinates("K{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("J{$signatureRow}", "\n\n\nApproved By:\n" . getUsername($fire_modular->approved_by));
-            } else {
-                $sheet->setCellValue("J{$signatureRow}", "Approved By:\nApproval pending");
-            }
+            $sheet->setCellValue("J{$signatureRow}", "Approved By: " . (!empty($approvedBy) ? $approvedBy : "INSPECTION HAS NOT BEEN APPROVED YET"));
+
+
+            // if (file_exists($verified_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Verified Signature');
+            //     $drawing->setDescription('Verified By');
+            //     $drawing->setPath($verified_by_signature);
+            //     $drawing->setCoordinates("G{$signatureRow}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            // } else {
+            //     $sheet->setCellValue("F{$signatureRow}", "Verified By:\nInspection not yet completed");
+            // }
+
+            // if (file_exists($approved_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Approved Signature');
+            //     $drawing->setDescription('Approved By');
+            //     $drawing->setPath($approved_by_signature);
+            //     $drawing->setCoordinates("K{$signatureRow}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            // } else {
+            //     $sheet->setCellValue("J{$signatureRow}", "Approved By:\nApproval pending");
+            // }
 
             $writer = new Xlsx($spreadsheet);
             $fileName = 'Fire Modular Inspection .xlsx';

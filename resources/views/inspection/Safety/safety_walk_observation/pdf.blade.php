@@ -345,7 +345,7 @@
                         <td style="border: 2px solid black; padding: 8px;">{{ $detail->remarks }}</td>
                     </tr>
                 @endforeach
-                @php
+                {{-- @php
                     $prepared_by_signature = GetSafetySignature(
                         $detail->checked_by,
                         $detail->safety_id,
@@ -356,19 +356,19 @@
                         $detail->safety_id,
                         SAFETY_WALK_OBSERVATION,
                     );
-                @endphp
+                @endphp --}}
                 <tr>
                     <td colspan="5"
                         style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                        <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
-                            style="height: 50px; margin-top:2px;">
+                        {{-- <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
+                            style="height: 50px; margin-top:2px;"> --}}
                         <div>Checked & Prepared By: {{ getUsername($detail->checked_by) }}</div>
                     </td>
                     <td colspan="5"
                         style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                         @if ($detail->verified_by != null)
-                            <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
-                                style="height: 50px;">
+                            {{-- <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
+                                style="height: 50px;"> --}}
                             <div>Verified By: {{ getUsername($detail->verified_by) }}</div>
                         @else
                             <p>Inspection has not been Verified Yet</p>

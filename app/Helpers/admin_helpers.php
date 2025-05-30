@@ -32,6 +32,7 @@ use App\Models\Inspection\GembaWalk\GembaWalk;
 use App\Models\Inspection\GembaWalkChecklist;
 use App\Models\OhcManagement\UserMedicineIssuance;
 use App\Models\OhcManagement\Opd\PrescribetoPatient;
+use App\Models\OhcManagement\Opd\FirstAid;
 use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\audit\AuditAssessment;
@@ -46,6 +47,11 @@ use App\Models\Inspection\Fire\FirePreNocInspection;
 use App\Models\Inspection\Fire\FireCheckListFollowUp;
 use App\Models\Inspection\Ohc\HealthInstrumentCalibration;
 use App\Models\IMS\Incident\IncidentBodyParts;
+use App\Models\IMS\Incident\InjuryDetails;
+use App\Models\Inspection\audit\MonthlyAuditPlan;
+use App\Models\Master\PpeRequest;
+use App\Models\Master\PpeExemption;
+use App\Models\Master\TrainingSchedule;
 
 /*
  * Menu bar start
@@ -272,7 +278,7 @@ if (!function_exists('getsequence')) {
             case 'audit_task':
                 $count = Task::withoutGlobalScopes()->count();
                 $count = $count + 1;
-                $sequence = 'AUDIT-TASk-' . getautogen($count);
+                $sequence = 'AUDIT-TASK-' . getautogen($count);
                 break;
             case 'ambientNoiseNo':
                 $count = Environment::where('type', 1)->withoutGlobalScopes()->count();
@@ -393,10 +399,74 @@ if (!function_exists('gettotalCount')) {
                 $count = Department::count();
                 break;
             case 'employee':
-                $count = Employee::count();
+                $count = Employee::where('status',1)->count();
                 break;
             case 'work':
-                $count = Work::count();
+                $count = Work::where('status',1)->count();
+                break;
+            case 'ppe_request':
+                $count = PpeRequest::count();
+                break;
+            case 'ppe_exception':
+                $count = PpeExemption::count();
+                break;
+            case 'safetypermit':
+                $count = SafetyPermit::count();
+                break;
+            case 'training':
+                $count = TrainingSchedule::count();
+                break;
+            case 'audit_assessment':
+                $count = AuditAssessment::count();
+                break;
+            case 'audit_analysis':
+                $count = AuditAnalysis::count();
+                break;
+            case 'monthly_audit':
+                $count = MonthlyAuditPlan::count();
+                break;
+            case 'inter_unit_audit':
+                $count = InterUnitAudit::count();
+                break;
+            case 'prescribe_to_patient':
+                $count = PrescribetoPatient::count();
+                break;
+            case 'ohc_first_aid':
+                $count = FirstAid::count();
+                break;
+            case 'major_accident':
+                $count = InjuryDetails::where('nature_of_injury', MAJOR_ACCIDENT)->count();
+                break;
+            case 'minor_accident':
+                $count = InjuryDetails::where('nature_of_injury', MINOR_ACCIDENT)->count();
+                break;
+            case 'un_safe_act':
+                $count = InitialIncident::whereRaw("FIND_IN_SET(?, ua_or_uc)", [UNSAFE_ACT])->count();
+                break;
+            case 'un_safe_condition':
+                $count = InitialIncident::whereRaw("FIND_IN_SET(?, ua_or_uc)", [UNSAFE_CONDITION])->count();
+                break;
+            case 'near_miss':
+                $nearmiss = DB::table('ims_master_incident_type')
+                    ->where('incident_type_name', 'LIKE', '%Near Miss%')
+                    ->where(function ($query) {
+                        $query->whereRaw("LOWER(REPLACE(incident_type_name, '-', '')) LIKE ?", ['%near miss%']);
+                    })
+                    ->where('status', 1)
+                    ->pluck('id')
+                    ->toArray();
+                $count = InitialIncident::whereIn('iir_type', $nearmiss)->count();
+                break;
+            case 'fire_incidence':
+                $fireIncidence = DB::table('ims_master_incident_type')
+                    ->where('incident_type_name', 'LIKE', '%Fire Incidence%')
+                    ->where(function ($query) {
+                        $query->whereRaw("LOWER(REPLACE(incident_type_name, '-', '')) LIKE ?", ['%near miss%']);
+                    })
+                    ->where('status', 1)
+                    ->pluck('id')
+                    ->toArray();
+                $count = InitialIncident::whereIn('iir_type', $fireIncidence)->count();
                 break;
             default:
                 $count = 0;
@@ -406,6 +476,128 @@ if (!function_exists('gettotalCount')) {
         return $count;
     }
 }
+
+if (!function_exists('GetInspectionCount')) {
+    function GetInspectionCount($type)
+    {
+        $group_wise_models = [];
+
+        switch ($type) {
+            case 'Environment':
+                $group_wise_models['Environment'] = [
+                    \App\Models\Inspection\Environment\AmbientAirMonitoring::class,
+                    \App\Models\Inspection\Environment\AmbientNoiseMonitoring::class,
+                    \App\Models\Inspection\Environment\DgSetStackEmissionMonitoring::class,
+                    \App\Models\Inspection\Environment\LuxMonitoring::class,
+                    \App\Models\Inspection\Environment\WorkNoiseMonitoring::class,
+                    \App\Models\Inspection\Environment\WorkZoneAirMonitoring::class,
+                ];
+                break;
+
+            case 'Fire':
+                $group_wise_models['Fire'] = [
+                    \App\Models\Inspection\Fire\CartridgeTypeFireExtinguisher::class,
+                    \App\Models\Inspection\Fire\CoTypeFireExtinguisher::class,
+                    \App\Models\Inspection\Fire\DailyFireHouseInspection::class,
+                    \App\Models\Inspection\Fire\DetectorInspection::class,
+                    \App\Models\Inspection\Fire\EmergencyLightInspection::class,
+                    \App\Models\Inspection\Fire\FireAlarmInspection::class,
+                    \App\Models\Inspection\Fire\FireCheckListFollowUp::class,
+                    \App\Models\Inspection\Fire\FireExtinguisher::class,
+                    \App\Models\Inspection\Fire\FireMockDrillInspection::class,
+                    \App\Models\Inspection\Fire\FireModularInspection::class,
+                    \App\Models\Inspection\Fire\HooterInspection::class,
+                    \App\Models\Inspection\Fire\HoseBoxInspection::class,
+                    \App\Models\Inspection\Fire\HoseReelHoseInspection::class,
+                    \App\Models\Inspection\Fire\HydrantRiserInspection::class,
+                    \App\Models\Inspection\Fire\IsolationValve::class,
+                    \App\Models\Inspection\Fire\MonthlyFirePumpHouseInspection::class,
+                    \App\Models\Inspection\Fire\MonthlyPhysicalInspection::class,
+                    \App\Models\Inspection\Fire\PASystemInspection::class,
+                    \App\Models\Inspection\Fire\SandBucketInspection::class,
+                    \App\Models\Inspection\Fire\SprinklarSystemInspection::class,
+                    \App\Models\Inspection\Fire\Fire::class,
+                ];
+                break;
+
+            case 'GembaWalk':
+                $group_wise_models['GembaWalk'] = [
+                    \App\Models\Inspection\GembaWalk\GembaWalk::class,
+                ];
+                break;
+
+            case 'MSDS':
+                $group_wise_models['MSDS'] = [
+                    \App\Models\Inspection\MSDS\MSDS::class,
+                ];
+                break;
+
+            case 'RRAA':
+                $group_wise_models['RRAA'] = [
+                    \App\Models\Inspection\RRAA\RRAADetails::class,
+                ];
+                break;
+
+            case 'Safety':
+                $group_wise_models['Safety'] = [
+                    \App\Models\Inspection\Safety\FireSafetyEquipment::class,
+                    \App\Models\Inspection\Safety\ForkLiftInspection::class,
+                    \App\Models\Inspection\Safety\MonthlyEyeWashInspection::class,
+                    \App\Models\Inspection\Safety\MonthlyForkLiftInspection::class,
+                    \App\Models\Inspection\Safety\OHSPlantSummaryReport::class,
+                    \App\Models\Inspection\Safety\SafetyGalleryInspection::class,
+                    \App\Models\Inspection\Safety\SafetyWalkObservation::class,
+                ];
+                break;
+
+            case 'Ohc':
+                $group_wise_models['Ohc'] = [
+                    \App\Models\Inspection\Ohc\CurrentNewExtCodeDialing::class,
+                    \App\Models\Inspection\Ohc\DailyDepartmentFirstAidBox::class,
+                    \App\Models\Inspection\Ohc\DailyVitalEquipment::class,
+                    \App\Models\Inspection\Ohc\EmergencyBuyerFirstAidChecklist::class,
+                    \App\Models\Inspection\Ohc\FirstAidBagChecklist::class,
+                    \App\Models\Inspection\Ohc\FirstAiderList::class,
+                    \App\Models\Inspection\Ohc\FirstAidMedicineInspection::class,
+                    \App\Models\Inspection\Ohc\FirstAidRecordChecklist::class,
+                    \App\Models\Inspection\Ohc\FloorStretcher::class,
+                    \App\Models\Inspection\Ohc\HealthInstrumentCalibrationDetails::class,
+                    \App\Models\Inspection\Ohc\MedicineRequistionSlipfdodetails::class,
+                    \App\Models\Inspection\Ohc\MedicineRequistionSlipfloordetails::class,
+                    \App\Models\Inspection\Ohc\MonthlyFirstAidbox::class,
+                    \App\Models\Inspection\Ohc\MonthlyMedicineStore::class,
+                    \App\Models\Inspection\Ohc\OccupationHealthInspection::class,
+                    \App\Models\Inspection\Ohc\OHCHygieneCleaningChecklist::class,
+                    \App\Models\Inspection\Ohc\SafetyPettyDetails::class,
+                    \App\Models\Inspection\Ohc\WeeklyAmbulance::class,
+                    \App\Models\Inspection\Ohc\WeeklyFirstAidBox::class,
+                ];
+                break;
+
+            default:
+                return []; // Return empty if no valid type is matched
+        }
+
+        $groupCounts = [];
+        $grandTotal = 0;
+
+        foreach ($group_wise_models as $groupName => $models) {
+            $total = 0;
+
+            foreach ($models as $modelClass) {
+                $query = $modelClass::where('status', 1)->where('trash', 'NO');
+                $count = $query->count();
+                $total += $count;
+            }
+
+            $groupCounts[$groupName] = $total;
+            $grandTotal += $total;
+        }
+
+        return $groupCounts;
+    }
+}
+
 
 if (!function_exists('getohctotalCount')) {
     function getohctotalCount($type, $unit_id = null)

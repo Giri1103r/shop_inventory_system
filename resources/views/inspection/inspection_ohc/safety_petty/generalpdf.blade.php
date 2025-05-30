@@ -230,7 +230,7 @@
                 <tr>
                     <td style="border: 2px solid black; padding: 8px;">{{ $i++ }}</td>
                     <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_details->serial_number) ? $sfty_petty_details->serial_number : '' }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ getUsername($sfty_petty_details->employee_name) }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">{{ ($sfty_petty_details->employee_name) }}</td>
                     <td style="border: 2px solid black; padding: 8px;"> {{ isset($sfty_petty_details->employee_code) ? $sfty_petty_details->employee_code : '' }}</td>
                     <td style="border: 2px solid black; padding: 8px;">{{ getDepartment($sfty_petty_details->department) }}</td>
                     <td style="border: 2px solid black; padding: 8px;">{{ getUnitname($sfty_petty_details->unit) }}</td>
@@ -238,20 +238,20 @@
                     <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_details->amount) ? $sfty_petty_details->amount : '' }}</td>
                     <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_details->description) ? $sfty_petty_details->description : '' }}</td>
                     <td colspan="1" style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                        @if($signature_amount_givenby && $signature_amount_givenby->file_path)
-                            <img src="{{ admin_url($signature_amount_givenby->file_path) }}" alt="Checked By Signature" style="height: 50px;">
+                        {{-- @if(isset($signature_amount_givenby && $signature_amount_givenby->file_path))
+                            <img src="{{ admin_url($signature_amount_givenby->file_path) }}" alt="Checked By Signature" style="height: 50px;"> --}}
                             {{ getUsername($sfty_petty_details->amount_given_by) }}
-                        @else
+                        {{-- @else
                             <div>N/A</div>
-                        @endif
+                        @endif --}}
                     </td>
                     <td colspan="1" style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                        @if($signature_amount_receivedby && $signature_amount_receivedby->file_path)
-                            <img src="{{ admin_url($signature_amount_receivedby->file_path) }}" alt="Checked By Signature" style="height: 50px;">
+                        {{-- @if(isset($signature_amount_receivedby && $signature_amount_receivedby->file_path))
+                            <img src="{{ admin_url($signature_amount_receivedby->file_path) }}" alt="Checked By Signature" style="height: 50px;"> --}}
                             {{ getUsername($sfty_petty_details->amount_received_by) }}
-                        @else
+                        {{-- @else
                             <div>N/A</div>
-                        @endif
+                        @endif --}}
                     </td>
                     <td style="border: 2px solid black; padding: 8px;">{{ isset($sfty_petty_details->remark) ? $sfty_petty_details->remark : '' }}</td>
                     <td style="border: 2px solid black; padding: 8px;">{{ getUsername(isset($sfty_petty_details->created_by) ? $sfty_petty_details->created_by : '') }}</td>

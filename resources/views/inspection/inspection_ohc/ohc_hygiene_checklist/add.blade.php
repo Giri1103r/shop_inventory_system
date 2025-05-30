@@ -80,8 +80,16 @@
                                                             <td
                                                                 style="border: 1px solid black; text-align: center; padding: 12px;">
                                                                 <div class="form-input">
-                                                                    <input type="date" class="issue_date form-control"
-                                                                        name="issue_date" value="{{ old('issue_date') }}" />
+
+                                                                    <div class="input-group date form-input custom-height">
+                                                                        <input type="date"
+                                                                            class="issue_date form-control"
+                                                                            name="issue_date"
+                                                                            value="{{ old('issue_date') }}" />
+                                                                        <div class="input-group-addon input-group-text">
+                                                                            <span class="fa fa-calendar"></span>
+                                                                        </div>
+                                                                    </div>
                                                                     @error('issue_date')
                                                                         <div class="error">{{ $message }}</div>
                                                                     @enderror
@@ -151,16 +159,22 @@
                                                     </div>
                                                     <div class="col-md-4 form-group form-input mb-2">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                        <input type="text" name="date" id = "date"
-                                                            class="form-control" value="{{ todayDate() }}" readonly>
+
+                                                        <div class="input-group date form-input custom-height">
+                                                            <input type="text" name="date" id = "date"
+                                                                class="form-control" value="{{ todayDate() }}" readonly>
+                                                            <div class="input-group-addon input-group-text">
+                                                                <span class="fa fa-calendar"></span>
+                                                            </div>
+                                                        </div>
                                                     </div>
-                                                    <div class="col-md-4 form-group form-input mb-2">
+                                                    {{-- <div class="col-md-4 form-group form-input mb-2">
                                                         @if (isset(Auth::user()->signature_upload))
                                                             <label class="form-label"
                                                                 style="display: block; ">{{ __('inspection.signature') }}</label>
                                                             <img src="{{ admin_url(Auth::user()->signature_upload) }}"
                                                                 alt="Signature Upload"
-                                                                style="width: 150px; margin-top:-10px">
+                                                                style="width: 100px; margin-top:-10px">
                                                         @else
                                                             <div class="form-input col-md-12 mb-2">
                                                                 <label class="form-label require">Signature</label>
@@ -172,10 +186,10 @@
                                                                 <div id="signature_upload" class="text-danger"></div>
                                                             </div>
                                                         @endif
-                                                    </div>
-                                                    @error('signature_upload')
+                                                    </div> --}}
+                                                    {{-- @error('signature_upload')
                                                         <div class="error">{{ $message }}</div>
-                                                    @enderror
+                                                    @enderror --}}
 
 
                                                 </div>
@@ -232,10 +246,10 @@
                             shift_id: {
                                 required: true,
                             },
-                            signature_image: {
-                                required: true,
-                               filesize: 15728640,
-                            },
+                            // signature_image: {
+                            //     required: true,
+                            //     filesize: 15728640,
+                            // },
                             remarks: {
                                 required: true,
                                 noSpaces: true,
@@ -252,10 +266,10 @@
                             shift_id: {
                                 required: "Shift is required",
                             },
-                            signature_image: {
-                                required: "Signature is required",
-                                filesize: "File size must be less than 15MB."
-                            },
+                            // signature_image: {
+                            //     required: "Signature is required",
+                            //     filesize: "File size must be less than 15MB."
+                            // },
                             remarks: {
                                 required: "Remarks is required",
                                 minlength: "Minimum 3 characters required",

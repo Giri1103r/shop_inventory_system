@@ -50,9 +50,17 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
-                                                    <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date"
-                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+
+
+                                                    <div class="input-group date form-input  custom-height">
+                                                        <input type="text" name="issue_date" id = "issue_date"
+                                                            class="form-control" placeholder="Issued Date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                     @error('issue_date')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
@@ -72,8 +80,15 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                    <input type="text" name="inspection_date" id = "inspection_date"
+
+
+                                                          <div class="input-group date form-input  custom-height">
+                                                     <input type="text" name="inspection_date" id = "inspection_date"
                                                         class="form-control" value="{{ old('inspection_date') }}">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
+                                                </div>
                                                     @error('inspection_date')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
@@ -126,7 +141,7 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -135,14 +150,14 @@
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
                                                         <label class="form-label require">Signature</label>
-                                                        <input type="file" name="signature_image" id="signature_upload"
-                                                            class="form-control form-control-sm" accept="image/*"
-                                                            placeholder="Enter the image">
+                                                        <input type="file" name="signature_image"
+                                                            id="signature_upload" class="form-control form-control-sm"
+                                                            accept="image/*" placeholder="Enter the image">
                                                         <small>Allowed file types: jpg, jpeg, png</small>
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                             {{-- <div class=""> --}}
                                             <table class="container p-5">
                                                 <thead>
@@ -273,10 +288,10 @@
                         unit_id: {
                             required: true,
                         },
-                        signature_image: {
-                            required: true,
-                            filesize: 15728640,
-                        },
+                        // signature_image: {
+                        //     required: true,
+                        //     filesize: 15728640,
+                        // },
                         resource_code: {
                             required: true,
                             minlength: 3,
@@ -303,10 +318,10 @@
                         unit_id: {
                             required: "Unit is required",
                         },
-                        signature_image: {
-                            required: "Signature is required",
-                             filesize: "File size must be less than 15MB."
-                        },
+                        // signature_image: {
+                        //     required: "Signature is required",
+                        //     filesize: "File size must be less than 15MB."
+                        // },
                         resource_code: {
                             required: 'Resource Code is required',
                             remote: 'Resource Code already exists',

@@ -114,6 +114,72 @@ class WeeklyFirstAidBox extends Model
         return $datas;
     }
 
+    public function listApi()
+    {
+        $request = request();
+        $perPage = $request->input('per_page', 10);
+        $search = '';
+
+        $query = $this->select('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.*', 'masters_location.location_name', 'masters_unit.unit_name', 'inspection_shift_option.shift', 'ohc_master_certified_first_aider.certifier_name', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift as shift_id')
+            ->leftJoin('masters_location', 'masters_location.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.location')
+            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.unit')
+            ->leftJoin('ohc_master_certified_first_aider', 'ohc_master_certified_first_aider.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.first_aider')
+            ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.shift');
+
+
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
+
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.first_aid_box_no', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_master_certified_first_aider.certifier_name', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        $paginatedData = $query->orderby('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.id')->paginate($perPage);
+        $inspection_data = $paginatedData->toArray();
+
+
+        if (empty($inspection_data['data'])) {
+            return $this->sendError('No records found.', [], 404);
+        }
+
+        $data_array = [];
+        $refined_data = [];
+
+        foreach ($inspection_data['data'] as $index => $data) {
+            $data_array['id'] = $data['id'];
+            $data_array['first_aid_box_no'] = $data['first_aid_box_no'];
+            $data_array['location_name'] = $data['location_name'];
+            $data_array['shift_name'] = $data['shift'];
+            $data_array['unit_name'] = $data['unit_name'];
+            $data_array['first_aider_name'] = $data['certifier_name'];
+            $data_array['created_at'] = Displaydateformat($data['created_at']);
+            $data_array['created_by'] = getUsername($data['created_by']);
+
+            $refined_data[$index] = $data_array;
+        }
+
+        $response = [
+            'per_page' => $paginatedData->perPage(),
+            'current_page' => $paginatedData->currentPage(),
+            'from' => $paginatedData->firstItem(),
+            'to' => $paginatedData->lastItem(),
+            'total' => $paginatedData->total(),
+            'total_page' => $paginatedData->lastPage(),
+            'list' => $refined_data,
+        ];
+
+        return $response;
+    }
+
     public function store()
     {
         $request = request();
@@ -144,6 +210,40 @@ class WeeklyFirstAidBox extends Model
             'created_by' => Auth::id(),
         ];
         return  $this->create($data);
+    }
+
+    public function storeApi()
+    {
+        $request = request();
+        $id = $request->medicine_id;
+        foreach ($id as $index => $value) {
+            $id = $value;
+            $updated_medicine_checklist[$id] = [
+                'medicine_id' => $id,
+                'freeze_quantity' => $request->freeze_quantity[$index],
+                'available_quantity' => $request->available_quantity[$index],
+                'expired_date' => dbdateformat($request->expired_date[$index]),
+                'remarks' => $request->remarks[$index],
+
+            ];
+        }
+        $updated_medicine_checklist = json_encode($updated_medicine_checklist);
+        $data = [
+
+            'document_reference_id' => $request->document_reference_id,
+            'date_of_inspection' =>  DBdateformat($request->date_of_inspection),
+            'location' => $request->location_id,
+            'first_aid_box_no' => $request->first_aid_box_no,
+            'shift' => $request->shift,
+            'unit' => $request->unit_id,
+            'first_aider' => $request->first_aider,
+            'remark_by' => $request->remark_by,
+            'inspection_data' => $updated_medicine_checklist,
+            'created_by' => Auth::id(),
+        ];
+        $inspection_data =   $this->create($data);
+
+        return $inspection_data;
     }
 
 
@@ -242,5 +342,16 @@ class WeeklyFirstAidBox extends Model
             );
         }
         return $this->where('id', $id)->update($update_data);
+    }
+
+
+    public function getInspectionData($id)
+    {
+        $data = $this->select('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.*', 'inspection_static_docno.doc_no', 'inspection_static_docno.issue_date', 'inspection_static_docno.rev_dt')
+            ->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_ohc_weekly_first_aid_box_inspection_checklist_details.document_reference_id')
+            ->where('inspection_ohc_weekly_first_aid_box_inspection_checklist_details.id', $id)
+            ->first();
+
+        return $data;
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Models\Inspection\GembaWalk;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Auth;
@@ -17,6 +18,7 @@ class GembaWalkInspectionEhsApproval extends Model
         'name',
         'date',
         'capa',
+        'capa_action_date',
         'remarks',
         'created_by',
         'updated_by',
@@ -68,9 +70,30 @@ class GembaWalkInspectionEhsApproval extends Model
 
             'gemba_walk_id' => $gembaWalk_id,
             'type' => $capa_type,
-            'name' => $request->officer_name,
+            'name' => Auth::user()->name,
             'date' => DBdateformat($request->capa_date),
             'capa' => decryptId($request->is_passed),
+            'capa_action_date' => DBdateformat($request->capa_action_date) ?: null,
+            'remarks' => $request->capa_remark,
+            'created_by' => Auth::id()
+
+        );
+
+        return $this->create($insert_array);
+    }
+
+    public function usercapaSubmit($id)
+    {
+        $capa_type = GEMBA_WALK_INSPECTION_PASS;
+        $request = request();
+        $insert_array = array(
+
+            'gemba_walk_id' => $id,
+            'type' =>  $capa_type,
+            'name' => Auth::user()->name,
+            'date' =>Carbon::now(),
+            'capa' => decryptId($request->is_passed),
+            'capa_action_date' => DBdateformat($request->capa_action_date) ?: null,
             'remarks' => $request->capa_remark,
             'created_by' => Auth::id()
 
@@ -110,7 +133,7 @@ class GembaWalkInspectionEhsApproval extends Model
             ->where('inspection_gemba_walk_ehs_officer_approval.type', 1)
 
             ->where('inspection_gemba_walk_ehs_officer_approval.gemba_walk_id', $id)
-            ->where('inspection_gemba_walk_ehs_officer_approval.status',1)
+            ->where('inspection_gemba_walk_ehs_officer_approval.status', 1)
             ->first();
 
         return $data;
@@ -122,7 +145,7 @@ class GembaWalkInspectionEhsApproval extends Model
             ->leftJoin('inspection_gemba_walk_ehs_inspection_files', 'inspection_gemba_walk_ehs_inspection_files.ehs_id', '=', 'inspection_gemba_walk_ehs_officer_approval.id')
             ->where('inspection_gemba_walk_ehs_officer_approval.type', 2)
             ->where('inspection_gemba_walk_ehs_officer_approval.gemba_walk_id', $id)
-            ->where('inspection_gemba_walk_ehs_officer_approval.status',1)
+            ->where('inspection_gemba_walk_ehs_officer_approval.status', 1)
             ->first();
 
         return $data;
@@ -134,7 +157,7 @@ class GembaWalkInspectionEhsApproval extends Model
             ->leftJoin('inspection_gemba_walk_ehs_inspection_files', 'inspection_gemba_walk_ehs_inspection_files.ehs_id', '=', 'inspection_gemba_walk_ehs_officer_approval.id')
             ->where('inspection_gemba_walk_ehs_officer_approval.type', 4)
             ->where('inspection_gemba_walk_ehs_officer_approval.gemba_walk_id', $id)
-            ->where('inspection_gemba_walk_ehs_officer_approval.status',1)
+            ->where('inspection_gemba_walk_ehs_officer_approval.status', 1)
             ->first();
 
         return $data;

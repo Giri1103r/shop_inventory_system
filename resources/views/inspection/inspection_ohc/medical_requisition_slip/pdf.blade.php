@@ -107,9 +107,11 @@
         .table_card td {
             text-align: center;
         }
+
         .page-break {
             page-break-before: always;
         }
+
         .table-container {
             padding: 20px;
         }
@@ -166,7 +168,7 @@
                         <span><b>MEDICAL REQUISITION SLIP
                             </b></span>
                         <br>
-                     
+
                     </h3>
                 </th>
 
@@ -212,7 +214,8 @@
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">NAME OF
                     MEDICINE
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">FREEZE QUANTITY
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">FREEZE
+                    QUANTITY
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">QUANTITY
                 </th>
@@ -248,7 +251,7 @@
 
 
 
-            <tr>
+            {{-- <tr>
                 @php
                     $createdSignature = GetOHCSignature(
                         $details->created_by,
@@ -281,6 +284,34 @@
                     <img src="{{ admin_url($SafetyOfficerManagerSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
                     <div style="margin-top: 5px;">Medical Assitant / Safety Officer Signature</div>
+                </th>
+
+            </tr> --}}
+
+            <tr>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">
+                    @if ($details->created_by != null)
+                        <div style="margin-top: 5px;">Requestor Name :- {{ getUsername($details->created_by) }} </div>
+                    @else
+                        <div style="margin-top: 5px;">Not yet prepared</div>
+                    @endif
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">
+                    @if ($details->verified_by != null)
+                        <div style="margin-top: 5px;"> Floor Manager Name :- {{ getUsername($details->verified_by) }}
+                        </div>
+                    @else
+                        <div style="margin-top: 5px;">Has Not yet been Verified</div>
+                    @endif
+
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">
+                    @if ($details->approved_by != null)
+                        <div style="margin-top: 5px;"> Medical Assitant / Safety Officer Name :-
+                            {{ getUsername($details->approved_by) }} </div>
+                    @else
+                        <div style="margin-top: 5px;">Has Not yet been Approved</div>
+                    @endif
                 </th>
 
             </tr>

@@ -244,7 +244,7 @@
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->observation }}</td>
 
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->correction_preventive_action }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ $detail->responsibility }}
+                    <td style="border: 2px solid black; padding: 8px;">{{ getUsername($detail->responsibility )}}
                     </td>
                     <td style="border: 2px solid black; padding: 8px;">
                         {{ Displaydateformat($detail->date_of_compliance) }}</td>
@@ -261,7 +261,7 @@
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->remarks }}</td>
                 </tr>
             @endforeach
-            @php
+            {{-- @php
                 $prepared_by_signature = GetSafetySignature(
                     $inspection_details->created_by,
                     $inspection_details->id,
@@ -272,19 +272,17 @@
                     $inspection_details->id,
                     FORKLIFT_INSPECTION,
                 );
-            @endphp
+            @endphp --}}
             <tr>
                 <td colspan="5"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
-                        style="height: 50px;">
+                    
                     <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
                 </td>
                 <td colspan="5"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     @if ($inspection_details->updated_by != null)
-                        <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
-                            style="height: 50px;">
+
                         <div>Verified By: {{ getUsername($inspection_details->updated_by) }}</div>
                     @else
                         <p>Inspection has not been Verified Yet</p>

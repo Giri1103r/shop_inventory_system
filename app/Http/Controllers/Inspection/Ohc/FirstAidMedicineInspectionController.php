@@ -82,7 +82,7 @@ class FirstAidMedicineInspectionController extends Controller
                             $btn = '';
                             $btn = '<a href="' . admin_url('ohc/first-aid/opd-medicine-inspection/view/' . encryptId($row->id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
 
-                            if (($row->inspection_status == OBSERVATION_PENDING &&  isAdmin()) ||($row->inspection_status == OBSERVATION_PENDING &&  CheckUserRole(ROLE_EHS_OFFICER)) ) {
+                            if (($row->inspection_status == OBSERVATION_PENDING &&  isAdmin()) || ($row->inspection_status == OBSERVATION_PENDING &&  CheckUserRole(ROLE_EHS_OFFICER))) {
                                 $btn .= '<a href="' . admin_url('ohc/first-aid/opd-medicine-inspection/approval/' . encryptId($row->id)) . '" class="me-1" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
 
@@ -143,14 +143,7 @@ class FirstAidMedicineInspectionController extends Controller
                 'expired_date.*' => 'required',
                 'emp_id.*' => 'required',
                 'remarks.*' => 'required',
-                'signature_upload.*' => [
-                    function ($attribute, $value, $fail) {
-                        $user = Auth::user();
-                        if (is_null($user->signature_upload)) {
-                            $fail('Signature is required.');
-                        }
-                    }
-                ],
+
             ];
 
             $messages = [
@@ -160,7 +153,7 @@ class FirstAidMedicineInspectionController extends Controller
                 'expired_date.*.required' => 'Expired Date is required',
                 'remarks.*' => 'Remarks is required',
                 'emp_id.*' => 'Employee is required',
-                'signature_upload' => 'Signature is required.',
+
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -172,7 +165,7 @@ class FirstAidMedicineInspectionController extends Controller
             $store = $this->medicine_checklist->store();
             $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
             $inspection_details = $this->medicine_checklist->selectOne($store->id);
-            $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
+            // $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
 
             $ehsOfficer = GetEHSOfficer();
             if (!empty($ehsOfficer)) {
@@ -230,14 +223,14 @@ class FirstAidMedicineInspectionController extends Controller
             $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
             $inspection_data = json_decode($inspection_details->inspection_data, true);
             $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
-            $verified_by = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, $inspection_type);
+            // $verified_by = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, $inspection_type);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
             $data = array(
                 'inspection_details' => $inspection_details,
                 'inspection_file' => $inspection_file,
                 'inspection_data' => $inspection_data,
-                'verified_by' => $verified_by,
+                // 'verified_by' => $verified_by,
                 'document_no' => $document_no,
             );
 
@@ -268,8 +261,8 @@ class FirstAidMedicineInspectionController extends Controller
                 $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
                 $inspection_data = json_decode($inspection_detail->inspection_data, true);
                 $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
-                $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
-                $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
+                // $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
+                // $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
 
                 $currentRow = $row;
 
@@ -391,42 +384,50 @@ class FirstAidMedicineInspectionController extends Controller
                 }
 
                 $signatureRow = $inspectionRow;
-                $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRow)->setRowHeight(20);
 
                 $sheet->mergeCells("A$signatureRow:J$signatureRow");
                 $sheet->mergeCells("K$signatureRow:S$signatureRow");
 
-                if (file_exists($inspection_created_by)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Inspection and checked By');
-                    $drawing->setPath($inspection_created_by);
-                    $drawing->setCoordinates("D$signatureRow");
-                    $drawing->setOffsetX(50);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                }
+                // if (file_exists($inspection_created_by)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Inspection and checked By');
+                //     $drawing->setPath($inspection_created_by);
+                //     $drawing->setCoordinates("D$signatureRow");
+                //     $drawing->setOffsetX(50);
+                //     $drawing->setOffsetY(10);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                // }
+
+
+                // if (file_exists($inspection_updated_by)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Approved By');
+                //     $drawing->setPath($inspection_updated_by);
+                //     $drawing->setCoordinates("N$signatureRow");
+                //     $drawing->setOffsetX(50);
+                //     $drawing->setOffsetY(10);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                // }
+
+                $inspectedBy = getUsername($inspection_detail->created_by);
+                $inspectedByText = !empty($inspectedBy) ? $inspectedBy : "Inspection has not been prepared yet";
+
+                $approvedBy = getUsername($inspection_detail->updated_by);
+                $approvedByText = !empty($approvedBy) ? $approvedBy : "Inspection has not been approved yet";
 
                 $richTextSig1 = new RichText();
-                $richTextSig1->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
+                $richTextSig1->createTextRun("Inspected and checked By: " . $inspectedByText)->getFont()->setBold(true);
                 $sheet->getCell("A$signatureRow")->setValue($richTextSig1);
 
-                if (file_exists($inspection_updated_by)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Approved By');
-                    $drawing->setPath($inspection_updated_by);
-                    $drawing->setCoordinates("N$signatureRow");
-                    $drawing->setOffsetX(50);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                }
-
                 $richTextSig2 = new RichText();
-                $richTextSig2->createTextRun("Approved By: " . getUsername($inspection_detail->updated_by))->getFont()->setBold(true);
+                $richTextSig2->createTextRun("Approved By: " . $approvedByText)->getFont()->setBold(true);
                 $sheet->getCell("K$signatureRow")->setValue($richTextSig2);
+
 
                 $sheet->getStyle("A$signatureRow:J$signatureRow")->applyFromArray([
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
@@ -742,49 +743,56 @@ class FirstAidMedicineInspectionController extends Controller
 
             $signatureRow = $row;
 
-            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+            $sheet->getRowDimension($signatureRow)->setRowHeight(20);
 
             $sheet->mergeCells("A{$signatureRow}:J{$signatureRow}");
             $sheet->getStyle("A{$signatureRow}:J{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
             ]);
-            if (file_exists($inspection_created_by)) {
-                $drawing = new Drawing();
-                $drawing->setName('Inspection and checked By');
-                $drawing->setPath($inspection_created_by);
-                $drawing->setCoordinates("D{$signatureRow}");
-                $drawing->setOffsetX(50);
-                $drawing->setOffsetY(10);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-            }
+            // if (file_exists($inspection_created_by)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Inspection and checked By');
+            //     $drawing->setPath($inspection_created_by);
+            //     $drawing->setCoordinates("D{$signatureRow}");
+            //     $drawing->setOffsetX(50);
+            //     $drawing->setOffsetY(10);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            // }
 
-            $richText = new RichText();
-            $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
-            $sheet->getCell("A{$signatureRow}")->setValue($richText);
 
             $sheet->mergeCells("K{$signatureRow}:S{$signatureRow}");
             $sheet->getStyle("K{$signatureRow}:S{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER]
             ]);
-            if (file_exists($inspection_updated_by)) {
-                $drawing = new Drawing();
-                $drawing->setName('Approved By');
-                $drawing->setPath($inspection_updated_by);
-                $drawing->setCoordinates("N{$signatureRow}");
-                $drawing->setOffsetX(50);
-                $drawing->setOffsetY(10);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-            }
+            // if (file_exists($inspection_updated_by)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Approved By');
+            //     $drawing->setPath($inspection_updated_by);
+            //     $drawing->setCoordinates("N{$signatureRow}");
+            //     $drawing->setOffsetX(50);
+            //     $drawing->setOffsetY(10);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            // }
+            $createdBy = getUsername($inspection_detail->created_by);
+            $createdByText = !empty($createdBy) ? $createdBy : "Inspection has not been prepared yet";
+
+            $approvedBy = getUsername($inspection_detail->updated_by);
+            $approvedByText = !empty($approvedBy) ? $approvedBy : "Inspection has not been approved yet";
+
+            $richText = new RichText();
+            $richText->createTextRun("Inspected and checked By: " . $createdByText)->getFont()->setBold(true);
+            $sheet->getCell("A{$signatureRow}")->setValue($richText);
 
             $richText2 = new RichText();
-            $richText2->createTextRun("Approved By: " . getUsername($inspection_detail->updated_by))->getFont()->setBold(true);
+            $richText2->createTextRun("Approved By: " . $approvedByText)->getFont()->setBold(true);
             $sheet->getCell("K{$signatureRow}")->setValue($richText2);
+
 
             $writer = new Xlsx($spreadsheet);
             $fileName = 'ohc-medicine-checklist.xlsx';

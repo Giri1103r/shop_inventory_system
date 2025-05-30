@@ -20,6 +20,21 @@
                                 <b>OPD Patient List</b>
                             </td>
                         </tr>
+
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Patient Code</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ $emailDetails['emp_id'] }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Patient Name</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ $emailDetails['emp_name'] }}</td>
+                        </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Unit</b>
@@ -34,8 +49,20 @@
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{ getDepartment($emailDetails['department_id']) }}</td>
                         </tr>
-
-
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Cheif Complaint</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ $emailDetails['cheif_complaint'] }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Treatment</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{  isset($emailDetails['treatment']) ? $emailDetails['treatment'] : '-' }}</td>
+                        </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Date</b>
@@ -124,14 +151,17 @@
                                 <b>Hospital Name</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ isset($hospitaldetails['hospital_name'])? $hospitaldetails['hospital_name']:'-'}}</td>
+                                valign="top">
+                                {{ isset($hospitaldetails['hospital_name']) ? $hospitaldetails['hospital_name'] : '-' }}
+                            </td>
                         </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>First Aider Name</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ isset($hospitaldetails['first_aider'])? $hospitaldetails['first_aider']:'-' }}</td>
+                                valign="top">
+                                {{ isset($hospitaldetails['first_aider']) ? $hospitaldetails['first_aider'] : '-' }}</td>
                         </tr>
 
 
@@ -140,14 +170,17 @@
                                 <b>Mobile Number</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ isset($hospitaldetails['mobile_no']) ? $hospitaldetails['mobile_no']:'-' }}</td>
+                                valign="top">
+                                {{ isset($hospitaldetails['mobile_no']) ? $hospitaldetails['mobile_no'] : '-' }}</td>
                         </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Refered By Vechicle</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ isset($hospitaldetails['refered_by_vechicle']) ? $hospitaldetails['refered_by_vechicle']:'-'}}</td>
+                                valign="top">
+                                {{ isset($hospitaldetails['refered_by_vechicle']) ? $hospitaldetails['refered_by_vechicle'] : '-' }}
+                            </td>
                         </tr>
 
                     </tbody>

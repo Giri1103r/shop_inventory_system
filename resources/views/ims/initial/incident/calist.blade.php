@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Incident Corrective Action')
-@section('pageurl', admin_url('incident/initial-incident/list'))
+@section('pageurl', admin_url('incident/initial-incident/list/all/type'))
 
 
 @section('content')
@@ -154,7 +154,7 @@
         $(function() {
             /* Datatable */
             var dash_iirtype_id =  '{{ isset($dashboard_search['iir_type']) && $dashboard_search['iir_type'] != ''
-            ? $dashboard_search['iir_type'] : ''}}';    
+            ? $dashboard_search['iir_type'] : ''}}';
             var table = $('.datatable-list').DataTable({
                 autoWidth: false,
                 responsive: true,

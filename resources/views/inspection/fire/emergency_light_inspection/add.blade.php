@@ -166,7 +166,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -182,180 +182,216 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
 
                                         </div>
                                         <hr>
-                                        <div class="form-wrapper">
-                                            <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white ms-3">Emergency Light Inspection</h4>
-                                                <button class="btn btn-primary add-row mb-2 " type="button"
-                                                    id="add-row"
-                                                    style="margin-left: 10px;  margin-right: 10px; width: 84px;">
-                                                    Add
-                                                </button>
-                                            </div>
-                                            <div class="row mt-4 form-set">
+
+                                        <div class="card-header-inner d-flex justify-content-between">
+                                            <h4 class="text-white ms-3">Emergency Light Inspection</h4>
+                                            <button class="btn btn-primary add-row mb-2 " type="button" id="add-row"
+                                                style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                Add
+                                            </button>
+                                        </div>
 
 
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.sr_no') }}</label>
-                                                        <input type="text" name="sr_no[1]" id = "sr_no"
-                                                            class="form-control"
-                                                            value="{{ FireSequence(EMERGENCY_LIGHT_INSPECTION) }}"
-                                                            readonly>
-                                                    </div>
-                                                </div>
 
 
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.department') }}</label>
-                                                        <select name="department[1]" id="department"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Department</option>
-                                                            @foreach ($department as $list)
-                                                                <option value="{{ encryptId($list->id) }}">
-                                                                    {{ $list->department_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <input type="text" name="location[1]" id = "location"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.emergency_light_number') }}</label>
-                                                        <input type="text" name="emergency_light_number[1]"
-                                                            id = "emergency_light_number" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.condition_of_light') }}</label>
-                                                        <select name="condition_of_light[1]" id="condition_of_light"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select the option</option>
+                                        <div class="table-responsive">
+                                            <div class="col-md-12">
+                                                <table class="table table-bordered ">
 
-                                                            @foreach ($conditionLight as $list)
-                                                                <option value="{{ encryptId($list->id) }}">
-                                                                    {{ $list->condition }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.type_of_light') }}</label>
-                                                        <select name="type_of_light[1]" id="type_of_light"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select the option</option>
-                                                            @foreach ($lightType as $list)
-                                                                <option value="{{ encryptId($list->id) }}">
-                                                                    {{ $list->type }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.capacity') }}</label>
-                                                        <input type="number" name="capacity[1]" id = "capacity"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.quantity') }}</label>
-                                                        <input type="number" name="quantity[1]" id = "quantity"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.power_supply') }}</label>
-                                                        <select name="power_supply[1]" id="power_supply"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select power supply</option>
-                                                            @foreach ($powerSupply as $list)
-                                                                <option value="{{ encryptId($list->id) }}">
-                                                                    {{ $list->name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.light_condition') }}</label>
-                                                        <select name="light_condition[1]" id="light_condition"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select the option</option>
-                                                            <option value="{{ encryptId(1) }}">Good</option>
-                                                            <option value="{{ encryptId(2) }}">Fair</option>
-                                                            <option value="{{ encryptId(3) }}">Poor</option>
+                                                    <thead class="bg-secondary" style="color: #ffff">
+                                                        <tr>
+                                                            <th>{{ __('inspection.sr_no') }}</th>
+                                                            <th>{{ __('inspection.department') }}</th>
+                                                            <th>{{ __('inspection.location') }}</th>
+                                                            <th>{{ __('inspection.emergency_light_number') }}</th>
+                                                            <th>{{ __('inspection.condition_of_light') }}</th>
+                                                            <th>{{ __('inspection.type_of_light') }}</th>
+                                                            <th>{{ __('inspection.capacity') }}</th>
+                                                            <th>{{ __('inspection.quantity') }}</th>
+                                                            <th>{{ __('inspection.power_supply') }}</th>
+                                                            <th>{{ __('inspection.light_condition') }}</th>
+                                                            <th>{{ __('inspection.switch_condition') }}</th>
+                                                            <th>{{ __('inspection.status') }}</th>
+                                                            <th>{{ __('inspection.remarks') }}</th>
+                                                            <th>{{ __('common.action') }}</th>
+                                                        </tr>
+                                                    </thead>
 
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.switch_condition') }}</label>
-                                                        <select name="switch_condition[1]" id="switch_condition"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select the option</option>
-                                                            <option value="{{ encryptId(1) }}">Good</option>
-                                                            <option value="{{ encryptId(2) }}">Fair</option>
-                                                            <option value="{{ encryptId(3) }}">Poor</option>
+                                                    <tbody id="medicine-tbody">
+                                                        <tr>
+                                                            <td>
+                                                                <div class="form-group form-input">
 
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.status') }}</label>
-                                                        <select name="status[1]" id="status"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Status</option>
-                                                            @foreach ($fireStatus as $list)
-                                                                <option value="{{ encryptId($list->id) }}">
-                                                                    {{ $list->name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;" rows="4"></textarea>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-2 text-right  mt-4">
-                                                    <button class="btn btn-danger remove-row" type="button"
-                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
+                                                                    <input type="text" name="sr_no[1]" id = "sr_no"
+                                                                        class="form-control"
+                                                                        value="{{ FireSequence(EMERGENCY_LIGHT_INSPECTION) }}"
+                                                                        readonly>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
 
-                                                </div>
-                                                <hr>
+
+                                                                    <select name="department[1]" id="department"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select Department</option>
+                                                                        @foreach ($department as $list)
+                                                                            <option value="{{ encryptId($list->id) }}">
+                                                                                {{ $list->department_name }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </td>
+
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <input type="text" name="location[1]"
+                                                                        id = "location" class="form-control">
+                                                                </div>
+                                                            </td>
+
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <input type="text" name="emergency_light_number[1]"
+                                                                        id = "emergency_light_number"
+                                                                        class="form-control">
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <select name="condition_of_light[1]"
+                                                                        id="condition_of_light"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select the option</option>
+
+                                                                        @foreach ($conditionLight as $list)
+                                                                            <option value="{{ encryptId($list->id) }}">
+                                                                                {{ $list->condition }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <select name="type_of_light[1]" id="type_of_light"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select the option</option>
+                                                                        @foreach ($lightType as $list)
+                                                                            <option value="{{ encryptId($list->id) }}">
+                                                                                {{ $list->type }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <input type="number" name="capacity[1]"
+                                                                        id = "capacity" class="form-control">
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <input type="number" name="quantity[1]"
+                                                                        id = "quantity" class="form-control">
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+                                                                    <select name="power_supply[1]" id="power_supply"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select power supply</option>
+                                                                        @foreach ($powerSupply as $list)
+                                                                            <option value="{{ encryptId($list->id) }}">
+                                                                                {{ $list->name }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <select name="light_condition[1]" id="light_condition"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select the option</option>
+                                                                        <option value="{{ encryptId(1) }}">Good</option>
+                                                                        <option value="{{ encryptId(2) }}">Fair</option>
+                                                                        <option value="{{ encryptId(3) }}">Poor</option>
+
+                                                                    </select>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <select name="switch_condition[1]"
+                                                                        id="switch_condition"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select the option</option>
+                                                                        <option value="{{ encryptId(1) }}">Good</option>
+                                                                        <option value="{{ encryptId(2) }}">Fair</option>
+                                                                        <option value="{{ encryptId(3) }}">Poor</option>
+
+                                                                    </select>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <select name="status[1]" id="status"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select Status</option>
+                                                                        @foreach ($fireStatus as $list)
+                                                                            <option value="{{ encryptId($list->id) }}">
+                                                                                {{ $list->name }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </td>
+
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;" rows="4"></textarea>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+
+
+                                                                <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
+                                                                    style="width: 30px; height: 30px;">
+                                                                    <i class="fa-solid fa-trash"></i>
+                                                                </div>
+
+
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         </div>
+
+
+
+
+
+
                                         <div class="form-observation">
                                             <div class="row mt-4 form-obs">
                                                 <div class="card-header-inner p-2">
@@ -409,6 +445,10 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
+            // clone based dynamic form
+
+
+
             // location based unit
 
             $(document).on('change', '#location_id', function() {
@@ -441,7 +481,7 @@
                     e.preventDefault();
                     location.reload();
                 });
-              
+
                 var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates) {
@@ -527,7 +567,7 @@
                         device_image: {
                             required: true,
                             // extension: "jpg",
-                             filesize: 15728640
+                            filesize: 15728640
                         },
                         observation: {
                             required: true,
@@ -673,245 +713,235 @@
                 });
             });
 
-            let form_set_count = 2;
-            let formIndex = 1;
-            const minFormSets = 1;
-            const maxFormSets = 200;
-            let serial_number = 2;
-            const maxObsSets = 5;
+            function generateSerialNumber(count) {
+                const today = new Date();
+                const year = today.getFullYear().toString().slice(-2);
+                const month = ('0' + (today.getMonth() + 1)).slice(-2);
+                const day = ('0' + today.getDate()).slice(-2);
+                return `EML-${('00000' + count).slice(-4)}`;
+            }
+
 
             $(document).ready(function() {
-                $(document).on('click', '#add-row', function() {
-                    let currentFormSets = $('.form-wrapper .form-set').length;
+
+                let emergency_light_count = 2;
+                let serial_number = 2;
+                let newSerialNumber = 'EML-' + ('00000' + serial_number).slice(-5);
+                $(".add-row").click(function() {
+                    var rowCount = $('#medicine-tbody tr').length;
 
 
+                    var newRow = `
+                                     <tr>
+                                                            <td>
+                                                                <div class="form-group form-input">
 
-                    if (currentFormSets >= maxFormSets) {
-                        Swal.fire({
-                            icon: 'warning',
-                            title: 'Emergency Light Inspection CheckList Reached',
-                            text: 'You can only add up to 200 Emergency Light Inspection.',
-                            confirmButtonColor: '#3085d6'
-                        });
-                        return;
-                    }
-
-                    let newSerialNumber = 'HTR-' + ('00000' + serial_number).slice(-5);
-
-                    var newFormSet = `
-                        <div class="row mt-4 form-set">
+                                                                  <input type="text" name="sr_no[${emergency_light_count}]" id="sr_no_${emergency_light_count}"
+    class="form-control"
+    value="${generateSerialNumber(emergency_light_count)}"
+    readonly>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
 
 
+                                                                    <select name="department[${emergency_light_count}]" id="department_${emergency_light_count}"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select Department</option>
+                                                                        @foreach ($department as $list)
+                                                                            <option value="{{ encryptId($list->id) }}">
+                                                                                {{ $list->department_name }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </td>
+
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <input type="text" name="location[${emergency_light_count}]"
+                                                                        id = "location_${emergency_light_count}" class="form-control">
+                                                                </div>
+                                                            </td>
+
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <input type="text" name="emergency_light_number[${emergency_light_count}]"
+                                                                        id = "emergency_light_number_${emergency_light_count}"
+                                                                        class="form-control">
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <select name="condition_of_light[${emergency_light_count}]"
+                                                                        id="condition_of_light_${emergency_light_count}"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select the option</option>
+
+                                                                        @foreach ($conditionLight as $list)
+                                                                            <option value="{{ encryptId($list->id) }}">
+                                                                                {{ $list->condition }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <select name="type_of_light[${emergency_light_count}]" id="type_of_light_${emergency_light_count}"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select the option</option>
+                                                                        @foreach ($lightType as $list)
+                                                                            <option value="{{ encryptId($list->id) }}">
+                                                                                {{ $list->type }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <input type="number" name="capacity[${emergency_light_count}]"
+                                                                        id = "capacity_${emergency_light_count}" class="form-control">
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <input type="number" name="quantity[${emergency_light_count}]"
+                                                                        id = "quantity_${emergency_light_count}" class="form-control">
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+                                                                    <select name="power_supply[${emergency_light_count}]" id="power_supply_${emergency_light_count}"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select power supply</option>
+                                                                        @foreach ($powerSupply as $list)
+                                                                            <option value="{{ encryptId($list->id) }}">
+                                                                                {{ $list->name }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <select name="light_condition[${emergency_light_count}]" id="light_condition_${emergency_light_count}"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select the option</option>
+                                                                        <option value="{{ encryptId(1) }}">Good</option>
+                                                                        <option value="{{ encryptId(2) }}">Fair</option>
+                                                                        <option value="{{ encryptId(3) }}">Poor</option>
+
+                                                                    </select>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <select name="switch_condition[${emergency_light_count}]"
+                                                                        id="switch_condition_${emergency_light_count}"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select the option</option>
+                                                                        <option value="{{ encryptId(1) }}">Good</option>
+                                                                        <option value="{{ encryptId(2) }}">Fair</option>
+                                                                        <option value="{{ encryptId(3) }}">Poor</option>
+
+                                                                    </select>
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <select name="status[${emergency_light_count}]" id="status_${emergency_light_count}"
+                                                                        class=" form-control single-select"
+                                                                        style="width: 100%">
+                                                                        <option value="">Select Status</option>
+                                                                        @foreach ($fireStatus as $list)
+                                                                            <option value="{{ encryptId($list->id) }}">
+                                                                                {{ $list->name }}</option>
+                                                                        @endforeach
+                                                                    </select>
+                                                                </div>
+                                                            </td>
+
+                                                            <td>
+                                                                <div class="form-group form-input">
+
+                                                                    <textarea name="remarks[${emergency_light_count}]" id="remarks_${emergency_light_count}" class="form-control" style="resize: none;" rows="4"></textarea>
+                                                                </div>
+                                                            </td>
+                                                            <td>
 
 
-                                                    <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.sr_no') }}</label>
-                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no_${form_set_count}"
-                                                            class="form-control"
-                                                            value="{{ FireSequence(EMERGENCY_LIGHT_INSPECTION) }}"
-                                                            readonly>
-                                                    </div>
-                                                </div>
+                                                                <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
+                                                                    style="width: 30px; height: 30px;">
+                                                                    <i class="fa-solid fa-trash"></i>
+                                                                </div>
 
 
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.department') }}</label>
-                                                        <select name="department[${form_set_count}]" id="department_${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Department</option>
+                                                            </td>
+                                                        </tr>
+                             `;
 
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <input type="text" name="location[${form_set_count}]" id = "location_${form_set_count}"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.emergency_light_number') }}</label>
-                                                        <input type="text" name="emergency_light_number[${form_set_count}]"
-                                                            id = "emergency_light_number_${form_set_count}" class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.condition_of_light') }}</label>
-                                                        <select name="condition_of_light[${form_set_count}]" id="condition_of_light_${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select the option</option>
+                    $('#medicine-tbody').append(newRow);
 
-                                                            @foreach ($conditionLight as $list)
-                                                                <option value="{{ encryptId($list->id) }}">
-                                                                    {{ $list->condition }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.type_of_light') }}</label>
-                                                        <select name="type_of_light[${form_set_count}]" id="type_of_light_${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select the option</option>
-                                                            @foreach ($lightType as $list)
-                                                                <option value="{{ encryptId($list->id) }}">
-                                                                    {{ $list->type }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.capacity') }}</label>
-                                                        <input type="number" name="capacity[${form_set_count}]" id = "capacity_${form_set_count}"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.quantity') }}</label>
-                                                        <input type="number" name="quantity[${form_set_count}]" id = "quantity_${form_set_count}"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.power_supply') }}</label>
-                                                        <select name="power_supply[${form_set_count}]" id="power_supply_${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select power supply</option>
-                                                            @foreach ($powerSupply as $list)
-                                                                <option value="{{ encryptId($list->id) }}">
-                                                                    {{ $list->name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.light_condition') }}</label>
-                                                        <select name="light_condition[${form_set_count}]" id="light_condition_${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select the option</option>
-                                                            <option value="{{ encryptId(1) }}">Good</option>
-                                                            <option value="{{ encryptId(2) }}">Fair</option>
-                                                            <option value="{{ encryptId(3) }}">Poor</option>
-
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.switch_condition') }}</label>
-                                                        <select name="switch_condition[${form_set_count}]" id="switch_condition_${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select the option</option>
-                                                            <option value="{{ encryptId(1) }}">Good</option>
-                                                            <option value="{{ encryptId(2) }}">Fair</option>
-                                                            <option value="{{ encryptId(3) }}">Poor</option>
-
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.status') }}</label>
-                                                        <select name="status[${form_set_count}]" id="status_${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Status</option>
-                                                            @foreach ($fireStatus as $list)
-                                                                <option value="{{ encryptId($list->id) }}">
-                                                                    {{ $list->name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks_${form_set_count}" class="form-control" style="resize: none;" rows="4"></textarea>
-                                                    </div>
-                                                </div>
- <div class="col-md-2 text-right  mt-4">
-                                                    <button class="btn btn-danger remove-row" type="button"
-                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
-
-                                                </div>
-                                                <hr>
-                                            </div>
-                    `;
-
-                    let newFormSetElement = $(newFormSet);
-
-                    let locationSelect = newFormSetElement.find('select[name^="department"]');
-                    GetDepartment(locationSelect);
-
-                    $('.form-wrapper').append(newFormSetElement);
-                    newFormSetElement.find('select.single-select').select2({
+                    $('#medicine-tbody tr:last .single-select').select2({
                         width: '100%'
                     });
-                    $("select[name='department[" + form_set_count + "]']").rules('add', {
+                    $("select[name='department[" + emergency_light_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please select the department',
                         }
                     });
-                    $("select[name='status[" + form_set_count + "]']").rules('add', {
+                    $("select[name='status[" + emergency_light_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please select the status',
                         }
                     });
-                    $("select[name='switch_condition[" + form_set_count + "]']").rules('add', {
+                    $("select[name='switch_condition[" + emergency_light_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please select the Switch Condition',
                         }
                     });
-                    $("select[name='light_condition[" + form_set_count + "]']").rules('add', {
+                    $("select[name='light_condition[" + emergency_light_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please select the light Condition',
                         }
                     });
-                    $("select[name='power_supply[" + form_set_count + "]']").rules('add', {
+                    $("select[name='power_supply[" + emergency_light_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please select the Power Suply',
                         }
                     });
-                    $("select[name='condition_of_light[" + form_set_count + "]']").rules('add', {
+                    $("select[name='condition_of_light[" + emergency_light_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please select the Condition of Light',
                         }
                     });
-                    $("select[name='type_of_light[" + form_set_count + "]']").rules('add', {
+                    $("select[name='type_of_light[" + emergency_light_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please select the Type of Light',
                         }
                     });
-                    $("input[name='location[" + form_set_count + "]']").rules('add', {
+                    $("input[name='location[" + emergency_light_count + "]']").rules('add', {
                         required: true,
                         minlength: 3,
                         maxlength: 30,
@@ -921,7 +951,7 @@
                             maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
-                    $("input[name='emergency_light_number[" + form_set_count + "]']").rules('add', {
+                    $("input[name='emergency_light_number[" + emergency_light_count + "]']").rules('add', {
                         required: true,
                         minlength: 3,
                         maxlength: 30,
@@ -931,21 +961,21 @@
                             maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
-                    $("input[name='quantity[" + form_set_count + "]']").rules('add', {
+                    $("input[name='quantity[" + emergency_light_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please add the quantity',
                         }
                     });
 
-                    $("input[name='capacity[" + form_set_count + "]']").rules('add', {
+                    $("input[name='capacity[" + emergency_light_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please add the capacity',
                         }
                     });
 
-                    $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
+                    $("textarea[name='remarks[" + emergency_light_count + "]']").rules('add', {
                         required: true,
                         minlength: 3,
                         maxlength: 30,
@@ -958,13 +988,28 @@
 
 
                     serial_number++;
-                    form_set_count++;
+                    emergency_light_count++;
                     updatePageIndices();
-
                 });
 
+                $(document).on("click", ".delete-row", function() {
+                    var rowCount = $('#medicine-tbody tr').length;
 
+                    if (rowCount > 1) {
+                        $(this).closest("tr").remove();
+                    } else {
+                        Swal.fire({
+                            icon: 'warning',
+
+                            title: 'Minimum One Emergency Light Inspection Required',
+                            text: 'At least One Emergency Light Inspection is required.',
+                            confirmButtonColor: '#3085d6'
+
+                        });
+                    }
+                });
             });
+
 
             function GetDepartment(selectElement) {
                 $.ajax({
@@ -1005,23 +1050,5 @@
                     $(this).find('select').select2();
                 });
             }
-
-
-            $(document).on('click', '.remove-row', function() {
-                let currentFormSets = $('.form-wrapper .form-set').length;
-
-                if (currentFormSets <= minFormSets) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Minimum One CheckList Required',
-                        text: 'At least One Emergency Light Inspection is required.',
-                        confirmButtonColor: '#3085d6'
-                    });
-                    return;
-                }
-                $(this).closest('.form-set').remove();
-                updatePageIndices();
-
-            });
         </script>
     @endpush

@@ -1,7 +1,7 @@
 <html>
 
 <head>
-    <title>Safety Permit | KARAM</title>
+    <title>Safety Work Permit | KARAM</title>
     <meta charset="UTF-8">
     <style>
         .badge {
@@ -86,7 +86,7 @@
                     </td>
                     <td border="0"
                         style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                        Safety Permit
+                        Safety Work Permit
                     </td>
                 </tr>
             </table>
@@ -118,7 +118,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
-                        Safety Permit
+                        Safety Work Permit
                     </td>
                 </tr>
             </table>
@@ -164,7 +164,7 @@
             </tr>
 
             <tr>
-                <td width="50%" style="padding:5px;"><b>Time(To)</b></td>
+                <td width="50%" style="padding:5px;"><b>Unit</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ getUnitname(isset($safetypermit->unit_id) ? $safetypermit->unit_id : '') }}</td>
@@ -248,14 +248,11 @@
 
         <table width="100%" style="width:100%;">
             <tr>
-                <td width="50%" style="padding:5px;"><b>Job Description</b></td>
+                <td width="20%" style="padding:5px;"><b>Job Description</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ isset($safetypermit->job_location_area) ? $safetypermit->job_location_area : '' }}</td>
+                    {{ isset($safetypermit->job_description) ? $safetypermit->job_description : '' }}</td>
             </tr>
-        </table>
-
-        <table width="100%" style="width:100%;">
             <tr>
                 <td width="20%" style="padding:5px;"><b>Shut Down Required (Yes/No)</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -313,6 +310,81 @@
                     @else
                         <p>N/A</p>
                     @endif
+                </td>
+            </tr>
+        </table>
+
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                        List of Workman involved in Job
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <br>
+        <div class="table-responsive">
+            <div class="col-md-12">
+                <table class="table table-bordered table-hover">
+                    <thead class=" text-white" style="background-color:#5b626b">
+                        <tr>
+                            <th>Employee Code / Visitor ID</th>
+                            <th>Name of Workman</th>
+                            <th>Designation</th>
+                            <th>Department / Company</th>
+                            <th>Nature of Job</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="workman-list-entries">
+                        @if (empty($workmaninvolved) ||
+                                $workmaninvolved->every(function ($item) {
+                                    return is_null($item->emp_id) &&
+                                        is_null($item->workman_name) &&
+                                        is_null($item->workman_desig) &&
+                                        is_null($item->department_name) &&
+                                        is_null($item->nature_of_job);
+                                }))
+                            <tr>
+                                <td colspan="5" class="text-center">No data is available</td>
+                            </tr>
+                        @else
+                            @foreach ($workmaninvolved as $workman)
+                                <tr>
+                                    <td>{{ $workman->emp_id }}</td>
+                                    <td>{{ $workman->workman_name }}</td>
+                                    <td>{{ $workman->workman_desig }}</td>
+                                    <td>{{ $workman->department_name }}</td>
+                                    <td>{{ $workman->nature_of_job }}</td>
+                                </tr>
+                            @endforeach
+                        @endif
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+        <br>
+
+        <table width="100%" style="width:100%;">
+            <tr>
+                <td width="20%" style="padding:5px;"><b>Are all above employee competent for
+                        assigned job & physically fit for duty (Yes/No)</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    @if ($safetypermit->assigned_job == 1)
+                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                    @endif
+                </td>
+            </tr>
+
+            <tr>
+                <td width="20%" style="padding:5px;"><b>Total number of attendance in Tool box Talk</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $safetypermit->attendance_toolbox_talk }}
                 </td>
             </tr>
         </table>
@@ -378,686 +450,614 @@
                                 <div style="font-weight: bold;">Others (if any, please specify):</div>
                                 <div style="margin-top: 5px;">{{ $item }}</div>
                             </td>
-                        @break
+                            @break
+                        @endif
+                    @endforeach
+                </tr>
+            @endif
+
+            <tr>
+                <td width="20%" style="padding:5px;"><b>Isolation fire panel</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    @if ($safetypermit->isolationpanel_checkbox == 1)
+                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                    @else
+                        <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
                     @endif
-                @endforeach
+                </td>
             </tr>
+
+            <tr>
+                <td width="20%" style="padding:5px;"><b>Isolation fire panel Description</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $safetypermit->isolationpanel_description ?? 'N/A' }}
+                </td>
+            </tr>
+        </table>
+
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;">
+                        Applicable for Confined Space Entry
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table width="100%" style="width:100%;">
+            <tr>
+                <td width="20%" style="padding:5px;"><b>O2</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $confined_space_entry->o2_percentage ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td width="20%" style="padding:5px;"><b>System Isolated</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    @if (isset($confined_space_entry) && $confined_space_entry->system_isolated == 1)
+                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                    @elseif (isset($confined_space_entry) && $confined_space_entry->system_isolated == 0)
+                        <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
+                    @else
+                        <p>N/A</p>
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td width="20%" style="padding:5px;"><b>Rescue System Available</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    @if (isset($confined_space_entry) && $confined_space_entry->rescue_system == 1)
+                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                    @elseif (isset($confined_space_entry) && $confined_space_entry->rescue_system == 0)
+                        <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
+                    @else
+                        <p>N/A</p>
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td width="20%" style="padding:5px;"><b>Confined Space Attendant</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    @if (isset($confined_space_entry) && $confined_space_entry->confined_attendant == 1)
+                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                    @elseif (isset($confined_space_entry) && $confined_space_entry->confined_attendant == 0)
+                        <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
+                    @else
+                        <p>N/A</p>
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td width="20%" style="padding:5px;"><b>Attendant Name</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $confined_space_entry->attendant_name ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td width="20%" style="padding:5px;"><b>Register for entry & exits</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    @if (optional($confined_space_entry)->register_entry_exits == 'on')
+                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                    @else
+                        <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td width="20%" style="padding:5px;"><b>Any Other Gas / PPM</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $confined_space_entry->other_gas ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td width="20%" style="padding:5px;"><b>PPM and is therefore safe to enter
+                        from</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $confined_space_entry->ppm_safe_to_enter ?? 'N/A' }}</td>
+            </tr>
+            <tr>
+                <td width="20%" style="padding:5px;"><b>To</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $confined_space_entry->to ?? 'N/A' }}</td>
+            </tr>
+        </table>
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                        Protective Equipment's to be Worn
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table width="100%" style="width:100%;">
+            @foreach ($safetypermit->mapped_protective_equip as $job => $details)
+                @foreach ($details['checkpoint_names'] as $checkpoint_name)
+                    <tr>
+                        <td width="20%" style="padding:5px;"><b>{{ $checkpoint_name }}</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                        </td>
+                    </tr>
+                @endforeach
+            @endforeach
+        </table>
+
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                        Name of Equipment's involved in Job
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table width="100%" style="width:100%;">
+            @foreach ($safetypermit->mapped_equiment_involved as $job => $details)
+                @foreach ($details['checkpoint_names'] as $checkpoint_name)
+                    <tr>
+                        <td width="20%" style="padding:5px;"><b>{{ $checkpoint_name }}</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                        </td>
+                    </tr>
+                @endforeach
+            @endforeach
+
+            <tr>
+                <td width="20%" style="padding:5px;"><b>Other If any</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $safetypermit->equiment_involved_others }}
+                </td>
+            </tr>
+        </table>
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                        Precaution To be Taken
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table width="100%" style="width:100%;">
+            @foreach ($safetypermit->mapped_precaution_taken as $job => $details)
+                @foreach ($details['checkpoint_names'] as $checkpoint_name)
+                    <tr>
+                        <td width="20%" style="padding:5px;"><b>{{ $checkpoint_name }}</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                        </td>
+                    </tr>
+                @endforeach
+            @endforeach
+        </table>
+
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                        Equipment's Check List
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table width="100%" style="width:100%;">
+            @foreach ($safetypermit->mapped_equipment_checklist as $job => $details)
+                @foreach ($details['checkpoint_names'] as $checkpoint_name)
+                    <tr>
+                        <td width="20%" style="padding:5px;"><b>{{ $checkpoint_name }}</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                        </td>
+                    </tr>
+                @endforeach
+            @endforeach
+
+
+            <tr>
+                <td width="20%" style="padding:5px;"><b>All Involved Equipment's have been
+                        inspected as per the inspection checklist prior to start work (Yes/No)</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    @if ($safetypermit->equipment_checklist_inspection == 1)
+                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
+                    @endif
+                </td>
+            </tr>
+        </table>
+
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                        Safe Work Instructions
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table width="100%" style="width:100%;font-family: freeserif; ">
+            @foreach ($safetypermit->mapped_safework_instruction as $job => $details)
+                @foreach ($details['checkpoint_names'] as $checkpoint_name)
+                    <tr>
+                        <td width="20%" style="padding:5px;"><b>{{ $checkpoint_name }}</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            <span style="color: #267709; width: 15px;">✔</span>
+                        </td>
+                    </tr>
+                @endforeach
+            @endforeach
+
+            <tr>
+                <td width="20%" style="padding:5px;"><b>Safe Work Procedure discussed in tool box
+                        talk before start the work
+                        (Yes/No)</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    @if ($safetypermit->toolbox_talk == 1)
+                        <span style="color: #267709; width: 15px;">✔</span>
+                    @endif
+                </td>
+            </tr>
+
+            <tr>
+                <td width="20%" style="padding:5px;"><b>Tool box Talk Given By (Name)</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $safetypermit->talk_givenby }}
+                </td>
+            </tr>
+        </table>
+
+
+
+
+        @if (isset($getEhSverification) && $safetypermit['permit_status'] >= 2)
+            <div style="width:100%;">
+                <table style="width:100%;">
+                    <tr>
+                        <td
+                            style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
+                            EHS Verification
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <table>
+
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('Approver Name') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ isset($getEhSverification->approve_reject_by) ? $getEhSverification->approve_reject_by : '' }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('Date') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ displaydateformat(isset($getEhSverification->date) ? $getEhSverification->date : '') }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('Time') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ displaytimeformat($getEhSverification && $getEhSverification->created_at ? $getEhSverification->created_at : '') }}
+
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Additional suggestion</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ isset($getEhSverification->remarks) ? $getEhSverification->remarks : '' }}</td>
+                </tr>
+                <tr>
+                    <td style="padding:5px;"><b>{{ __('Site Images') }}</b></td>
+                    <td style="padding:5px;">:</td>
+                    <td style="padding:5px;">
+                        @if ($getEhSverification && $getEhSverification->file_paths)
+                            @foreach (explode(',', $getEhSverification->file_paths) as $file_path)
+                                <a href="{{ asset($file_path) }}" target="_blank">
+                                    <img src="{{ asset($file_path) }}" alt="Signature" style="max-width: 10%;">
+                                </a>
+                            @endforeach
+                        @else
+                            <p>No files available</p>
+                        @endif
+                    </td>
+                </tr>
+
+            </table>
         @endif
 
-        <tr>
-            <td width="20%" style="padding:5px;"><b>Isolation fire panel</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                @if ($safetypermit->isolationpanel_checkbox == 1)
-                    <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
-                @else
-                    <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
-                @endif
-            </td>
-        </tr>
-
-        <tr>
-            <td width="20%" style="padding:5px;"><b>Isolation fire panel Description</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $safetypermit->isolationpanel_description ?? 'N/A' }}
-            </td>
-        </tr>
-    </table>
-
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td style="width:100%;background-color: #6c757d;color:#fff;padding: 10px 10px 10px;">
-                    Applicable for Confined Space Entry
-                </td>
-            </tr>
-        </table>
-    </div>
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="20%" style="padding:5px;"><b>O2</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $confined_space_entry->o2_percentage ?? 'N/A' }}</td>
-        </tr>
-        <tr>
-            <td width="20%" style="padding:5px;"><b>System Isolated</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                @if (isset($confined_space_entry) && $confined_space_entry->system_isolated == 1)
-                    <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
-                @elseif (isset($confined_space_entry) && $confined_space_entry->system_isolated == 0)
-                    <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
-                @else
-                    <p>N/A</p>
-                @endif
-            </td>
-        </tr>
-        <tr>
-            <td width="20%" style="padding:5px;"><b>Rescue System Available</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                @if (isset($confined_space_entry) && $confined_space_entry->rescue_system == 1)
-                    <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
-                @elseif (isset($confined_space_entry) && $confined_space_entry->rescue_system == 0)
-                    <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
-                @else
-                    <p>N/A</p>
-                @endif
-            </td>
-        </tr>
-        <tr>
-            <td width="20%" style="padding:5px;"><b>Confined Space Attendant</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                @if (isset($confined_space_entry) && $confined_space_entry->confined_attendant == 1)
-                    <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
-                @elseif (isset($confined_space_entry) && $confined_space_entry->confined_attendant == 0)
-                    <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
-                @else
-                    <p>N/A</p>
-                @endif
-            </td>
-        </tr>
-        <tr>
-            <td width="20%" style="padding:5px;"><b>Attendant Name</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $confined_space_entry->attendant_name ?? 'N/A' }}</td>
-        </tr>
-        <tr>
-            <td width="20%" style="padding:5px;"><b>Register for entry & exits</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                @if (optional($confined_space_entry)->register_entry_exits == 'on')
-                    <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
-                @else
-                    <b><i class="fa-solid fa-times" style="color: #f31008; width: 15px;">✖</i></b>
-                @endif
-            </td>
-        </tr>
-        <tr>
-            <td width="20%" style="padding:5px;"><b>Any Other Gas / PPM</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $confined_space_entry->other_gas ?? 'N/A' }}</td>
-        </tr>
-        <tr>
-            <td width="20%" style="padding:5px;"><b>PPM and is therefore safe to enter
-                    from</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $confined_space_entry->ppm_safe_to_enter ?? 'N/A' }}</td>
-        </tr>
-        <tr>
-            <td width="20%" style="padding:5px;"><b>To</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $confined_space_entry->to ?? 'N/A' }}</td>
-        </tr>
-    </table>
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td
-                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
-                    Protective Equipment's to be Worn
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <table width="100%" style="width:100%;">
-        @foreach ($safetypermit->mapped_protective_equip as $job => $details)
-            @foreach ($details['checkpoint_names'] as $checkpoint_name)
-                <tr>
-                    <td width="20%" style="padding:5px;"><b>{{ $checkpoint_name }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
-                    </td>
-                </tr>
-            @endforeach
-        @endforeach
-    </table>
-
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td
-                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
-                    Name of Equipment's involved in Job
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <table width="100%" style="width:100%;">
-        @foreach ($safetypermit->mapped_equiment_involved as $job => $details)
-            @foreach ($details['checkpoint_names'] as $checkpoint_name)
-                <tr>
-                    <td width="20%" style="padding:5px;"><b>{{ $checkpoint_name }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
-                    </td>
-                </tr>
-            @endforeach
-        @endforeach
-
-        <tr>
-            <td width="20%" style="padding:5px;"><b>Other If any</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $safetypermit->equiment_involved_others }}
-            </td>
-        </tr>
-    </table>
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td
-                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
-                    Precaution To be Taken
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <table width="100%" style="width:100%;">
-        @foreach ($safetypermit->mapped_precaution_taken as $job => $details)
-            @foreach ($details['checkpoint_names'] as $checkpoint_name)
-                <tr>
-                    <td width="20%" style="padding:5px;"><b>{{ $checkpoint_name }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
-                    </td>
-                </tr>
-            @endforeach
-        @endforeach
-    </table>
-
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td
-                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
-                    Equipment's Check List
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <table width="100%" style="width:100%;">
-        @foreach ($safetypermit->mapped_equipment_checklist as $job => $details)
-            @foreach ($details['checkpoint_names'] as $checkpoint_name)
-                <tr>
-                    <td width="20%" style="padding:5px;"><b>{{ $checkpoint_name }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
-                    </td>
-                </tr>
-            @endforeach
-        @endforeach
-
-
-        <tr>
-            <td width="20%" style="padding:5px;"><b>All Involved Equipment's have been
-                    inspected as per the inspection checklist prior to start work (Yes/No)</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                @if ($safetypermit->equipment_checklist_inspection == 1)
-                    <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
-                @endif
-            </td>
-        </tr>
-    </table>
-
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td
-                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
-                    Safe Work Instructions
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <table width="100%" style="width:100%;font-family: freeserif; ">
-        @foreach ($safetypermit->mapped_safework_instruction as $job => $details)
-            @foreach ($details['checkpoint_names'] as $checkpoint_name)
-                <tr>
-                    <td width="20%" style="padding:5px;"><b>{{ $checkpoint_name }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        <span style="color: #267709; width: 15px;">✔</span>
-                    </td>
-                </tr>
-            @endforeach
-        @endforeach
-
-        <tr>
-            <td width="20%" style="padding:5px;"><b>Safe Work Procedure discussed in tool box
-                    talk before start the work
-                    (Yes/No)</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                @if ($safetypermit->toolbox_talk == 1)
-                    <span style="color: #267709; width: 15px;">✔</span>
-                @endif
-            </td>
-        </tr>
-
-        <tr>
-            <td width="20%" style="padding:5px;"><b>Tool box Talk Given By (Name)</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $safetypermit->talk_givenby }}
-            </td>
-        </tr>
-    </table>
-
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td
-                    style="width:100%;background-color: #6c757d;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
-                    List of Workman involved in Job
-                </td>
-            </tr>
-        </table>
-    </div>
-    <br>
-    <div class="table-responsive">
-        <div class="col-md-12">
-            <table class="table table-bordered table-hover">
-                <thead class=" text-white" style="background-color:#5b626b">
+        @if (isset($getsafetyPermitExtension) &&
+                count($getsafetyPermitExtension) > 0 &&
+                ($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED ||
+                    ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
+                        $safetypermit['permit_extension_status'] == 1 &&
+                        $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED)))
+            <div style="width:100%;">
+                <table style="width:100%;">
                     <tr>
-                        <th>Employee Code / Visitor ID</th>
-                        <th>Name of Workman</th>
-                        <th>Designation</th>
-                        <th>Department / Company</th>
-                        <th>Nature of Job</th>
+                        <td
+                            style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
+                            Permit Extension
+                        </td>
                     </tr>
-                </thead>
-
-                <tbody id="workman-list-entries">
-                    @if (empty($workmaninvolved) ||
-                            $workmaninvolved->every(function ($item) {
-                                return is_null($item->emp_id) &&
-                                    is_null($item->workman_name) &&
-                                    is_null($item->workman_desig) &&
-                                    is_null($item->department_name) &&
-                                    is_null($item->nature_of_job);
-                            }))
-                        <tr>
-                            <td colspan="5" class="text-center">No data is available</td>
-                        </tr>
-                    @else
-                        @foreach ($workmaninvolved as $workman)
-                            <tr>
-                                <td>{{ $workman->emp_id }}</td>
-                                <td>{{ $workman->workman_name }}</td>
-                                <td>{{ $workman->workman_desig }}</td>
-                                <td>{{ $workman->department_name }}</td>
-                                <td>{{ $workman->nature_of_job }}</td>
-                            </tr>
-                        @endforeach
-                    @endif
-                </tbody>
+                </table>
+            </div>
+            <table>
+                @foreach ($getsafetyPermitExtension as $getsafetyPermitExtension)
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Name</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ isset($getsafetyPermitExtension->created_by) ? getUsername($getsafetyPermitExtension->created_by) : '' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Date</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ displaydateformat(isset($getsafetyPermitExtension->date) ? $getsafetyPermitExtension->date : '') }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>To Time</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ displaytimeformat(isset($getsafetyPermitExtension->to_time) ? $getsafetyPermitExtension->to_time : '') }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Reason</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ isset($getsafetyPermitExtension->remarks) ? $getsafetyPermitExtension->remarks : '' }}
+                        </td>
+                    </tr>
+                @endforeach
             </table>
+        @endif
 
-        </div>
-    </div>
-    <br>
-
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="20%" style="padding:5px;"><b>Are all above employee competent for
-                    assigned job & physically fit for duty (Yes/No)</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                @if ($safetypermit->assigned_job == 1)
-                    <b><i class="fa-solid fa-check" style="color: #267709; width: 15px;">✔</i></b>
-                @endif
-            </td>
-        </tr>
-
-        <tr>
-            <td width="20%" style="padding:5px;"><b>Total number of attendance in Tool box Talk</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ $safetypermit->attendance_toolbox_talk }}
-            </td>
-        </tr>
-    </table>
-    @if (isset($getEhSverification) && $safetypermit['permit_status'] >= 2)
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
-                        EHS Verification
-                    </td>
-                </tr>
+        @if (isset($getpermitextensionapproval) &&
+                count($getpermitextensionapproval) > 0 &&
+                ($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL ||
+                    ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
+                        $safetypermit['permit_extension_status'] == 1)))
+            <div style="width:100%;">
+                <table style="width:100%;">
+                    <tr>
+                        <td
+                            style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
+                            Permit Extension Approval
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <table>
+                @foreach ($getpermitextensionapproval as $getpermitextensionapproval)
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>{{ __('ptw.approver_name') }}</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ isset($getpermitextensionapproval->approve_reject_by) ? $getpermitextensionapproval->approve_reject_by : '' }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>{{ __('ptw.inspection_date') }}</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ displaydateformat(isset($getpermitextensionapproval->date) ? $getpermitextensionapproval->date : '') }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>{{ __('ptw.inspection_approve_time') }}</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ displaytimeformat(null != $getpermitextensionapproval->created_at ? $getpermitextensionapproval->created_at : '') }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Reason</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ isset($getpermitextensionapproval->remarks) ? $getpermitextensionapproval->remarks : '' }}
+                        </td>
+                    </tr>
+                @endforeach
             </table>
-        </div>
-        <table>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($getEhSverification->approve_reject_by) ? $getEhSverification->approve_reject_by : '' }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ displaydateformat(isset($getEhSverification->date) ? $getEhSverification->date : '') }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ displaytimeformat($getEhSverification && $getEhSverification->created_at ? $getEhSverification->created_at : '') }}
-
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Additional suggestion</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($getEhSverification->remarks) ? $getEhSverification->remarks : '' }}</td>
-            </tr>
-            <tr>
-                <td style="padding:5px;"><b>{{ __('Site Images') }}</b></td>
-                <td style="padding:5px;">:</td>
-                <td style="padding:5px;">
-                    @if ($getEhSverification && $getEhSverification->file_paths)
-                        @foreach (explode(',', $getEhSverification->file_paths) as $file_path)
-                            <a href="{{ asset($file_path) }}" target="_blank">
-                                <img src="{{ asset($file_path) }}" alt="Signature" style="max-width: 10%;">
-                            </a>
-                        @endforeach
-                    @else
-                        <p>No files available</p>
-                    @endif
-                </td>
-            </tr>
-
-        </table>
-    @endif
-
-    @if (
-        isset($getsafetyPermitExtension) &&
-        count($getsafetyPermitExtension) > 0 &&
-            ($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED ||
-                ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
-                    $safetypermit['permit_extension_status'] == 1 &&
-                    $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED)))
-        <div style="width:100%;">
-            <table style="width:100%;">
+        @endif
+        @if (isset($getEhsapproval) &&
+                ($safetypermit['permit_status'] != 8 &&
+                    $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
+                    $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED &&
+                    $safetypermit['permit_status'] != 5 &&
+                    ($safetypermit['permit_status'] > 3 || $safetypermit['permit_status'] > 4)))
+            <div style="width:100%;">
+                <table style="width:100%;">
+                    <tr>
+                        <td
+                            style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
+                            Forwarded to Plant Head Aproval
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <table>
                 <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
-                        Permit Extension
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <table>
-            @foreach ($getsafetyPermitExtension as $getsafetyPermitExtension)
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>Name</b></td>
+                    <td width="50%" style="padding:5px;"><b>{{ __('ptw.approver_name') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ isset($getsafetyPermitExtension->created_by) ? getUsername($getsafetyPermitExtension->created_by) : '' }}
+                        {{ isset($getEhsapproval->approve_reject_by) ? $getEhsapproval->approve_reject_by : '' }}
                     </td>
                 </tr>
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>Date</b></td>
+                    <td width="50%" style="padding:5px;"><b>{{ __('ptw.inspection_date') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ displaydateformat(isset($getsafetyPermitExtension->date) ? $getsafetyPermitExtension->date : '') }}
+                        {{ displaydateformat(isset($getEhsapproval->date) ? $getEhsapproval->date : '') }}
                     </td>
                 </tr>
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>To Time</b></td>
+                    <td width="50%" style="padding:5px;"><b>{{ __('ptw.inspection_approve_time') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ displaytimeformat(isset($getsafetyPermitExtension->to_time) ? $getsafetyPermitExtension->to_time : '') }}
+                        {{ displaytimeformat(null != $getEhsapproval->created_at ? $getEhsapproval->created_at : '') }}
                     </td>
                 </tr>
                 <tr>
                     <td width="50%" style="padding:5px;"><b>Reason</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ isset($getsafetyPermitExtension->remarks) ? $getsafetyPermitExtension->remarks : '' }}
-                    </td>
-                </tr>
-            @endforeach
-        </table>
-    @endif
-
-    @if (
-        isset($getpermitextensionapproval) &&
-        count($getpermitextensionapproval) > 0 &&
-            ($safetypermit['permit_status'] >= STATUS_PERMIT_EXTENDED_APPROVAL ||
-                ($safetypermit['permit_status'] >= STATUS_EHS_APPROVE_PENDING &&
-                    $safetypermit['permit_extension_status'] == 1)))
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
-                        Permit Extension Approval
-                    </td>
+                        {{ isset($getEhsapproval->remarks) ? $getEhsapproval->remarks : '' }}</td>
                 </tr>
             </table>
-        </div>
-        <table>
-            @foreach ($getpermitextensionapproval as $getpermitextensionapproval)
+        @endif
+
+        @if (isset($getplantheadapproval) &&
+                ($safetypermit['permit_status'] >= STATUS_PLANT_HEAD_APPROVED &&
+                    $safetypermit['permit_status'] != STATUS_EHS_RESUME &&
+                    $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
+                    $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED_APPROVAL))
+            <div style="width:100%;">
+                <table style="width:100%;">
+                    <tr>
+                        <td
+                            style="width:100%;background-color: #ce0f1f;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                            Plant Head Approval
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <table>
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
+                    <td width="50%" style="padding:5px;"><b>{{ __('ptw.approver_name') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ isset($getpermitextensionapproval->approve_reject_by) ? $getpermitextensionapproval->approve_reject_by : '' }}
+                        {{ isset($getplantheadapproval->approve_reject_by) ? $getplantheadapproval->approve_reject_by : '' }}
                     </td>
                 </tr>
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                    <td width="50%" style="padding:5px;"><b>{{ __('ptw.inspection_date') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ displaydateformat(isset($getpermitextensionapproval->date) ? $getpermitextensionapproval->date : '') }}
+                        {{ displaydateformat(isset($getplantheadapproval->date) ? $getplantheadapproval->date : '') }}
                     </td>
                 </tr>
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
+                    <td width="50%" style="padding:5px;"><b>{{ __('ptw.inspection_approve_time') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ displaytimeformat(null != $getpermitextensionapproval->created_at ? $getpermitextensionapproval->created_at : '') }}
+                        {{ displaytimeformat(null != $getplantheadapproval->created_at ? $getplantheadapproval->created_at : '') }}
                     </td>
                 </tr>
                 <tr>
                     <td width="50%" style="padding:5px;"><b>Reason</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ isset($getpermitextensionapproval->remarks) ? $getpermitextensionapproval->remarks : '' }}
-                    </td>
-                </tr>
-            @endforeach
-        </table>
-    @endif
-    @if (isset($getEhsapproval) &&
-            ($safetypermit['permit_status'] != 8 &&
-                $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
-                $safetypermit['permit_status'] != STATUS_PLANTHEAD_REJECTED &&
-                $safetypermit['permit_status'] != 5 &&
-                ($safetypermit['permit_status'] > 3 || $safetypermit['permit_status'] > 4)))
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#FFF;font-weight:bold;padding: 10px 10px 10px;">
-                        EHS Approval
-                    </td>
+                        {{ isset($getplantheadapproval->remarks) ? $getplantheadapproval->remarks : '' }}</td>
                 </tr>
             </table>
-        </div>
-        <table>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($getEhsapproval->approve_reject_by) ? $getEhsapproval->approve_reject_by : '' }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ displaydateformat(isset($getEhsapproval->date) ? $getEhsapproval->date : '') }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ displaytimeformat(null != $getEhsapproval->created_at ? $getEhsapproval->created_at : '') }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Reason</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($getEhsapproval->remarks) ? $getEhsapproval->remarks : '' }}</td>
-            </tr>
-        </table>
-    @endif
-
-    @if (isset($getplantheadapproval) &&
-            ($safetypermit['permit_status'] >= STATUS_PLANT_HEAD_APPROVED &&
-                $safetypermit['permit_status'] != STATUS_EHS_RESUME &&
-                $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED &&
-                $safetypermit['permit_status'] != STATUS_PERMIT_EXTENDED_APPROVAL))
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
-                        Plant Head Approval
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <table>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($getplantheadapproval->approve_reject_by) ? $getplantheadapproval->approve_reject_by : '' }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ displaydateformat(isset($getplantheadapproval->date) ? $getplantheadapproval->date : '') }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ displaytimeformat(null != $getplantheadapproval->created_at ? $getplantheadapproval->created_at : '') }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Reason</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($getplantheadapproval->remarks) ? $getplantheadapproval->remarks : '' }}</td>
-            </tr>
-        </table>
-    @endif
+        @endif
 
 
-    @if ($safetypermit['permit_status'] == STATUS_CLOSED)
-        <div style="width:100%;">
-            <table style="width:100%;">
+        @if ($safetypermit['permit_status'] == STATUS_CLOSED)
+            <div style="width:100%;">
+                <table style="width:100%;">
+                    <tr>
+                        <td
+                            style="width:100%;background-color: #ce0f1f;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                            Permit Closed
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <table>
                 <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
-                        Permit Closed
+                    <td width="50%" style="padding:5px;"><b>Closed By</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ getUsername(isset($safetypermit->closed_by) ? $safetypermit->closed_by : '') }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Cancelled Date</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ isset($safetypermit->closed_date) ? Displaydateformat($safetypermit->closed_date) : '' }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Reason</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ isset($safetypermit->close_remarks) ? $safetypermit->close_remarks : '' }}
                     </td>
                 </tr>
             </table>
-        </div>
-        <table>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Closed By</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getUsername(isset($safetypermit->closed_by) ? $safetypermit->closed_by : '') }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Cancelled Date</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($safetypermit->closed_date) ? Displaydateformat($safetypermit->closed_date) : '' }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Reason</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($safetypermit->close_remarks) ? $safetypermit->close_remarks : '' }}
-                </td>
-            </tr>
-        </table>
-    @endif
-    @if ($safetypermit['permit_status'] == STATUS_CANCELLED)
-        <div style="width:100%;">
-            <table style="width:100%;">
+        @endif
+        @if ($safetypermit['permit_status'] == STATUS_CANCELLED)
+            <div style="width:100%;">
+                <table style="width:100%;">
+                    <tr>
+                        <td
+                            style="width:100%;background-color: #ce0f1f;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
+                            Permit Cancelled
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <table>
                 <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#fff;font-weight:bold;padding: 10px 10px 10px;">
-                        Permit Cancelled
+                    <td width="50%" style="padding:5px;"><b>Cancelled By</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ getUsername(isset($safetypermit->cancelled_by) ? $safetypermit->cancelled_by : '') }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Cancelled Date</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ isset($safetypermit->cancelled_date) ? Displaydateformat($safetypermit->cancelled_date) : '' }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>Reason</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ isset($safetypermit->cancel_remarks) ? $safetypermit->cancel_remarks : '' }}
                     </td>
                 </tr>
             </table>
-        </div>
-        <table>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Cancelled By</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getUsername(isset($safetypermit->cancelled_by) ? $safetypermit->cancelled_by : '') }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Cancelled Date</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($safetypermit->cancelled_date) ? Displaydateformat($safetypermit->cancelled_date) : '' }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Reason</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ isset($safetypermit->cancel_remarks) ? $safetypermit->cancel_remarks : '' }}
-                </td>
-            </tr>
-        </table>
-    @endif
+        @endif
 
 </body>
 

@@ -61,7 +61,7 @@ class Work extends Model
         $query = $query->leftJoin('masters_location', 'masters_work.location', '=', 'masters_location.id');
         $query = $query->leftJoin('masters_unit', 'masters_work.unit', '=', 'masters_unit.id');
         $query = $query->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id');
-        $query = $query->where('masters_work.status',1);
+        $query = $query->where('masters_work.status', 1);
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -213,29 +213,38 @@ class Work extends Model
     // }
     public function store($worktemp)
     {
+
         $insertedRecords = [];
         $batchSize = 500;
 
         // Convert to array
         $worktemp = $worktemp->toArray();
-
+// dd($worktemp);
         // Process in chunks
         foreach (array_chunk($worktemp, $batchSize) as $chunk) {
             foreach ($chunk as $item) {
-                // Check existence of related entities
+                // Skip if 'emp_id' is not set or empty
+                if (empty($item['emp_id'])) {
+                    continue;
+                }
+
                 $companyExists = DB::table('company_management')->where('short_name', $item['company'])->first();
-                $unitExists = DB::table('masters_unit')->where('unit_name', $item['unit'])->first();
-                $departmentExists = DB::table('masters_department')->where('department_name', $item['department'])->first();
-               // dd($companyExists,$unitExists,$departmentExists,$item);
-                // Validate existence
                 // if (!$companyExists) {
-                //     $this->updateErrorStatus($item['emp_id'], "Company does not exist.");
                 //     continue;
-                // } elseif (!$unitExists) {
-                //     $this->updateErrorStatus($item['emp_id'], "Unit does not exist.");
+                // }
+
+                $locationExists = DB::table('masters_location')->where('company_id', $companyExists->id)->where('location_name', $item['subdepartment'])->first();
+                // if (!$locationExists) {
                 //     continue;
-                // } elseif (!$departmentExists) {
-                //     $this->updateErrorStatus($item['emp_id'], "Department does not exist.");
+                // }
+
+                $unitExists = DB::table('masters_unit')->where('company_id', $companyExists->id)->where('location_id', $locationExists->id)->where('unit_name', $item['unit'])->first();
+                // if (!$unitExists) {
+                //     continue;
+                // }
+
+                $departmentExists = DB::table('masters_department')->where('company_id', $companyExists->id)->where('location_id', $locationExists->id)->where('unit_id', $unitExists->id)->where('department_name', $item['department'])->first();
+                // if (!$departmentExists) {
                 //     continue;
                 // }
 
@@ -249,7 +258,7 @@ class Work extends Model
                     'exit_date' => isset($item['exit_date']) ? DBdatetimeformat($item['exit_date']) : null,
                     'mobile_no' => $item['mobile_no'] ?? null,
                     'company' => $companyExists->id ?? null,
-                    'subdepartment' => $item['subdepartment'] ?? null,
+                    'location' => $locationExists->id ?? null,
                     'unit' => $unitExists->id ?? null,
                     'department' => $departmentExists->id ?? null,
                     'designation' => $item['designation'] ?? null,
@@ -258,7 +267,7 @@ class Work extends Model
                     'status' => $item['status'],
                     'created_by' => Auth::id(),
                 ];
-                // dd($valuesToInsertOrUpdate ,$item );
+
                 // Check if record exists
                 if ($this->where('emp_id', $item['emp_id'])->exists()) {
                     $valuesToInsertOrUpdate['updated_at'] = now();
@@ -271,10 +280,7 @@ class Work extends Model
 
                 // Add to insertedRecords for tracking
                 $insertedRecords[] = array_merge(['emp_id' => $item['emp_id']], $valuesToInsertOrUpdate);
-
             }
-
-
         }
 
 
@@ -320,8 +326,9 @@ class Work extends Model
 
         return Worktemp::where('emp_id', $emp_id)->update($update_data);
     }
-    public function getEmployeeID(){
-        return $this->where('status',1)->where('trash','NO')->get();
+    public function getEmployeeID()
+    {
+        return $this->where('status', 1)->where('trash', 'NO')->get();
     }
 
     public function statuschange($id)
@@ -367,6 +374,7 @@ class Work extends Model
         $query = $query->leftJoin('masters_unit', 'masters_work.unit', '=', 'masters_unit.id');
         $query = $query->leftJoin('masters_location', 'masters_work.location', '=', 'masters_location.id');
         $query = $query->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id');
+        $query = $query->where('masters_work.status', 1);
 
 
         if (!empty($request->search)) {

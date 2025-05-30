@@ -174,7 +174,7 @@
                                                     <thead class="bg-secondary" style="color: #ffff">
 
                                                         <tr>
-                                                            <th colspan="3">
+                                                            <th colspan="2">
                                                                 Check Points
                                                             </th>
 
@@ -204,24 +204,24 @@
                                                                         name="sub_type_id[{{ $checklist->checklist_sub_type_id }}][]"
                                                                         value="{{ $checklist->checklist_id }}">
 
-                                                                    @if ($index == 0)
+                                                                    {{-- @if ($index == 0)
                                                                         <td rowspan="{{ $rowCount }}"
                                                                             style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
                                                                             {{ $checklist->subcategory_name }}
                                                                         </td>
-                                                                    @endif
+                                                                    @endif --}}
                                                                     <td colspan="2"
-                                                                        style="border: 1px solid black; padding: 8px;">
+                                                                        style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle;">
                                                                         {{ $checklist->checklist_name }}
-
                                                                     </td>
+
                                                                     @php
                                                                         $options = explode(',', $checklist->type);
                                                                     @endphp
 
                                                                     @foreach ($getoption as $option)
                                                                         <td
-                                                                            style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                                            style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle;">
                                                                             <label class="radio-label">
                                                                                 <input type="radio"
                                                                                     name="checklist_type_status[{{ $checklist->checklist_id }}]"
@@ -231,10 +231,10 @@
                                                                         </td>
                                                                     @endforeach
                                                                     <td
-                                                                        style="border: 1px solid black; padding: 8px; text-align: center;">
+                                                                        style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle;">
                                                                         <input type="number"
                                                                             name="quantity[{{ $checklist->checklist_id ?? '' }}]"
-                                                                            min="1" class="form-control">
+                                                                            min="0" class="form-control">
                                                                     </td>
 
                                                                     <td
@@ -253,7 +253,7 @@
                                         </div>
 
 
-                                        @if ($signature_upload->signature_upload != '')
+                                        {{-- @if ($signature_upload->signature_upload != '')
                                             <label class="form-label view_label">Requestor Signature</label>
 
                                             <p>
@@ -283,14 +283,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                 </div>
                                 <hr>
                                 <div class="submit-button" style="text-align: right;">
                                     <x-button-submit class="submit"></x-button-submit>
                                     <x-button-reset class="submit"></x-button-reset>
-                                    <x-button-cancel
-                                        href="{{ admin_url('ohc/inspection/list') }}"></x-button-cancel>
+                                    <x-button-cancel href="{{ admin_url('ohc/inspection/list') }}"></x-button-cancel>
                                 </div>
 
                                 </form>
@@ -314,12 +313,6 @@
                 e.preventDefault();
                 location.reload();
             });
-        });
-
-        var IssueDatepicker = flatpickr("#issue_date", {
-            dateFormat: "d-m-Y",
-            minDate: new Date()
-
         });
         var Datepicker = flatpickr("#date_of_inspection", {
             dateFormat: "d-m-Y",
@@ -364,7 +357,7 @@
                     signature_image: {
                         required: true,
                         extension: "png|jpeg|jpg",
-                       filesize: 15728640,
+                        filesize: 15728640,
                     },
                     date_of_inspection: {
                         required: true
@@ -443,17 +436,22 @@
                 return $('input[name="' + param + '"]:checked').length > 0;
             }, "Please select an option");
 
-            // Custom method for quantity field
+            // Custom method for quantity
             $.validator.addMethod("quantityRequired", function(value, element) {
                 var checklistId = $(element).attr('name').match(/\d+/);
                 if (checklistId && checklistId[0]) {
-                    return $('input[name="checklist_type_status[' + checklistId[0] + ']"]:checked').length >
-                        0 ?
-                        $.trim(value).length > 0 :
-                        true;
+                    var selectedValue = $('input[name="checklist_type_status[' + checklistId[0] +
+                        ']"]:checked').val();
+
+                    if (selectedValue === "YES") {
+                        return $.trim(value).length > 0 && parseInt(value, 10) >= 1;
+                    } else if (selectedValue === "NO" || selectedValue === "N/A") {
+                        return $.trim(value).length > 0 && parseInt(value, 10) === 0;
+                    }
                 }
                 return true;
-            }, "Please provide quantity");
+            }, "");
+
 
             // Custom method for remarks field
             $.validator.addMethod("remarksRequired", function(value, element) {
@@ -489,21 +487,29 @@
                     maxlength: "Remarks must not exceed 600 characters"
                 };
             });
-
-            // Add rules for quantity fields
+            // Add rules for quantity textarea
             $('input[name^="quantity"]').each(function() {
-                var name = $(this).attr("name");
-                validator.settings.rules[name] = {
+                var input = $(this);
+                var checklistId = input.attr('name').match(/\d+/)[0];
+
+                input.rules("add", {
                     quantityRequired: true,
-                    digits: true
-                };
-                validator.settings.messages[name] = {
-                    quantityRequired: "Quantity is required if an option is selected",
-                    digits: "Quantity should be numeric"
-                };
+                    messages: {
+                        quantityRequired: function() {
+                            var selectedValue = $('input[name="checklist_type_status[' +
+                                checklistId + ']"]:checked').val();
+                            if (selectedValue === "YES") {
+                                return "Please enter quantity greater than or equal to 1.";
+                            } else if (selectedValue === "NO" || selectedValue === "N/A") {
+                                return "Quantity must be 0 when status is NO or N/A.";
+                            }
+                            return "Please enter a valid quantity.";
+                        }
+                    }
+                });
             });
+
+
         });
-
-
     </script>
 @endpush

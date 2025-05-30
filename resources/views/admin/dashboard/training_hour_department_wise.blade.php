@@ -32,12 +32,12 @@
         },
         plotOptions: {
             bar: {
-                borderRadius: 10,
+                columnWidth: '10%',
                 horizontal: false,
-                distributed: true // ✅ Enables individual bar colors
+                distributed: true
             }
         },
-        colors: colors, // ✅ Apply individual colors
+        colors: colors,
         dataLabels: {
             enabled: true
         },

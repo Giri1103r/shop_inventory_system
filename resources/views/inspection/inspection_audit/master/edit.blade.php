@@ -32,9 +32,9 @@
                                     <form method="POST" id="auditTaskAdd"
                                         action="{{ admin_url('audit/master/task/edit/submit') }}">
                                         @csrf
-                                        
+
                                         <input type="hidden" name="id" id="id"
-                                        value="{{ encryptId($audit_task->id) }}">
+                                            value="{{ encryptId($audit_task->id) }}">
 
                                         <div class="row">
 
@@ -50,7 +50,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Task Name</label>
                                                     <input type="text" name="task_name" id = "task_name"
-                                                        class="form-control" placeholder="Task Name" value="{{ $audit_task->task_name }}">
+                                                        class="form-control" placeholder="Task Name"
+                                                        value="{{ $audit_task->task_name }}">
                                                 </div>
                                             </div>
 
@@ -87,6 +88,18 @@
                         minlength: 3,
                         maxlength: 200,
                         pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
+                        remote: {
+                            url: '{{ admin_url('audit/master/task/unique') }}',
+                            type: 'post',
+                            data: {
+                                task_name: function() {
+                                    return $('#task_name').val();
+                                },
+                                 id: function() {
+                                    return $('#id').val();
+                                }
+                            }
+                        }
                     }
 
                 },
@@ -95,9 +108,10 @@
                         required: "Task Name is required.",
                         minlength: "Task Name must be at least 3 characters.",
                         maxlength: "Task Name cannot exceed 200 characters.",
-                        pattern: "Must be alphanumeric and accept the mentioned special characters: (-, _, ‘, “, ())."
+                        pattern: "Must be alphanumeric and accept the mentioned special characters: (-, _, ‘, “, ()).",
+                        remote: "Task Name already exists."
                     }
-                },  
+                },
 
                 errorElement: 'span',
                 errorPlacement: function(error, element) {

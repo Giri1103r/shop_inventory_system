@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                   OHC DAILY VITAL EQUIPMENT </td>
+                    OHC DAILY VITAL EQUIPMENT </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -242,7 +242,7 @@
                     @php $srNo++; @endphp
                 @endforeach
             @endforeach
-            @php
+            {{-- @php
                 $signature = GetOHCSignature(
                     $daily_vital->created_by,
                     $daily_vital->id,
@@ -255,6 +255,17 @@
                     <img src="{{ admin_url($signature) }}" alt="Checked By Signature"
                         style="height: 50px;">
                     <div>Checked & Prepared By: {{ getUsername($daily_vital->created_by) }}</div>
+                </td>
+            </tr> --}}
+            <tr>
+                <td colspan="5"
+                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    @if (isset($daily_vital->created_by))
+                        <div>Checked & Prepared By: {{ getUsername($daily_vital->created_by) }}</div>
+                    @else
+                        <div>Not Yet Checked</div>
+                    @endif
+
                 </td>
             </tr>
 

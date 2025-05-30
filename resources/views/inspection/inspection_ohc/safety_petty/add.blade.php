@@ -52,9 +52,15 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Issue Date</label>
-                                                    <input type="text" name ="issue_date" id="issue_date"
-                                                        class="form-control" placeholder="Issue Date"
-                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name ="issue_date" id="issue_date"
+                                                            class="form-control" placeholder="Issue Date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -79,19 +85,16 @@
                                             </div>
 
                                             <div id="form-wrapper">
+                                                <div class="card-header-inner d-flex justify-content-between">
+                                                    <h4 class="text-white ms-2">Safety Petty Logbook CheckList</h4>
+                                                    <button class="btn btn-primary add-row mb-2 " type="button"
+                                                        id="add-row"
+                                                        style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                        Add
+                                                    </button>
+                                                </div>
                                                 <div class="form-set mb-3">
-                                                    <div class="card-header-inner">
-                                                        <h4 class="text-white">Safety Petty Logbook CheckList</h4>
-                                                    </div>
-                                                    <div class="d-flex justify-content-end">
-                                                        <button class="btn btn-primary add-row me-3" type="button"
-                                                            id="add-row" style="width: 84px;">
-                                                            Add
-                                                        </button>
-                                                        <button type="button" class="btn btn-danger remove-row">
-                                                            <i class="fa-solid fa-trash"></i> Remove
-                                                        </button>
-                                                    </div>
+
                                                     <div class="row">
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
@@ -101,25 +104,25 @@
                                                                     value="SPLB-00001" readonly>
                                                             </div>
                                                         </div>
-
-                                                        <div class="col-md-4 mt-2">
-                                                            <div class="form-group form-input">
-                                                                <label class="form-label require">Employee Name </label>
-                                                                <select name="emp_id[1]" id="emp_id"
-                                                                    class="form-control single-select" style="width: 100%">
-                                                                    <option value="">Select Employee Name</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Employee Code</label>
-                                                                <input type="text" name="employee_code[1]"
-                                                                    id="employee_code" class="form-control"
-                                                                    placeholder="Employee Code" value="">
+                                                                <select name="employee_code[1]" id="employee_code"
+                                                                    class="form-control single-select" style="width: 100%">
+                                                                    <option value="">Select Employee Code</option>
+                                                                </select>
                                                             </div>
                                                         </div>
+                                                        <div class="col-md-4 mt-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Employee Name </label>
+                                                                <input type="text" name="emp_name[1]" id="emp_name"
+                                                                    class="form-control" placeholder="Employee Name"
+                                                                    value="" readonly>
+                                                            </div>
+                                                        </div>
+
+
 
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
@@ -149,9 +152,14 @@
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Date</label>
-                                                                <input type="text" name ="date[1]" id="date"
-                                                                    class="form-control date-picker" placeholder="Date"
-                                                                    value="">
+                                                                <div class="input-group date form-input custom-height">
+                                                                    <input type="text" name ="date[1]" id="date"
+                                                                        class="form-control date-picker"
+                                                                        placeholder="Date" value="">
+                                                                    <div class="input-group-addon input-group-text">
+                                                                        <span class="fa fa-calendar"></span>
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                         </div>
 
@@ -207,6 +215,12 @@
                                                                 <label class="form-label require">Remark</label>
                                                                 <textarea name="remark[1]" class="form-control" placeholder="Remark" rows="3"></textarea>
                                                             </div>
+                                                        </div>
+
+                                                        <div class="col-md-2 text-right  mt-4">
+                                                            <button class="btn btn-danger remove-row" type="button"
+                                                                style="margin:10px;"><i class="fa fa-trash"></i></button>
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -290,9 +304,11 @@
                         type: 'GET',
                         dataType: 'json',
                         success: function(data) {
-                            departmentSelect.empty().append('<option value="">Select Department</option>');
+                            departmentSelect.empty().append(
+                                '<option value="">Select Department</option>');
                             $.each(data, function(key, value) {
-                                departmentSelect.append('<option value="' + value.id + '">' + value.name + '</option>');
+                                departmentSelect.append('<option value="' + value.id +
+                                    '">' + value.name + '</option>');
                             });
                             departmentSelect.trigger('change');
                         },
@@ -306,9 +322,10 @@
                 }
             });
 
-            $('#emp_id').select2({
+            // getting the employee/worker details
+            $('#employee_code').select2({
                 ajax: {
-                    url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
+                    url: '{{ admin_url('ohc/prescribe-to-patient/fetchemployeename') }}',
                     dataType: 'json',
                     delay: 250,
                     data: function(params) {
@@ -332,10 +349,43 @@
                 selectionCssClass: 'form-control'
             });
 
+            // department and number & emp name
+
+            $(document).on('change', '#employee_code', function() {
+                var empId = $(this).val();
+
+
+
+                if (empId) {
+                    $.ajax({
+                        url: "{{ admin_url('ohc/prescribe-to-patient/emp-details/') }}" +
+                            empId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.employee) {
+                                $('#emp_name').val(response.employee.emp_name).prop(
+                                    'readonly', true);
+
+
+                            } else {
+                                alert("No employee details found.");
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching employee details. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#emp_name').val('').prop('readonly', false);
+                }
+
+            });
+
             function initEmpSelect2(selector) {
                 $(selector).select2({
                     ajax: {
-                        url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
+                        url: '{{ admin_url('ohc/prescribe-to-patient/fetchemployeename') }}',
                         dataType: 'json',
                         delay: 250,
                         data: function(params) {
@@ -360,7 +410,39 @@
                     placeholder: "Select Employee Name",
                     width: '100%'
                 });
+
+                // Bind change event specific to the current selector
+                $(selector).off('change').on('change', function() {
+                    var empId = $(this).val();
+                    var formIndex = $(this).attr('id').split('-')[1]; // e.g., "employee_code-0" → 0
+                    var nameInput = `#emp_name-${formIndex}`;
+
+                    if (empId) {
+                        $.ajax({
+                            url: "{{ admin_url('ohc/prescribe-to-patient/emp-details/') }}" +
+                                empId,
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(response) {
+                                if (response.employee) {
+                                    $(nameInput).val(response.employee.emp_name).prop(
+                                        'readonly', true);
+                                } else {
+                                    alert("No employee details found.");
+                                    $(nameInput).val('').prop('readonly', false);
+                                }
+                            },
+                            error: function(xhr) {
+                                alert('Error fetching employee details. Please try again.');
+                                $(nameInput).val('').prop('readonly', false);
+                            }
+                        });
+                    } else {
+                        $(nameInput).val('').prop('readonly', false);
+                    }
+                });
             }
+
 
             $('#amnt_givenby_id').select2({
                 ajax: {
@@ -478,23 +560,23 @@
                 });
             }
 
-            $('#amnt_givenby_id').on('select2:select', function(e) {
-                var loginId = $(this).val();
-                if (loginId) {
-                    updateGivenBySignatureField(loginId);
-                } else {
-                    $('#signature_givenby').hide();
-                }
-            });
+            // $('#amnt_givenby_id').on('select2:select', function(e) {
+            //     var loginId = $(this).val();
+            //     if (loginId) {
+            //         updateGivenBySignatureField(loginId);
+            //     } else {
+            //         $('#signature_givenby').hide();
+            //     }
+            // });
 
-            $('#amnt_receivedby_id').on('select2:select', function(e) {
-                var loginId = $(this).val();
-                if (loginId) {
-                    updateReceivedBySignatureField(loginId);
-                } else {
-                    $('#signature_receivedby').hide();
-                }
-            });
+            // $('#amnt_receivedby_id').on('select2:select', function(e) {
+            //     var loginId = $(this).val();
+            //     if (loginId) {
+            //         updateReceivedBySignatureField(loginId);
+            //     } else {
+            //         $('#signature_receivedby').hide();
+            //     }
+            // });
 
             $.validator.addMethod("noSpaces", function(value, element) {
                 return this.optional(element) || value.trim().length > 0;
@@ -502,7 +584,7 @@
 
             $('#sftyAdd').validate({
                 rules: {
-                    'emp_id[1]': {
+                    'emp_name[1]': {
                         required: true,
                     },
                     'employee_code[1]': {
@@ -558,7 +640,7 @@
                     }
                 },
                 messages: {
-                    'emp_id[1]': {
+                    'emp_name[1]': {
                         required: "Employee Name is Required",
                     },
                     'employee_code[1]': {
@@ -592,11 +674,11 @@
                     },
                     'signature_givenby_image[1]': {
                         required: "Signature Given by Image is Required",
-                         filesize: "File must be less than 15MB."
+                        filesize: "File must be less than 15MB."
                     },
                     'signature_receivedby_image[1]': {
                         required: "Signature Received by Image is Required",
-                         filesize: "File must be less than 15MB."
+                        filesize: "File must be less than 15MB."
                     }
                 },
                 errorElement: 'span',
@@ -656,18 +738,7 @@
 
                 var newFormSet = `
                     <div class="form-set mb-3">
-                        <div class="card-header-inner">
-                            <h4 class="text-white">Safety Petty Logbook CheckList</h4>
-                        </div>
-                        <div class="d-flex justify-content-end">
-                            <button class="btn btn-primary add-row me-3" type="button"
-                                id="add-row" style="width: 84px;">
-                                Add
-                            </button>
-                            <button type="button" class="btn btn-danger remove-row">
-                                <i class="fa-solid fa-trash"></i> Remove
-                            </button>
-                        </div>
+
                         <div class="row">
                             <div class="col-md-4 mt-2">
                                 <div class="form-group form-input">
@@ -675,25 +746,24 @@
                                     <input type="text" name="serial_number[${form_set_count}]" class="form-control" placeholder="Serial Number" value="${newSerialNumber}" readonly>
                                 </div>
                             </div>
-
                             <div class="col-md-4 mt-2">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Employee Name </label>
-                                    <select name="emp_id[${form_set_count}]" id="emp_id-${form_set_count}"
-                                        class="form-control single-select" style="width: 100%">
-                                        <option value="">Select Employee Name</option>
-                                    </select>
-                                </div>
-                            </div>
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Employee Code</label>
+                                                                <select name="employee_code[${form_set_count}]" id="employee_code-${form_set_count}"
+                                                                    class="form-control single-select" style="width: 100%">
+                                                                    <option value="">Select Employee Code</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4 mt-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Employee Name </label>
+                                                                <input type="text" name="emp_name[${form_set_count}]"
+                                                                    id="emp_name-${form_set_count}" class="form-control"
+                                                                    placeholder="Employee Name" value="" readonly>
+                                                            </div>
+                                                        </div>
 
-                            <div class="col-md-4 mt-2">
-                                <div class="form-group form-input">
-                                    <label class="form-label require">Employee Code</label>
-                                    <input type="text" name="employee_code[${form_set_count}]"
-                                        id="employee_code-${form_set_count}" class="form-control"
-                                        placeholder="Employee Code" value="">
-                                </div>
-                            </div>
 
                             <div class="col-md-4 mt-2">
                                 <div class="form-group form-input">
@@ -722,9 +792,16 @@
                             <div class="col-md-4 mt-2">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Date</label>
-                                    <input type="text" name ="date[${form_set_count}]" id="date-${form_set_count}"
+
+                                         <div class="input-group date form-input custom-height">
+                                                                   <input type="text" name ="date[${form_set_count}]" id="date-${form_set_count}"
                                         class="form-control date-picker" placeholder="Date"
                                         value="">
+
+                                                                    <div class="input-group-addon input-group-text">
+                                                                        <span class="fa fa-calendar"></span>
+                                                                    </div>
+                                                                </div>
                                 </div>
                             </div>
 
@@ -781,7 +858,11 @@
                                         placeholder="Remark"></textarea>
                                 </div>
                             </div>
+ <div class="col-md-2 text-right  mt-4">
+                                                            <button class="btn btn-danger remove-row" type="button"
+                                                                style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                        </div>
                         </div>
                     </div>
                 `;
@@ -804,7 +885,7 @@
                     });
                 });
 
-                $("select[name='emp_id[" + form_set_count + "]']").rules('add', {
+                $("select[name='emp_name[" + form_set_count + "]']").rules('add', {
                     required: true,
                     messages: {
                         required: 'Employee Name is required',
@@ -816,13 +897,13 @@
                     noSpaces: true,
                     uniqueItemCode: true,
                     remote: {
-                            url: '{{ admin_url('ohc/safety-petty-logbook/unique') }}',
-                            type: 'post',
-                            data: {
-                                location_type_name: function() {
-                                    return $('#employee_code').val();
-                                }
+                        url: '{{ admin_url('ohc/safety-petty-logbook/unique') }}',
+                        type: 'post',
+                        data: {
+                            location_type_name: function() {
+                                return $('#employee_code').val();
                             }
+                        }
                     },
                     messages: {
                         required: 'Employee Code is required',
@@ -896,7 +977,7 @@
 
                 initializeNewFormSet(form_set_count);
                 initDatePicker(`#date-${form_set_count}`);
-                initEmpSelect2(`#emp_id-${form_set_count}`);
+                initEmpSelect2(`#employee_code-${form_set_count}`);
                 form_set_count++;
 
                 updatePageIndices();
@@ -910,34 +991,34 @@
                 const receivedBySelector = '#amnt_receivedby_id-' + form_set_count;
 
                 $(givenBySelector).select2({
-                        ajax: {
-                            url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
-                            dataType: 'json',
-                            delay: 250,
-                            data: function(params) {
-                                return {
-                                    search: params.term
-                                };
-                            },
-                            processResults: function(data) {
-                                return {
-                                    results: $.map(data, function(item) {
-                                        return {
-                                            id: item.id,
-                                            text: item.text
-                                        };
-                                    })
-                                };
-                            },
-                            error: function(xhr, status, error) {
-                                // console.log('Error during AJAX call:', error);
-                                // console.log('Response:', xhr.responseText);
-                            }
+                    ajax: {
+                        url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
                         },
-                        minimumInputLength: 1,
-                        dropdownCssClass: 'form-control',
-                        selectionCssClass: 'form-control'
-                    });
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        },
+                        error: function(xhr, status, error) {
+                            // console.log('Error during AJAX call:', error);
+                            // console.log('Response:', xhr.responseText);
+                        }
+                    },
+                    minimumInputLength: 1,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
+                });
 
 
                 $(receivedBySelector).select2({
@@ -1099,8 +1180,10 @@
                     $(this).find('input[name^="amount"]').attr('name', 'amount[' + (index + 1) + ']');
                     $(this).find('select[name^="amnt_givenby_id"]').attr('name', 'amnt_givenby_id[' + (
                         index + 1) + ']');
-                    $(this).find('input[name^="signature_givenby_image"]').attr('name', 'signature_givenby_image[' + (index + 1) + ']');
-                    $(this).find('input[name^="signature_receivedby_image"]').attr('name', 'signature_receivedby_image[' + (index + 1) + ']');
+                    $(this).find('input[name^="signature_givenby_image"]').attr('name',
+                        'signature_givenby_image[' + (index + 1) + ']');
+                    $(this).find('input[name^="signature_receivedby_image"]').attr('name',
+                        'signature_receivedby_image[' + (index + 1) + ']');
                     $(this).find('select[name^="amnt_receivedby_id"]').attr('name', 'amnt_receivedby_id[' +
                         (index + 1) + ']');
                     $(this).find('textarea[name^="description"]').attr('name', 'description[' + (index +

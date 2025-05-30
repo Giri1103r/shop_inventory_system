@@ -207,7 +207,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 // Store user medicine requisition
                 $medicine_requisition_fdo_details = $this->medicine_requisition_fdo_details->store();
                 $id = ($medicine_requisition_fdo_details->id);
-                $signature = $this->signature->requestorsignatureUpload(OHC_TYPE_MEDICINE_REQUISTION_FDO, $id);
+                // $signature = $this->signature->requestorsignatureUpload(OHC_TYPE_MEDICINE_REQUISTION_FDO, $id);
                 $medicine_requisition_fdo_checklist = $this->medicine_requisition_fdo_checklist->store($medicine_requisition_fdo_details);
                 $data = [
                     'type' => OHC_TYPE_MEDICINE_REQUISTION_FDO,
@@ -481,7 +481,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
 
                 ];
 
-                $signature_update = $this->signature->signatureUpload(OHC_TYPE_MEDICINE_REQUISTION_FDO);
+                // $signature_update = $this->signature->signatureUpload(OHC_TYPE_MEDICINE_REQUISTION_FDO);
                 $this->inspection_ohc_status_log->store($data);
                 $this->medicine_requisition_fdo_details->safetyofficerapprovalupdate($id, $nextStatus);
                 $details = $this->medicine_requisition_fdo_details->Selectone($id);
@@ -627,7 +627,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", "MEDICAL REQUISITION ISSUE SLIP ");
 
-                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                $sheet->getStyle("G{$currentRow}:M{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -697,7 +697,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
 
                     $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
 
                     $inspectionRow++;
@@ -708,52 +708,82 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 $labelRow = $signatureEndRow + 1;
                 $imageHeight = 60;
 
-                // Requestor Signature
-                if (file_exists($RequestorSignature)) {
-                    $sheet->mergeCells("A$signatureStartRow:J" . ($signatureStartRow + 2));
+                // // Requestor Signature
+                // if (file_exists($RequestorSignature)) {
+                //     $sheet->mergeCells("A$signatureStartRow:J" . ($signatureStartRow + 2));
 
-                    $drawing = new Drawing();
-                    $drawing->setName('CREATOR SIGNATURE');
-                    $drawing->setPath($RequestorSignature);
-                    $drawing->setCoordinates("A$signatureStartRow");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
-                    // Label + Name
-                    $sheet->setCellValue("A" . ($signatureStartRow + 3), "CREATOR SIGNATURE: " . getUserName($medicine_requisition_fdo_details->created_by));
-                    $sheet->mergeCells("A" . ($signatureStartRow + 3) . ":J" . ($signatureStartRow + 3));
+                //     $drawing = new Drawing();
+                //     $drawing->setName('CREATOR SIGNATURE');
+                //     $drawing->setPath($RequestorSignature);
+                //     $drawing->setCoordinates("A$signatureStartRow");
+                //     $drawing->setOffsetX(100);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+                //     // Label + Name
+                //     $sheet->setCellValue("A" . ($signatureStartRow + 3), "CREATOR SIGNATURE: " . getUserName($medicine_requisition_fdo_details->created_by));
+                //     $sheet->mergeCells("A" . ($signatureStartRow + 3) . ":J" . ($signatureStartRow + 3));
 
-                    $sheet->getStyle("A$signatureStartRow:J" . ($signatureStartRow + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
+                //     $sheet->getStyle("A$signatureStartRow:J" . ($signatureStartRow + 3))->applyFromArray([
+                //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                //     ]);
+                // }
+
+                // if (file_exists($safetyofficerSignature)) {
+                //     $sheet->mergeCells("K$signatureStartRow:S" . ($signatureStartRow + 2));
+
+                //     $drawing = new Drawing();
+                //     $drawing->setName('SAFETY OFFICER SIGNATURE');
+                //     $drawing->setPath($safetyofficerSignature);
+                //     $drawing->setCoordinates("M$signatureStartRow");
+                //     $drawing->setOffsetX(100);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+                //     // Label + Name
+                //     $sheet->setCellValue("K" . ($signatureStartRow + 3), "SAFETY OFFICER SIGNATURE: " . getUserName($medicine_requisition_fdo_details->approved_by));
+                //     $sheet->mergeCells("K" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
+
+                //     $sheet->getStyle("K$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([
+                //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                //     ]);
+                // }
+
+                // CREATOR (Requestor) Name or Verification Message
+                if (!empty($medicine_requisition_fdo_details->created_by)) {
+                    $creatorName = getUserName($medicine_requisition_fdo_details->created_by);
+                    $sheet->mergeCells("A$signatureStartRow:J" . ($signatureStartRow + 1));
+                    $sheet->setCellValue("A$signatureStartRow", "REQUESTOR NAME: " . $creatorName);
+                } else {
+                    $sheet->mergeCells("A$signatureStartRow:J" . ($signatureStartRow + 1));
+                    $sheet->setCellValue("A$signatureStartRow", "CREATOR: Inspection not yet verified");
                 }
+                $sheet->getStyle("A$signatureStartRow:J" . ($signatureStartRow + 1))->applyFromArray([
+                    'font'      => ['bold' => true],
+                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
 
-                if (file_exists($safetyofficerSignature)) {
-                    $sheet->mergeCells("K$signatureStartRow:S" . ($signatureStartRow + 2));
-
-                    $drawing = new Drawing();
-                    $drawing->setName('SAFETY OFFICER SIGNATURE');
-                    $drawing->setPath($safetyofficerSignature);
-                    $drawing->setCoordinates("M$signatureStartRow");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
-                    // Label + Name
-                    $sheet->setCellValue("K" . ($signatureStartRow + 3), "SAFETY OFFICER SIGNATURE: " . getUserName($medicine_requisition_fdo_details->approved_by));
-                    $sheet->mergeCells("K" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
-
-                    $sheet->getStyle("K$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
+                // SAFETY OFFICER Name or Verification Message
+                if (!empty($medicine_requisition_fdo_details->approved_by)) {
+                    $safetyOfficerName = getUserName($medicine_requisition_fdo_details->approved_by);
+                    $sheet->mergeCells("K$signatureStartRow:S" . ($signatureStartRow + 1));
+                    $sheet->setCellValue("K$signatureStartRow", "SAFETY OFFICER: " . $safetyOfficerName);
+                } else {
+                    $sheet->mergeCells("K$signatureStartRow:S" . ($signatureStartRow + 1));
+                    $sheet->setCellValue("K$signatureStartRow", "SAFETY OFFICER: Inspection not yet verified");
                 }
+                $sheet->getStyle("K$signatureStartRow:S" . ($signatureStartRow + 1))->applyFromArray([
+                    'font'      => ['bold' => true],
+                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
 
                 $row =   $signatureStartRow + 8;
             }
@@ -953,63 +983,94 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
 
                 $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
                 $inspectionRow++;
             }
 
             $signatureStartRow = $inspectionRow;
-            $signatureEndRow = $signatureStartRow + 3;
-            $labelRow = $signatureEndRow + 1;
-            $imageHeight = 60;
+            // $signatureEndRow = $signatureStartRow + 3;
+            // $labelRow = $signatureEndRow + 1;
+            // $imageHeight = 60;
 
-            // Requestor Signature
-            if (file_exists($RequestorSignature)) {
-                $sheet->mergeCells("A$signatureStartRow:J" . ($signatureStartRow + 2));
+            // // Requestor Signature
+            // if (file_exists($RequestorSignature)) {
+            //     $sheet->mergeCells("A$signatureStartRow:J" . ($signatureStartRow + 2));
 
-                $drawing = new Drawing();
-                $drawing->setName('CREATOR SIGNATURE');
-                $drawing->setPath($RequestorSignature);
-                $drawing->setCoordinates("A$signatureStartRow");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
-                // Label + Name
-                $sheet->setCellValue("A" . ($signatureStartRow + 3), "CREATOR SIGNATURE: " . getUserName($medicine_requisition_fdo_details->created_by));
-                $sheet->mergeCells("A" . ($signatureStartRow + 3) . ":J" . ($signatureStartRow + 3));
+            //     $drawing = new Drawing();
+            //     $drawing->setName('CREATOR SIGNATURE');
+            //     $drawing->setPath($RequestorSignature);
+            //     $drawing->setCoordinates("A$signatureStartRow");
+            //     $drawing->setOffsetX(100);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+            //     // Label + Name
+            //     $sheet->setCellValue("A" . ($signatureStartRow + 3), "CREATOR SIGNATURE: " . getUserName($medicine_requisition_fdo_details->created_by));
+            //     $sheet->mergeCells("A" . ($signatureStartRow + 3) . ":J" . ($signatureStartRow + 3));
 
-                $sheet->getStyle("A$signatureStartRow:J" . ($signatureStartRow + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
+            //     $sheet->getStyle("A$signatureStartRow:J" . ($signatureStartRow + 3))->applyFromArray([
+            //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            //     ]);
+            // }
+
+            // if (file_exists($safetyofficerSignature)) {
+            //     $sheet->mergeCells("K$signatureStartRow:S" . ($signatureStartRow + 2));
+
+            //     $drawing = new Drawing();
+            //     $drawing->setName('SAFETY OFFICER SIGNATURE');
+            //     $drawing->setPath($safetyofficerSignature);
+            //     $drawing->setCoordinates("M$signatureStartRow");
+            //     $drawing->setOffsetX(100);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+            //     // Label + Name
+            //     $sheet->setCellValue("K" . ($signatureStartRow + 3), "SAFETY OFFICER SIGNATURE: " . getUserName($medicine_requisition_fdo_details->approved_by));
+            //     $sheet->mergeCells("K" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
+
+            //     $sheet->getStyle("K$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([
+            //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            //     ]);
+            // }
+
+            // CREATOR (Requestor) Name or Verification Message
+            if (!empty($medicine_requisition_fdo_details->created_by)) {
+                $creatorName = getUserName($medicine_requisition_fdo_details->created_by);
+                $sheet->mergeCells("A$signatureStartRow:J" . ($signatureStartRow + 1));
+                $sheet->setCellValue("A$signatureStartRow", "Requestor Name: " . $creatorName);
+            } else {
+                $sheet->mergeCells("A$signatureStartRow:J" . ($signatureStartRow + 1));
+                $sheet->setCellValue("A$signatureStartRow", "CREATOR: Inspection not yet verified");
             }
+            $sheet->getStyle("A$signatureStartRow:J" . ($signatureStartRow + 1))->applyFromArray([
+                'font'      => ['bold' => true],
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
 
-            if (file_exists($safetyofficerSignature)) {
-                $sheet->mergeCells("K$signatureStartRow:S" . ($signatureStartRow + 2));
-
-                $drawing = new Drawing();
-                $drawing->setName('SAFETY OFFICER SIGNATURE');
-                $drawing->setPath($safetyofficerSignature);
-                $drawing->setCoordinates("M$signatureStartRow");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
-                // Label + Name
-                $sheet->setCellValue("K" . ($signatureStartRow + 3), "SAFETY OFFICER SIGNATURE: " . getUserName($medicine_requisition_fdo_details->approved_by));
-                $sheet->mergeCells("K" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
-
-                $sheet->getStyle("K$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
+            // SAFETY OFFICER Name or Verification Message
+            if (!empty($medicine_requisition_fdo_details->approved_by)) {
+                $safetyOfficerName = getUserName($medicine_requisition_fdo_details->approved_by);
+                $sheet->mergeCells("K$signatureStartRow:S" . ($signatureStartRow + 1));
+                $sheet->setCellValue("K$signatureStartRow", "SAFETY OFFICER: " . $safetyOfficerName);
+            } else {
+                $sheet->mergeCells("K$signatureStartRow:S" . ($signatureStartRow + 1));
+                $sheet->setCellValue("K$signatureStartRow", "SAFETY OFFICER: Inspection not yet verified");
             }
+            $sheet->getStyle("K$signatureStartRow:S" . ($signatureStartRow + 1))->applyFromArray([
+                'font'      => ['bold' => true],
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            ]);
+
 
             $fileName = 'Medical Requisition Slip- Fdo & Security Gate.xlsx';
             $writer = new Xlsx($spreadsheet);

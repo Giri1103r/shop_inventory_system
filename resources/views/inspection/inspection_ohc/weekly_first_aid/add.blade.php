@@ -34,8 +34,7 @@
                                     @csrf
 
 
-                                    <input type="hidden" name="document_reference_id"
-                                    value="{{ $document_no->id }}">
+                                    <input type="hidden" name="document_reference_id" value="{{ $document_no->id }}">
 
                                     <div class="basic-form">
 
@@ -53,7 +52,9 @@
                                                         Date</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="issue_date" id="issue_date"
-                                                            class="form-control"autocomplete="off" value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+                                                            class="form-control"autocomplete="off"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
                                                         <div class="input-group-addon input-group-text">
                                                             <span class="fa fa-calendar"></span>
                                                         </div>
@@ -65,8 +66,8 @@
                                                     <label for="rate" class="form-label require ">Review
                                                         Date</label>
                                                     <div class="input-group date form-input custom-height">
-                                                        <input type="text"
-                                                            name="review_date" id="review_date" class="form-control" value="{{ $document_no->rev_dt }}" readonly
+                                                        <input type="text" name="review_date" id="review_date"
+                                                            class="form-control" value="{{ $document_no->rev_dt }}" readonly
                                                             autocomplete="off" readonly>
 
                                                         <div class="input-group-addon input-group-text">
@@ -129,10 +130,7 @@
                                                     <select name="unit_id" id="unit_id" class="form-control single-select"
                                                         style="width: 100%">
                                                         <option value="">Select the unit</option>
-                                                        @foreach ($unit as $list)
-                                                            <option value="{{ encryptId($list->id) }}">
-                                                                {{ $list->unit_name }}</option>
-                                                        @endforeach
+
                                                     </select>
                                                 </div>
                                             </div>
@@ -186,9 +184,18 @@
                                                                 </td>
                                                                 <td>
                                                                     <div class="form-input">
-                                                                        <input class="form-control expired_date"
-                                                                            type="date"
-                                                                            name="expired_date[{{ $medicines->id }}]" />
+
+
+                                                                        <div
+                                                                            class="input-group date form-input custom-height">
+                                                                            <input class="form-control expired_date"
+                                                                                type="date"
+                                                                                name="expired_date[{{ $medicines->id }}]" />
+                                                                            <div
+                                                                                class="input-group-addon input-group-text">
+                                                                                <span class="fa fa-calendar"></span>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </td>
 
@@ -205,8 +212,16 @@
 
                                             </div>
 
+                                            <div class="col-md-12 mt-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Remark By</label>
+                                                    <textarea class="form-control" name="remark_by" id="remark_by"></textarea>
+
+                                                </div>
+                                            </div>
+
                                             <div class="row m-2">
-                                                <div class="col-md-4 form-group form-input mb-2">
+                                                {{-- <div class="col-md-4 form-group form-input mb-2">
                                                     @if (isset(Auth::user()->signature_upload))
                                                         <label class="form-label"
                                                             style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -222,15 +237,9 @@
                                                             <div id="signature_upload" class="text-danger"></div>
                                                         </div>
                                                     @endif
-                                                </div>
+                                                </div> --}}
 
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label">Remark By</label>
-                                                        <textarea class="form-control" name="remark_by" id="remark_by"></textarea>
 
-                                                    </div>
-                                                </div>
                                             </div>
 
                                             <div class="submit-button m-2" style="text-align: right;">
@@ -269,9 +278,7 @@
                 e.preventDefault();
                 location.reload();
             });
-            flatpickr("#issue_date", {
-                dateFormat: "d-m-Y",
-            });
+
             flatpickr("#date_of_inspection", {
                 dateFormat: "d-m-Y",
             });
@@ -279,7 +286,33 @@
                 dateFormat: "d-m-Y",
             });
 
+            // location based unit
 
+            $(document).on('change', '#location_id', function() {
+                var locationId = $(this).val();
+                if (locationId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append(
+                                '<option value="">Select unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#unit_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select unit</option>');
+                    $('#unit_id').trigger('change.');
+                }
+            });
             $('#WeeklyFirstAidAdd').validate({
                 rules: {
                     document_no: {
@@ -318,8 +351,8 @@
                         filesize: 10485760,
                     },
                     remark_by: {
-                            required: true,
-                        },
+                        required: true,
+                    },
                 },
                 messages: {
                     document_no: {

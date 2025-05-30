@@ -147,15 +147,25 @@
                                                                 </td>
                                                                 <td>
                                                                     <div class="form-input">
-                                                                        <input class="form-control" type="number" min="1"
+                                                                        <input class="form-control" type="number"
+                                                                            min="1"
                                                                             name="available_quantity[{{ $medicines->id }}]" />
                                                                     </div>
                                                                 </td>
                                                                 <td>
                                                                     <div class="form-input">
-                                                                        <input class="form-control expired_date"
-                                                                            type="date"
-                                                                            name="expired_date[{{ $medicines->id }}]" />
+
+
+                                                                        <div
+                                                                            class="input-group date form-input custom-height">
+                                                                            <input class="form-control expired_date"
+                                                                                type="date"
+                                                                                name="expired_date[{{ $medicines->id }}]" />
+                                                                            <div
+                                                                                class="input-group-addon input-group-text">
+                                                                                <span class="fa fa-calendar"></span>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                 </td>
 
@@ -182,8 +192,16 @@
                                                 </div>
                                             </div>
 
-                                            <div class="row m-2">
-                                                <div class="col-md-6 form-group form-input mb-2">
+                                            <div class="col-md-6 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Remark By</label>
+                                                    <textarea class="form-control" name="remark_by" id="remark_by"></textarea>
+
+                                                </div>
+                                            </div>
+
+                                            {{-- <div class="row m-2"> --}}
+                                            {{-- <div class="col-md-6 form-group form-input mb-2">
                                                     @if (isset(Auth::user()->signature_upload))
                                                         <label class="form-label"
                                                             style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -199,16 +217,10 @@
                                                             <div id="signature_upload" class="text-danger"></div>
                                                         </div>
                                                     @endif
-                                                </div>
+                                                </div> --}}
 
-                                                <div class="col-md-6 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label">Remark By</label>
-                                                        <textarea class="form-control" name="remark_by" id="remark_by"></textarea>
 
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            {{-- </div> --}}
 
                                             <div class="submit-button m-2" style="text-align: right;">
                                                 <x-button-submit class="submit"></x-button-submit>
@@ -284,8 +296,8 @@
                     },
                     remark_by: {
                         required: true,
-                        minlength:3,
-                        maxlength:300,
+                        minlength: 3,
+                        maxlength: 300,
 
                     }
                 },
@@ -383,8 +395,8 @@
                 $('textarea[name^="remarks"]').each(function() {
                     $(this).rules('add', {
                         required: true,
-                        minlength:3,
-                        maxlength:300,
+                        minlength: 3,
+                        maxlength: 300,
                         messages: {
                             required: "Remarks is required",
                             minlength: "Minimum 3 characters required",

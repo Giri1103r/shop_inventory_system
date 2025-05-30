@@ -35,7 +35,7 @@ class FirstAidEquipment extends Model
         $search = '';
         $query = $this->select('inspection_ohc_master_first_aid_equipment.*', 'ohc_master_medicine.medicine')
             ->leftJoin('ohc_master_medicine', 'ohc_master_medicine.id', '=', 'inspection_ohc_master_first_aid_equipment.medicine_id')
-            ->where('inspection_ohc_master_first_aid_equipment.trash', 'NO');
+            ->where('inspection_ohc_master_first_aid_equipment.status', 1);
 
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -92,6 +92,57 @@ class FirstAidEquipment extends Model
             'filter_records' => $total_records,
         );
         return $datas;
+    }
+
+    public function ListApi()
+    {
+        $request = request();
+        $perPage = $request->input('per_page', 10);
+        $search = '';
+        $query = $this->select('inspection_ohc_master_first_aid_equipment.*', 'ohc_master_medicine.medicine')
+            ->leftJoin('ohc_master_medicine', 'ohc_master_medicine.id', '=', 'inspection_ohc_master_first_aid_equipment.medicine_id')
+            ->where('inspection_ohc_master_first_aid_equipment.status', 1);
+
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
+
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('ohc_master_medicine.medicine', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_ohc_master_first_aid_equipment.freeze_quantity', 'LIKE', '%' . $search . '%');
+            });
+        }
+        $paginatedData = $query->orderBy('inspection_ohc_master_first_aid_equipment.id')->paginate($perPage);
+
+        $first_aid = $paginatedData->toArray();
+        $first_aid_stock = [];
+        $refined_data = [];
+
+        foreach ($first_aid['data'] as $index => $data) {
+            $first_aid_stock['id'] = $data['id'];
+            $first_aid_stock['medicine_name'] = $data['medicine'];
+            $first_aid_stock['freeze_quantity'] = $data['freeze_quantity'];
+            $first_aid_stock['status'] = $data['status'];
+            $first_aid_stock['created_by'] = getUsername($data['created_by']);
+            $first_aid_stock['created_at'] = Displaydateformat($data['created_at']);
+
+            $refined_data[$index] = $first_aid_stock;
+        }
+
+        $response = [
+            'per_page' => $paginatedData->perPage(),
+            'current_page' => $paginatedData->currentPage(),
+            'from' => $paginatedData->firstItem(),
+            'to' => $paginatedData->lastItem(),
+            'total' => $paginatedData->total(),
+            'total_page' => $paginatedData->lastPage(),
+            'list' => $refined_data,
+        ];
+
+        return $response;
     }
 
     public function store()

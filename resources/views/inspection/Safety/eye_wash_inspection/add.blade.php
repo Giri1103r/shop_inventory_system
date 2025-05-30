@@ -47,9 +47,16 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
-                                                    <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date"
-                                                        value="{{ Displaydateformat($document_no->issue_date) }}" readonly>
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="issue_date" id = "issue_date"
+                                                            class="form-control" placeholder="Issued Date"
+                                                            value="{{ Displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -64,10 +71,35 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                    <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control" value="{{ old('inspection_date') }}">
+
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="inspection_date" id = "inspection_date"
+                                                            class="form-control" value="{{ old('inspection_date') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 @error('inspection_date')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.next_due') }}</label>
+
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="next_due" id = "next_due"
+                                                            class="form-control" value="{{ old('next_due') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                @error('next_due')
                                                     <div class="error">{{ $message }}</div>
                                                 @enderror
                                             </div>
@@ -92,6 +124,19 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit</option>
+
+                                                    </select>
+                                                </div>
+                                                @error('unit_id')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label class="form-label require">Shift</label>
                                                     <select name="shift_id" id="shift_id"
                                                         class=" form-control single-select" style="width: 100%">
@@ -107,34 +152,8 @@
                                                     <div class="error">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                    <input type="text" name="next_due" id = "next_due"
-                                                        class="form-control" value="{{ old('next_due') }}">
-                                                </div>
-                                                @error('next_due')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($units as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}"
-                                                                {{ old('unit_id.1') == encryptId($unit->id) ? 'selected' : '' }}>
-                                                                {{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                                @error('unit_id')
-                                                    <div class="error">{{ $message }}</div>
-                                                @enderror
-                                            </div>
+
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -153,7 +172,7 @@
                                                     <div class="error">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -169,28 +188,23 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
-                                            @error('signature_image')
+                                            </div> --}}
+                                            {{-- @error('signature_image')
                                                 <div class="error">{{ $message }}</div>
-                                            @enderror
+                                            @enderror --}}
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
+                                            <div class="card-header-inner d-flex justify-content-between">
+                                                <h4 class="text-white ms-2">Monthly Eye Wash Inspection Checklist</h4>
+                                                <button class="btn btn-primary add-row mb-2 " type="button"
+                                                    id="add-row"
+                                                    style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                    Add
+                                                </button>
+                                            </div>
                                             <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Monthly Eye Wash Inspection Checklist</h4>
-                                                </div>
 
-                                                <div class="d-flex justify-content-end gap-0 m-2">
-                                                    <button class="btn btn-primary add-row me-3" type="button"
-                                                        id="add-row" style="width: 84px;">
-                                                        Add
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger remove-row">
-                                                        <i class="fa-solid fa-trash"></i> Remove
-                                                    </button>
-
-                                                </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -367,8 +381,7 @@
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.remarks') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.remarks') }}</label>
                                                         <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;">{{ old('remarks.1') }}</textarea>
 
                                                     </div>
@@ -376,7 +389,12 @@
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
+                                                <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                </div>
+                                                <hr>
                                             </div>
                                         </div>
 
@@ -407,9 +425,7 @@
                     e.preventDefault();
                     location.reload();
                 });
-                flatpickr("#issue_date", {
-                    dateFormat: "d-m-Y",
-                });
+
                 flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                 });
@@ -417,6 +433,34 @@
                     dateFormat: "d-m-Y",
                     minDate: new Date(),
                 });
+            });
+
+            // location based unit
+
+            $(document).on('change', '#location_id', function() {
+                var locationId = $(this).val();
+                if (locationId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append(
+                                '<option value="">Select unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#unit_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select unit</option>');
+                    $('#unit_id').trigger('change.');
+                }
             });
             $(function() {
                 $.validator.addMethod("noSpaces", function(value, element) {
@@ -542,7 +586,7 @@
                         },
                         signature_image: {
                             required: "Signature is required",
-                             filesize: "File size must be less than 15MB."
+                            filesize: "File size must be less than 15MB."
                         },
                         location_id: {
                             required: "Location is required",
@@ -672,20 +716,7 @@
 
                     var newFormSet = `
                         <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Monthly Eye Wash Inspection Checklist</h4>
-                                                </div>
 
-                                                <div class="d-flex justify-content-end gap-0 m-2">
-                                                    <button class="btn btn-primary add-row me-3" type="button"
-                                                        id="add-row" style="width: 84px;">
-                                                        Add
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger remove-row">
-                                                        <i class="fa-solid fa-trash"></i> Remove
-                                                    </button>
-
-                                                </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -810,7 +841,12 @@
 
                                                     </div>
                                                 </div>
+  <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                </div>
+                                                <hr>
                                             </div>
                     `;
 
@@ -863,8 +899,8 @@
                         maxlength: 30,
                         messages: {
                             required: 'Please add the valve',
-                              minlength: "Please enter at least 3 characters.",
-                             maxlength: "Please enter no more than 30 characters."
+                            minlength: "Please enter at least 3 characters.",
+                            maxlength: "Please enter no more than 30 characters."
                         }
                     });
 
@@ -874,7 +910,7 @@
                         maxlength: 30,
                         messages: {
                             required: 'Please add the value of Hand free stay open',
-                              minlength: "Please enter at least 3 characters.",
+                            minlength: "Please enter at least 3 characters.",
                             maxlength: "Please enter no more than 30 characters."
                         }
                     });
@@ -885,7 +921,7 @@
                         maxlength: 30,
                         messages: {
                             required: 'Please add foot pedal value',
-                              minlength: "Please enter at least 3 characters.",
+                            minlength: "Please enter at least 3 characters.",
                             maxlength: "Please enter no more than 30 characters."
                         }
                     });
@@ -896,7 +932,7 @@
                         maxlength: 30,
                         messages: {
                             required: 'Please add the name of Eyewash heads',
-                              minlength: "Please enter at least 3 characters.",
+                            minlength: "Please enter at least 3 characters.",
                             maxlength: "Please enter no more than 30 characters."
                         }
                     });
@@ -907,7 +943,7 @@
                         maxlength: 30,
                         messages: {
                             required: 'Please add the name of receptable used',
-                              minlength: "Please enter at least 3 characters.",
+                            minlength: "Please enter at least 3 characters.",
                             maxlength: "Please enter no more than 30 characters."
                         }
                     });
@@ -925,7 +961,7 @@
                         maxlength: 30,
                         messages: {
                             required: 'Please select the quality of water',
-                              minlength: "Please enter at least 3 characters.",
+                            minlength: "Please enter at least 3 characters.",
                             maxlength: "Please enter no more than 30 characters."
                         }
                     });

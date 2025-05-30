@@ -19,8 +19,11 @@ class MedicalFitnessCertificate extends Model
         'emp_name',
         'date',
         'company_id',
+        'unit_id',
+        'department_id',
         'file',
         'remarks',
+        'cheif_complaint',
         'approve_status',
         'approved_by',
         'status',
@@ -67,6 +70,18 @@ class MedicalFitnessCertificate extends Model
         if ($request->has('emp_name') && $request->emp_name) {
 
             $query = $query->where('ohc_management_medical_fitness_certificate.emp_name', ($request->emp_name));
+        }
+        if ($request->has('company_id') && $request->company_id) {
+
+            $query = $query->where('ohc_management_medical_fitness_certificate.company_id', decryptId($request->company_id));
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
+
+            $query = $query->where('ohc_management_medical_fitness_certificate.unit_id', decryptId($request->unit_id));
+        }
+        if ($request->has('department_id') && $request->department_id) {
+
+            $query = $query->where('ohc_management_medical_fitness_certificate.department_id', decryptId($request->department_id));
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
@@ -119,26 +134,32 @@ class MedicalFitnessCertificate extends Model
             $ohc_file_path = $destinationPath . '/' . $ohc_file_name;
         }
         $employee = Employee::where('emp_id', $request->emp_id)
-            ->select('company')
+            ->select('*')
             ->first();
 
 
         if (!$employee) {
             $employee = Work::where('emp_id', $request->emp_id)
-                ->select('company')
+                ->select('*')
                 ->first();
         }
 
 
         if ($employee) {
             $company = $employee->company;
+            $unit = $employee->unit;
+            $department = $employee->department;
         }
+
         $insert_array = [
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
             'emp_name' => $request->emp_name,
             'company_id' => $company,
+            'unit_id' => $unit,
+            'department_id' => $department,
             'remarks' => $request->remarks,
+            'cheif_complaint' => $request->cheif_complaint,
             'date' => DBdateformat($request->date),
             'file' => $ohc_file_path,
             'approve_status' => STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING,
@@ -173,25 +194,31 @@ class MedicalFitnessCertificate extends Model
         }
 
         $employee = Employee::where('emp_id', $request->emp_id)
-            ->select('company')
+            ->select('*')
             ->first();
 
 
         if (!$employee) {
             $employee = Work::where('emp_id', $request->emp_id)
-                ->select('company')
+                ->select('*')
                 ->first();
         }
 
 
         if ($employee) {
             $company = $employee->company;
+            $unit = $employee->unit;
+            $department = $employee->department;
         }
+
         $update_array = array(
             'emp_id' => $request->emp_id,
             'emp_name' => $request->emp_name,
             'remarks' => $request->remarks,
+            'cheif_complaint' => $request->cheif_complaint,
             'company_id' => $company,
+            'unit_id' => $unit,
+            'department_id' => $department,
             'date' => DBdateformat($request->date),
             'file' =>  $ohc_file_path,
             'created_by' => Auth::id(),
@@ -256,7 +283,18 @@ class MedicalFitnessCertificate extends Model
         if ($request->filled('emp_name')) {
             $query->where('ohc_management_medical_fitness_certificate.emp_name',  $request->emp_name . '%');
         }
+        if ($request->has('company_id') && $request->company_id) {
 
+            $query = $query->where('ohc_management_medical_fitness_certificate.company_id', decryptId($request->company_id));
+        }
+        if ($request->has('unit_id') && $request->unit_id) {
+
+            $query = $query->where('ohc_management_medical_fitness_certificate.unit_id', decryptId($request->unit_id));
+        }
+        if ($request->has('department_id') && $request->department_id) {
+
+            $query = $query->where('ohc_management_medical_fitness_certificate.department_id', decryptId($request->department_id));
+        }
         // Date range filter
         if ($request->filled('from_date') && $request->filled('to_date')) {
             $startDate = Carbon::parse($request->from_date)->startOfDay();

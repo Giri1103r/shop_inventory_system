@@ -192,7 +192,7 @@
     @php
         $user_response = json_decode($weeklyAmbulance->checklist, true);
     @endphp
-    <div class="table-responsive">
+    {{-- <div class="table-responsive">
         <div class="col-md-12">
             <table class="table table-bordered table-hover tblborder">
                 <thead>
@@ -258,7 +258,126 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </div> --}}
+
+    <table
+        style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
+        <tr>
+            <th colspan="4" style="border:1px solid black;height:50;width:40">
+                <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+            </th>
+            <th colspan="6" style="border:1px solid black;">
+                <h3>
+                    <span><b>WEEKLY AMBULANCE INSPECTION CHECKLIST</b></span>
+                    <br>
+
+                </h3>
+            </th>
+
+            <th colspan="6" style="border:1px solid black;">
+                <table class="table table-bordered scrolldown">
+                    <thead>
+                        <tr>
+                            <td style="border: 1px solid black;width:70;">Doc.No</td>
+                            <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black;width:70;">Issue Dt.</td>
+                            <td style="border: 1px solid black;">{{ $document_no->issue_date }}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
+                            <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
+                        </tr>
+                    </thead>
+                </table>
+
+            </th>
+        </tr>
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="4">
+                DATE OF INSPECTION: {{ Displaydateformat($weeklyAmbulance->date_of_inspection) ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="6">
+                UNIT: {{ getUnitname($weeklyAmbulance->unit) ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="6">
+                SHIFT: {{ $weeklyAmbulance->shift ?? 'N/A' }}
+            </th>
+        </tr>
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="8">
+                NEXT DUE: {{ Displaydateformat($weeklyAmbulance->next_due) ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="8">
+                LOCATION: {{ getLocationname($weeklyAmbulance->location) ?? 'N/A' }}
+            </th>
+
+        </tr>
+
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">CHECK ITEMS
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">OK/NOT-OK
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">REMARKS
+            </th>
+
+        </tr>
+
+        @php
+            $checklist = json_decode($weeklyAmbulance->checklist, true);
+            $index = 1;
+
+        @endphp
+
+        @foreach ($checklist['check_item'] as $groupId => $items)
+            @foreach ($items as $itemId)
+                <tr>
+                    <td colspan="2"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ $index }}</td>
+                    <td colspan="4"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ getSubcategoryDataname($itemId) }}</td>
+                    <td colspan="5"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+
+                        @php
+                            $status = strtolower(trim($checklist['status'][$itemId] ?? ''));
+                        @endphp
+
+                        @if ($status === 'ok')
+                            <span style="color: green; font-size: 20px;">Ok</span>
+                        @elseif ($status === 'not ok')
+                            <span style="color: red; font-size: 20px;">Not Ok</span>
+                        @else
+                            <span style="color: red; font-size: 20px;">N/A</span>
+                        @endif
+                    </td>
+
+                    <td colspan="5"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ $checklist['remarks'][$itemId] ?? '' }}</td>
+                </tr>
+                @php
+                    $index++;
+                @endphp
+            @endforeach
+        @endforeach
+
+
+
+
+
+    </table>
+
 
 
 

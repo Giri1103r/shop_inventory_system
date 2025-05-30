@@ -145,7 +145,21 @@
                 <td width="50%" style="padding:5px;"><b>Company Name</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ getCompanyname(isset($medicinefitness->company_id) ? $medicinefitness->company_id : '' )}}
+                    {{ getCompanyname(isset($medicinefitness->company_id) ? $medicinefitness->company_id : '') }}
+                </td>
+            </tr>
+              <tr>
+                <td width="50%" style="padding:5px;"><b>Unit Name</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getUnitname(isset($medicinefitness->unit_id) ? $medicinefitness->unit_id : '') }}
+                </td>
+            </tr>
+              <tr>
+                <td width="50%" style="padding:5px;"><b>Department Name</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getdepartment(isset($medicinefitness->department_id) ? $medicinefitness->department_id : '') }}
                 </td>
             </tr>
             <tr>
@@ -153,6 +167,13 @@
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ displayDateformat(isset($medicinefitness->date) ? $medicinefitness->date : '') }}</td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>Cheif Complaint</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ isset($medicinefitness->cheif_complaint) ? $medicinefitness->cheif_complaint : '' }}
+                </td>
             </tr>
             <tr>
                 <td width="50%" style="padding:5px;"><b>Remarks</b></td>
@@ -179,7 +200,8 @@
 
         @if (
             $medicinefitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING ||
-                $medicinefitness->approve_status == STATUS_OHC_MEDICAL_DOCTOR_REJECTED ||  $medicinefitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
+                $medicinefitness->approve_status == STATUS_OHC_MEDICAL_DOCTOR_REJECTED ||
+                $medicinefitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
             <div>
                 <table style="width:100%;">
                     <tr>
@@ -225,136 +247,136 @@
 
                 </table>
             </div>
-            @endif
+        @endif
 
-            @if ( $medicinefitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
-                <div>
-                    <table style="width:100%;">
-                        <tr>
-                            <td
-                                style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px; font-weight:bold;">
-                                EHS Head Approval
-                            </td>
-                        </tr>
-                    </table>
-                    <table width="100%" style="width:100%;">
-
-
-
-                        <tr>
-                            <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
-                            <td width="2%" style="padding:5px;">:</td>
-                            <td width="48%" style="padding:5px;">
-                                {{ getUsername(isset($ehsheadlog->created_by) ? $ehsheadlog->created_by : '') }}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
-                            <td width="2%" style="padding:5px;">:</td>
-                            <td width="48%" style="padding:5px;">
-                                {{ displayDateformat($ehsheadlog->created_at) }}
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
-                            <td width="2%" style="padding:5px;">:</td>
-                            <td width="48%" style="padding:5px;">
-                                {{ displayTimeformat($ehsheadlog->created_at) }}</td>
-                        </tr>
-                        <tr>
-                            <td width="50%" style="padding:5px;"><b>Remarks</b></td>
-                            <td width="2%" style="padding:5px;">:</td>
-                            <td width="48%" style="padding:5px;">
-                                {{ isset($ehsheadlog->remarks) ? $ehsheadlog->remarks : '' }}
-                            </td>
-                        </tr>
-
-
-                    </table>
-                </div>
-                @endif
+        @if ($medicinefitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
             <div>
-                <div style="width:100%;">
-                    <table style="width:100%;">
-                        <tr>
-                            <td
-                                style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
-                                Status Logs
-                            </td>
-                        </tr>
+                <table style="width:100%;">
+                    <tr>
+                        <td
+                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px; font-weight:bold;">
+                            EHS Head Approval
+                        </td>
+                    </tr>
+                </table>
+                <table width="100%" style="width:100%;">
+
+
+
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ getUsername(isset($ehsheadlog->created_by) ? $ehsheadlog->created_by : '') }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ displayDateformat($ehsheadlog->created_at) }}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ displayTimeformat($ehsheadlog->created_at) }}</td>
+                    </tr>
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>Remarks</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ isset($ehsheadlog->remarks) ? $ehsheadlog->remarks : '' }}
+                        </td>
+                    </tr>
+
+
+                </table>
+            </div>
+        @endif
+        <div>
+            <div style="width:100%;">
+                <table style="width:100%;">
+                    <tr>
+                        <td
+                            style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
+                            Status Logs
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="table-responsive">
+                <div class="col-md-12">
+                    <table class="table table-bordered table-hover tblborder">
+                        <thead>
+                            <tr>
+                                <th>From Status</th>
+                                <th>To Status</th>
+                                <th>Approved By</th>
+                                <th>Remarks</th>
+                                <th>Created Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($medicalfitnesslog as $status_log)
+                                <tr>
+                                <tr>
+                                    <!-- From Status Column -->
+                                    <td>
+                                        <p>
+                                            <span>
+                                                @if ($status_log['from_status'] == STATUS_OHC_MEDICAL_PARAMEDICS_REQUEST)
+                                                    Paramedics request the fitness Approval
+                                                @elseif ($status_log['from_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING)
+                                                    Doctor Approval Pending
+                                                @elseif ($status_log['from_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVED)
+                                                    Doctor Approved
+                                                @elseif ($status_log['from_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING)
+                                                    EHS Head Approval Pending
+                                                @elseif ($status_log['from_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
+                                                    EHS Head Approved
+                                                @endif
+                                            </span>
+                                        </p>
+                                    </td>
+
+                                    <td>
+                                        <p>
+                                            <span>
+                                                @if ($status_log['to_status'] == STATUS_OHC_MEDICAL_PARAMEDICS_REQUEST)
+                                                    Paramedics request the fitness Approval
+                                                @elseif ($status_log['to_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING)
+                                                    Doctor Approval Pending
+                                                @elseif ($status_log['to_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVED)
+                                                    Doctor Approved
+                                                @elseif ($status_log['to_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING)
+                                                    EHS Head Approval Pending
+                                                @elseif ($status_log['to_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
+                                                    EHS Head Approved
+                                                @elseif ($status_log['to_status'] == STATUS_OHC_MEDICAL_DOCTOR_REJECTED)
+                                                    Doctor Rejected
+                                                @endif
+                                            </span>
+                                        </p>
+                                    </td>
+
+
+                                    <td>{{ isset($status_log['created_by']) ? getUsername($status_log['created_by']) : '-' }}
+                                    </td>
+                                    <td>{{ isset($status_log['remarks']) ? $status_log['remarks'] : '-' }}
+                                    </td>
+                                    <td>{{ null !== Displaydateformat($status_log['created_at']) ? Displaydateformat($status_log['created_at']) : '-' }}
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
                     </table>
                 </div>
-                <div class="table-responsive">
-                    <div class="col-md-12">
-                        <table class="table table-bordered table-hover tblborder">
-                            <thead>
-                                <tr>
-                                    <th>From Status</th>
-                                    <th>To Status</th>
-                                    <th>Approved By</th>
-                                    <th>Remarks</th>
-                                    <th>Created Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($medicalfitnesslog as $status_log)
-                                    <tr>
-                                    <tr>
-                                        <!-- From Status Column -->
-                                        <td>
-                                            <p>
-                                                <span>
-                                                    @if ($status_log['from_status'] == STATUS_OHC_MEDICAL_PARAMEDICS_REQUEST)
-                                                        Paramedics request the fitness Approval
-                                                    @elseif ($status_log['from_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING)
-                                                        Doctor Approval Pending
-                                                    @elseif ($status_log['from_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVED)
-                                                        Doctor Approved
-                                                    @elseif ($status_log['from_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING)
-                                                        EHS Head Approval Pending
-                                                    @elseif ($status_log['from_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
-                                                        EHS Head Approved
-                                                    @endif
-                                                </span>
-                                            </p>
-                                        </td>
-
-                                        <td>
-                                            <p>
-                                                <span>
-                                                    @if ($status_log['to_status'] == STATUS_OHC_MEDICAL_PARAMEDICS_REQUEST)
-                                                        Paramedics request the fitness Approval
-                                                    @elseif ($status_log['to_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING)
-                                                        Doctor Approval Pending
-                                                    @elseif ($status_log['to_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVED)
-                                                        Doctor Approved
-                                                    @elseif ($status_log['to_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING)
-                                                        EHS Head Approval Pending
-                                                    @elseif ($status_log['to_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
-                                                        EHS Head Approved
-                                                    @elseif ($status_log['to_status'] == STATUS_OHC_MEDICAL_DOCTOR_REJECTED)
-                                                        Doctor Rejected
-                                                    @endif
-                                                </span>
-                                            </p>
-                                        </td>
-
-
-                                        <td>{{ isset($status_log['created_by']) ? getUsername($status_log['created_by']) : '-' }}
-                                        </td>
-                                        <td>{{ isset($status_log['remarks']) ? $status_log['remarks'] : '-' }}
-                                        </td>
-                                        <td>{{ null !== Displaydateformat($status_log['created_at']) ? Displaydateformat($status_log['created_at']) : '-' }}
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <br>
             </div>
+            <br>
+        </div>
 
 </body>
 

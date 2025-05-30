@@ -50,9 +50,16 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
-                                                    <input type="text" name="issue_date" id="issue_date"
-                                                        class="form-control" placeholder="Issued Date"
-                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="issue_date" id="issue_date"
+                                                            class="form-control" placeholder="Issued Date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                     @error('issue_date')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
@@ -75,9 +82,33 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                    <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control" value="{{ old('inspection_date') }}">
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="inspection_date" id = "inspection_date"
+                                                            class="form-control" value="{{ old('inspection_date') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                     @error('inspection_date')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.next_due') }}</label>
+
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="next_due" id = "next_due"
+                                                            class="form-control" value="{{ old('next_due') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
+                                                    @error('next_due')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
@@ -103,6 +134,19 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                    <select name="unit_id" id="unit_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Unit</option>
+
+                                                    </select>
+                                                    @error('unit_id')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label class="form-label require">Shift</label>
                                                     <select name="shift_id" id="shift_id"
                                                         class=" form-control single-select" style="width: 100%">
@@ -118,34 +162,8 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                    <input type="text" name="next_due" id = "next_due"
-                                                        class="form-control" value="{{ old('next_due') }}">
-                                                    @error('next_due')
-                                                        <div class="error">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.unit') }}</label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit</option>
-                                                        @foreach ($units as $unit)
-                                                            <option value="{{ encryptId($unit->id) }}"
-                                                                {{ old('unit_id') == encryptId($unit->id) ? 'selected' : '' }}>
-                                                                {{ $unit->unit_name }}</option>
-                                                        @endforeach
-                                                    </select>
-                                                    @error('unit_id')
-                                                        <div class="error">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
-                                            </div>
+
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -208,7 +226,7 @@
                                                 @enderror
                                             </div>
 
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -227,7 +245,8 @@
                                                         @enderror
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
+
                                             {{-- <div class=""> --}}
                                             <table class="container p-5">
                                                 <thead>
@@ -320,6 +339,33 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
+            // location based unit
+
+            $(document).on('change', '#location_id', function() {
+                var locationId = $(this).val();
+                if (locationId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append(
+                                '<option value="">Select unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#unit_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select unit</option>');
+                    $('#unit_id').trigger('change.');
+                }
+            });
             $(document).ready(function() {
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();
@@ -458,10 +504,6 @@
                             capacity: {
                                 required: "{{ __('Capacity is Required') }}",
                             },
-                            signature_image: {
-                                required: "Signature is required",
-                                 filesize: "File size must be less than 15MB."
-                            }
                         },
                         errorElement: 'span',
                         errorPlacement: function(error, element) {

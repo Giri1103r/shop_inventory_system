@@ -172,7 +172,7 @@
                         <span><b>MEDICAL REQUISITION ISSUE SLIP
                             </b></span>
                         <br>
-                      
+
                     </h3>
                 </th>
 
@@ -263,15 +263,26 @@
                 @endphp
 
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">
-                    <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
-                        style="width: 150px; margin-top: -10px;" />
-                    <div style="margin-top: 5px;">Requestor Signature </div>
+                    {{-- <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
+                            style="width: 150px; margin-top: -10px;" /> --}}
+                    <div style="margin-top: 5px;">Requestor Name :
+                        {{ getUsername($medicine_requisition_fdo_details->created_by) }} </div>
                 </th>
 
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">
-                    <img src="{{ admin_url($approvedSignature) }}" alt="Signature Upload"
-                        style="width: 150px; margin-top: -10px;" />
-                    <div style="margin-top: 5px;">Medical Assitant / Safety Officer Signature</div>
+                    {{-- <img src="{{ admin_url($approvedSignature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" /> --}}
+                    @if ($medicine_requisition_fdo_details->approved_by)
+                        <div style="margin-top: 5px;">
+                            Medical Assistant / Safety Officer Signature:
+                            {{ getUsername($medicine_requisition_fdo_details->approved_by) }}
+                        </div>
+                    @else
+                        <div style="margin-top: 5px;">
+                            Medical Assistant / Safety Officer Signature: Not Yet Approved
+                        </div>
+                    @endif
+
                 </th>
 
             </tr>
@@ -315,7 +326,7 @@
                     {{ Displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
                 </td>
             </tr>
-            <tr>
+            {{-- <tr>
                 <td width="50%" style="padding:5px;"><b>Signature</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
@@ -329,7 +340,7 @@
                         No Signature Available
                     @endif
                 </td>
-            </tr>
+            </tr> --}}
             <tr>
                 <td width="50%" style="padding:5px;"><b>Remarks</b></td>
                 <td width="2%" style="padding:5px;">:</td>

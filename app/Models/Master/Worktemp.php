@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\Log;
 
 class Worktemp extends Model
 {
@@ -61,9 +62,6 @@ class Worktemp extends Model
             ->where('id', '!=', decryptId($data['id']))
             ->get();
     }
-
-
-
     public function store($data)
     {
         $batchSize = 500;
@@ -74,7 +72,6 @@ class Worktemp extends Model
 
                 $status = isset($item['Status']) ? ($item['Status'] === 'Y' ? 1 : 0) : null;
 
-              
                 $valuesToInsertOrUpdate = [
                     'emp_name' => isset($item['EmpName']) ? $item['EmpName'] : null,
                     'gender' => isset($item['Gender']) ? $item['Gender'] : null,
@@ -97,8 +94,9 @@ class Worktemp extends Model
 
                 ];
 
-                $exists = $this->where('emp_id', $item['EmpId'])->exists();
 
+
+                $exists = $this->where('emp_id', $item['EmpId'])->exists();
                 if ($exists) {
                     $valuesToInsertOrUpdate['updated_at'] = now();
                 } else {
@@ -109,11 +107,105 @@ class Worktemp extends Model
                     ['emp_id' => $item['EmpId']],
                     $valuesToInsertOrUpdate
                 );
+
+                $companyExists = DB::table('company_management')->where('short_name', $item['Company'])->first();
+                if (!$companyExists) {
+                    $errorMessage = "Company not found: " . $item['Company'];
+                    $this->updateErrorStatus($item['EmpId'], $errorMessage);
+
+                    continue;
+                }
+
+                $locationExists = DB::table('masters_location')
+                    ->where('company_id', $companyExists->id)
+                    ->where('location_name', $item['Subdepartment'])
+                    ->first();
+                if (!$locationExists) {
+                    $errorMessage = "Location not found: " . $item['Subdepartment'];
+                    $this->updateErrorStatus($item['EmpId'], $errorMessage);
+
+                    continue;
+                }
+
+                $unitExists = DB::table('masters_unit')
+                    ->where('company_id', $companyExists->id)
+                    ->where('location_id', $locationExists->id)
+                    ->where('unit_name', $cleanUnit)
+                    ->first();
+
+                if (!$unitExists) {
+                    $errorMessage = "Unit not found: " . $cleanUnit;
+                    $this->updateErrorStatus($item['EmpId'], $errorMessage);
+                    continue;
+                }
+                $departmentExists = DB::table('masters_department')
+                    ->where('company_id', $companyExists->id)
+                    ->where('location_id', $locationExists->id)
+                    ->where('unit_id', $unitExists->id)
+                    ->where('department_name', $item['Dept'])
+                    ->first();
+                if (!$departmentExists) {
+                    $errorMessage = "Department not found: " . $item['Dept'];
+                    $this->updateErrorStatus($item['EmpId'], $errorMessage);
+                    continue;
+                }
             }
         }
 
         return response()->json(['message' => 'Data processed successfully.']);
     }
+
+
+    // public function store($data)
+    // {
+    //     $batchSize = 500;
+    //     $chunks = array_chunk($data, $batchSize);
+    //     foreach ($chunks as $chunk) {
+    //         foreach ($chunk as $item) {
+    //             $cleanUnit = isset($item['Unit']) ? str_replace(["\r", "\n"], '', trim($item['Unit'])) : null;
+
+    //             $status = isset($item['Status']) ? ($item['Status'] === 'Y' ? 1 : 0) : null;
+
+
+    //             $valuesToInsertOrUpdate = [
+    //                 'emp_name' => isset($item['EmpName']) ? $item['EmpName'] : null,
+    //                 'gender' => isset($item['Gender']) ? $item['Gender'] : null,
+    //                 'nationality' => isset($item['Nationality']) ? $item['Nationality'] : null,
+    //                 'biometric_code' => isset($item['BiometricCode']) ? $item['BiometricCode'] : null,
+    //                 'doi' => DBdatetimeformat($item['Doi']),
+    //                 'exit_date' => $item['ExitDate'] != '' ? DBdatetimeformat($item['ExitDate']) : null,
+    //                 'mobile_no' => isset($item['MobileNo']) ? $item['MobileNo'] : null,
+    //                 'company' => isset($item['Company']) ? $item['Company'] : null,
+    //                 'subdepartment' => isset($item['Subdepartment']) ? $item['Subdepartment'] : null,
+    //                 'unit' => $cleanUnit,
+    //                 'department' => isset($item['Dept']) ? $item['Dept'] : null,
+    //                 'designation' => isset($item['Designation']) ? $item['Designation'] : null,
+    //                 'status' => $status,
+    //                 'wfemptype' => isset($item['WfEmpType']) ? $item['WfEmpType'] : null,
+    //                 'skill' => isset($item['Skill']) ? $item['Skill'] : null,
+    //                 'upload_status' => 0,
+    //                 'error_status' => 0,
+    //                 'error_remarks' => null,
+
+    //             ];
+
+    //             $exists = $this->where('emp_id', $item['EmpId'])->exists();
+
+    //             if ($exists) {
+    //                 $valuesToInsertOrUpdate['updated_at'] = now();
+    //             } else {
+    //                 $valuesToInsertOrUpdate['created_at'] = now();
+    //             }
+
+    //             $this->updateOrInsert(
+    //                 ['emp_id' => $item['EmpId']],
+    //                 $valuesToInsertOrUpdate
+    //             );
+    //         }
+    //     }
+
+    //     return response()->json(['message' => 'Data processed successfully.']);
+    // }
 
 
     public function updates($workid)
@@ -170,6 +262,17 @@ class Worktemp extends Model
 
         return $datas;
     }
+    public function updateErrorStatus($emp_id, $errorMessage)
+    {
+
+        $update_data = [
+            'error_status' => 1,
+            'error_remarks' => $errorMessage,
+        ];
+
+        return $this->where('emp_id', $emp_id)->update($update_data);
+    }
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('masters_work_temp'));

@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Jobs\Ohc\ImportRequisitionjob;
 use App\Mail\Ohc\FitnessEmail;
 use App\Mail\Ohc\MedicineRequisitionEmail;
+use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
@@ -41,12 +42,14 @@ class MedicalFitnessCertificateController extends Controller
 
     private $medical_fitness_certificate;
     private $ohc_status;
+    private $company;
 
     public function __construct()
     {
 
         $this->medical_fitness_certificate = new MedicalFitnessCertificate();
         $this->ohc_status = new OhcStatuslog();
+        $this->company = new Company();
     }
 
     public function index(Request $request)
@@ -78,8 +81,7 @@ class MedicalFitnessCertificateController extends Controller
                                 $text = "<span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Approval Pending</span>";
                             } else if ($row->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED) {
                                 $text = "<span class='badge bg-success' style='font-size: 1.0em;'>EHS Head Approved</span>";
-                            }
-                            else if ($row->approve_status == STATUS_OHC_MEDICAL_DOCTOR_REJECTED) {
+                            } else if ($row->approve_status == STATUS_OHC_MEDICAL_DOCTOR_REJECTED) {
                                 $text = "<span class='badge bg-danger' style='font-size: 1.0em;'>Doctor Rejected</span>";
                             }
                             return $text;
@@ -89,6 +91,9 @@ class MedicalFitnessCertificateController extends Controller
                         })
                         ->editColumn('unit_id', function ($row) {
                             return getUnitname($row->unit_id);
+                        })
+                         ->editColumn('company_id', function ($row) {
+                            return getCompanyname($row->company_id);
                         })
                         ->editColumn('department_id', function ($row) {
                             return getDepartment($row->department_id);
@@ -125,7 +130,18 @@ class MedicalFitnessCertificateController extends Controller
         }
 
 
-        $data = array();
+
+        $companyList  = $this->company->select('id', 'company_name')->where('status', '1')->get();
+
+        // $location = $this->location->select('id', 'location_type_name')->where('status', 1)->where('trash', 'NO')->get();
+        $data = array(
+
+
+            'companyList' => $companyList,
+
+            'dashboard_search' => $request,
+            // 'location' => $location,
+        );
 
         return view('ohcmanagement.medical_fitness_certificate.list', $data);
     }
@@ -137,6 +153,8 @@ class MedicalFitnessCertificateController extends Controller
             return view('ohcmanagement.medical_fitness_certificate.add');
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
 
@@ -149,7 +167,7 @@ class MedicalFitnessCertificateController extends Controller
                 'emp_name' => 'required',
                 'date' => 'required',
                 'remarks' => 'required',
-                'company_id.required' => 'Date is required',
+                'company_id.required' => 'company is required',
 
             ];
 
@@ -224,7 +242,7 @@ class MedicalFitnessCertificateController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-                report($ex);
+               report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
@@ -253,11 +271,12 @@ class MedicalFitnessCertificateController extends Controller
                     'ehsheadlog' => $ehsheadlog,
 
                 );
-
             }
             return view('ohcmanagement.medical_fitness_certificate.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
 
@@ -291,16 +310,16 @@ class MedicalFitnessCertificateController extends Controller
                 $action = $request->input('action');
                 $remarks = $request->input('remarks');
 
-                if($action == 'approve'){
+                if ($action == 'approve') {
                     $doctorverifydata = [
                         'remarks' => $remarks,
                         'approve_status' =>  STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING
                     ];
-                }else if ($action == 'reject'){    $doctorverifydata = [
-                    'remarks' => $remarks,
-                    'approve_status' =>  STATUS_OHC_MEDICAL_DOCTOR_REJECTED
-                ];
-
+                } else if ($action == 'reject') {
+                    $doctorverifydata = [
+                        'remarks' => $remarks,
+                        'approve_status' =>  STATUS_OHC_MEDICAL_DOCTOR_REJECTED
+                    ];
                 }
 
                 $this->medical_fitness_certificate->doctorapproval($id, $doctorverifydata);
@@ -335,9 +354,9 @@ class MedicalFitnessCertificateController extends Controller
                             }
                         }
 
-                    /**
-                     * Send Web notification
-                     */
+                        /**
+                         * Send Web notification
+                         */
                         $notificationData = array(
                             'notification_type' => 4,
                             'module_type' => 1,
@@ -355,17 +374,13 @@ class MedicalFitnessCertificateController extends Controller
                         );
                         notificationSave($notificationData);
                     }
-
-
-
-
                 }
 
-                if($action == 'reject'){
+                if ($action == 'reject') {
                     $mailsubject = 'Medical Fitness Check';
                     $data = $this->medical_fitness_certificate->selectOne($id);
                     $createdBy =   $data->created_by;
-                    $user = User::where('id',$createdBy)->where('status',1)->first();
+                    $user = User::where('id', $createdBy)->where('status', 1)->first();
                     $email_id = $user->email;
 
                     if ($email_id != '' || $email_id != null) {
@@ -501,7 +516,6 @@ class MedicalFitnessCertificateController extends Controller
                 $data = array(
                     'medicalfitness' => $medicalfitness,
                 );
-
             }
 
             return view('ohcmanagement.medical_fitness_certificate.edit', $data);
@@ -594,14 +608,14 @@ class MedicalFitnessCertificateController extends Controller
 
                 Session::flash('success', 'Your data has been updated successfully!');
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medical-fitness/list'));
         } catch (Exception $ex) {
 
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-fitness/list'));
         }
@@ -625,7 +639,10 @@ class MedicalFitnessCertificateController extends Controller
                 'Employee Code',
                 'Employee Name',
                 'Company Name',
+                'Unit Name',
+                'Department Name',
                 ' Date',
+                'Cheif Complaint',
                 'Remarks',
                 'From Status',
                 'To Status',
@@ -641,9 +658,12 @@ class MedicalFitnessCertificateController extends Controller
                 $export[] =  ($data->emp_id);
                 $export[] =  ($data->emp_name);
                 $export[] =  getCompanyname($data->company_id);
+                $export[] =  getUnitname($data->unit_id);
+                $export[] =  getDepartment($data->department_id);
                 $export[] = displaydateformat($data->date);
+                $export[] =  $data->cheif_complaint;
                 $export[] =  $data->remarks;
-                if ($data->approve_status ==STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING ) {
+                if ($data->approve_status == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING) {
                     $export[] = 'Paramedicis Applied the fitness certificate';
                 } elseif ($data->approve_status == STATUS_OHC_MEDICAL_DOCTOR_APPROVED) {
                     $export[] = 'Doctor Approval Pending';
@@ -651,10 +671,10 @@ class MedicalFitnessCertificateController extends Controller
                     $export[] = 'Doctor Approved';
                 } elseif ($data->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED) {
                     $export[] = 'EHS Head Approval Pending';
-                }  else {
+                } else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));
                 }
-                if ($data->approve_status ==STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING ) {
+                if ($data->approve_status == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING) {
                     $export[] = 'Doctor Approval Pending';
                 } elseif ($data->approve_status == STATUS_OHC_MEDICAL_DOCTOR_APPROVED) {
                     $export[] = 'Doctor Approved';
@@ -662,11 +682,9 @@ class MedicalFitnessCertificateController extends Controller
                     $export[] = 'EHS Head Approval Pending';
                 } elseif ($data->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED) {
                     $export[] = 'EHS Head Approved';
-
-                }
-                elseif ($data->approve_status == STATUS_OHC_MEDICAL_DOCTOR_REJECTED) {
+                } elseif ($data->approve_status == STATUS_OHC_MEDICAL_DOCTOR_REJECTED) {
                     $export[] = 'Doctor Rejected';
-                }  else {
+                } else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));
                 }
                 $export[] =  getusername($data->created_by);
@@ -729,7 +747,8 @@ class MedicalFitnessCertificateController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
 
@@ -749,7 +768,10 @@ class MedicalFitnessCertificateController extends Controller
                 'Employee Code',
                 'Employee Name',
                 'Company Name',
+                'Unit Name',
+                'Department Name',
                 ' Date',
+                'Cheif Complaint',
                 'Remarks',
                 'From Status',
                 'To Status',

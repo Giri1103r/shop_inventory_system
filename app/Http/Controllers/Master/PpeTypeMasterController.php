@@ -68,11 +68,19 @@ class PpeTypeMasterController extends Controller
                                 $btn = '<a href="' . admin_url('ppe_ppetype_master/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
                             // if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('ppe_ppetype_master/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('ppe_ppetype_master/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_at', 'created_by', 'status'])
+                        ->addColumn('item_code', function ($row) {
+                            $ppeName = $row->ppe_name ?? '-';
+                            $ppeStandard = $row->ppe_standard ?? '-';
+                            $tooltip = "Name: {$ppeName}; Standard: {$ppeStandard}";
+
+                            return '<span title="' . e($tooltip) . '">' . e($row->item_code) . '</span>';
+                        })
+
+                        ->rawColumns(['action', 'created_at', 'created_by', 'status','item_code'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()

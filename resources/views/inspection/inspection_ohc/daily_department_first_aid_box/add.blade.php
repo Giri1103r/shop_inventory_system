@@ -257,7 +257,7 @@
                                         </div>
 
 
-                                        @if ($signature_upload->signature_upload != '')
+                                        {{-- @if ($signature_upload->signature_upload != '')
                                             <label class="form-label view_label">Requestor Signature</label>
 
                                             <p>
@@ -286,7 +286,7 @@
                                                 </div>
                                             </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                 </div>
                                 <hr>
                                 <div class="submit-button" style="text-align: right;">
@@ -318,11 +318,7 @@
                 location.reload();
             });
         });
-        var IssueDatepicker = flatpickr("#issue_date", {
-            dateFormat: "d-m-Y",
-            minDate: new Date()
 
-        });
         var Datepicker = flatpickr("#date_of_inspection", {
             dateFormat: "d-m-Y",
             minDate: new Date()

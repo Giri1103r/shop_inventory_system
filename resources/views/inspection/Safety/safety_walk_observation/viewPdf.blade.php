@@ -209,7 +209,7 @@
             <td width="50%" style="padding:5px;"><b>Safety Walk Taken By</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{ isset($inspection_details->safety_walk_taken_by) ? $inspection_details->safety_walk_taken_by : '' }}
+                {{ getUsername(isset($inspection_details->safety_walk_taken_by) ? $inspection_details->safety_walk_taken_by : '') }}
             </td>
         </tr>
         <tr>
@@ -349,7 +349,7 @@
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->remarks }}</td>
                 </tr>
             @endforeach
-            @php
+            {{-- @php
                 $prepared_by_signature = GetSafetySignature(
                     $inspection_details->created_by,
                     $inspection_details->id,
@@ -360,19 +360,19 @@
                     $inspection_details->id,
                     SAFETY_WALK_OBSERVATION,
                 );
-            @endphp
+            @endphp --}}
             <tr>
                 <td colspan="5"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
-                        style="height: 50px; margin-top:2px;">
+                    {{-- <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
+                        style="height: 50px; margin-top:2px;"> --}}
                     <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
                 </td>
                 <td colspan="5"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     @if ($inspection_details->updated_by != null)
-                        <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
-                            style="height: 50px;">
+                        {{-- <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
+                            style="height: 50px;"> --}}
                         <div>Verified By: {{ getUsername($inspection_details->updated_by) }}</div>
                     @else
                         <p>Inspection has not been Verified Yet</p>

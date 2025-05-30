@@ -74,9 +74,9 @@ class MonthlyAuditPlanController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('audit/monthly-audit/audit-plan/view/' . encryptId($row->id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('audit/monthly-audit/audit-plan/generalpdf/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF"><i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a>';
-                            $btn .= '<a href="' . admin_url('audit/monthly-audit/audit-plan/generalExcel/' . encryptId($row->id)) . '" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
+                            $btn = '<a href="' . admin_url('audit/monthly-audit/audit-plan/view/' . encryptId($row->id)) . '"   class="view-icon me-1 " title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('audit/monthly-audit/audit-plan/generalpdf/' . encryptId($row->id)) . '"  class="me-1" style="margin-right: 5px;" title="PDF"><i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i></a>';
+                            $btn .= '<a href="' . admin_url('audit/monthly-audit/audit-plan/generalExcel/' . encryptId($row->id)) . '"  class="me-1" style="margin-right: 5px;" title="PDF"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
                             // if (CheckUserRole(ROLE_SUPERADMIN)) {
                             // $btn .= '<a href="' . admin_url('audit/master/task/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  class="recordDelete" title="' . __('common.delete') . '"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';

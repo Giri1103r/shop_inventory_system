@@ -229,7 +229,7 @@
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ Displaydateformat($medicines['expired_date']) }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ getUsername($medicines['emp_id']) }}</td>
+                        {{ ($medicines['emp_id']) }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ $medicines['remarks'] }}</td>
                 </tr>
@@ -237,15 +237,15 @@
             <tr>
                 <td colspan="3"
                     style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($inspection_created_by) }}" alt="Checked By Signature"
-                        style="height: 50px; margin-top:2px;">
+                    {{-- <img src="{{ admin_url($inspection_created_by) }}" alt="Checked By Signature"
+                        style="height: 50px; margin-top:2px;"> --}}
                     <div>Checked & Prepared By: {{ getUsername($inspection_detail->created_by) }}</div>
                 </td>
                 <td colspan="3"
                     style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     @if ($inspection_detail->updated_by != null)
-                        <img src="{{ admin_url($inspection_updated_by) }}" alt="Verified By Signature"
-                            style="height: 50px;">
+                        {{-- <img src="{{ admin_url($inspection_updated_by) }}" alt="Verified By Signature"
+                            style="height: 50px;"> --}}
                         <div>Verified By: {{ getUsername($inspection_detail->updated_by) }}</div>
                     @else
                         <p>Inspection has not been Verified Yet</p>

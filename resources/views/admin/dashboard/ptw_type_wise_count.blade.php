@@ -1,4 +1,4 @@
-@if (empty($work_wise_count) || array_sum($work_wise_count) === 0)
+@if (empty($totalCount) || array_sum(array_column($work_wise_count, 'count')) === 0)
     <div class="border-0 pb-3" style="margin-top: 166px;">
         <h4 style="text-align: center;">No data Found.</h4>
     </div>
@@ -6,20 +6,11 @@
     <div id="ptw_type_wise"></div>
     <script>
         var type_wise = @json($work_wise_count);
-
-
-        // var dynamicColors = [
-        //     '#3B5998', '#26A69A', '#FFC300', '#6C3483', '#E74C3C', '#3498DB',
-        //     '#1ABC9C', '#9B59B6', '#F39C12', '#2ECC71', '#E67E22', '#34495E'
-        // ];
-
-        // // Ensure colors match the number of bars
-        // var barCount = seriesData.length;
-        // var colors = dynamicColors.slice(0, barCount);
+        type_wise = Object.values(type_wise);
         var options = {
             series: [{
                 name: 'Work Count',
-                data: Object.values(type_wise)
+                data: type_wise.map(item => item.count) 
             }],
             chart: {
                 height: 350,
@@ -27,17 +18,23 @@
                 toolbar: {
                     show: false
                 },
+                events: {
+                    dataPointSelection: function(event, chartContext, config) {
+                        var selectedItem = type_wise[config.dataPointIndex];
+                        var typeOfWork = selectedItem.id;
+                       redirectToPPE('', '', '', '', typeOfWork, '');
+                    }
+                }
             },
             plotOptions: {
                 bar: {
-                    borderRadius: 10,
+                    columnWidth: '25%',
                     horizontal: false,
-                    distributed: true // ✅ Enables individual bar colors
+                    distributed: true
                 }
             },
-            // colors: colors,
             xaxis: {
-                categories: Object.keys(type_wise),
+                categories: type_wise.map(item => item.name), 
                 position: 'bottom',
                 axisBorder: {
                     show: false
@@ -69,13 +66,12 @@
                     show: false,
                 },
                 labels: {
-                    show: false,
+                    show: true, 
                     formatter: function(val) {
                         return val;
                     }
                 }
             },
-
             grid: {
                 padding: {
                     bottom: 60
@@ -94,7 +90,6 @@
         var ptw_type_wise = new ApexCharts(document.querySelector("#ptw_type_wise"), options);
         ptw_type_wise.render();
 
-        // Download button functionality
         $("#ptw_type_wise_download").off("click").on("click", function() {
             ptw_type_wise.dataURI().then(({
                 imgURI

@@ -6,6 +6,7 @@ use Exception;
 use App\Models\User;
 use Illuminate\Support\Str;
 use App\Models\Master\Employee;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Database\Eloquent\Model;
@@ -72,8 +73,64 @@ class SignatureUpload extends Model
                 $this->create($insert_array);
             }
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
+        }
+    }
+
+    public function signatureUpload_api($type, $id)
+    {
+        $request = request();
+        if ($request->has('signature_image')) {
+            $base64File = $request->input('signature_image');
+            $extension = null;
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64File, $matches)) {
+                $extension = $matches[1];
+            } elseif (preg_match('/^data:application\/pdf;base64,/', $base64File)) {
+                $extension = 'pdf';
+            } elseif (preg_match('/^data:application\/msword;base64,/', $base64File)) {
+                $extension = 'doc';
+            } elseif (preg_match('/^data:application\/vnd\.openxmlformats-officedocument\.wordprocessingml\.document;base64,/', $base64File)) {
+                $extension = 'docx';
+            } elseif (preg_match('/^data:application\/vnd\.ms-excel;base64,/', $base64File)) {
+                $extension = 'xls';
+            } elseif (preg_match('/^data:application\/vnd\.openxmlformats-officedocument\.spreadsheetml\.sheet;base64,/', $base64File)) {
+                $extension = 'xlsx';
+            } elseif (preg_match('/^data:application\/octet-stream;base64,/', $base64File)) {
+                $extension = 'bin';
+            } else {
+                Log::error("Unsupported Base64 file format.");
+                return;
+            }
+
+            $base64File = preg_replace('#^data:(.*);base64,#i', '', $base64File);
+            $fileData = base64_decode($base64File);
+
+            if ($fileData === false) {
+                Log::error("Base64 decoding failed.");
+                return;
+            }
+
+            $uploadDir = public_path('uploads/inspection/safety/signatureupload');
+
+            if (!File::exists($uploadDir)) {
+                File::makeDirectory($uploadDir, 0777, true, true);
+            }
+
+            $fileName = time() . Str::random(10) . '.' . $extension;
+            $fileFullPath = $uploadDir . '/' . $fileName;
+
+            file_put_contents($fileFullPath, $fileData);
+
+            $this->create([
+                'emp_id' => Auth::id(),
+                'inspection_id' => $id,
+                'type' => $type,
+                'file_name'      => $fileName,
+                'file_orgname'   => $fileName,
+                'file_path'      => 'public/uploads/inspection/safety/signatureupload/' . $fileName,
+                'file_extension' => $extension,
+                'created_by'     => Auth::id(),
+            ]);
         }
     }
 }

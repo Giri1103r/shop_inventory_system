@@ -287,7 +287,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -296,7 +296,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             @if (isset($inspection->approved_by))
                                                 @if ($inspection->verified_by == $inspection->approved_by)
                                                     <div class="col-md-4 mb-2">
@@ -315,16 +315,17 @@
                                                             FIRE_ALARM_INSPECTION,
                                                         );
                                                     @endphp
-                                                    @if (isset($signature))
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label"
-                                                                style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                                style="width: 150px; margin-top: -10px;" />
+                                                    {{-- @if (isset($signature))
+                                                        <div class="col-md-4 mb-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label"
+                                                                    style="display: block;">{{ __('inspection.signature') }}</label>
+                                                                <img src="{{ admin_url($signature) }}"
+                                                                    alt="Signature Upload"
+                                                                    style="width: 150px; margin-top: -10px;" />
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                @endif
+                                                    @endif --}}
                                                 @endif
                                             @endif
 
@@ -379,7 +380,7 @@
                                                     FIRE_ALARM_INSPECTION,
                                                 );
                                             @endphp
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -388,7 +389,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -432,7 +433,7 @@
                                                 FIRE_ALARM_INSPECTION,
                                             );
                                         @endphp
-                                        @if (isset($signature))
+                                        {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
@@ -441,7 +442,7 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label
@@ -484,7 +485,7 @@
                                                 FIRE_ALARM_INSPECTION,
                                             );
                                         @endphp
-                                        @if (isset($signature))
+                                        {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
@@ -493,7 +494,7 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label
@@ -535,7 +536,7 @@
                                                 FIRE_ALARM_INSPECTION,
                                             );
                                         @endphp
-                                        @if (isset($signature))
+                                        {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
@@ -544,7 +545,7 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         {{-- @if ($inspection->approved_by)
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">

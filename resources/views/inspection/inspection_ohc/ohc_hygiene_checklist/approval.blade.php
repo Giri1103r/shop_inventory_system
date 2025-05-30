@@ -150,13 +150,13 @@
 
                                 </div>
                                 <div class="container d-flex justify-content-between">
-                                    <div class="mb-3 col-md-4 form-input">
+                                    {{-- <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Cleaner Signature') }}</label>
                                         <div class="view_data">
                                             <img src="{{ admin_url($cleaner_signature) }}" alt="Cleaner Signature"
                                                 style="width:100px; height:100px;">
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     @isset($nursing_signature)
                                         <div class="container ">
                                             <div class="mb-3 col-md-4 form-input">
@@ -196,7 +196,7 @@
                                                         value="{{ todayDate() }}" readonly>
                                                 </div>
 
-                                                <div class="col-md-4 form-group form-input mb-2">
+                                                {{-- <div class="col-md-4 form-group form-input mb-2">
                                                     @if (isset(Auth::user()->signature_upload))
                                                         <label class="form-label"
                                                             style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -212,7 +212,7 @@
                                                             <div id="signature_upload" class="text-danger"></div>
                                                         </div>
                                                     @endif
-                                                </div>
+                                                </div> --}}
 
                                                 <div class="col-md-12 mb-2 form-input" id="capa_remarks">
                                                     <label for="capa_remarks" class="form-label">Remarks</label>

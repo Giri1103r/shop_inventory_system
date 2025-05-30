@@ -167,7 +167,7 @@
                 <th colspan="20" style="border:1px solid black;">
                     <h3>
                         <span><b>Monthly First Aid Box Audit Checklist</b></span>
-                        
+
                     </h3>
                 </th>
 
@@ -332,7 +332,7 @@
 
             @endphp
 
-            <tr>
+            {{-- <tr>
                 <th colspan="58" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
                     <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
@@ -341,7 +341,18 @@
                 </th>
 
 
-            </tr>
+            </tr> --}}
+
+            <tr>
+            <th colspan="58" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                @if ($details->created_by != null)
+                    <div style="margin-top: 5px;">Creator Name: {{ getUsername($details->created_by) }}
+                    </div>
+                @else
+                    <div style="margin-top: 5px;">Not available</div>
+                @endif
+            </th>
+        </tr>
         </table>
         <div class="page-break"></div>
     @endforeach

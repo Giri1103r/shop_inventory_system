@@ -218,7 +218,7 @@
         </th>
     </tr>
 
-   
+
 
     <tr style="background-color: #ddd;">
         <th rowspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">SL</th>
@@ -226,13 +226,14 @@
         <th rowspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">HYDRANT NO.</th>
         <th colspan="9" style="border: 1px solid black; padding: 6px; text-align: center;">CHECK ITEMS</th>
         <th rowspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">REMARKS</th>
-      </tr>
-      <tr style="background-color: #ddd;">
-        <th colspan="6" style="border: 1px solid black; padding: 6px; text-align: center;">CONDITION OF LANDING VALVE</th>
+    </tr>
+    <tr style="background-color: #ddd;">
+        <th colspan="6" style="border: 1px solid black; padding: 6px; text-align: center;">CONDITION OF LANDING VALVE
+        </th>
         <th colspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">CONDITION OF ISV</th>
         <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">APPROACH</th>
-      </tr>
-      <tr style="background-color: #ddd;">
+    </tr>
+    <tr style="background-color: #ddd;">
         <th style="border: 1px solid black; padding: 6px; text-align: center;">LUGS</th>
         <th style="border: 1px solid black; padding: 6px; text-align: center;">RUBBER WASHER</th>
         <th style="border: 1px solid black; padding: 6px; text-align: center;">CHECK NUT</th>
@@ -241,7 +242,7 @@
         <th style="border: 1px solid black; padding: 6px; text-align: center;">FEMALE COUPLING</th>
         <th style="border: 1px solid black; padding: 6px; text-align: center;">LEVER</th>
         <th style="border: 1px solid black; padding: 6px; text-align: center;">FLOW TEST</th>
-      </tr>
+    </tr>
 
 
     <!-- Data Rows -->
@@ -251,16 +252,22 @@
             <td style="border: 1px solid black; padding: 6px;">{{ getLocationname($detail->location_check_id) }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->hydrant_no }}</td>
 
-            <td style="border: 1px solid black; padding: 6px; text-align: center;"> {{ $detail->lugs_id == '1' ? 'Present' : 'Missing' }}</td>
+            <td style="border: 1px solid black; padding: 6px; text-align: center;">
+                {{ $detail->lugs_id == '1' ? 'Present' : 'Missing' }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">
                 {{ $detail->rubber_washer == '1' ? 'Intact' : 'Damaged' }}
             </td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->check_nut == '1' ? 'Present' : 'Missing' }}</td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->spindle_wheel == '1' ? 'Functional' : 'Non-Functional' }}
+            <td style="border: 1px solid black; padding: 6px; text-align: center;">
+                {{ $detail->check_nut == '1' ? 'Present' : 'Missing' }}</td>
+            <td style="border: 1px solid black; padding: 6px; text-align: center;">
+                {{ $detail->spindle_wheel == '1' ? 'Functional' : 'Non-Functional' }}
             </td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->blank_cap == '1' ? 'Present' : 'Missing' }}</td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->female_coupling == '1' ? 'Functional' : 'Non-Functional' }}</td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->lever == '1' ? 'Functional' : 'Non-Functional' }}</td>
+            <td style="border: 1px solid black; padding: 6px; text-align: center;">
+                {{ $detail->blank_cap == '1' ? 'Present' : 'Missing' }}</td>
+            <td style="border: 1px solid black; padding: 6px; text-align: center;">
+                {{ $detail->female_coupling == '1' ? 'Functional' : 'Non-Functional' }}</td>
+            <td style="border: 1px solid black; padding: 6px; text-align: center;">
+                {{ $detail->lever == '1' ? 'Functional' : 'Non-Functional' }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->flow_test }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">
                 {{ $detail->approach }}
@@ -269,7 +276,7 @@
         </tr>
     @endforeach
 
-    @php
+    {{-- @php
         $approved_by = GetFireSignature($first->approved_by, $first->fire_id, $inspection_type);
         $verified_by = GetFireSignature($first->verified_by, $first->fire_id, $inspection_type);
         $checked_by = GetFireSignature($first->checked_by, $first->fire_id, $inspection_type);
@@ -302,6 +309,37 @@
                 @if (!empty($first->approved_by))
                     <img src="{{ admin_url($approved_by) }}" alt=""
                         style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                    <p style="margin: 0;">Approved By:- {{ getUsername($first->approved_by) }}</p>
+                @else
+                    <p style="margin: 0;">Approved By:- Not yet approved</p>
+                @endif
+            </div>
+        </td>
+    </tr> --}}
+
+
+    <tr>
+        <td colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">
+            <div class="view_data">
+                @if (!empty($first->checked_by))
+                    <p style="margin: 0;">Checked By:- {{ getUsername($first->checked_by) }}</p>
+                @else
+                    <p style="margin: 0;">Checked By:- Not yet checked</p>
+                @endif
+            </div>
+        </td>
+        <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+            <div class="view_data">
+                @if (!empty($first->verified_by))
+                    <p style="margin: 0;">Verified By:- {{ getUsername($first->verified_by) }}</p>
+                @else
+                    <p style="margin: 0;">Verified By:- Not yet verified</p>
+                @endif
+            </div>
+        </td>
+        <td colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">
+            <div class="view_data">
+                @if (!empty($first->approved_by))
                     <p style="margin: 0;">Approved By:- {{ getUsername($first->approved_by) }}</p>
                 @else
                     <p style="margin: 0;">Approved By:- Not yet approved</p>

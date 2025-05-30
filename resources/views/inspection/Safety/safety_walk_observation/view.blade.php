@@ -88,18 +88,18 @@
                                                 <label
                                                     class="form-label ">{{ __('inspection.safety_walk_taken_by') }}</label>
                                                 <div class="view_data">
-                                                    {{ $inspection_details->safety_walk_taken_by }}
+                                                    {{  getUsername($inspection_details->safety_walk_taken_by) }}
                                                 </div>
                                             </div>
                                         </div>
-                                        @php
+                                        {{-- @php
                                             $signature = GetSafetySignature(
                                                 $inspection_details->created_by,
                                                 $inspection_details->id,
                                                 SAFETY_WALK_OBSERVATION,
                                             );
-                                        @endphp
-                                        @if (isset($signature))
+                                        @endphp --}}
+                                        {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
@@ -108,7 +108,7 @@
                                                         style="width: 100px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                     </div>
                                     <hr>
                                     @foreach ($inspection as $details)
@@ -206,7 +206,6 @@
                                                     $images = GetSafetyWalkImage($details->id);
                                                 @endphp
 
-                                                {{-- @dd($images); --}}
                                                 <div class="col-md-4 mb-2">
                                                     @if ($images !== false)
                                                         <label class="form-label "
@@ -239,14 +238,14 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @php
+                                            {{-- @php
                                                 $signature = GetSafetySignature(
                                                     $inspection_details->updated_by,
                                                     $inspection_details->id,
                                                     SAFETY_WALK_OBSERVATION,
                                                 );
-                                            @endphp
-                                            @if (isset($signature))
+                                            @endphp --}}
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -255,7 +254,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.remarks') }}</label>
                                                 <div class="view_data">

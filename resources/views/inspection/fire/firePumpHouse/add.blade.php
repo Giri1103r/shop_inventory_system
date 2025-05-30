@@ -191,7 +191,7 @@
                                                 </tbody>
                                             </table>
 
-                                            <div class="col-md-4  form-input mt-2">
+                                            {{-- <div class="col-md-4  form-input mt-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -207,7 +207,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-4 form-input mt-2">
                                                 <label class="form-label require">Date</label>
 

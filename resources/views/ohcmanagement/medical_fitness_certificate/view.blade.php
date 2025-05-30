@@ -55,6 +55,18 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Unit Name') }}</label>
+                                        <div class="view_data">
+                                            {{ getUnitname(isset($medicalfitness->unit_id) ? $medicalfitness->unit_id : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Department Name') }}</label>
+                                        <div class="view_data">
+                                            {{ getDepartment(isset($medicalfitness->department_id) ? $medicalfitness->department_id : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('date') }}</label>
                                         <div class="view_data">
                                             {{ displaydateformat(isset($medicalfitness->date) ? $medicalfitness->date : '') }}
@@ -99,6 +111,12 @@
                                         <label class="form-label view_label">{{ __('Created Date') }}</label>
                                         <div class="view_data">
                                             {{ displaydateformat(isset($medicalfitness->created_at) ? $medicalfitness->created_at : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-8 form-input">
+                                        <label class="form-label view_label">{{ __('Chief Complaint') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($medicalfitness->cheif_complaint) ? $medicalfitness->cheif_complaint : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-12 form-input">
@@ -221,10 +239,12 @@
                                                                 <p class='badge bg-info' style='font-size: 1.0em;'>Doctor
                                                                     Approval Pending</p>
                                                             @elseif($status_log['from_status'] == STATUS_OHC_MEDICAL_DOCTOR_APPROVED)
-                                                                <p class='badge bg-success' style='font-size: 1.0em;'>Doctor
+                                                                <p class='badge bg-success' style='font-size: 1.0em;'>
+                                                                    Doctor
                                                                     Approved</p>
                                                             @elseif($status_log['from_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING)
-                                                                <p class='badge bg-info' style='font-size: 1.0em;'> EHS Head
+                                                                <p class='badge bg-info' style='font-size: 1.0em;'> EHS
+                                                                    Head
                                                                     Approval Pending</p>
                                                             @elseif($status_log['from_status'] == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
                                                                 <p class='badge bg-success' style='font-size: 1.0em;'>EHS

@@ -790,39 +790,23 @@ class MonthlyFirePumpHouseController extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
 
-                if (file_exists($createdBySig)) {
-                    $drawing = new Drawing();
-                    $drawing->setPath($createdBySig);
-                    $drawing->setCoordinates("B{$currentRow}");
-                    $drawing->setOffsetX(30);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWidth(90);
-                    $drawing->setWorksheet($sheet);
-                } else {
-                    $sheet->setCellValue("A{$currentRow}", "CHECKED BY:- \nInspection not yet started");
-                }
+                // if (file_exists($createdBySig)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setPath($createdBySig);
+                //     $drawing->setCoordinates("B{$currentRow}");
+                //     $drawing->setOffsetX(30);
+                //     $drawing->setOffsetY(10);
+                //     $drawing->setWidth(90);
+                //     $drawing->setWorksheet($sheet);
+                // } else {
+                //     $sheet->setCellValue("A{$currentRow}", "CHECKED BY:- \nInspection not yet started");
+                // }
 
-                if (file_exists($verifiedBySig)) {
-                    $drawing = new Drawing();
-                    $drawing->setPath($verifiedBySig);
-                    $drawing->setCoordinates("H{$currentRow}");
-                    $drawing->setOffsetX(30);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWidth(90);
-                    $drawing->setWorksheet($sheet);
-                } else {
+                if ($inspection->updated_by == null) {
                     $sheet->setCellValue("F{$currentRow}", "VERIFIED BY:- \nInspection not yet started");
-                }
+                } 
 
-                if (file_exists($approvedBySig)) {
-                    $drawing = new Drawing();
-                    $drawing->setPath($approvedBySig);
-                    $drawing->setCoordinates("N{$currentRow}");
-                    $drawing->setOffsetX(30);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWidth(90);
-                    $drawing->setWorksheet($sheet);
-                } else {
+                if ($inspection->approved_by == null) {
                     $sheet->setCellValue("L{$currentRow}", "APPROVED BY:- \nApproval pending");
                 }
 
@@ -1079,46 +1063,16 @@ class MonthlyFirePumpHouseController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_BOTTOM],
             ]);
 
-            if (file_exists($inspection_created_by)) {
-                $drawing = new Drawing();
-                $drawing->setName('Checked By');
-                $drawing->setPath($inspection_created_by);
-                $drawing->setCoordinates("B{$signatureRow}");
-                $drawing->setOffsetX(40);
-                $drawing->setOffsetY(20);
-                $drawing->setWidth(100);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-            }else {
-                $sheet->setCellValue("A{$signatureRow}", "CHECKED BY:- \nInspection not yet started");
+            if ($monthlyfirepump->updated_by == null) {
+                $sheet->setCellValue("A{$signatureRow}", "CHECKED BY:- Inspection not yet started");
             }
 
-            if (file_exists($inspection_verified_by)) {
-                $drawing = new Drawing();
-                $drawing->setName('Verified By');
-                $drawing->setPath($inspection_verified_by);
-                $drawing->setCoordinates("G{$signatureRow}");
-                $drawing->setOffsetX(40);
-                $drawing->setOffsetY(20);
-                $drawing->setWidth(100);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-            } else {
-                $sheet->setCellValue("E{$signatureRow}", "VERIFIED BY:- \nInspection not yet started");
+            if ($monthlyfirepump->updated_by == null) {
+                $sheet->setCellValue("E{$signatureRow}", "VERIFIED BY:- Inspection not yet started");
             }
 
-            if (file_exists($inspection_approved_by)) {
-                $drawing = new Drawing();
-                $drawing->setName('Approved By');
-                $drawing->setPath($inspection_approved_by);
-                $drawing->setCoordinates("K{$signatureRow}");
-                $drawing->setOffsetX(40);
-                $drawing->setOffsetY(20);
-                $drawing->setWidth(100);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-            }else {
-                $sheet->setCellValue("J{$signatureRow}", "APPROVED BY:- \nApproval pending");
+            if ($monthlyfirepump->approved_by == null) {
+                $sheet->setCellValue("E{$signatureRow}", "APPROVED BY:- Inspection not yet started");
             }
 
             $writer = new Xlsx($spreadsheet);

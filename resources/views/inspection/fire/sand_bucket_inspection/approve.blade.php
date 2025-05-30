@@ -32,7 +32,7 @@
                                     <div class="row">
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.doc_no') }}</label>
+                                                <label class="form-label ">{{ __('inspection.doc_no') }}</label>
                                                 <div class="view_data">
                                                     {{ $document_no->doc_no }}
                                                 </div>
@@ -40,7 +40,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.issue_date') }}</label>
+                                                <label class="form-label ">{{ __('inspection.issue_date') }}</label>
                                                 <div class="view_data">
                                                     {{ Displaydateformat($document_no->issue_date) }}
                                                 </div>
@@ -48,7 +48,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.rev_date') }}</label>
+                                                <label class="form-label ">{{ __('inspection.rev_date') }}</label>
                                                 <div class="view_data">
                                                     {{ $document_no->rev_dt }}
                                                 </div>
@@ -57,7 +57,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">{{ __('inspection.inspection_date') }}</label>
+                                                    class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                                 <div class="view_data">
                                                     {{ Displaydateformat($inspection->date_of_inspection) }}
                                                 </div>
@@ -65,7 +65,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.location') }}</label>
+                                                <label class="form-label ">{{ __('inspection.location') }}</label>
                                                 <div class="view_data">
                                                     {{ getLocationname($inspection->location) }}
                                                 </div>
@@ -73,7 +73,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">Shift</label>
+                                                <label class="form-label ">Shift</label>
                                                 <div class="view_data">
                                                     {{ getShiftName($inspection->shift) }}
                                                 </div>
@@ -81,7 +81,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
+                                                <label class="form-label ">{{ __('inspection.next_due') }}</label>
                                                 <div class="view_data">
                                                     {{ Displaydateformat($inspection->next_due) }}
                                                 </div>
@@ -89,7 +89,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                <label class="form-label ">{{ __('inspection.unit') }}</label>
                                                 <div class="view_data">
                                                     {{ getUnitname($inspection->unit) }}
                                                 </div>
@@ -97,7 +97,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.frequency') }}</label>
+                                                <label class="form-label ">{{ __('inspection.frequency') }}</label>
                                                 <div class="view_data">
                                                     {{ getFrequencyname($inspection->frequency) }}
                                                 </div>
@@ -106,14 +106,14 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">{{ __('inspection.upload_image') }}</label>
+                                                    class="form-label ">{{ __('inspection.upload_image') }}</label>
                                                 <div class="view_data">
                                                     <img src="{{ admin_url($inspection_image) }}"
                                                         style="width:50px; height:50px;" alt="" srcset="">
                                                 </div>
                                             </div>
                                         </div>
-                                        @php
+                                        {{-- @php
                                             $signature = GetFireSignature(
                                                 $inspection->created_by,
                                                 $inspection->id,
@@ -129,7 +129,7 @@
                                                         style="width: 100px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                     </div>
                                     <hr>
                                     <div class="form-observation">
@@ -139,9 +139,9 @@
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.obs') }}</label>
+                                                    <label class="form-label ">{{ __('inspection.obs') }}</label>
                                                     <div class="view_data">
-                                                        {{ $inspection->observation }}
+                                                        {{ $inspection->observation_needed ? "Yes" : "No" }}
                                                     </div>
 
                                                 </div>
@@ -161,7 +161,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.sr_no') }}</label>
+                                                            class="form-label ">{{ __('inspection.sr_no') }}</label>
                                                         <div class="view_data">
                                                             {{ $loop->iteration }}
                                                         </div>
@@ -172,7 +172,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
+                                                            class="form-label ">{{ __('inspection.location') }}</label>
                                                         <div class="view_data">
                                                             {{ getLocationname($details->location) }}
                                                         </div>
@@ -183,7 +183,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.fire_sand_bucket_stand_no') }}</label>
+                                                            class="form-label ">{{ __('inspection.fire_sand_bucket_stand_no') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->fire_bucket_stand_no }}
                                                         </div>
@@ -194,7 +194,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.fire_sand_bucket_no') }}</label>
+                                                            class="form-label ">{{ __('inspection.fire_sand_bucket_no') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->fire_bucket_no }}
                                                         </div>
@@ -205,7 +205,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.fire_bucket_stand_condition') }}</label>
+                                                            class="form-label ">{{ __('inspection.fire_bucket_stand_condition') }}</label>
                                                         <div class="view_data">
                                                             @if ($details->condition == GOOD)
                                                                 <p>Good</p>
@@ -221,7 +221,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.fire_bucket_condition') }}</label>
+                                                            class="form-label ">{{ __('inspection.fire_bucket_condition') }}</label>
                                                         <div class="view_data">
                                                             @if ($details->fire_bucket_condition == GOOD)
                                                                 <p>Good</p>
@@ -236,7 +236,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.paint_condition') }}</label>
+                                                            class="form-label ">{{ __('inspection.paint_condition') }}</label>
                                                         <div class="view_data">
                                                             @if ($details->paint_condition == GOOD)
                                                                 <p>Good</p>
@@ -255,7 +255,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.qualtiy_quantity_sand') }}</label>
+                                                            class="form-label ">{{ __('inspection.qualtiy_quantity_sand') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->qualtiy_quantity_sand == '1' ? 'ADEQUATE' : 'IN ADEQUATE' }}
                                                         </div>
@@ -266,7 +266,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.approach') }}</label>
+                                                            class="form-label ">{{ __('inspection.approach') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->approach }}
                                                         </div>
@@ -276,7 +276,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                            class="form-label ">{{ __('inspection.remarks') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->remarks }}
                                                         </div>
@@ -306,16 +306,16 @@
                                         <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
                                         <div class="row">
                                             <div class="col-md-4 form-group form-input mb-2">
-                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <label class="form-label require">{{ __('inspection.name') }}</label>
                                                 <input type="text" name="name" id = "name" class="form-control"
                                                     value="{{ getUserName(Auth::id()) }}" readonly>
                                             </div>
                                             <div class="col-md-4 form-group form-input mb-2">
-                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <label class="form-label require">{{ __('inspection.date') }}</label>
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -323,7 +323,7 @@
                                                         alt="Signature Upload" style="width: 100px; margin-top:-10px">
                                                 @else
                                                     <div class="form-input col-md-12 mb-2">
-                                                        <label class="form-label require">Signature</label>
+                                                        <label class="form-label ">Signature</label>
                                                         <input type="file" name="signature_image"
                                                             id="signature_upload" class="form-control form-control-sm"
                                                             accept="image/*" placeholder="Enter the image">
@@ -331,9 +331,9 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-12 form-input">
-                                                <label class="form-label required">Whether the Inspection has been
+                                                <label class="form-label require">Whether the Inspection has been
                                                     passed Without the CAPA
                                                     ?</label>
                                                 <div class="mb-3 form-input">
@@ -347,7 +347,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-12 mb-2 form-input" id="remarks">
-                                                <label for="remarks" class="form-label">Remarks</label>
+                                                <label for="remarks" class="form-label require ">Remarks</label>
                                                 <textarea id="remarks" class="form-control" rows="3" placeholder="Please Enter Remarks" name="remarks"></textarea>
                                             </div>
                                             <div class="submit-button" style="text-align: right;">
@@ -374,11 +374,11 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetFireSignature(
-                                                        $inspection->verified_by,
-                                                        $inspection->id,
-                                                        SAND_BUCKET_INSPECTION,
-                                                    );
+                                                    // $signature = GetFireSignature(
+                                                    //     $inspection->verified_by,
+                                                    //     $inspection->id,
+                                                    //     SAND_BUCKET_INSPECTION,
+                                                    // );
 
                                                     $updated_time = GetFireUpdatedTime(
                                                         $inspection->verified_by,
@@ -398,7 +398,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -407,7 +407,7 @@
                                                             style="width: 100px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
 
                                             @if ($inspection->approved_by)
                                                 <div class="col-md-4 mb-2">
@@ -456,11 +456,11 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetFireSignature(
-                                                        $inspection->created_by,
-                                                        $inspection->id,
-                                                        SAND_BUCKET_INSPECTION,
-                                                    );
+                                                    // $signature = GetFireSignature(
+                                                    //     $inspection->created_by,
+                                                    //     $inspection->id,
+                                                    //     SAND_BUCKET_INSPECTION,
+                                                    // );
 
                                                     $updated_time = GetFireUpdatedTime(
                                                         $inspection->created_by,
@@ -477,7 +477,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @if (isset($signature))
+                                                {{-- @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
@@ -486,7 +486,7 @@
                                                                 style="width: 100px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -515,11 +515,11 @@
                                                     </div>
                                                 </div>
                                                 @php
-                                                    $signature = GetFireSignature(
-                                                        $inspection->verified_by,
-                                                        $inspection->id,
-                                                        SAND_BUCKET_INSPECTION,
-                                                    );
+                                                    // $signature = GetFireSignature(
+                                                    //     $inspection->verified_by,
+                                                    //     $inspection->id,
+                                                    //     SAND_BUCKET_INSPECTION,
+                                                    // );
 
                                                     $updated_time = GetFireUpdatedTime(
                                                         $inspection->verified_by,
@@ -536,7 +536,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @if (isset($signature))
+                                                {{-- @if (isset($signature))
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
                                                             <label class="form-label"
@@ -545,7 +545,7 @@
                                                                 style="width: 100px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -575,11 +575,11 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetFireSignature(
-                                                    $inspection->l1_manager_verified_by,
-                                                    $inspection->id,
-                                                    SAND_BUCKET_INSPECTION,
-                                                );
+                                                // $signature = GetFireSignature(
+                                                //     $inspection->l1_manager_verified_by,
+                                                //     $inspection->id,
+                                                //     SAND_BUCKET_INSPECTION,
+                                                // );
 
                                                 $updated_time = GetFireUpdatedTime(
                                                     $inspection->l1_manager_verified_by,
@@ -596,7 +596,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -605,7 +605,7 @@
                                                             style="width: 100px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -633,11 +633,11 @@
                                                 </div>
                                             </div>
                                             @php
-                                                $signature = GetFireSignature(
-                                                    $inspection->l2_manager_verified_by,
-                                                    $inspection->id,
-                                                    SAND_BUCKET_INSPECTION,
-                                                );
+                                                // $signature = GetFireSignature(
+                                                //     $inspection->l2_manager_verified_by,
+                                                //     $inspection->id,
+                                                //     SAND_BUCKET_INSPECTION,
+                                                // );
 
                                                 $updated_time = GetFireUpdatedTime(
                                                     $inspection->l2_manager_verified_by,
@@ -654,7 +654,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -663,7 +663,7 @@
                                                             style="width: 100px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -704,7 +704,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -720,7 +720,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-12 mb-2 form-input" id="capa_remarks">
                                                 <label for="capa_remarks" class="form-label">Remarks</label>
                                                 <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
@@ -756,7 +756,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -772,7 +772,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                                 <label for="remarks" class="form-label">Remarks</label>
                                                 <textarea id="" class="form-control" rows="3" placeholder="Please Provide Remarks" name="remarks"></textarea>
@@ -806,7 +806,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -822,7 +822,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                         </div>
 
                                         <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
@@ -858,7 +858,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -874,7 +874,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                             <label for="remarks" class="form-label">Remarks</label>
@@ -907,10 +907,10 @@
                         maxlength: 100,
                         noSpaces: true,
                     },
-                    signature_image: {
-                        required: true,
-                        filesize: 15728640,
-                    }
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
                 messages: {
                     remarks: {
@@ -918,10 +918,10 @@
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 100",
                     },
-                    signature_image: {
-                        required: "Signature is Required",
-                        filesize: "File size should not exceed 15MB",
-                    }
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size should not exceed 15MB",
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {
@@ -956,10 +956,10 @@
                         maxlength: 100,
                         noSpaces: true,
                     },
-                    signature_image: {
-                        required: true,
-                        filesize: 15728640,
-                    }
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
                 messages: {
                     capa_remarks: {
@@ -967,10 +967,10 @@
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 100",
                     },
-                    signature_image: {
-                        required: "Signature is Required",
-                        filesize: "File size should not exceed 15MB",
-                    }
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size should not exceed 15MB",
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {
@@ -1001,10 +1001,10 @@
                         maxlength: 100,
                         noSpaces: true,
                     },
-                    signature_image: {
-                        required: true,
-                       filesize: 15728640,
-                    }
+                    // signature_image: {
+                    //     required: true,
+                    //    filesize: 15728640,
+                    // }
                 },
                 messages: {
                     level_one_manager: {
@@ -1012,10 +1012,10 @@
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 100",
                     },
-                    signature_image: {
-                        required: "Signature is Required",
-                        filesize: "File size should not exceed 15MB",
-                    }
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size should not exceed 15MB",
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {
@@ -1046,10 +1046,10 @@
                         maxlength: 100,
                         noSpaces: true,
                     },
-                    signature_image: {
-                        required: true,
-                       filesize: 15728640,
-                    }
+                    // signature_image: {
+                    //     required: true,
+                    //    filesize: 15728640,
+                    // }
                 },
                 messages: {
                     level_two_manager: {
@@ -1057,10 +1057,10 @@
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 100",
                     },
-                    signature_image: {
-                        required: "Signature is Required",
-                        filesize: "File size should not exceed 15MB",
-                    }
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size should not exceed 15MB",
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {

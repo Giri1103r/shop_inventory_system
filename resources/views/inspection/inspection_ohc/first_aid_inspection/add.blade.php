@@ -38,9 +38,16 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                    <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control inspection_date"
-                                                        value="{{ old('inspection_date') }}">
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="inspection_date" id = "inspection_date"
+                                                            class="form-control inspection_date"
+                                                            value="{{ old('inspection_date') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
+
                                                 </div>
                                                 @error('inspection_date')
                                                     <div class="error">{{ $message }}</div>
@@ -51,8 +58,13 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.next_due') }}</label>
-                                                    <input type="text" name="next_due" id = "next_due"
-                                                        class="form-control next_due" value="{{ old('next_due') }}">
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="next_due" id = "next_due"
+                                                            class="form-control next_due" value="{{ old('next_due') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                                 @error('next_due')
                                                     <div class="error">{{ $message }}</div>
@@ -80,7 +92,8 @@
                                                                         value="{{ encryptId($medicines->id) }}"></td>
                                                                 <td>
                                                                     <div class="form-input">
-                                                                        <input class="form-control" type="number" min="1"
+                                                                        <input class="form-control" type="number"
+                                                                            min="1"
                                                                             name="available_quantity[{{ $medicines->id }}]"
                                                                             value="{{ old('available_quantity.' . $loop->iteration) }}" />
                                                                     </div>
@@ -90,10 +103,18 @@
                                                                 </td>
                                                                 <td>
                                                                     <div class="form-input">
-                                                                        <input class="form-control expired_date"
-                                                                            type="date"
-                                                                            name="expired_date[{{ $medicines->id }}]"
-                                                                            value="{{ old('expired_date.' . $loop->iteration) }}" />
+
+
+                                                                        <div
+                                                                            class="input-group date form-input custom-height">
+                                                                            <input class="form-control expired_date"
+                                                                                type="date"
+                                                                                name="expired_date[{{ $medicines->id }}]"
+                                                                                value="{{ old('expired_date.' . $loop->iteration) }}" />
+                                                                            <div class="input-group-addon input-group-text">
+                                                                                <span class="fa fa-calendar"></span>
+                                                                            </div>
+                                                                        </div>
                                                                     </div>
                                                                     @error('expired_date.' . $loop->iteration)
                                                                         <div class="error">{{ $message }}</div>
@@ -103,6 +124,7 @@
                                                                     <div class="form-input">
                                                                         <select name="emp_id[{{ $medicines->id }}]"
                                                                             id="emp_id[{{ $loop->iteration }}]"
+                                                                            style="width: 100%"
                                                                             class="form-select single-select emp_id">
                                                                             <option value="">Select Employee Name
                                                                             </option>
@@ -127,7 +149,7 @@
 
 
                                             </div>
-                                            <div class="row m-2">
+                                            {{-- <div class="row m-2">
                                                 <div class="col-md-4 form-group form-input mb-2">
                                                     @if (isset(Auth::user()->signature_upload))
                                                         <label class="form-label"
@@ -145,7 +167,7 @@
                                                         </div>
                                                     @endif
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
 
 
@@ -179,13 +201,23 @@
                 flatpickr(".expired_date", {
                     dateFormat: "d-m-Y",
                 });
-                flatpickr(".inspection_date", {
-                    dateFormat: "d-m-Y",
-                });
-                flatpickr(".next_due", {
-                    dateFormat: "d-m-Y",
-                });
 
+                var fromDatepicker = flatpickr("#inspection_date", {
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+                            toDatepicker.set('minDate', startDate);
+                            toDatepicker.clear();
+                        }
+                    }
+
+                })
+
+                var toDatepicker = flatpickr("#next_due", {
+                    dateFormat: "d-m-Y",
+
+                });
 
                 $('.emp_id').select2({
                     ajax: {
@@ -222,10 +254,10 @@
                         next_due: {
                             required: true,
                         },
-                        signature_image: {
-                            required: true,
-                            filesize: 15728640,
-                        }
+                        // signature_image: {
+                        //     required: true,
+                        //     filesize: 15728640,
+                        // }
                     },
                     messages: {
                         inspection_date: {
@@ -234,10 +266,10 @@
                         next_due: {
                             required: "Next Due Date is required",
                         },
-                        signature_image: {
-                            required: "Signature is required",
-                            filesize: "File size must be less than 10MB."
-                        }
+                        // signature_image: {
+                        //     required: "Signature is required",
+                        //     filesize: "File size must be less than 10MB."
+                        // }
                     },
                     errorElement: 'span',
                     errorPlacement: function(error, element) {
@@ -301,13 +333,13 @@
 
                     $('textarea[name^="remarks"]').each(function() {
                         $(this).rules('add', {
-                              required: true,
-                            minlength:3,
-                            maxlength:300,
+                            required: true,
+                            minlength: 3,
+                            maxlength: 300,
                             messages: {
                                 required: "Remarks is required",
-                                minlength:"Minimum 3 characters required",
-                                maxlength:"Maximum character does not exceed 300"
+                                minlength: "Minimum 3 characters required",
+                                maxlength: "Maximum character does not exceed 300"
                             }
                         });
                     });

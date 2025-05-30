@@ -44,10 +44,36 @@
                                             <select name="company_id" id="company_id"
                                                 class="form-control single-select form-control-sm" style="width: 100%">
                                                 <option value="">Select the company</option>
-                                                @foreach ($company as $list)
-                                                    <option value="{{ encryptId($list->id) }}">
-                                                        {{ $list->company_name }}</option>
-                                                @endforeach
+                                                @if (CheckUserRole(ROLE_EHS_OFFICER) || checkUserRole(ROLE_EHS_HEAD))
+                                                    @foreach ($company as $list)
+                                                        @php
+                                                            $isEhs = in_array(auth()->user()->role, [
+                                                                ROLE_EHS_HEAD,
+                                                                ROLE_EHS_OFFICER,
+                                                            ]);
+                                                            $value = encryptId($list->id);
+                                                            $requestCompanyId = $loggedInCompanyId;
+                                                            $selected = '';
+
+                                                            if ($requestCompanyId) {
+                                                                $selected =
+                                                                    $requestCompanyId == $value ? 'selected' : '';
+                                                            } elseif (isset($loggedInCompanyId)) {
+                                                                $selected =
+                                                                    $loggedInCompanyId == $value ? 'selected' : '';
+                                                            }
+                                                        @endphp
+                                                        <option value="{{ $value }}" {{ $selected }}>
+                                                            {{ $list->company_name }}
+                                                        </option>
+                                                    @endforeach
+                                                @else
+                                                    @foreach ($company as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->company_name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
                                             </select>
                                         </div>
 
@@ -249,57 +275,57 @@
         });
 
         $('#emp_id').select2({
-                ajax: {
-                    url: '{{ admin_url('ohc/employee-cum-patient/employeeid') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    }
+            ajax: {
+                url: '{{ admin_url('ohc/employee-cum-patient/employeeid') }}',
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
                 },
-                minimumInputLength: 1,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
-            $(document).on('change', '#emp_id', function() {
-                var empId = $(this).val();
-                if (empId) {
-                    $.ajax({
-                        url: "{{ admin_url('ohc/employee-cum-patient/employeename') }}",
-                        type: 'GET',
-                        data: {
-                            empId: empId
-                        },
-                        dataType: 'json',
-                        success: function(response) {
-                            if (response.employee) {
-                                $('#emp_name').val(response.employee.emp_name).prop('readonly',
-                                    true);
-
-                            } else {
-                                $('#emp_name').val('').prop('readonly', true);
-                            }
-                        },
-                        error: function(xhr) {
-                            alert('Error fetching employee name. Please try again.');
-                        }
-                    });
-                } else {
-                    $('#emp_name').val('').prop('readonly', true);
+                processResults: function(data) {
+                    return {
+                        results: $.map(data, function(item) {
+                            return {
+                                id: item.id,
+                                text: item.text
+                            };
+                        })
+                    };
                 }
-            });
+            },
+            minimumInputLength: 1,
+            dropdownCssClass: 'form-control',
+            selectionCssClass: 'form-control'
+        });
+        $(document).on('change', '#emp_id', function() {
+            var empId = $(this).val();
+            if (empId) {
+                $.ajax({
+                    url: "{{ admin_url('ohc/employee-cum-patient/employeename') }}",
+                    type: 'GET',
+                    data: {
+                        empId: empId
+                    },
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.employee) {
+                            $('#emp_name').val(response.employee.emp_name).prop('readonly',
+                                true);
+
+                        } else {
+                            $('#emp_name').val('').prop('readonly', true);
+                        }
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching employee name. Please try again.');
+                    }
+                });
+            } else {
+                $('#emp_name').val('').prop('readonly', true);
+            }
+        });
 
         $(document).ready(function() {
             var fromDatepicker = flatpickr("#from_date", {

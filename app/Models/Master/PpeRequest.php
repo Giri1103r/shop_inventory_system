@@ -49,26 +49,22 @@ class PpeRequest extends Model
         $empId = $user->employee_id;
         $query = $this->select('ppe_pperequest.*');
 
-
-        if (in_array(ROLE_EHS_OFFICER, $userRole)) {
+        if (in_array(ROLE_EHS_HEAD, $userRole)) {
             $query->orderBy('ppe_pperequest.id', 'DESC');
-        }
-        elseif (in_array(ROLE_HOD, $userRole)) {
+        } elseif (in_array(ROLE_HOD, $userRole)) {
+            $companyId = $user->company_id;
             $departmentId = $user->department_id;
-            $query->where('ppe_pperequest.department', $departmentId)
+            $query->where('ppe_pperequest.company_id', $companyId)->where('ppe_pperequest.department', $departmentId)
                 ->orderBy('ppe_pperequest.id', 'DESC');
-        }
-         elseif (in_array(ROLE_EHS_OFFICER, $userRole) ||in_array(ROLE_EHS_HEAD, $userRole) ) {
-            $company = $user->company_id;
-            $query->where('ppe_pperequest.company_id', $company)
-                ->orderBy('ppe_pperequest.id', 'DESC');
-        }
-        elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
+        } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
             $query->orderBy('ppe_pperequest.id', 'DESC');
-        }
-        elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
-        }
-        else {
+        } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
+            $query->orderBy('ppe_pperequest.id', 'DESC');
+        } elseif (in_array(ROLE_ADMIN, $userRole)) {
+            $query->orderBy('ppe_pperequest.id', 'DESC');
+        } elseif (in_array(ROLE_SUPERADMIN, $userRole)) {
+            $query->orderBy('ppe_pperequest.id', 'DESC');
+        } else {
             $query->where('ppe_pperequest.created_by', Auth::id());
         }
 
@@ -79,6 +75,8 @@ class PpeRequest extends Model
             });
         }
 
+
+
         if ($request->has('emp_id') && $request->emp_id) {
             $query->where('emp_id', 'LIKE', '%' . $request->emp_id . '%');
         }
@@ -87,17 +85,17 @@ class PpeRequest extends Model
         }
 
         if ($request->has('unit_id') && $request->unit_id) {
-            $query->where('ppe_pperequest.unit_id',  decryptId($request->unit_id) );
+            $query->where('ppe_pperequest.unit_id',  decryptId($request->unit_id));
         }
         if ($request->has('company_id') && $request->company_id) {
 
-            $query->where('ppe_pperequest.company_id',  decryptId($request->company_id) );
+            $query->where('ppe_pperequest.company_id', decryptId($request->company_id));
         }
         if ($request->has('location_id') && $request->location_id) {
-            $query->where('ppe_pperequest.location_id',  decryptId($request->location_id) );
+            $query->where('ppe_pperequest.location_id',  decryptId($request->location_id));
         }
         if ($request->has('department_id') && $request->department_id) {
-            $query->where('ppe_pperequest.department',  decryptId($request->department_id) );
+            $query->where('ppe_pperequest.department',  decryptId($request->department_id));
         }
 
 
@@ -132,6 +130,7 @@ class PpeRequest extends Model
         }
 
         $query->orderBy('ppe_pperequest.id', 'DESC');
+
         $data = $query->get();
 
 
@@ -166,13 +165,13 @@ class PpeRequest extends Model
             $ppe_file_name = time() . '_' . $ppe_file->getClientOriginalName();
             $ppe_file->move(public_path($destinationPath), $ppe_file_name);
 
-            $ppe_file_path = 'public/'.$destinationPath . '/' . $ppe_file_name;
+            $ppe_file_path = 'public/' . $destinationPath . '/' . $ppe_file_name;
         }
 
         if ($request->request_for == 1) {
 
             $employee = User::where('employee_id', $request->emp_id)
-            ->select('*')
+                ->select('*')
                 ->first();
 
             $unit = $employee->unit_id;
@@ -180,7 +179,6 @@ class PpeRequest extends Model
 
             $company = $employee->company_id;
             $location = $employee->location_id;
-
         } elseif ($request->request_for == 2) {
             $work = Work::where('emp_id', $request->emp_id)
                 ->select('*')
@@ -190,7 +188,6 @@ class PpeRequest extends Model
             $department = $work->department;
             $company = $work->company;
             $location = $work->location;
-
         } else {
             $unit = Auth::user()->unit_id;
             $department = Auth::user()->department_id;
@@ -434,16 +431,16 @@ class PpeRequest extends Model
         }
 
         if ($request->has('unit_id') && $request->unit_id) {
-            $query->where('ppe_pperequest.unit_id',  decryptId($request->unit_id) );
+            $query->where('ppe_pperequest.unit_id',  decryptId($request->unit_id));
         }
         if ($request->has('company_id') && $request->company_id) {
-            $query->where('ppe_pperequest.company_id',  decryptId($request->company_id) );
+            $query->where('ppe_pperequest.company_id',  decryptId($request->company_id));
         }
         if ($request->has('location_id') && $request->location_id) {
-            $query->where('ppe_pperequest.location_id',  decryptId($request->location_id) );
+            $query->where('ppe_pperequest.location_id',  decryptId($request->location_id));
         }
         if ($request->has('department_id') && $request->department_id) {
-            $query->where('ppe_pperequest.department',  decryptId($request->department_id) );
+            $query->where('ppe_pperequest.department',  decryptId($request->department_id));
         }
 
         return $query->orderBy('id', 'DESC')->get();

@@ -42,10 +42,36 @@
                                             <select name="company_id" id="company_id" class=" form-control single-select"
                                                 style="width: 100%">
                                                 <option value="">Select Company</option>
-                                                @foreach ($companyList as $list)
-                                                    <option value="{{ encryptId($list->id) }}">
-                                                        {{ $list->company_name }}</option>
-                                                @endforeach
+                                                @if (CheckUserRole(ROLE_EHS_OFFICER) || checkUserRole(ROLE_EHS_HEAD))
+                                                    @foreach ($companyList as $list)
+                                                        @php
+                                                            $isEhs = in_array(auth()->user()->role, [
+                                                                ROLE_EHS_HEAD,
+                                                                ROLE_EHS_OFFICER,
+                                                            ]);
+                                                            $value = encryptId($list->id);
+                                                            $requestCompanyId = $loggedInCompanyId;
+                                                            $selected = '';
+
+                                                            if ($requestCompanyId) {
+                                                                $selected =
+                                                                    $requestCompanyId == $value ? 'selected' : '';
+                                                            } elseif (isset($loggedInCompanyId)) {
+                                                                $selected =
+                                                                    $loggedInCompanyId == $value ? 'selected' : '';
+                                                            }
+                                                        @endphp
+                                                        <option value="{{ $value }}" {{ $selected }}>
+                                                            {{ $list->company_name }}
+                                                        </option>
+                                                    @endforeach
+                                                @else
+                                                    @foreach ($companyList as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->company_name }}
+                                                        </option>
+                                                    @endforeach
+                                                @endif
 
                                             </select>
                                         </div>
@@ -264,7 +290,11 @@
                 '{{ isset($dashboard_search['month']) && $dashboard_search['month'] != '' ? $dashboard_search['month'] : '' }}';
             var dashboard_openCloseStatus =
                 '{{ isset($dashboard_search['openclose']) && $dashboard_search['openclose'] != '' ? $dashboard_search['openclose'] : '' }}';
-           
+            var dashboard_permitType =
+                '{{ isset($dashboard_search['typeOfWork']) && $dashboard_search['typeOfWork'] != '' ? $dashboard_search['typeOfWork'] : '' }}';
+            var dashboard_permitStatus =
+                '{{ isset($dashboard_search['permitStatus']) && $dashboard_search['permitStatus'] != '' ? $dashboard_search['permitStatus'] : '' }}';
+
 
             var table = $('.datatable-list').DataTable({
                 autoWidth: false,
@@ -306,6 +336,8 @@
                         d.status = $('#status').val();
                         d.dashboard_month = dashboard_month;
                         d.dashboard_openCloseStatus = dashboard_openCloseStatus;
+                        d.dashboard_permitType = dashboard_permitType;
+                        d.dashboard_permitStatus = dashboard_permitStatus;
 
                     },
                     error: function(xhr, error, code) {
@@ -396,6 +428,8 @@
                                     status = $('#status').val();
                                     dashboard_month = dashboard_month;
                                     dashboard_openCloseStatus = dashboard_openCloseStatus;
+                                    dashboard_permitType = dashboard_permitType;
+                                    dashboard_permitStatus = dashboard_permitStatus;
 
                                     $(".dt-button").removeClass('processing');
                                     $('body').click();
@@ -404,7 +438,10 @@
                                         '?search=' + searchValue +
                                         '&permit_id=' + permit_id +
                                         '&dashboard_month=' + dashboard_month +
-                                        '&dashboard_openCloseStatus=' + dashboard_openCloseStatus +
+                                        '&dashboard_permitType=' + dashboard_permitType +
+                                        '&dashboard_permitStatus=' + dashboard_permitStatus +
+                                        '&dashboard_openCloseStatus=' +
+                                        dashboard_openCloseStatus +
                                         '&company_id=' + company_id +
                                         '&location_id=' + location_id +
                                         '&unit_id=' + unit_id +
@@ -428,6 +465,8 @@
                                     status = $('#status').val();
                                     dashboard_month = dashboard_month;
                                     dashboard_openCloseStatus = dashboard_openCloseStatus;
+                                    dashboard_permitType = dashboard_permitType;
+                                    dashboard_permitStatus = dashboard_permitStatus;
 
 
                                     $(".dt-button").removeClass('processing');
@@ -437,7 +476,10 @@
                                         '?search=' + searchValue +
                                         '&permit_id=' + permit_id +
                                         '&dashboard_month=' + dashboard_month +
-                                        '&dashboard_openCloseStatus=' + dashboard_openCloseStatus +
+                                        '&dashboard_permitType=' + dashboard_permitType +
+                                        '&dashboard_permitStatus=' + dashboard_permitStatus +
+                                        '&dashboard_openCloseStatus=' +
+                                        dashboard_openCloseStatus +
                                         '&company_id=' + company_id +
                                         '&location_id=' + location_id +
                                         '&unit_id=' + unit_id +

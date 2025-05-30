@@ -3,7 +3,7 @@
 @php
     $departments = $departmentDetails->pluck('department_name')->toArray();
     $departmentsID = $departmentDetails->pluck('id')->toArray();
- 
+
 @endphp
 
 <script>
@@ -18,7 +18,7 @@
     var seriesData = [{
         name: 'Department Count',
         data: sortedCounts
-        // data: departments.map(category => chartData[category] || 0) 
+        // data: departments.map(category => chartData[category] || 0)
     }];
 
     var options = {
@@ -51,7 +51,7 @@
         plotOptions: {
             bar: {
                 horizontal: false,
-                borderRadius: 10,
+                columnWidth: '10%',
                 dataLabels: {
                     total: {
                         enabled: true,
@@ -64,7 +64,7 @@
                 distributed: true
             },
         },
-        
+
         xaxis: {
             categories: sorteddepartments,
             labels: {
@@ -73,9 +73,9 @@
                     return value.length > 8 ? value.substring(0, 8) + '...' : value;
                 }
             },
-         
+
         },
-        
+
         fill: {
             opacity: 1
         }

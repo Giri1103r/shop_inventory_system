@@ -220,8 +220,8 @@
                     first_aid_box_no: {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
-                        pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
+                        maxlength: 50,
+
                         remote: {
                             url: '{{ admin_url('ohc/first-aid-location/first-aid-box') }}',
                             type: 'POST',
@@ -244,8 +244,8 @@
                     station_number: {
                         required: true,
                         minlength: 3,
-                        maxlength: 20,
-                        pattern: /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9\s\-_'"()]*$/,
+                        maxlength: 50,
+
                         remote: {
                             url: '{{ admin_url('ohc/first-aid-location/station-number-unique') }}',
                             type: 'post',
@@ -269,8 +269,7 @@
                     first_aid_box_no: {
                         required: "First Aid Box Number is required.",
                         minlength: "First Aid Box Number must be at least 3 characters long.",
-                        maxlength: "First Aid Box Number must not exceed 30 characters.",
-                        pattern: "First Aid Box Number contains invalid characters.",
+                        maxlength: "First Aid Box Number must not exceed 50 characters.",
                         remote: "First Aid Box Number Must Be Unique according to unit and department",
                     },
                     department_id: {
@@ -286,8 +285,8 @@
                     station_number: {
                         required: "Station number is required.",
                         minlength: "Station number must be at least 3 characters long.",
-                        maxlength: "Station number must not exceed 20 characters.",
-                        pattern: "Station number contains invalid characters.",
+                        maxlength: "Station number must not exceed 50 characters.",
+
                         remote: "Station Number Must Be Unique",
                     },
                 },

@@ -150,7 +150,9 @@ class SafetyGalleryInspection extends Model
 
     public function store()
     {
+
         $request = request();
+        dd($request->all());
         $responses = $request->checklist;
         foreach ($responses as $index => $respones) {
             foreach ($respones as $question => $value) {
@@ -168,6 +170,34 @@ class SafetyGalleryInspection extends Model
             'date_of_inspection' => DBdateformat($request->inspection_date),
             'location' => decryptId($request->location_id),
             'unit' => decryptId($request->unit_id),
+            'resource_code' => $request->resource_code,
+            'created_by' => Auth::id(),
+            'responses' => $respones,
+            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+        ];
+        return $this->create($insert_array);
+    }
+
+    public function store_api()
+    {
+        $request = request();
+        $responses = $request->checklist;
+        foreach ($responses as $index => $respones) {
+            foreach ($respones as $question => $value) {
+                $encoded_data[$question] = [
+                    'question_id' => $question,
+                    'answer' => $value,
+                    'remarks' => $request->remarks[$index][$question],
+                ];
+            }
+        }
+        $respones = json_encode($encoded_data);
+
+        $insert_array = [
+            'document_reference_id' => ($request->document_reference_id),
+            'date_of_inspection' => DBdateformat($request->inspection_date),
+            'location' => ($request->location_id),
+            'unit' => ($request->unit_id),
             'resource_code' => $request->resource_code,
             'created_by' => Auth::id(),
             'responses' => $respones,

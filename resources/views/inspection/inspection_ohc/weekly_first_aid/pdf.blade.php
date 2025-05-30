@@ -275,18 +275,18 @@
                     </tr>
                 @endforeach
 
-                @php
+                {{-- @php
                     $inspection_created_by = GetOHCSignature(
                         $details->created_by,
                         $details->checklist_id,
                         OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE,
                     );
-                @endphp
+                @endphp--}}
 
                 <tr>
                     <td colspan="6" style="border: 1px solid black; text-align: center; font-weight: bold;">
-                        <img src="{{ admin_url($inspection_created_by) }}" alt="Checked By Signature"
-                            style="height: 50px; margin-top:2px;"><br>
+                        {{-- <img src="{{ admin_url($inspection_created_by) }}" alt="Checked By Signature"
+                            style="height: 50px; margin-top:2px;"><br> --}}
                         Checked & Prepared By: {{ getUsername($details->created_by) }}
                     </td>
                 </tr>

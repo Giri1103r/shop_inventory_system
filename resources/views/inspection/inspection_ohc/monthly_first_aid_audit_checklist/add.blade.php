@@ -136,7 +136,7 @@
                                                 </div>
                                             </div>
 
-                                            @if ($signature_upload->signature_upload != '')
+                                            {{-- @if ($signature_upload->signature_upload != '')
                                                 <label class="form-label view_label">Requestor Signature</label>
 
                                                 <p>
@@ -165,7 +165,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                         </div>
                                         <div class="row mt-2">
                                             <div class="card-header-inner">
@@ -399,7 +399,7 @@
                                     <x-button-submit class="submit"></x-button-submit>
                                     <x-button-reset class="submit"></x-button-reset>
                                     <x-button-cancel
-                                        href="{{ admin_url('ohc/first-aid-box/monthly-audit/checklist') }}"></x-button-cancel>
+                                        href="{{ admin_url('ohc/first-aid-box/monthly-audit/list') }}"></x-button-cancel>
                                 </div>
 
                                 </form>
@@ -425,11 +425,7 @@
             });
         });
 
-        var IssueDatepicker = flatpickr("#issue_date", {
-            dateFormat: "d-m-Y",
-            minDate: new Date()
 
-        });
         var Datepicker = flatpickr("#date", {
             dateFormat: "d-m-Y",
             minDate: new Date()

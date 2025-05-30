@@ -55,6 +55,18 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Unit Name') }}</label>
+                                        <div class="view_data">
+                                            {{ getUnitname(isset($medicalfitness->unit_id) ? $medicalfitness->unit_id : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('Department Name') }}</label>
+                                        <div class="view_data">
+                                            {{ getDepartment(isset($medicalfitness->department_id) ? $medicalfitness->department_id : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Date') }}</label>
                                         <div class="view_data">
                                             {{ displayDateformat(isset($medicalfitness->date) ? $medicalfitness->date : '') }}
@@ -66,15 +78,21 @@
                                         @if (isset($medicalfitness) && $medicalfitness && $medicalfitness->file)
                                             <p>
                                                 @php
-                                                    $fileExtension = pathinfo($medicalfitness->file, PATHINFO_EXTENSION);
+                                                    $fileExtension = pathinfo(
+                                                        $medicalfitness->file,
+                                                        PATHINFO_EXTENSION,
+                                                    );
                                                 @endphp
                                                 @if (in_array($fileExtension, ['pdf', 'doc', 'docx']))
-                                                    <a href="{{ asset('public/' . $medicalfitness->file) }}" target="_blank" >
+                                                    <a href="{{ asset('public/' . $medicalfitness->file) }}"
+                                                        target="_blank">
                                                         <i class="fas fa-eye text-danger"></i> View
                                                     </a>
                                                 @else
-                                                    <a href="{{ asset('public/' . $medicalfitness->file) }}" target="_blank">
-                                                        <img src="{{ asset('public/' . $medicalfitness->file) }}" style="width: 100px" alt="image">
+                                                    <a href="{{ asset('public/' . $medicalfitness->file) }}"
+                                                        target="_blank">
+                                                        <img src="{{ asset('public/' . $medicalfitness->file) }}"
+                                                            style="width: 100px" alt="image">
                                                     </a>
                                                 @endif
                                             </p>
@@ -86,7 +104,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Created By') }}</label>
                                         <div class="view_data">
-                                            {{ getUsername(isset($medicalfitness->created_by) ?$medicalfitness->created_by : '') }}
+                                            {{ getUsername(isset($medicalfitness->created_by) ? $medicalfitness->created_by : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -101,11 +119,17 @@
                                             {{ isset($medicalfitness->remarks) ? $medicalfitness->remarks : '' }}
                                         </div>
                                     </div>
+                                    <div class="mb-3 col-md-8 form-input">
+                                        <label class="form-label view_label">{{ __('Chief Complaint') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($medicalfitness->cheif_complaint) ? $medicalfitness->cheif_complaint : '' }}
+                                        </div>
+                                    </div>
                                 </div>
                                 @if (
-                                    $medicalfitness->approve_status == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING &&
-                                        CheckUserrole(ROLE_DOCTOR) || ((  $medicalfitness->approve_status == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING) &&
-                                        CheckUserrole(ROLE_SUPERADMIN)))
+                                    ($medicalfitness->approve_status == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING && CheckUserrole(ROLE_DOCTOR)) ||
+                                        ($medicalfitness->approve_status == STATUS_OHC_MEDICAL_DOCTOR_APPROVAL_PENDING &&
+                                            CheckUserrole(ROLE_SUPERADMIN)))
                                     <div class="row mt-2">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">Doctor Approval Pending</h4>
@@ -115,7 +139,8 @@
                                         <form method="POST" id="requestApprovalForm"
                                             action="{{ admin_url('ohc/medical-fitness/approvereject/submit') }}">
                                             @csrf
-                                            <input type="hidden" name="id" value="{{ encryptId($medicalfitness->id) }}">
+                                            <input type="hidden" name="id"
+                                                value="{{ encryptId($medicalfitness->id) }}">
                                             <div class="">
                                                 <div class="mb-3 row">
                                                     <div class="col-md-4 mb-3">
@@ -147,7 +172,7 @@
                                             <div class="d-flex float-end gap-2 mx-auto">
                                                 <button type="submit" name="action" value="approve"
                                                     class="btn btn-success w-100">Approve</button>
-                                                    <button type="submit" name="action" value="reject"
+                                                <button type="submit" name="action" value="reject"
                                                     class="btn btn-danger w-100">Reject</button>
                                             </div>
                                         </form>
@@ -156,8 +181,7 @@
 
                                 {{-- view of doctor aapproval --}}
 
-                                @if (
-                                     $medicalfitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING )
+                                @if ($medicalfitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING)
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">Doctor Approval Pending</h4>
@@ -195,10 +219,10 @@
                                     </div>
                                 @endif
 
-                                @if(
+                                @if (
                                     ($medicalfitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING && CheckUserrole(ROLE_EHS_HEAD)) ||
-                                    ($medicalfitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING && CheckUserrole(ROLE_SUPERADMIN))
-                                )
+                                        ($medicalfitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVAL_PENDING &&
+                                            CheckUserrole(ROLE_SUPERADMIN)))
                                     <div class="row mt-2">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">EHS Head Approval</h4>
@@ -208,7 +232,8 @@
                                         <form method="POST" id="requestApprovalForm"
                                             action="{{ admin_url('ohc/medical-fitness/ehsheadapprove/submit') }}">
                                             @csrf
-                                            <input type="hidden" name="id" value="{{ encryptId($medicalfitness->id) }}">
+                                            <input type="hidden" name="id"
+                                                value="{{ encryptId($medicalfitness->id) }}">
                                             <div class="">
                                                 <div class="mb-3 row">
                                                     <div class="col-md-4 mb-3">
@@ -225,7 +250,8 @@
                                                     </div>
                                                     <div class="col-md-12 mb-3">
                                                         <div class="mb-1">
-                                                            <label for="remarks" class="form-label require">Remarks</label>
+                                                            <label for="remarks"
+                                                                class="form-label require">Remarks</label>
                                                             <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" rows="3"></textarea>
                                                             <div class="text-danger" id="remarks_error"></div>
                                                             @error('remarks')

@@ -919,84 +919,141 @@ class EmergencyLightInspectionController extends Controller
             }
             $row = $dataStartRow;
 
-            $CreatorSignature = GetSignature($data->created_by, $id, EMERGENCY_LIGHT_INSPECTION);
-            $VerifiedSignature = GetSignature($data->verified_by, $id, EMERGENCY_LIGHT_INSPECTION);
-            $ApprovedSignature = GetSignature($data->approved_by, $id, EMERGENCY_LIGHT_INSPECTION);
+            $signatureRowStart = $dataStartRow;
+            $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
 
-            $sheet->mergeCells("A$row:H" . ($row + 2));
-            if (file_exists($CreatorSignature)) {
-
-                $drawing = new Drawing();
-                $drawing->setName('Creator Signature');
-                $drawing->setPath($CreatorSignature);
-                $drawing->setCoordinates("C$row");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($row + 2)->setRowHeight(40);
-            } else {
-                $sheet->setCellValue("A{$row}", "Inspection has not been  started");
-            }
-            // Label + Name
-            $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($data->created_by));
-            $sheet->mergeCells("A" . ($row + 3) . ":H" . ($row + 3));
-
-            $sheet->getStyle("A$row:H" . ($row + 3))->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            // Prepared By
+            $sheet->mergeCells("A{$signatureRowStart}:H{$signatureRowStart}");
+            $sheet->getStyle("A{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
 
-            $sheet->mergeCells("I$row:N" . ($row + 2));
-            if (file_exists($VerifiedSignature)) {
+            $richText = new RichText();
+            $name = getUsername($data->created_by);
 
-                $drawing = new Drawing();
-                $drawing->setName('Verified Signature');
-                $drawing->setPath($VerifiedSignature);
-                $drawing->setCoordinates("K$row");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($row + 2)->setRowHeight(40);
+            if (!empty($name)) {
+                $richText->createTextRun("Prepared By :" . $name)->getFont()->setBold(true);
             } else {
-                $sheet->setCellValue("I{$row}", "Inspection has not been  started");
+                $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
             }
-            // Label + Name
-            $sheet->setCellValue("I" . ($row + 3), "Verified By: " . getUserName($data->verified_by));
-            $sheet->mergeCells("I" . ($row + 3) . ":N" . ($row + 3));
 
-            $sheet->getStyle("I$row:N" . ($row + 3))->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            $sheet->getCell("A{$signatureRowStart}")->setValue($richText);
+
+            // Verified By
+            $sheet->mergeCells("I{$signatureRowStart}:N{$signatureRowStart}");
+            $sheet->getStyle("I{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
 
-            $sheet->mergeCells("O$row:U" . ($row + 2));
-            if (file_exists($ApprovedSignature)) {
+            $richText = new RichText();
+            $name = getUsername($data->verified_by);
 
-                $drawing = new Drawing();
-                $drawing->setName('Approved Signature');
-                $drawing->setPath($ApprovedSignature);
-                $drawing->setCoordinates("O$row");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($row + 2)->setRowHeight(60);
+            if (!empty($name)) {
+                $richText->createTextRun("Verified By :" . $name)->getFont()->setBold(true);
             } else {
-                $sheet->setCellValue("O{$row}", "Inspection has not been  started");
+                $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
             }
-            // Label + Name
-            $sheet->setCellValue("O" . ($row + 3), "Approved By: " . getUserName($data->approved_by));
-            $sheet->mergeCells("O" . ($row + 3) . ":U" . ($row + 3));
 
-            $sheet->getStyle("O$row:U" . ($row + 3))->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            $sheet->getCell("I{$signatureRowStart}")->setValue($richText);
+
+            // Approved By
+            $sheet->mergeCells("O{$signatureRowStart}:U{$signatureRowStart}");
+            $sheet->getStyle("O{$signatureRowStart}:U{$signatureRowStart}")->applyFromArray([
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
+            $richText = new RichText();
+            $name = getUsername($data->approved_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Approved By :" . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
+            }
+
+            $sheet->getCell("O{$signatureRowStart}")->setValue($richText);
+
+            // $CreatorSignature = GetSignature($data->created_by, $id, EMERGENCY_LIGHT_INSPECTION);
+            // $VerifiedSignature = GetSignature($data->verified_by, $id, EMERGENCY_LIGHT_INSPECTION);
+            // $ApprovedSignature = GetSignature($data->approved_by, $id, EMERGENCY_LIGHT_INSPECTION);
+
+            // $sheet->mergeCells("A$row:H" . ($row + 2));
+            // if (file_exists($CreatorSignature)) {
+
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Creator Signature');
+            //     $drawing->setPath($CreatorSignature);
+            //     $drawing->setCoordinates("C$row");
+            //     $drawing->setOffsetX(100);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($row + 2)->setRowHeight(40);
+            // } else {
+            //     $sheet->setCellValue("A{$row}", "Inspection has not been  started");
+            // }
+            // // Label + Name
+            // $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($data->created_by));
+            // $sheet->mergeCells("A" . ($row + 3) . ":H" . ($row + 3));
+
+            // $sheet->getStyle("A$row:H" . ($row + 3))->applyFromArray([
+            //     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            // ]);
+
+            // $sheet->mergeCells("I$row:N" . ($row + 2));
+            // if (file_exists($VerifiedSignature)) {
+
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Verified Signature');
+            //     $drawing->setPath($VerifiedSignature);
+            //     $drawing->setCoordinates("K$row");
+            //     $drawing->setOffsetX(100);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($row + 2)->setRowHeight(40);
+            // } else {
+            //     $sheet->setCellValue("I{$row}", "Inspection has not been  started");
+            // }
+            // // Label + Name
+            // $sheet->setCellValue("I" . ($row + 3), "Verified By: " . getUserName($data->verified_by));
+            // $sheet->mergeCells("I" . ($row + 3) . ":N" . ($row + 3));
+
+            // $sheet->getStyle("I$row:N" . ($row + 3))->applyFromArray([
+            //     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            // ]);
+
+            // $sheet->mergeCells("O$row:U" . ($row + 2));
+            // if (file_exists($ApprovedSignature)) {
+
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Approved Signature');
+            //     $drawing->setPath($ApprovedSignature);
+            //     $drawing->setCoordinates("O$row");
+            //     $drawing->setOffsetX(100);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($row + 2)->setRowHeight(60);
+            // } else {
+            //     $sheet->setCellValue("O{$row}", "Inspection has not been  started");
+            // }
+            // // Label + Name
+            // $sheet->setCellValue("O" . ($row + 3), "Approved By: " . getUserName($data->approved_by));
+            // $sheet->mergeCells("O" . ($row + 3) . ":U" . ($row + 3));
+
+            // $sheet->getStyle("O$row:U" . ($row + 3))->applyFromArray([
+            //     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            // ]);
+
             $fileName = 'emergency_light_inspection.xlsx';
             $writer = new Xlsx($spreadsheet);
 
@@ -1261,87 +1318,65 @@ class EmergencyLightInspectionController extends Controller
                     ]);
                     $dataStartRow++;
                 }
-                $row = $dataStartRow;
+                // $row = $dataStartRow;
 
-                $CreatorSignature = GetSignature($data->created_by, $details->id, EMERGENCY_LIGHT_INSPECTION);
-                $VerifiedSignature = GetSignature($data->verified_by,  $details->id, EMERGENCY_LIGHT_INSPECTION);
-                $ApprovedSignature = GetSignature($data->approved_by,  $details->id, EMERGENCY_LIGHT_INSPECTION);
+                $signatureRowStart = $dataStartRow;
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
 
-                $sheet->mergeCells("A$row:H" . ($row + 2));
-                if (file_exists($CreatorSignature)) {
-
-                    $drawing = new Drawing();
-                    $drawing->setName('Creator Signature');
-                    $drawing->setPath($CreatorSignature);
-                    $drawing->setCoordinates("A$row");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($row + 2)->setRowHeight(40);
-                } else {
-                    $sheet->setCellValue("A{$row}", "Prepared By:\nInspection not yet started");
-                }
-                // Label + Name
-                $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($data->created_by));
-                $sheet->mergeCells("A" . ($row + 3) . ":H" . ($row + 3));
-
-                $sheet->getStyle("A$row:H" . ($row + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                // Prepared By
+                $sheet->mergeCells("A{$signatureRowStart}:H{$signatureRowStart}");
+                $sheet->getStyle("A{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
+                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                 ]);
 
-                $sheet->mergeCells("I$row:N" . ($row + 2));
-                if (file_exists($VerifiedSignature)) {
+                $richText = new RichText();
+                $name = getUsername($data->created_by);
 
-                    $drawing = new Drawing();
-                    $drawing->setName('Verified Signature');
-                    $drawing->setPath($VerifiedSignature);
-                    $drawing->setCoordinates("K$row");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($row + 2)->setRowHeight(40);
+                if (!empty($name)) {
+                    $richText->createTextRun("Prepared By :" . $name)->getFont()->setBold(true);
                 } else {
-                    $sheet->setCellValue("I{$row}", "Inspection has not been Verified yet");
+                    $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
                 }
-                // Label + Name
-                $sheet->setCellValue("I" . ($row + 3), "Verified By: " . getUserName($data->verified_by));
-                $sheet->mergeCells("I" . ($row + 3) . ":N" . ($row + 3));
 
-                $sheet->getStyle("I$row:N" . ($row + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                $sheet->getCell("A{$signatureRowStart}")->setValue($richText);
+
+                // Verified By
+                $sheet->mergeCells("I{$signatureRowStart}:N{$signatureRowStart}");
+                $sheet->getStyle("I{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                 ]);
 
-                $sheet->mergeCells("O$row:U" . ($row + 2));
-                if (file_exists($ApprovedSignature)) {
+                $richText = new RichText();
+                $name = getUsername($data->verified_by);
 
-                    $drawing = new Drawing();
-                    $drawing->setName('Approved Signature');
-                    $drawing->setPath($ApprovedSignature);
-                    $drawing->setCoordinates("O$row");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($row + 2)->setRowHeight(60);
+                if (!empty($name)) {
+                    $richText->createTextRun("Verified By :" . $name)->getFont()->setBold(true);
                 } else {
-                    $sheet->setCellValue("O{$row}", "Inspection has not been Approved yet");
+                    $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
                 }
-                // Label + Name
-                $sheet->setCellValue("O" . ($row + 3), "Approved By: " . getUserName($data->approved_by));
-                $sheet->mergeCells("O" . ($row + 3) . ":U" . ($row + 3));
 
-                $sheet->getStyle("O$row:U" . ($row + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                $sheet->getCell("I{$signatureRowStart}")->setValue($richText);
+
+                // Approved By
+                $sheet->mergeCells("O{$signatureRowStart}:U{$signatureRowStart}");
+                $sheet->getStyle("O{$signatureRowStart}:U{$signatureRowStart}")->applyFromArray([
+                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                 ]);
-                $row = $row + 5;
+                $richText = new RichText();
+                $name = getUsername($data->approved_by);
+
+                if (!empty($name)) {
+                    $richText->createTextRun("Approved By :" . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
+                }
+
+                $sheet->getCell("O{$signatureRowStart}")->setValue($richText);
+
+                $row = $signatureRowStart + 5;
             }
 
             $fileName = 'emergency_light_inspection.xlsx';

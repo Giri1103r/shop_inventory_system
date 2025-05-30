@@ -6,6 +6,15 @@
     <div id="chartPPEIssuanceGroupWise"></div>
 
     <script>
+        var seriesData = {!! json_encode($chartData['series']) !!};
+        var dynamicColors = [
+            '#3B5998', '#26A69A', '#FFC300', '#6C3483', '#E74C3C', '#3498DB',
+            '#1ABC9C', '#9B59B6', '#F39C12', '#2ECC71', '#E67E22', '#34495E'
+        ];
+
+        // Ensure colors match the number of bars
+        var barCount = seriesData.length;
+        var colors = dynamicColors.slice(0, barCount);
         var options = {
             series: [{
                 name: 'PPE Issuance (in Count)',
@@ -35,7 +44,8 @@
             plotOptions: {
                 bar: {
                     horizontal: false,
-                    borderRadius: 10,
+                    distributed: true,
+                    columnWidth: '50px',
                     dataLabels: {
                         total: {
                             enabled: true,
@@ -45,8 +55,10 @@
                             }
                         }
                     }
-                },
+                }
             },
+
+            colors: colors,
             xaxis: {
                 categories: {!! json_encode($chartData['labels']) !!}
             },

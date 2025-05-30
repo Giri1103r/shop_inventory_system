@@ -59,6 +59,9 @@ class PpeStockinventory extends Model
             $query->where('ppe_stock_inventory.created_at', '<=', $endDate);
         }
 
+         if ($request->has('dashboard_sub') && $request->dashboard_sub) {
+            $query = $query->where('ppe_stock_inventory.sub', 'LIKE', '%' . $request->dashboard_sub . '%');
+        }
 
         $data_count = $query->count();
         $total_records = $data_count;

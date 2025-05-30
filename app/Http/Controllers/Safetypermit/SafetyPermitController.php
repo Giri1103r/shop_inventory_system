@@ -221,11 +221,13 @@ class SafetyPermitController extends Controller
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
         $companyList  = $this->company->select('id', 'company_name')->where('status', '1')->get();
         $status = $this->status->get();
+        $loggedInCompanyId = encryptId(Auth::user()->company_id);
         // $location = $this->location->select('id', 'location_type_name')->where('status', 1)->where('trash', 'NO')->get();
         $data = array(
             'unitList' => $unitList,
             'status' => $status,
             'companyList' => $companyList,
+            'loggedInCompanyId' => $loggedInCompanyId,
             'dashboard_search' => $request,
             // 'location' => $location,
         );
@@ -674,8 +676,21 @@ class SafetyPermitController extends Controller
             if (Auth::check()) {
                 $safetypermit = $this->safetypermit->selectOne($id);
                 $workmaninvolved = $this->safetypermit->workmaninvolved($id);
-                $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto);
-                $confined_space_entry = json_decode($safetypermit->confined_space_entry);
+
+                $confined_space_entry = [];
+                $stateIsolationLoto = [];
+
+
+                if (!empty($safetypermit->confined_space_entry)) {
+                    $confined_space_entry = json_decode($safetypermit->confined_space_entry, true);
+                }
+
+                if (!empty($safetypermit->state_isolation_loto)) {
+                    $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto, true);
+                }
+
+
+
                 $getEhSverification =   $this->approvereject->getEhSverification($id);
                 $getEhsapproval =   $this->approvereject->getEhsapproval($id);
                 $getplantheadapproval =   $this->approvereject->getplantheadapproval($id);
@@ -1917,7 +1932,7 @@ class SafetyPermitController extends Controller
             $html = view('permit.safetypermit.exportpdf', $data)->render();
             $mpdf->WriteHTML($html);
             $filename = "Safety Permit  " . $safetypermit->permit_id . ".pdf";
-            return $mpdf->Output($filename, 'D');
+            return $mpdf->Output($filename, 'd');
         } catch (Exception $ex) {
 
             report($ex);
@@ -1934,7 +1949,7 @@ class SafetyPermitController extends Controller
 
             $data = [
                 'safetypermit' => $safetypermit,
-                'showAlert' => $safetypermit->reference_id ,
+                'showAlert' => $safetypermit->reference_id,
                 'totime' => $safetypermit->time_to,
             ];
 

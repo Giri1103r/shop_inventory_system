@@ -68,6 +68,26 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label class="form-label require">Unit</label>
+                                                    <input type="text" name="unit_id" id="unit_id" class="form-control"
+                                                        placeholder="Enter the Unit name" readonly>
+                                                    @error('company_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Department</label>
+                                                    <input type="text" name="department_id" id="department_id"
+                                                        class="form-control" placeholder="Enter the Department" readonly>
+                                                    @error('company_id')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">Date
                                                     </label>
                                                     <div class="input-group date form-input custom-height">
@@ -92,7 +112,15 @@
                                                     <small>Allowed file types: PDF, DOCX, DOC</small>
                                                 </div>
                                             </div>
-
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Chief Complaint</label>
+                                                    <textarea name="cheif_complaint" id="cheif_complaint" class="form-control " cols="30" rows="5"></textarea>
+                                                    @error('cheif_complaint')
+                                                        <div class="text-danger">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Remarks</label>
@@ -174,8 +202,14 @@
                         if (response.employee) {
                             $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
                             $('#company_id').val(response.company.company_name).prop('readonly', true);
+                            $('#unit_id').val(response.unit.unit_name).prop('readonly', true);
+                            $('#department_id').val(response.department.department_name).prop(
+                                'readonly', true);
                         } else {
                             $('#emp_name').val('').prop('readonly', true);
+                            $('#company_id').val('').prop('readonly', true);
+                            $('#unit_id').val('').prop('readonly', true);
+                            $('#department_id').val('').prop('readonly', true);
                         }
                     },
                     error: function(xhr) {
@@ -207,6 +241,12 @@
                     company_id: {
                         required: true,
                     },
+                    unit_id: {
+                        required: true,
+                    },
+                    department_id: {
+                        required: true,
+                    },
                     date: {
                         required: true,
                     },
@@ -215,6 +255,11 @@
                         extension: "pdf|doc|docx"
                     },
                     remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+                    },
+                    cheif_complaint: {
                         required: true,
                         minlength: 3,
                         maxlength: 600,
@@ -233,6 +278,12 @@
                     company_id: {
                         required: "Please Enter the Company name.",
                     },
+                     unit_id: {
+                        required: "Please Enter the Unit name.",
+                    },
+                     department_id: {
+                        required: "Please Enter the department name.",
+                    },
                     file: {
                         required: "File is required.",
                         extension: "Please Select the valid mime Type."
@@ -241,6 +292,11 @@
                         required: "Remarks are required.",
                         minlength: "Remarks should have at least 3 characters.",
                         maxlength: "Remarks should not exceed 600 characters.",
+                    },
+                    cheif_complaint: {
+                        required: "Cheif Complaint are required.",
+                        minlength: "Cheif Complaint should have at least 3 characters.",
+                        maxlength: "Cheif Complaint should not exceed 600 characters.",
                     },
                 },
                 errorElement: 'span',

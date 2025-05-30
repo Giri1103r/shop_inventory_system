@@ -111,6 +111,7 @@
         .table-container {
             padding: 20px;
         }
+
         .page-break {
             page-break-before: always;
         }
@@ -229,35 +230,64 @@
 
             @php
                 $checklist = json_decode($details->checklist, true);
+                $index = 1;
             @endphp
 
             @foreach ($checklist['check_item'] as $groupId => $items)
                 @foreach ($items as $itemId)
                     <tr>
-                        <td colspan="2"  style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">{{ $loop->iteration }}</td>
-                        <td colspan="4"  style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">{{ getSubcategoryDataname($itemId) }}</td>
-                        <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                            @if (strtolower($checklist['status'][$itemId]) === 'ok')
-                            <span style="color: green; font-size: 20px;">✓</span>
+                        <td colspan="2"
+                            style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                            {{ $index }}</td>
+                        <td colspan="4"
+                            style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                            {{ getSubcategoryDataname($itemId) }}</td>
+                        <td colspan="5"
+                            style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                            @php
+                                $status = strtolower(trim($checklist['status'][$itemId] ?? ''));
+                            @endphp
+
+                            @if ($status === 'ok')
+                                <span style="color: green; font-size: 20px;">Ok</span>
+                            @elseif ($status === 'not ok')
+                                <span style="color: red; font-size: 20px;">Not Ok</span>
                             @else
-                            <span style="color: red; font-size: 20px;">X</span>
+                                <span style="color: red; font-size: 20px;">N/A</span>
                             @endif
-                        </td >
-                        <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">{{ $checklist['remarks'][$itemId] ?? '' }}</td>
+                        </td>
+                        <td colspan="5"
+                            style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                            {{ $checklist['remarks'][$itemId] ?? '' }}</td>
                     </tr>
+                    @php
+                        $index++;
+                    @endphp
                 @endforeach
             @endforeach
 
 
             <tr>
                 @php
-                    $createdSignature  = GetOHCSignature($details->inspection_created_by, $details->inspection_id, OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
-                    $verifiedSignature = GetOHCSignature($details->verified_by, $details->inspection_id, OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
-                    $approvedSignature = GetOHCSignature($details->approved_by, $details->inspection_id, OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
+                    $createdSignature = GetOHCSignature(
+                        $details->inspection_created_by,
+                        $details->inspection_id,
+                        OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                    );
+                    $verifiedSignature = GetOHCSignature(
+                        $details->verified_by,
+                        $details->inspection_id,
+                        OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                    );
+                    $approvedSignature = GetOHCSignature(
+                        $details->approved_by,
+                        $details->inspection_id,
+                        OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                    );
                 @endphp
 
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">
-                    <img src="{{ admin_url( $createdSignature) }}" alt="Signature Upload"
+                {{-- <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">
+                    <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
                     <div style="margin-top: 5px;">Checked By</div>
                 </th>
@@ -269,6 +299,32 @@
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">
                     <img src="{{ admin_url($approvedSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
+                    <div style="margin-top: 5px;">Approved By</div>
+                </th> --}}
+
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">
+                    @if ($details->inspection_created_by != null)
+                        <div style="margin-top: 5px;">Checked By : {{ getUsername($details->inspection_created_by) }}
+                        </div>
+                    @else
+                        <div style="margin-top: 5px;">Checked By : Not yet Checked</div>
+                    @endif
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">
+                    @if ($details->verified_by != null)
+                        <div style="margin-top: 5px;">Verified By : {{ getUsername($details->verified_by) }}
+                        </div>
+                    @else
+                        <div style="margin-top: 5px;">Verified By : Has Not yet been Verified</div>
+                    @endif
+                </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">
+                    @if ($details->approved_by != null)
+                        <div style="margin-top: 5px;">Approved By : {{ getUsername($details->approved_by) }}
+                        </div>
+                    @else
+                        <div style="margin-top: 5px;">Approved By : Has Not yet been Approved</div>
+                    @endif
                     <div style="margin-top: 5px;">Approved By</div>
                 </th>
             </tr>

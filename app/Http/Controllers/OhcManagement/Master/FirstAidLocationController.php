@@ -452,11 +452,13 @@ class FirstAidLocationController extends Controller
         $name = $request->input('search');
 
         $employee_code = $this->employee->where('emp_id', 'like', '%' . $name . '%')
+            ->orwhere('emp_name', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(10)
             ->get();
 
-        $work = $this->work->where('emp_id', 'like', '%' . $name . '%')
+        $work = $this->work->where('emp_name', 'like', '%' . $name . '%')
+            ->orwhere('emp_id', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(10)
             ->get();

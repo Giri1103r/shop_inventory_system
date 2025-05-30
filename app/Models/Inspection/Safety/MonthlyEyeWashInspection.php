@@ -142,6 +142,61 @@ class MonthlyEyeWashInspection extends Model
         return $datas;
     }
 
+    public function listApi()
+    {
+        $request = request();
+        $perPage = $request->input('per_page', 10);
+        $search = $request->input('search', '');
+
+        $query = $this->select('inspection_monthly_eyewash.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_monthly_eyewash.id as inspection_id', 'inspection_static_docno.*')
+            ->leftJoin('masters_location', 'inspection_monthly_eyewash.location', '=', 'masters_location.id')
+            ->leftJoin('inspection_shift_option', 'inspection_monthly_eyewash.shift', '=', 'inspection_shift_option.id')
+            ->leftJoin('masters_unit', 'inspection_monthly_eyewash.unit', '=', 'masters_unit.id')
+            ->leftJoin('inspection_static_docno', 'inspection_monthly_eyewash.document_reference_id', '=', 'inspection_static_docno.id')
+            ->leftJoin('inspection_frequency_option', 'inspection_monthly_eyewash.frequency', '=', 'inspection_frequency_option.id');
+
+
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+            $query->where('inspection_monthly_eyewash.created_by', Auth::id());
+        }
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"')
+                    ->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"')
+                    ->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"')
+                    ->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
+            });
+        }
+
+        $paginatedData = $query->orderBy('inspection_monthly_eyewash.id', 'DESC')->paginate($perPage);
+
+        $refined_data = [];
+        foreach ($paginatedData as $data) {
+            $data->date_of_inspection = Displaydateformat($data->date_of_inspection);
+            $data->issue_date = Displaydateformat($data->issue_date);
+            $data->next_due = Displaydateformat($data->next_due);
+            $data->inspection_status = GetStatusValue($data->inspection_status);
+            $data->status = ($data->status == 1) ? 'Active' : 'In-Active';
+            $data->created_by = getUsername($data->created_by);
+            $data->created_at = Displaydateformat($data->created_at);
+            $refined_data[] = $data;
+        }
+
+        $response = [
+            'per_page' => $paginatedData->perPage(),
+            'current_page' => $paginatedData->currentPage(),
+            'from' => $paginatedData->firstItem(),
+            'to' => $paginatedData->lastItem(),
+            'total' => $paginatedData->total(),
+            'total_page' => $paginatedData->lastPage(),
+            'list' => $refined_data,
+        ];
+
+        return $response;
+    }
+
 
     public function store()
     {
@@ -155,6 +210,26 @@ class MonthlyEyeWashInspection extends Model
             'next_due' => DBdateformat($request->next_due),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
+            'created_by' => Auth::id(),
+            'checked_by' => Auth::id(),
+            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+        );
+
+        return $this->create($data);
+    }
+
+    public function storeApi()
+    {
+        $request = request();
+
+        $data = array(
+            'document_reference_id' => $request->document_reference_id,
+            'date_of_inspection' => DBdateformat($request->inspection_date),
+            'location' => $request->location_id,
+            'shift' => $request->shift_id,
+            'next_due' => DBdateformat($request->next_due),
+            'unit' => $request->unit_id,
+            'frequency' => $request->frequency_id,
             'created_by' => Auth::id(),
             'checked_by' => Auth::id(),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,

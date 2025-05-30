@@ -67,9 +67,9 @@ class Medicine extends Model
 
                     ->orWhere('pack', 'LIKE', '%' . $search . '%');
 
-                    if ($formattedDate) {
-                        $query  ->orWhere('expiry_date', 'LIKE', '%' . $formattedDate . '%');
-                    }
+                if ($formattedDate) {
+                    $query->orWhere('expiry_date', 'LIKE', '%' . $formattedDate . '%');
+                }
             });
         }
 
@@ -118,13 +118,74 @@ class Medicine extends Model
         return $datas;
     }
 
+    public function listApi()
+    {
+        $request = request();
+                $perPage = $request->input('per_page', 10);
+
+        $search = '';
+        $query = $this->select('ohc_master_medicine.*')->where('status', 1);
+
+        // dd($query);
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
+
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+            $formattedDate = null;
+            if (\DateTime::createFromFormat('d-m-Y', $search) !== false) {
+                $formattedDate = \Carbon\Carbon::createFromFormat('d-m-Y', $search)->format('Y-m-d');
+            }
+            $query->where(function ($query) use ($search, $formattedDate) {
+                $query
+                    ->orWhere('medicine', 'LIKE', '%' . $search . '%')
+
+                    ->orWhere('hsn', 'LIKE', '%' . $search . '%')
+                    ->orWhere('threshold_limit', 'LIKE', '%' . $search . '%')
+                    ->orWhere('remarks', 'LIKE', '%' . $search . '%')
+
+                    ->orWhere('pack', 'LIKE', '%' . $search . '%');
+
+                if ($formattedDate) {
+                    $query->orWhere('expiry_date', 'LIKE', '%' . $formattedDate . '%');
+                }
+            });
+        }
+
+        $paginatedData = $query->orderBy('ohc_master_medicine.id')->paginate($perPage);
+
+        $medicine_data = $paginatedData->toArray();
+
+        $medicine_data_array = [];
+        $refined_data = [];
+
+        foreach ($medicine_data['data'] as $index => $data) {
+            $medicine_data_array['id'] = $data['id'];
+            $medicine_data_array['medicine_name'] = $data['medicine'];
+
+            $refined_data[$index] = $medicine_data_array;
+        }
+
+         $response = [
+            'per_page' => $paginatedData->perPage(),
+            'current_page' => $paginatedData->currentPage(),
+            'from' => $paginatedData->firstItem(),
+            'to' => $paginatedData->lastItem(),
+            'total' => $paginatedData->total(),
+            'total_page' => $paginatedData->lastPage(),
+            'list' => $refined_data,
+        ];
+
+        return $response;
+    }
+
     public function uniqueCheck($medicine_name)
     {
 
         return $this->where('medicine', $medicine_name)->get();
     }
 
-    public function existUniqueCheck($medicine_name,$id)
+    public function existUniqueCheck($medicine_name, $id)
     {
         return $this->where('medicine', $medicine_name)
             ->where('id', '!=', $id)
@@ -148,14 +209,14 @@ class Medicine extends Model
         $request = request();
 
 
-        $user = User::where('status', 1)->where('id',Auth::id())->first();
+        $user = User::where('status', 1)->where('id', Auth::id())->first();
 
 
         $approveStatus = ($user && (checkUserRole(ROLE_SUPERADMIN) ||  checkUserRole(ROLE_EHS_HEAD)))
             ? STATUS_OHC_EHS_HEAD_APPROVED
             : STATUS_OHC_EHS_HEAD_APPROVAL_PENDING;
-            $Status = ($user && (checkUserRole(ROLE_SUPERADMIN) ||  checkUserRole(ROLE_EHS_HEAD)))
-            ?1
+        $Status = ($user && (checkUserRole(ROLE_SUPERADMIN) ||  checkUserRole(ROLE_EHS_HEAD)))
+            ? 1
             : 0;
 
         $insert_array = [
@@ -178,11 +239,11 @@ class Medicine extends Model
         $request = request();
         $user = User::where('status', 1)->first();
         $approveStatus = ($user && (checkUserRole(ROLE_SUPERADMIN) ||  checkUserRole(ROLE_EHS_HEAD)))
-        ? STATUS_OHC_EHS_HEAD_APPROVED
-        : STATUS_OHC_EHS_HEAD_APPROVAL_PENDING;
+            ? STATUS_OHC_EHS_HEAD_APPROVED
+            : STATUS_OHC_EHS_HEAD_APPROVAL_PENDING;
         $Status = ($user && (checkUserRole(ROLE_SUPERADMIN) ||  checkUserRole(ROLE_EHS_HEAD)))
-        ?1
-        : 0;
+            ? 1
+            : 0;
         $update_array = array(
             'medicine' => $request->medicine,
             'pack' => $request->pack,

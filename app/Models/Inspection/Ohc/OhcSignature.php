@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class OhcSignature extends Model
 {
@@ -75,7 +76,9 @@ class OhcSignature extends Model
                 $data =    $this->create($insert_array);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect()->back();
         }
     }
 
@@ -115,9 +118,78 @@ class OhcSignature extends Model
                 return $this->create($insert_array);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect()->back();
         }
     }
+
+    public function requestorsignatureUpload_api($type, $id)
+    {
+        try {
+            $request = request();
+
+            $base64File = $request->input('signature_image');
+
+            if (!$base64File) {
+                return response()->json(['error' => 'No signature image provided.'], 400);
+            }
+
+            $extension = null;
+            if (preg_match('/^data:image\/(\w+);base64,/', $base64File, $matches)) {
+                $extension = $matches[1];
+            } else {
+                return response()->json(['error' => 'Invalid or unsupported image format.'], 400);
+            }
+
+            $base64File = preg_replace('/^data:image\/\w+;base64,/', '', $base64File);
+            $fileData = base64_decode($base64File);
+
+            if ($fileData === false) {
+                return response()->json(['error' => 'Base64 decoding failed.'], 400);
+            }
+
+            $uploadPath = public_path('uploads/inspection/ohc/signatureupload');
+            if (!File::exists($uploadPath)) {
+                File::makeDirectory($uploadPath, 0777, true, true);
+            }
+
+            $fileName = time() . Str::random(10) . '.' . $extension;
+            $filePath = $uploadPath . '/' . $fileName;
+
+            file_put_contents($filePath, $fileData);
+
+            $relativePath = 'public/uploads/inspection/ohc/signatureupload/' . $fileName;
+            $insertArray = [
+                'emp_id' => Auth::id(),
+                'ohc_id' => $id,
+                'type' => $type,
+                'requestor_file_path' => $relativePath,
+                'file_path' => $relativePath,
+                'file_name' => $fileName,
+                'file_orgname' => $fileName,
+                'file_extension' => $extension,
+                'created_by' => Auth::id(),
+            ];
+
+            $record = $this->create($insertArray);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Signature uploaded successfully.',
+                'data' => $record
+            ], 201);
+        } catch (\Exception $ex) {
+            report($ex);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Something went wrong.',
+                'error' => $ex->getMessage()
+            ], 500);
+        }
+    }
+
 
     public function signatureLogUpload($empId, $sfty_petty_id, $type, $fileInputName)
     {
@@ -157,6 +229,8 @@ class OhcSignature extends Model
             }
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect()->back();
         }
     }
 

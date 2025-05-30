@@ -177,23 +177,7 @@
                                                         accept="image/*">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
-                                                @if (isset(Auth::user()->signature_upload))
-                                                    <label class="form-label"
-                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
-                                                @else
-                                                    <div class="form-input col-md-12 mb-2">
-                                                        <label class="form-label require">Signature</label>
-                                                        <input type="file" name="signature_image"
-                                                            id="signature_upload" class="form-control form-control-sm"
-                                                            accept="image/*" placeholder="Enter the image">
-                                                        <small>Allowed file types: jpg, jpeg, png</small>
-                                                        <div id="signature_upload" class="text-danger"></div>
-                                                    </div>
-                                                @endif
-                                            </div>
+
                                             <input type="hidden" name="document_reference_id"
                                                 value="{{ encryptId($document_no->id) }}">
                                         </div>
@@ -473,7 +457,6 @@
                     rules: {
                         doc_no: {
                             required: true,
-                            minlength: 3,
                             maxlength: 100,
                             noSpaces: true,
                         },
@@ -500,7 +483,6 @@
                         },
                         identification_no: {
                             required: true,
-                            minlength: 3,
                             maxlength: 100,
                             noSpaces: true,
                         },
@@ -509,12 +491,10 @@
                         },
                         "sprinkler_head[1]": {
                             required: true,
-                            minlength: 3,
                             maxlength: 30,
                         },
                         "neck_ring[1]": {
                             required: true,
-                            minlength: 3,
                             maxlength: 30,
                         },
                         "cylinder_pressure[1]": {
@@ -528,7 +508,6 @@
                         },
                         "types_of_equipment[1]": {
                             required: true,
-                            minlength: 3,
                             maxlength: 30,
                         },
                         "location[1]": {
@@ -539,13 +518,11 @@
                         },
                         "resource_code[1]": {
                             required: true,
-                            minlength: 3,
                             maxlength: 30,
                             uniqueItemCode: true,
                         },
                         "remarks[1]": {
                             required: true,
-                            minlength: 3,
                             maxlength: 300,
                         },
                         device_image: {
@@ -555,10 +532,10 @@
                         observation: {
                             required: true,
                         },
-                        signature_image: {
-                            required: true,
-                            filesize: 15728640,
-                        },
+                        // signature_image: {
+                        //     required: true,
+                        //     filesize: 15728640,
+                        // },
 
                     },
                     messages: {
@@ -567,10 +544,10 @@
                             minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 100",
                         },
-                        signature_image: {
-                            required: 'Please upload your signature',
-                            filesize: 'File size should not exceed 15MB',
-                        },
+                        // signature_image: {
+                        //     required: 'Please upload your signature',
+                        //     filesize: 'File size should not exceed 15MB',
+                        // },
                         issue_date: {
                             required: "Date Of Audit is required",
                         },
@@ -828,22 +805,18 @@
                     $("input[name='resource_code[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
-                        minlength: 3,
                         maxlength: 30,
                         messages: {
                             required: 'Please Enter the resource code',
-                            minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
                     $("input[name='sprinkler_head[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
-                        minlength: 3,
                         maxlength: 30,
                         messages: {
                             required: 'Please Enter the Sprinkler Head',
-                            minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 30",
 
                         }
@@ -851,11 +824,9 @@
                     $("input[name='neck_ring[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueItemCode: true,
-                        minlength: 3,
                         maxlength: 30,
                         messages: {
                             required: 'Please Enter the Neck Ring',
-                            minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 30",
                         }
                     });
@@ -876,11 +847,9 @@
 
                     $("input[name='types_of_equipment[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength: 3,
                         maxlength: 30,
                         messages: {
                             required: 'Please Enter the Type Of Equipment',
-                            minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 30",
 
                         }
@@ -900,11 +869,9 @@
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength: 3,
                         maxlength: 300,
                         messages: {
                             required: 'Please Enter the Remarks',
-                            minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 300",
                         }
                     });

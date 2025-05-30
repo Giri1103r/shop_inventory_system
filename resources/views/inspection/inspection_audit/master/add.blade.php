@@ -91,6 +91,15 @@
                         maxlength: 200,
                         pattern: /^[a-zA-Z0-9\s\-_'"()]+$/,
                         noSpaces: true,
+                        remote: {
+                            url: '{{ admin_url('audit/master/task/unique') }}',
+                            type: 'post',
+                            data: {
+                                task_name: function() {
+                                    return $('#task_name').val();
+                                }
+                            }
+                        }
                     }
 
                 },
@@ -99,7 +108,8 @@
                         required: "Task Name is required.",
                         minlength: "Task Name must be at least 3 characters.",
                         maxlength: "Task Name cannot exceed 200 characters.",
-                        pattern: "Must be alphanumeric and accept the mentioned special characters: (-, _, ‘, “, ())."
+                        pattern: "Must be alphanumeric and accept the mentioned special characters: (-, _, ‘, “, ()).",
+                        remote: "Task Name already exists."
                     }
                 },
 

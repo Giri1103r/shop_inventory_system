@@ -73,15 +73,15 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Org ID</th>
-                                        <th>Inventory Item ID</th>
+                                        {{-- <th>Org ID</th> --}}
+                                        {{-- <th>Inventory Item ID</th> --}}
                                         <th>Item Code</th>
-                                        <th>PPE Name</th>
-                                        <th>SUB</th>
-                                        <th>UOM</th>
+                                        {{-- <th>PPE Name</th> --}}
+                                        {{-- <th>SUB</th> --}}
+                                        {{-- <th>UOM</th> --}}
                                         <th>Quantity</th>
-                                        <th>{{ __('common.created_by') }}</th>
-                                        <th>{{ __('common.created_date') }}</th>
+                                        {{-- <th>{{ __('common.created_by') }}</th> --}}
+                                        {{-- <th>{{ __('common.created_date') }}</th> --}}
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -125,6 +125,8 @@
                 minDate: "today"
             });
 
+            var dashboard_sub =
+                '{{ isset($dashboard_search['sub']) && $dashboard_search['sub'] != '' ? $dashboard_search['sub'] : '' }}';
 
             var table = $('.datatable-list').DataTable({
                 serverSide: true,
@@ -160,6 +162,7 @@
                         d.inventory_item_id = $('#inventory_item_id').val();
                         d.from_date = $('#from_date').val();
                         d.to_date = $('#to_date').val();
+                        d.dashboard_sub = dashboard_sub;
 
                     },
                     error: function(xhr, error, code) {
@@ -174,42 +177,42 @@
                         orderable: false,
                         searchable: false
                     },
-                    {
-                        data: 'org',
-                        name: 'org'
-                    },
-                    {
-                        data: 'inventory_item_id',
-                        name: 'inventory_item_id'
-                    },
+                    // {
+                    //     data: 'org',
+                    //     name: 'org'
+                    // },
+                    // {
+                    //     data: 'inventory_item_id',
+                    //     name: 'inventory_item_id'
+                    // },
                     {
                         data: 'item_code',
                         name: 'item_code'
                     },
-                    {
-                        data: 'ppe_name',
-                        name: 'ppe_name'
-                    },
-                    {
-                        data: 'sub',
-                        name: 'sub'
-                    },
-                    {
-                        data: 'uom',
-                        name: 'uom'
-                    },
+                    // {
+                    //     data: 'ppe_name',
+                    //     name: 'ppe_name'
+                    // },
+                    // {
+                    //     data: 'sub',
+                    //     name: 'sub'
+                    // },
+                    // {
+                    //     data: 'uom',
+                    //     name: 'uom'
+                    // },
                     {
                         data: 'quantity',
                         name: 'quantity'
                     },
-                    {
-                        data: 'created_by',
-                        name: 'created_by'
-                    },
-                    {
-                        data: 'created_at',
-                        name: 'created_at'
-                    },
+                    // {
+                    //     data: 'created_by',
+                    //     name: 'created_by'
+                    // },
+                    // {
+                    //     data: 'created_at',
+                    //     name: 'created_at'
+                    // },
                     {
                         data: 'action',
                         name: 'action',
@@ -243,6 +246,7 @@
                                     var inventory_item_id = $('#inventory_item_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
+                                    var dashboard_sub = dashboard_sub;
 
 
                                     $(".dt-button").removeClass('processing');
@@ -253,7 +257,8 @@
                                         '&item_code=' + item_code +
                                         '&inventory_item_id=' + inventory_item_id +
                                         '&from_date=' + from_date +
-                                        '&to_date=' + to_date;
+                                        '&to_date=' + to_date +
+                                        '&dashboard_sub=' + dashboard_sub;
 
                                 }
                             },
@@ -266,6 +271,7 @@
                                     var inventory_item_id = $('#inventory_item_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
+                                    var dashboard_sub = dashboard_sub;
 
 
                                     $(".dt-button").removeClass('processing');
@@ -276,7 +282,8 @@
                                         '&item_code=' + item_code +
                                         '&inventory_item_id=' + inventory_item_id +
                                         '&from_date=' + from_date +
-                                        '&to_date=' + to_date;
+                                        '&to_date=' + to_date + '&dashboard_sub=' +
+                                        dashboard_sub;
 
                                 }
                             }

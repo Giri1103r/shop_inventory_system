@@ -91,7 +91,7 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
+                                        <label class="form-label view_label">{{ __('Stock Entry Date') }}</label>
                                         <div class="view_data">
                                             {{ displayDateformat($medicine_receiving->created_at) }}
                                         </div>

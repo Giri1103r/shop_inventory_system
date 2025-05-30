@@ -267,7 +267,7 @@ class PrescribetoPatientController extends Controller
                         $hospitaldetails = $isreffered ? $isreffered->toArray() : [];
                         $emailDetails = $opdpatient ? $opdpatient->toArray() : [];
 
-                        if (!empty($emailDetails) && !empty($medicineDetails) && !empty($hospitaldetails)) {
+                        if (!empty($emailDetails) || !empty($medicineDetails) || !empty($hospitaldetails)) {
                             $emailDetails['name'] = $user->name;
                             $emailDetails['email_id'] = $email_id;
                             $emailDetails['mail_subject'] = $mailsubject;
@@ -429,8 +429,8 @@ class PrescribetoPatientController extends Controller
 
 
                     $totalPrescribe =  $this->inventory->where('unit_id', Auth::user()->unit_id)
-                    ->where('medicine_id', $medicine_first_aid_medicine->medicine_id)
-                    ->decrement('total_prescribe', $medicine_first_aid_medicine->quantity);
+                        ->where('medicine_id', $medicine_first_aid_medicine->medicine_id)
+                        ->decrement('total_prescribe', $medicine_first_aid_medicine->quantity);
 
 
                     $this->inventory->where('unit_id', Auth::user()->unit_id)
@@ -667,11 +667,13 @@ class PrescribetoPatientController extends Controller
         $name = $request->input('search');
 
         $employee_code = $this->employee->where('emp_id', 'like', '%' . $name . '%')
+            ->orwhere('emp_name', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(10)
             ->get();
 
         $work = $this->work->where('emp_id', 'like', '%' . $name . '%')
+            ->orwhere('emp_name', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(10)
             ->get();
@@ -683,11 +685,13 @@ class PrescribetoPatientController extends Controller
             $mergedResults->map(function ($employee) {
                 return [
                     'id' => $employee->emp_id,
-                    'text' => $employee->emp_id,
+                    'text' => $employee->emp_id . ' - ' . $employee->emp_name,
+
                 ];
             })
         );
     }
+
 
     // fetching the employee department and mobile number
 
@@ -855,11 +859,13 @@ class PrescribetoPatientController extends Controller
         $name = $request->input('search');
 
         $employee_code = $this->employee->where('emp_id', 'like', '%' . $name . '%')
+            ->orwhere('emp_name', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(10)
             ->get();
 
         $work = $this->work->where('emp_id', 'like', '%' . $name . '%')
+            ->orwhere('emp_name', 'like', '%' . $name . '%')
             ->where('status', 1)
             ->limit(10)
             ->get();

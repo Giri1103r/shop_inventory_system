@@ -275,10 +275,7 @@
 
         document.addEventListener("DOMContentLoaded", function() {
             function initializeFlatpickr() {
-                flatpickr("input[id^='issue_date']", {
-                    dateFormat: "d-m-Y",
-                    minDate: new Date()
-                });
+                
                 flatpickr("input[id^='date_of_calibration_']", {
                     dateFormat: "d-m-Y"
                 });

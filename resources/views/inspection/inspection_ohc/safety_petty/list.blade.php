@@ -265,8 +265,8 @@
                         name: 'department_name'
                     },
                     {
-                        data: 'emp_name',
-                        name: 'emp_name'
+                        data: 'employee_name',
+                        name: 'employee_name'
                     },
                     {
                         data: 'employee_code',

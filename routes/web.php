@@ -141,6 +141,7 @@ use App\Http\Controllers\{SettingsController, LocalizationController, TestContro
 use App\Http\Controllers\Inspection\Environment\DgSetStackEmissionMonitoringController;
 use App\Http\Controllers\OhcManagement\Opd\FirstAidController as OpdFirstAidController;
 use App\Http\Controllers\Admin\{LoginController, NotificationController, AdminController, BlockedController};
+use App\Http\Controllers\KPI\LeadingLaggingDashboardController;
 use App\Http\Controllers\Master\{PpeTypeController, PpeTypeMasterController, UserLogController, UserPermissionController, UploadLogController, UserController, UserRoleController};
 
 Route::get('cache', function () {
@@ -200,6 +201,7 @@ Route::get('expireexemptionstatus', [CronController::class, 'ExpireExemption']);
 Route::get('updateStockitem', [CronController::class, 'updateItem']);
 Route::get('cron/master/work/all-details-temp', [CronController::class, 'workMasterAllDetailsTemp']);
 Route::get('cron/master/workmastertemp', [CronController::class, 'workMasterTemp']);
+Route::get('cron/master/worker/temp-custom-details', [CronController::class, 'workMasterTempCustom']);
 Route::get('cron/master/worksave', [CronController::class, 'workSave']);
 Route::get('cron/master/employee/all-details-temp', [CronController::class, 'employeeMasterTempAllDetails']);
 Route::get('cron/master/employee/temp-details', [CronController::class, 'employeeMasterTemp']);
@@ -328,6 +330,13 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('chart19', [KpiDashboardController::class, 'getChart19']);
                 Route::get('chart20', [KpiDashboardController::class, 'getChart20']);
                 Route::get('chart21', [KpiDashboardController::class, 'getChart21']);
+
+                Route::group(['prefix' =>  'leading-lagging/'], function () {
+                    Route::get('', [LeadingLaggingDashboardController::class, 'index']);
+                    Route::get('leading/chart1', [LeadingLaggingDashboardController::class, 'getChart1']);
+                    Route::GET('lagging-line', [LeadingLaggingDashboardController::class, 'LaggingIndicatorLine']);
+                    Route::GET('lagging-indicator', [LeadingLaggingDashboardController::class, 'LaggingDoughNut']);
+                });
             });
 
             /**
@@ -354,8 +363,6 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('administration/role/import/submit', [UserRoleController::class, 'importSubmit']);
             Route::get('administration/role/list/{companyId}', [UserRoleController::class, 'list']);
             Route::get('administration/role/sampledownload', [UserRoleController::class, 'DownloadSample']);
-
-
 
 
             Route::get('administration/users/list', [UserController::class, 'index']);
@@ -927,6 +934,8 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::post('import/Submit', [TaskMasterController::class, 'importSubmit']);
                     Route::post('delete', [TaskMasterController::class, 'Delete']);
                     Route::post('status', [TaskMasterController::class, 'StatusChange']);
+                    Route::post('unique', [TaskMasterController::class, 'Uniquecheck']);
+
                 });
 
                 Route::group(['prefix' => 'master/compliance_category'], function () {
@@ -989,8 +998,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('add', [GembaWalkController::class, 'add']);
                 Route::post('add/submit', [GembaWalkController::class, 'store']);
                 Route::get('view/{id}', [GembaWalkController::class, 'view']);
-                Route::get('capa-verification/{id}', [GembaWalkController::class, 'approvals']);
-                Route::post('capa/submit', [GembaWalkController::class, 'CAPASubmit']);
+                // Route::get('capa-verification/{id}', [GembaWalkController::class, 'approvals']);
+                // Route::post('capa/submit', [GembaWalkController::class, 'CAPASubmit']);
                 Route::get('floor-manager/{id}', [GembaWalkController::class, 'review']);
                 Route::post('floor-manager/review/submit', [GembaWalkController::class, 'capaReviewSubmit']);
                 Route::get('ehs-officer/{id}', [GembaWalkController::class, 'ehsOfficerReview']);
@@ -999,6 +1008,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('generalExcel/{id}', [GembaWalkController::class, 'generalExcel']);
                 Route::get('export/pdf', [GembaWalkController::class, 'exportPdf']);
                 Route::get('export/excel', [GembaWalkController::class, 'exportExcel']);
+                Route::get('employeeName', [GembaWalkController::class, 'getEmployeeName']);
             });
 
             Route::group(['prefix' => 'environment/'], function () {
@@ -1798,6 +1808,7 @@ Route::middleware(['securityheader'])->group(function () {
             Route::group(['prefix' => 'ohc/emergency-floor-first-aid-bag/checklist/'], function () {
                 Route::get('list', [FirstAidBagChecklistController::class, 'index']);
                 Route::post('list', [FirstAidBagChecklistController::class, 'index']);
+                Route::get('fetchemployeename', [FirstAidBagChecklistController::class, 'fetchemployeename']);
                 Route::get('add', [FirstAidBagChecklistController::class, 'add']);
                 Route::post('add/submit', [FirstAidBagChecklistController::class, 'store']);
                 Route::get('view/{id}', [FirstAidBagChecklistController::class, 'view']);
@@ -2294,6 +2305,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/view/{id}', [PrescribetoPatientController::class, 'view']);
                 Route::get('/generalpdf/{id}', [PrescribetoPatientController::class, 'medicineslip']);
                 Route::get('/fetchemployeename', [PrescribetoPatientController::class, 'fetchemployeename']);
+
                 Route::get('/emp-details/{emp_id}', [PrescribetoPatientController::class, 'employeedetails']);
                 Route::get('/first-aider-number', [PrescribetoPatientController::class, 'firstaidernumber']);
                 Route::get('/firstaider', [PrescribetoPatientController::class, 'firstaider']);
@@ -2479,8 +2491,12 @@ Route::middleware(['securityheader'])->group(function () {
 
 
             Route::group(['prefix' => 'incident/initial-incident'], function () {
-                Route::get('/list', [InitialIncidentController::class, 'index']);
-                Route::post('/list', [InitialIncidentController::class, 'index']);
+                Route::get('/list/{type}/{condition}', [InitialIncidentController::class, 'index']);
+                Route::post('/list/{type}/{condition}', [InitialIncidentController::class, 'index']);
+
+                Route::get('unit', [InitialIncidentController::class, 'redirectindex']);
+                Route::post('/list/all/type', [InitialIncidentController::class, 'redirectindex']);
+
                 Route::get('/investigationList', [InitialIncidentController::class, 'investigationList']);
                 Route::post('/investigationList', [InitialIncidentController::class, 'investigationList']);
                 Route::get('/calist', [InitialIncidentController::class, 'calist']);
@@ -2688,7 +2704,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('/lists', [LeadingLaggingController::class, 'Checklists']);
                 });
 
-                Route::group(['prefix' => 'hsc-inputs'], function () {
+                Route::group(['prefix' => 'ehs-inputs'], function () {
                     Route::GET('/list', [HSCInputsController::class, 'Index']);
                     Route::POST('/list', [HSCInputsController::class, 'Index']);
                     Route::GET('/add', [HSCInputsController::class, 'Add']);

@@ -94,7 +94,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Employee Name</label>
                                         <div class="view_data">
-                                            {{ getUsername($sfty_petty_details->employee_name) }}
+                                            {{ ($sfty_petty_details->employee_name) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -142,14 +142,14 @@
                                         </div>
                                     </div>
 
-                                    @if (isset($signature_amount_givenby) && $signature_amount_givenby)
+                                    {{-- @if (isset($signature_amount_givenby) && $signature_amount_givenby)
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label" style="display: block;">Signature (Amount Given By)</label>
                                                 <img src="{{ admin_url( $signature_amount_givenby->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif --}}
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Amount Received By</label>
@@ -157,14 +157,14 @@
                                             {{ getUsername($sfty_petty_details->amount_received_by) }}
                                         </div>
                                     </div>
-                                    @if (isset($signature_amount_receivedby) && $signature_amount_receivedby)
+                                    {{-- @if (isset($signature_amount_receivedby) && $signature_amount_receivedby)
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label" style="display: block;">Signature (Amount Received By)</label>
                                                 <img src="{{ admin_url($signature_amount_receivedby->file_path) }}" alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif --}}
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">remark</label>
                                         <div class="view_data">
