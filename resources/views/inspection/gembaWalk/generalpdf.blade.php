@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Gemba Walk Inspection (Safety Walk Observation)| KARAM</title>
+    <title>Gemba Walk Inspection (Safety  Observation)| KARAM</title>
 
     <style>
         .badge {

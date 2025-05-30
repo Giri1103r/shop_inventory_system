@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Gemba Walk Inspection (Safety Walk Observation)')
+@section('title', 'Gemba Walk Inspection (Safety  Observation)')
 @section('pageurl', admin_url('inspection/gemba-walk/add'))
 
 @section('content')
