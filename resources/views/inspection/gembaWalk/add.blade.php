@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Gemba Walk Inspection (Safety Walk Observation)')
+@section('title', 'Gemba Walk Inspection (Safety  Observation)')
 @section('pageurl', admin_url('inspection/gemba-walk/add'))
 
 @section('content')
@@ -280,6 +280,17 @@
                                                                 </div>
                                                             </div>
 
+                                                            <div class="col-md-4 mt-2">
+                                                                <div class="form-group  form-input">
+                                                                    <label for="hazard" class="require form-label">
+                                                                       Name of the Observer</label>
+                                                                    <input type="text" class="form-control"
+                                                                        name="gemba_walk[0][observer_name][]"
+                                                                        id="observer_name"
+                                                                        value="{{ Auth::user()->name }}">
+                                                                </div>
+                                                            </div>
+
                                                             <div class="col-md-4 mt-4">
                                                                 <div class="form-group form-input">
                                                                     <label
@@ -551,17 +562,9 @@
             //     dropdownCssClass: 'form-control',
             //     selectionCssClass: 'form-control'
             // });
-            const loggedInUser = {
-                id: {{ auth()->user()->id }},
-                name: "{{ auth()->user()->name }}"
-            };
+
             $(document).ready(function() {
-                const $select = $('#responsible_person_id');
-
-                // Append and select the logged-in user manually
-                const lockedOption = new Option(loggedInUser.name, loggedInUser.id, true, true);
-                $select.append(lockedOption).trigger('change');
-
+                var $select = $('#responsible_person_id');
                 // Initialize Select2
                 $select.select2({
                     ajax: {
@@ -589,21 +592,8 @@
                     selectionCssClass: 'form-control'
                 });
 
-                // Prevent removing the logged-in user from selection
-                $select.on('select2:unselecting', function(e) {
-                    if (e.params.args.data.id == loggedInUser.id) {
-                        e.preventDefault(); // Prevent removing current user
-                    }
-                });
 
-                // Optional: visually lock the logged-in user
-                $select.on('select2:select', function(e) {
-                    if (e.params.data.id == loggedInUser.id) {
-                        let selected = $('.select2-selection__choice[title="' + loggedInUser.name +
-                            '"]');
-                        selected.css('background', '#ccc').append(' 🔒'); // Visual lock
-                    }
-                });
+
             });
 
 

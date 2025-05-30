@@ -302,6 +302,7 @@ class GembaWalkController extends Controller
             }
 
             if ($users->count() > 0) {
+              
                 foreach ($users as $user) {
                     $email_id = $user->email;
                     if (!empty($email_id)) {

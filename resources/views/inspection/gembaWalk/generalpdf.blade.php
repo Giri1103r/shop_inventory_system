@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Gemba Walk Inspection (Safety Walk Observation)| KARAM</title>
+    <title>Gemba Walk Inspection (Safety  Observation)| KARAM</title>
 
     <style>
         .badge {
@@ -127,7 +127,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    GembaWalk Details
+                    Gemba Walk (Safety Observation)
                 </td>
             </tr>
         </table>
@@ -154,7 +154,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Gemba Walk Inspection (Safety Walk Observation)
+                    Gemba Walk Inspection (Safety  Observation)
 
                 </td>
             </tr>
@@ -237,7 +237,7 @@
             <tr>
                 <td
                     style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
-                   {{ __('inspection.checklist_details') }}
+                    {{ __('inspection.checklist_details') }}
                 </td>
             </tr>
         </table>
@@ -265,7 +265,8 @@
                             {{-- <th>Date of Compliance</th> --}}
                             <th>Status</th>
                             <th>Remark</th>
-                            <th>Observer Person</th>
+                            <th>Recommanded Person for CAPA</th>
+                            <th>Name Of the Observer</th>
                             {{-- <th>Observation</th> --}}
 
 
@@ -316,7 +317,7 @@
                                     @endforeach
                                 </td>
 
-
+                                <td>{{ getUsername($gembaWalk->created_by ?? 'N/A') }}</td>
 
                             </tr>
                         @endforeach
