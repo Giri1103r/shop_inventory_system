@@ -79,7 +79,7 @@ class GembaWalkController extends BaseController
             if (Auth::check()) {
                 $id = $request->id;
                 $inspections = $this->gembaWalk->getInspectionDetails($id);
-                $insspection_details = $this->gembaWalkCheckList->getChecklistDetails($inspections->id);
+                $inspection_details = $this->gembaWalkCheckList->getChecklistDetails($inspections->id);
                 $type = GEMBA_WALK;
                 $prepared_by_signature = GetSignature($inspections->created_by, $inspections->id, $type);
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($id);
@@ -100,6 +100,7 @@ class GembaWalkController extends BaseController
                     $statuslog = [];
                 }
 
+
                 $inspection = [
                     'gemba_walk_auto_id' => $inspections->gemba_walk_auto_id,
                     'document_no' => $inspections->doc_no,
@@ -107,60 +108,73 @@ class GembaWalkController extends BaseController
                     'revision_date' => $inspections->rev_dt,
                     'date' => Displaydateformat($inspections->date),
                     'shift_name' => getShift($inspections->shift_id),
-                    'responsibile_person' => getUsername($inspections->responsible_person_id),
-                    'prepared_by_signature' => admin_url($prepared_by_signature)
-
                 ];
+
 
                 $inspection_checklist_details = [];
 
-                foreach ($insspection_details as $index => $data) {
+                foreach ($inspection_details as $data) {
+                    $hazard_data = [];
+                    $hazard_ids = explode(',', $data->hazard ?? '');
+                    foreach ($hazard_ids as $id) {
+                        $id = trim($id);
+                        $hazard_data[] = [
+                            'id' => $id,
+                            'name' => getGembaWalkHazardName($id),
+                        ];
+                    }
+
+                    $responsible_person_data = [];
+                    $respon_per_ids = explode(',', $data->responsibility_id ?? '');
+                    foreach ($respon_per_ids as $id) {
+                        $id = trim($id);
+                        $responsible_person_data[] = [
+                            'id' => $id,
+                            'name' => getUsername($id)
+                        ];
+                    }
+
                     $inspection_data = [
                         'id' => $data->gemba_walk_id,
                         'location_name' => getLocationname($data->location_id),
                         'unit_name' => getUnitname($data->unit_id),
+                        'department_name' => getDepartment($data->department_id),
+                        'exact_location' => $data->exact_location,
+                        'date_of_observation' => Displaydateformat($data->date_of_observation),
+                        'observation_time' => $data->time,
+                        'risk_category' => getRiskCategory($data->risk_category),
                         'observation_type' => getObservationType($data->observation_type_id),
                         'description' => $data->description,
-                        'hazard' => $data->hazard,
+                        'hazard' => $hazard_data,
+                        'recommended_capa_action' => $data->capa_needed == 1 ? 'Yes' : 'No',
                         'recommended_capa' => $data->capa,
-                        'gemba_walk_status' => $data->gemba_walk_checklist_status,
+                        'gemba_walk_status' => getGembaWalkStatus($data->gemba_walk_checklist_status),
                         'remarks' => $data->remark,
-                        'device_image' => admin_url($data->file_path)
+                        'responsible_person' => $responsible_person_data,
+                        'observer_person' => getUsername($data->created_by),
+                        'evidence' => admin_url($data->file_path),
                     ];
+
                     $inspection_checklist_details[] = $inspection_data;
                 }
-
-                // CAPA ACtion
-                if (!empty($gembaWalk_ehs_capa_details)) {
-                    $inspection_checklist_details += [
-                        'ehs_officer_name' => $gembaWalk_ehs_capa_details->name,
-                        'ehs_created_date' => Displaydateformat($gembaWalk_ehs_capa_details->created_at),
-                        'ehs_remarks' => $gembaWalk_ehs_capa_details->remarks ? $gembaWalk_ehs_capa_details->remarks : '-',
-                        'capa_needed' => $gembaWalk_ehs_capa_details->capa == 1 ? 'Yes' : 'No'
-                    ];
-                }
-
                 // FLOOR MANAGER ACTION
                 if (!empty($gembaWalk_ehs_floor_manager_details)) {
-                    $floor_manager_verified_signature = GetSignature($inspections->verified_by, $inspections->id, $type);
                     $inspection_checklist_details += [
-                        'floor_manager_name' => $gembaWalk_ehs_floor_manager_details->name,
-                        'floor_manager_remarks' => Displaydateformat($gembaWalk_ehs_floor_manager_details->created_at),
-                        'floor_manager_created_date' => $gembaWalk_ehs_floor_manager_details->remarks ? $gembaWalk_ehs_floor_manager_details->remarks : '-',
-                        'floor_manager_verified_signature' => admin_url($floor_manager_verified_signature)
-
+                        'responsible_person_action_taken' => $gembaWalk_ehs_floor_manager_details->name,
+                        'responsible_person_created_date' => Displaydateformat($gembaWalk_ehs_floor_manager_details->created_at),
+                        'responsible_person_remarks' => $gembaWalk_ehs_floor_manager_details->remarks ? $gembaWalk_ehs_floor_manager_details->remarks : '-',
+                        'capa_action_date' => Displaydateformat($gembaWalk_ehs_floor_manager_details->capa_action_date),
+                        'observer_capa_image' => admin_url($gembaWalk_ehs_floor_manager_details->file_path)
                     ];
                 }
 
                 // ehs approve
                 if (!empty($gembaWalk_ehs_verificatioin_details)) {
-                    $approved_by_signature = GetSignature($inspections->created_by, $inspections->id, $type);
-
                     $inspection_checklist_details += [
                         'ehs_approver_name' => $gembaWalk_ehs_verificatioin_details->name,
                         'ehs_approver_remarks' => $gembaWalk_ehs_verificatioin_details->remarks ? $gembaWalk_ehs_verificatioin_details->remarks : '-',
                         'ehs_approver_created_date' => Displaydateformat($gembaWalk_ehs_verificatioin_details->created_at),
-                        'ehs_approved_signature' => admin_url($approved_by_signature)
+
 
                     ];
                 }
@@ -185,6 +199,7 @@ class GembaWalkController extends BaseController
             );
         }
     }
+
 
     public function Store(Request $request)
     {
@@ -395,7 +410,7 @@ class GembaWalkController extends BaseController
             return $this->sendResponse($success, 'Inspection Created');
         } catch (Exception $ex) {
             report($ex);
-              return $this->sendError(
+            return $this->sendError(
                 'Unauthorised.',
                 ['error' => 'Please try again after sometimes'],
                 404
