@@ -59,6 +59,7 @@ class GembaWalkChecklist extends Model
         if (!empty($gembaWalkData) && is_array($gembaWalkData)) {
             foreach ($gembaWalkData as $index => $walk) {
 
+
                 // for Hazard
                 $decryptedHazards = array_map(function ($id) {
                     return decryptId($id);
@@ -67,10 +68,15 @@ class GembaWalkChecklist extends Model
 
                 // for responsible person
 
-                $decryptedObserverPerson = array_map(function ($id) {
-                    return ($id);
-                }, $walk['responsible_person_id']);
-                $ObserversIds = implode(',', $decryptedObserverPerson);
+                if (!empty($walk['responsible_person_id'])) {
+                    $decryptedObserverPerson = array_map(function ($id) {
+                        return ($id); // You can add decryption here if needed
+                    }, $walk['responsible_person_id']);
+
+                    $ObserversIds = implode(',', $decryptedObserverPerson);
+                } else {
+                    $ObserversIds = '';
+                }
 
                 $data = [
                     'gemba_walk_id' => $gembaWalk_id,

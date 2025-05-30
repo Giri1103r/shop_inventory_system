@@ -916,7 +916,7 @@
                     capa_remark: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
 
                     },
                     is_passed: {
@@ -944,7 +944,7 @@
                     capa_remark: {
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
-                        maxlength: "Maximum 100 characters",
+                         maxlength: "Maximum 600 characters",
 
                     },
                     is_passed: {
@@ -992,7 +992,7 @@
                     capa_remark: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
 
                     },
                     capa_image: {
@@ -1007,7 +1007,7 @@
                     capa_remark: {
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
-                        maxlength: "Maximum 100 characters",
+                         maxlength: "Maximum 600 characters",
 
                     },
                     capa_image: {
@@ -1047,7 +1047,7 @@
                     capa_remark: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
 
                     },
                     gemba_walk_verified_by: {
@@ -1062,7 +1062,7 @@
                     capa_remark: {
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
-                        maxlength: "Maximum 100 characters",
+                         maxlength: "Maximum 600 characters",
 
                     },
                     gemba_walk_verified_by: {
