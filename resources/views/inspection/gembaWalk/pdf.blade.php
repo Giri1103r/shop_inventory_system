@@ -212,6 +212,7 @@
                     <th>Department</th>
                     <th>Exact Location</th>
                     <th>Date of Observation</th>
+                     <th>Observation Time</th>
                     <th>Type (Unsafe Act / Unsafe Condition)</th>
                     <th>Description</th>
                     <th>{{ __('inspection.risk_category') }}</th>
@@ -233,6 +234,7 @@
                         <td>{{ getDepartment($gembaWalk->department_id ?? 'N/A') }}</td>
                         <td>{{ $gembaWalk->exact_location ?? 'N/A' }}</td>
                         <td>{{ displaydateformat($gembaWalk->date_of_observation ?? 'N/A') }}</td>
+                        <td>{{ ($gembaWalk->time ?? 'N/A') }}</td>
                         <td>{{ getObservationType($gembaWalk->observation_type_id ?? 'N/A') }}</td>
                         <td>{{ $gembaWalk->description ?? 'N/A' }}</td>
                         <td>{{ getRiskCategory($gembaWalk->risk_category ?? 'N/A') }}</td>
@@ -266,12 +268,12 @@
                     $verifiedSignature = GetSignature($firstItem->verified_by, $firstItem->inspection_id, GEMBA_WALK);
                 @endphp
 
-                <th colspan="7" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                <th colspan="8" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
 
                     <div style="margin-top: 5px;">Prepared By : {{ getUsername($firstItem->created_by) }} </div>
 
                 </th>
-                <th colspan="10" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                <th colspan="9" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
 
                     @if (!empty($firstItem->verified_by))
                         <p style="margin: 0;">Verified By:- {{ getUsername($firstItem->verified_by) }}</p>

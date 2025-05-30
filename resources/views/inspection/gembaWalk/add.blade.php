@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Gemba Walk Inspection (Safety  Observation)')
+@section('title', 'Gemba Walk Inspection (Safety Observation)')
 @section('pageurl', admin_url('inspection/gemba-walk/add'))
 
 @section('content')
@@ -84,13 +84,7 @@
                                                             id="document_upload_date" class="form-control">
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label require ">Time</label>
-                                                        <input type="text" name="time" id="time"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Shift</label>
@@ -218,7 +212,13 @@
                                                                         id="date_of_observation_0" class="form-control">
                                                                 </div>
                                                             </div>
-
+                                                            <div class="col-md-4 mt-2">
+                                                                <div class="form-group form-input">
+                                                                    <label class="form-label require ">Observation Time</label>
+                                                                    <input type="text" name="gemba_walk[0][time]" id="time"
+                                                                        class="form-control">
+                                                                </div>
+                                                            </div>
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group form-input ">
                                                                     <label for="observation_type"
@@ -283,7 +283,7 @@
                                                             <div class="col-md-4 mt-2">
                                                                 <div class="form-group  form-input">
                                                                     <label for="hazard" class="require form-label">
-                                                                       Name of the Observer</label>
+                                                                        Name of the Observer</label>
                                                                     <input type="text" class="form-control"
                                                                         name="gemba_walk[0][observer_name][]"
                                                                         id="observer_name"
@@ -846,7 +846,7 @@
                         shift: {
                             required: true
                         },
-                        time: {
+                        'gemba_walk[0][time]': {
                             required: true
                         },
                         gemba_walk_prepared_by: {
@@ -935,7 +935,7 @@
                         document_upload_date: {
                             required: "Please select a date."
                         },
-                        time: {
+                       'gemba_walk[0][time]': {
                             required: "Please select a time."
                         },
                         shift: {

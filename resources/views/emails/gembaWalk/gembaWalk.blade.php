@@ -168,7 +168,7 @@
 
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                <b>Created Name</b>
+                                <b>Name of  the Observer</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{ getUsername($details['created_by']) }}</td>
