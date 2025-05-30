@@ -917,7 +917,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 100,
-                        customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+
                     },
                     is_passed: {
                         required: true
@@ -945,7 +945,7 @@
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
                         maxlength: "Maximum 100 characters",
-                        customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+
                     },
                     is_passed: {
                         required: "Please select an option"
@@ -993,7 +993,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 100,
-                        customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+
                     },
                     capa_image: {
                         required: true,
@@ -1008,7 +1008,7 @@
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
                         maxlength: "Maximum 100 characters",
-                        customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+
                     },
                     capa_image: {
                         required: "Image is required",
@@ -1048,7 +1048,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 100,
-                        customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+
                     },
                     gemba_walk_verified_by: {
                         required: true,
@@ -1063,7 +1063,7 @@
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
                         maxlength: "Maximum 100 characters",
-                        customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+                     
                     },
                     gemba_walk_verified_by: {
                         required: "Signature is required",
