@@ -215,7 +215,6 @@ class CronController extends Controller
             $toDate = todayDbdate();
 
             $office_id = $this->company->getcompany();
-
             $responses = [];
             $errors = [];
 
@@ -317,7 +316,7 @@ class CronController extends Controller
     {
 
         try {
-            $worktemp = Worktemp::select('*')->where('upload_status', 0)->where('error_status', '0')->where('status', 1)->get();
+            $worktemp = Worktemp::select('*')->where('status', 1)->where('upload_status', 0)->where('error_status', '0')->get();
 
             if (!empty($worktemp)) {
 

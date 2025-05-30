@@ -166,18 +166,18 @@ class SafetyPettyController extends Controller
 
             $empId =  Auth::user()->id;
 
-            $this->signature->signatureLogUpload(
-                $empId,
-                $id,
-                OHC_AMOUNT_GIVENBY_INSPECTION,
-                'signature_givenby_image'
-            );
-            $this->signature->signatureLogUpload(
-                $empId,
-                $id,
-                OHC_AMOUNT_RECEIVEDBY_INSPECTION,
-                'signature_receivedby_image'
-            );
+            // $this->signature->signatureLogUpload(
+            //     $empId,
+            //     $id,
+            //     OHC_AMOUNT_GIVENBY_INSPECTION,
+            //     'signature_givenby_image'
+            // );
+            // $this->signature->signatureLogUpload(
+            //     $empId,
+            //     $id,
+            //     OHC_AMOUNT_RECEIVEDBY_INSPECTION,
+            //     'signature_receivedby_image'
+            // );
 
 
             Session::flash('success', __('Your data has been created successfully'));
@@ -222,14 +222,14 @@ class SafetyPettyController extends Controller
                 $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
                 $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
 
-                $signature_amount_givenby = $this->signature->getGivenBy($type, $sub_type_given, $sfty_petty_details->id);
+                // $signature_amount_givenby = $this->signature->getGivenBy($type, $sub_type_given, $sfty_petty_details->id);
 
-                $signature_amount_receivedby = $this->signature->getReceivedBy($type, $sub_type_received, $sfty_petty_details->id);
+                // $signature_amount_receivedby = $this->signature->getReceivedBy($type, $sub_type_received, $sfty_petty_details->id);
 
                 $data = array(
                     'sfty_petty_details' => $sfty_petty_details,
-                    'signature_amount_givenby' => $signature_amount_givenby,
-                    'signature_amount_receivedby' => $signature_amount_receivedby,
+                    // 'signature_amount_givenby' => $signature_amount_givenby,
+                    // 'signature_amount_receivedby' => $signature_amount_receivedby,
                     'document_no' => $document_no,
                 );
             }
@@ -311,9 +311,9 @@ class SafetyPettyController extends Controller
     public function ExportExcel(Request $request)
     {
         try {
-            $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
-            $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
-            $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
+            // $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
+            // $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
+            // $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
 
             $allData = $this->sfty_petty_details->exportdata();
             $document_no = $this->document_reference->selectUsingName('SafetyPettyLogbook');
@@ -413,37 +413,37 @@ class SafetyPettyController extends Controller
                 $sheet->mergeCells("K{$dataRow}:L{$dataRow}")->setCellValue("K{$dataRow}", Displaydateformat($data->date) ?? '');
                 $sheet->mergeCells("M{$dataRow}:N{$dataRow}")->setCellValue("M{$dataRow}", $data->amount ?? '');
                 $sheet->mergeCells("O{$dataRow}:P{$dataRow}")->setCellValue("O{$dataRow}", $data->description ?? '');
-                $sheet->mergeCells("Q{$dataRow}:R{$dataRow}");
-                $sheet->mergeCells("S{$dataRow}:T{$dataRow}");
+                $sheet->mergeCells("Q{$dataRow}:R{$dataRow}")->setCellValue("Q{$dataRow}", getUsername($data->amount_given_by ?? ''));
+                $sheet->mergeCells("S{$dataRow}:T{$dataRow}")->setCellValue("S{$dataRow}", getUsername($data->amount_received_by ?? ''));
                 $sheet->mergeCells("U{$dataRow}:V{$dataRow}")->setCellValue("U{$dataRow}", $data->remark ?? '');
                 $sheet->getRowDimension($dataRow)->setRowHeight(70);
 
-                $givenSignature = $this->signature->getGivenBy($type, $sub_type_given, $data->id);
-                $receivedSignature = $this->signature->getReceivedBy($type, $sub_type_received, $data->id);
+                // $givenSignature = $this->signature->getGivenBy($type, $sub_type_given, $data->id);
+                // $receivedSignature = $this->signature->getReceivedBy($type, $sub_type_received, $data->id);
 
-                if ($givenSignature && file_exists($givenSignature->file_path)) {
-                    $drawingGiven = new Drawing();
-                    $drawingGiven->setName('Given Signature');
-                    $drawingGiven->setPath($givenSignature->file_path);
-                    $drawingGiven->setCoordinates("Q{$dataRow}");
-                    $drawingGiven->setWidth(100);
-                    $drawingGiven->setHeight(50);
-                    $drawingGiven->setOffsetX(25);
-                    $drawingGiven->setOffsetY(10);
-                    $drawingGiven->setWorksheet($sheet);
-                }
+                // if ($givenSignature && file_exists($givenSignature->file_path)) {
+                //     $drawingGiven = new Drawing();
+                //     $drawingGiven->setName('Given Signature');
+                //     $drawingGiven->setPath($givenSignature->file_path);
+                //     $drawingGiven->setCoordinates("Q{$dataRow}");
+                //     $drawingGiven->setWidth(100);
+                //     $drawingGiven->setHeight(50);
+                //     $drawingGiven->setOffsetX(25);
+                //     $drawingGiven->setOffsetY(10);
+                //     $drawingGiven->setWorksheet($sheet);
+                // }
 
-                if ($receivedSignature && file_exists($receivedSignature->file_path)) {
-                    $drawingReceived = new Drawing();
-                    $drawingReceived->setName('Received Signature');
-                    $drawingReceived->setPath($receivedSignature->file_path);
-                    $drawingReceived->setCoordinates("S{$dataRow}");
-                    $drawingReceived->setWidth(100);
-                    $drawingReceived->setHeight(50);
-                    $drawingReceived->setOffsetX(25);
-                    $drawingReceived->setOffsetY(10);
-                    $drawingReceived->setWorksheet($sheet);
-                }
+                // if ($receivedSignature && file_exists($receivedSignature->file_path)) {
+                //     $drawingReceived = new Drawing();
+                //     $drawingReceived->setName('Received Signature');
+                //     $drawingReceived->setPath($receivedSignature->file_path);
+                //     $drawingReceived->setCoordinates("S{$dataRow}");
+                //     $drawingReceived->setWidth(100);
+                //     $drawingReceived->setHeight(50);
+                //     $drawingReceived->setOffsetX(25);
+                //     $drawingReceived->setOffsetY(10);
+                //     $drawingReceived->setWorksheet($sheet);
+                // }
 
                 $sheet->getStyle("A{$dataRow}:V{$dataRow}")->applyFromArray([
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -459,7 +459,7 @@ class SafetyPettyController extends Controller
                 $sheet->getStyle("A{$blockStartRow}:V{$dataRow}")->applyFromArray([
                     'borders' => [
                         'outline' => [
-                            'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
+                            'borderStyle' => Border::BORDER_THICK,
                             'color' => ['argb' => '000000'],
                         ],
                     ],
@@ -499,14 +499,12 @@ class SafetyPettyController extends Controller
                 $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
                 $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
 
-                $signature_amount_givenby = $this->signature->getGivenBy($type, $sub_type_given, $sfty_petty_details->id);
+                // $signature_amount_givenby = $this->signature->getGivenBy($type, $sub_type_given, $sfty_petty_details->id);
 
-                $signature_amount_receivedby = $this->signature->getReceivedBy($type, $sub_type_received, $sfty_petty_details->id);
+                // $signature_amount_receivedby = $this->signature->getReceivedBy($type, $sub_type_received, $sfty_petty_details->id);
 
                 $data = [
                     'sfty_petty_details' => $sfty_petty_details,
-                    'signature_amount_givenby' => $signature_amount_givenby,
-                    'signature_amount_receivedby' => $signature_amount_receivedby,
                     'document_no' => $document_no,
                     'pagetitle' => "Safety Petty Logbook Details",
                 ];
@@ -558,9 +556,9 @@ class SafetyPettyController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
-            $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
-            $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
+            // $type = OHC_SAFETY_PETTY_LOGBOOK_INSPECTION;
+            // $sub_type_given = OHC_AMOUNT_GIVENBY_INSPECTION;
+            // $sub_type_received = OHC_AMOUNT_RECEIVEDBY_INSPECTION;
 
             $sfty_petty_details = $this->sfty_petty_details->selectOne($id);
             $document_no = $this->document_reference->selectUsingName('SafetyPettyLogbook');
@@ -585,7 +583,7 @@ class SafetyPettyController extends Controller
             $sheet->getStyle("A1:C3")->applyFromArray([
                 'borders' => [
                     'allBorders' => [
-                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                        'borderStyle' => Border::BORDER_THIN,
                     ],
                 ],
             ]);
@@ -672,40 +670,40 @@ class SafetyPettyController extends Controller
             $sheet->mergeCells("O{$row}:P{$row}")->setCellValue("O{$row}", $sfty_petty_details->description ?? '');
             $sheet->mergeCells("U{$row}:V{$row}")->setCellValue("U{$row}", $sfty_petty_details->remark);
 
-            $givenSignaturePath = $this->signature->getGivenBy($type, $sub_type_given, $sfty_petty_details->id)->file_path;
+            // $givenSignaturePath = $this->signature->getGivenBy($type, $sub_type_given, $sfty_petty_details->id)->file_path;
 
-            $receivedSignaturePath = $this->signature->getReceivedBy($type, $sub_type_received, $sfty_petty_details->id)->file_path;
+            // $receivedSignaturePath = $this->signature->getReceivedBy($type, $sub_type_received, $sfty_petty_details->id)->file_path;
 
-            $sheet->mergeCells("Q{$row}:R{$row}");
-            $sheet->mergeCells("S{$row}:T{$row}");
+            $sheet->mergeCells("Q{$row}:R{$row}")->setCellValue("Q{$row}", getUsername($sfty_petty_details->amount_given_by ?? ''));
+            $sheet->mergeCells("S{$row}:T{$row}")->setCellValue("S{$row}", getUsername($sfty_petty_details->amount_received_by ?? ''));
 
             $sheet->getRowDimension($row)->setRowHeight(70);
 
-            if (file_exists($givenSignaturePath)) {
-                $drawingGiven = new Drawing();
-                $drawingGiven->setName('Amount Given By Signature');
-                $drawingGiven->setPath($givenSignaturePath);
-                $drawingGiven->setCoordinates("Q{$row}");
-                $drawingGiven->setWidth(100);
-                $drawingGiven->setHeight(50);
+            // if (file_exists($givenSignaturePath)) {
+            //     $drawingGiven = new Drawing();
+            //     $drawingGiven->setName('Amount Given By Signature');
+            //     $drawingGiven->setPath($givenSignaturePath);
+            //     $drawingGiven->setCoordinates("Q{$row}");
+            //     $drawingGiven->setWidth(100);
+            //     $drawingGiven->setHeight(50);
 
-                $drawingGiven->setOffsetX(15);
-                $drawingGiven->setOffsetY(10);
-                $drawingGiven->setWorksheet($sheet);
-            }
+            //     $drawingGiven->setOffsetX(15);
+            //     $drawingGiven->setOffsetY(10);
+            //     $drawingGiven->setWorksheet($sheet);
+            // }
 
-            if (file_exists($receivedSignaturePath)) {
-                $drawingReceived = new Drawing();
-                $drawingReceived->setName('Amount Received By Signature');
-                $drawingReceived->setPath($receivedSignaturePath);
-                $drawingReceived->setCoordinates("S{$row}");
-                $drawingReceived->setWidth(100);
-                $drawingReceived->setHeight(50);
+            // if (file_exists($receivedSignaturePath)) {
+            //     $drawingReceived = new Drawing();
+            //     $drawingReceived->setName('Amount Received By Signature');
+            //     $drawingReceived->setPath($receivedSignaturePath);
+            //     $drawingReceived->setCoordinates("S{$row}");
+            //     $drawingReceived->setWidth(100);
+            //     $drawingReceived->setHeight(50);
 
-                $drawingReceived->setOffsetX(25);
-                $drawingReceived->setOffsetY(10);
-                $drawingReceived->setWorksheet($sheet);
-            }
+            //     $drawingReceived->setOffsetX(25);
+            //     $drawingReceived->setOffsetY(10);
+            //     $drawingReceived->setWorksheet($sheet);
+            // }
 
 
             $sheet->getStyle("A{$row}:V{$row}")->applyFromArray([

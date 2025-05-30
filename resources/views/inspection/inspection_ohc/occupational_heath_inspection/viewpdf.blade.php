@@ -172,7 +172,7 @@
             <th colspan="6" style="border:1px solid black;">
                 <h3>
                     <span><b> OCCUPATIONAL HEALTH CENTER</b></span>
-                    
+
                 </h3>
             </th>
 
@@ -262,7 +262,7 @@
 
             @foreach ($checkPoints as $checkPoint)
                 <tr>
-                    @if ($firstRow)
+                    {{-- @if ($firstRow)
                         <td rowspan="{{ $rowCount }}" colspan="1"
                             style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                             {{ $srNo++ }}
@@ -272,7 +272,11 @@
                             {{ getSubcategoryname($groupId) }}
                         </td>
                         @php $firstRow = false; @endphp
-                    @endif
+                    @endif --}}
+
+                    <td colspan="2" style="border: 1px solid black; padding: 8px;">
+                        {{$loop->iteration}}
+                    </td>
 
                     {{-- CHECK ITEM (4 columns) --}}
                     <td colspan="4" style="border: 1px solid black; padding: 8px;">
@@ -322,7 +326,7 @@
             );
         @endphp
 
-        <tr>
+        {{-- <tr>
             <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
                 <img src="{{ admin_url($signature) }}" alt="Signature Upload"
                     style="width: 150px; margin-top: -10px;" />
@@ -337,6 +341,27 @@
                 <img src="{{ admin_url($Verifiedsignature) }}" alt="Signature Upload"
                     style="width: 150px; margin-top: -10px;" />
                 <div style="margin-top: 5px;">Approved By:{{getUsername($weeklyAmbulance->approved_by)}}</div>
+            </th>
+        </tr> --}}
+        <tr>
+            <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                @if ($weeklyAmbulance->created_by != null)
+                    <div style="margin-top: 5px;">Checked By:{{ getUsername($weeklyAmbulance->created_by) }}</div>
+                @endif
+            </th>
+            <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                @if ($weeklyAmbulance->verified_by != null)
+                    <div style="margin-top: 5px;">Verified By:{{ getUsername($weeklyAmbulance->verified_by) }}</div>
+                @else
+                    <div style="margin-top: 5px;">Has Not Yet Been Verified</div>
+                @endif
+            </th>
+            <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                @if ($weeklyAmbulance->approved_by != null)
+                    <div style="margin-top: 5px;">Approved By:{{ getUsername($weeklyAmbulance->approved_by) }}</div>
+                @else
+                    <div style="margin-top: 5px;">Has Not Yet Been Approved</div>
+                @endif
             </th>
         </tr>
 
@@ -568,23 +593,23 @@
                 </td>
             </tr>
             @php
-            $signature = GetOHCSignature(
-                $weeklyAmbulance->l1_manager_verified_by,
-                $weeklyAmbulance->id,
-                OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
-            );
-        @endphp
-        @if (isset($signature))
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
+                $signature = GetOHCSignature(
+                    $weeklyAmbulance->l1_manager_verified_by,
+                    $weeklyAmbulance->id,
+                    OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
+                );
+            @endphp
+            @if (isset($signature))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
 
 
-                <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                        style="width: 150px; margin-top: -10px;" /></td>
+                    <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                            style="width: 150px; margin-top: -10px;" /></td>
 
-            </tr>
-        @endif
+                </tr>
+            @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -621,23 +646,23 @@
                 </td>
             </tr>
             @php
-            $signature = GetOHCSignature(
-                $weeklyAmbulance->l2_manager_verified_by,
-                $weeklyAmbulance->id,
-                OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
-            );
-        @endphp
-        @if (isset($signature))
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
+                $signature = GetOHCSignature(
+                    $weeklyAmbulance->l2_manager_verified_by,
+                    $weeklyAmbulance->id,
+                    OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
+                );
+            @endphp
+            @if (isset($signature))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
 
 
-                <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                        style="width: 150px; margin-top: -10px;" /></td>
+                    <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                            style="width: 150px; margin-top: -10px;" /></td>
 
-            </tr>
-        @endif
+                </tr>
+            @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.approved_by') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>

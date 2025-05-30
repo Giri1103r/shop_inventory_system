@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Gemba Walk Inspection| KARAM</title>
+    <title>Gemba Walk Inspection (Safety Observation)| KARAM</title>
 
     <style>
         .badge {
@@ -127,7 +127,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    GembaWalk Details
+                    Gemba Walk (Safety Observation)
                 </td>
             </tr>
         </table>
@@ -154,7 +154,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Gemba Walk Inspection (Safety Walk Observation)
+                    Gemba Walk Inspection (Safety Observation)
 
                 </td>
             </tr>
@@ -191,6 +191,7 @@
                     {{ $document_no->rev_dt ?? '' }}
                 </td>
             </tr>
+
             <tr>
                 <td width="50%" style="padding:5px;"><b>Shift Name</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -230,7 +231,7 @@
             <tr>
                 <td
                     style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
-                   Gemba Walk
+                    {{ __('inspection.checklist_details') }}
                 </td>
             </tr>
         </table>
@@ -249,15 +250,18 @@
                             <th>Department</th>
                             <th>Exact Location</th>
                             <th>Date of Observation</th>
+                            <th>Observation Time</th>
                             <th> Observation Type</th>
                             <th>Description</th>
+                            <th>Risk Category</th>
                             <th>Hazard</th>
                             <th>Image</th>
                             <th>Recommended CAPA</th>
                             {{-- <th>Date of Compliance</th> --}}
                             <th>Status</th>
                             <th>Remark</th>
-                            <th>Observer Person</th>
+                            <th>Recommanded Person for CAPA</th>
+                            <th>Name Of the Observer</th>
                             {{-- <th>Observation</th> --}}
 
 
@@ -272,8 +276,10 @@
                                 <td>{{ getDepartment($gembaWalk->department_id ?? 'N/A') }}</td>
                                 <td>{{ $gembaWalk->exact_location ?? 'N/A' }}</td>
                                 <td>{{ displaydateformat($gembaWalk->date_of_observation ?? 'N/A') }}</td>
+                                <td>{{ ($gembaWalk->time ?? 'N/A') }}</td>
                                 <td>{{ getObservationType($gembaWalk->observation_type_id ?? 'N/A') }}</td>
                                 <td>{{ $gembaWalk->description ?? 'N/A' }}</td>
+                                <td>{{ getRiskcategory($gembaWalk->risk_category ?? 'N/A') }}</td>
                                 <td>
                                     @php
                                         $hazards = explode(',', $gembaWalk->hazard);
@@ -307,7 +313,7 @@
                                     @endforeach
                                 </td>
 
-
+                                <td>{{ getUsername($gembaWalk->created_by ?? 'N/A') }}</td>
 
                             </tr>
                         @endforeach

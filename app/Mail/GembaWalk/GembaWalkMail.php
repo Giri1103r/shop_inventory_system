@@ -11,19 +11,20 @@ use Illuminate\Queue\SerializesModels;
 
 class GembaWalkMail extends Mailable
 {
-    use Queueable,
-        SerializesModels;
+    use Queueable, SerializesModels;
 
     protected $details;
+    protected $gembaWalkChecklist;
+
     /**
      * Create a new message instance.
      *
      * @return void
      */
-
-    public function __construct($details)
+    public function __construct($details, $gembaWalkChecklist)
     {
         $this->details = $details;
+        $this->gembaWalkChecklist = $gembaWalkChecklist;
     }
 
     /**
@@ -33,9 +34,11 @@ class GembaWalkMail extends Mailable
      */
     public function build()
     {
-
         return $this->view('emails.gembaWalk.gembaWalk')
             ->subject(config('app.name') . " - " . $this->details['mail_subject'])
-            ->with("details", $this->details);
+            ->with([
+                'details' => $this->details,
+                'gembaWalkChecklist' => $this->gembaWalkChecklist
+            ]);
     }
 }

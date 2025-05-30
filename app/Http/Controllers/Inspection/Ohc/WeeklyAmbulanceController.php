@@ -185,6 +185,8 @@ class WeeklyAmbulanceController extends Controller
 
                     return $datatables;
                 } catch (Exception $ex) {
+                    report($ex);
+
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -230,7 +232,7 @@ class WeeklyAmbulanceController extends Controller
             );
             return view('inspection.inspection_ohc.weekly_ambulance.add', $data);
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
@@ -312,13 +314,13 @@ class WeeklyAmbulanceController extends Controller
 
                 Session::flash('success', __('Your data Created Successfully.!'));
             } catch (Exception $ex) {
-                 dd($ex);
+                report($ex);
                 Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         } catch (Exception $ex) {
-             dd($ex);
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
@@ -356,7 +358,7 @@ class WeeklyAmbulanceController extends Controller
             }
             return view('inspection.inspection_ohc.weekly_ambulance.view', $data);
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
@@ -395,7 +397,7 @@ class WeeklyAmbulanceController extends Controller
             }
             return view('inspection.inspection_ohc.weekly_ambulance.approval', $data);
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
@@ -469,7 +471,7 @@ class WeeklyAmbulanceController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
             Session::flash('error', __('Something Went Wrong!'));
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
@@ -532,7 +534,7 @@ class WeeklyAmbulanceController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
@@ -610,7 +612,7 @@ class WeeklyAmbulanceController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
@@ -687,7 +689,7 @@ class WeeklyAmbulanceController extends Controller
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something Went wrong!');
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
@@ -830,7 +832,7 @@ class WeeklyAmbulanceController extends Controller
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", "WEEKLY AMBULANCE INSPECTION CHECKLIST");
-                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                $sheet->getStyle("G{$currentRow}:M{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -875,26 +877,37 @@ class WeeklyAmbulanceController extends Controller
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                // next row 5
+                // Define row index
+                $infoRow = $currentRow + 4;
 
-                $sheet->mergeCells("A" . ($currentRow + 4) . ":I" . ($currentRow + 4));
+                // Merge and set NEXT DUE DATE OF INSPECTION
+                $sheet->mergeCells("A{$infoRow}:I{$infoRow}");
                 $richText1 = new RichText();
-                $richText1->createTextRun(' NEXT DUE DATE OF INSPECTION :- ')->getFont()->setBold(true);
+                $richText1->createTextRun('NEXT DUE DATE OF INSPECTION: ')->getFont()->setBold(true);
                 $richText1->createText(Displaydateformat($weeklyAmbulance->next_due));
-                $sheet->getCell("A" . ($currentRow + 4))->setValue($richText1);
+                $sheet->getCell("A{$infoRow}")->setValue($richText1);
 
-                $sheet->mergeCells("J" . ($currentRow + 4) . ":S" . ($currentRow + 4));
+                // Merge and set LOCATION
+                $sheet->mergeCells("J{$infoRow}:S{$infoRow}");
                 $richText2 = new RichText();
-                $richText2->createTextRun('LOCATION :- ')->getFont()->setBold(true);
+                $richText2->createTextRun('LOCATION: ')->getFont()->setBold(true);
                 $richText2->createText(getLocationname($weeklyAmbulance->location));
-                $sheet->getCell("J" . ($currentRow + 4))->setValue($richText2);
+                $sheet->getCell("J{$infoRow}")->setValue($richText2);
 
-
-
-                $sheet->getStyle("A" . ($currentRow + 4) . ":S" . ($currentRow + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                // Apply styling to the correct row
+                $sheet->getStyle("A{$infoRow}:S{$infoRow}")->applyFromArray([
+                    'borders' => [
+                        'allBorders' => [
+                            'borderStyle' => Border::BORDER_THIN,
+                        ],
+                    ],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
                 ]);
+
 
                 // Table Header
                 $headerRow = $currentRow + 5;
@@ -923,16 +936,19 @@ class WeeklyAmbulanceController extends Controller
 
                     foreach ($checkPoints as $checkPoint) {
 
-                        if ($firstRowInGroup) {
-                            $sheet->mergeCells("A$inspectionRow:A" . ($inspectionRow + $rowCount - 1))
-                                ->setCellValue("A$inspectionRow", $srNo);
+                        // if ($firstRowInGroup) {
+                        //     $sheet->mergeCells("A$inspectionRow:A" . ($inspectionRow + $rowCount - 1))
+                        //         ->setCellValue("A$inspectionRow", $srNo);
 
-                            $sheet->mergeCells("B$inspectionRow:C" . ($inspectionRow + $rowCount - 1))
-                                ->setCellValue("B$inspectionRow", getSubcategoryname($groupId));
+                        //     $sheet->mergeCells("B$inspectionRow:C" . ($inspectionRow + $rowCount - 1))
+                        //         ->setCellValue("B$inspectionRow", getSubcategoryname($groupId));
 
-                            $firstRowInGroup = false;
-                            $srNo++;
-                        }
+                        //     $firstRowInGroup = false;
+                        //     $srNo++;
+                        // }
+
+                        $sheet->mergeCells("A$inspectionRow:C$inspectionRow")
+                            ->setCellValue("A$inspectionRow", $srNo);
 
 
                         $sheet->mergeCells("D$inspectionRow:L$inspectionRow")
@@ -970,83 +986,134 @@ class WeeklyAmbulanceController extends Controller
                         ]);
 
                         $inspectionRow++;
+                        $srNo++;
                     }
                 }
 
                 $row = $inspectionRow;
 
+                $signatureRow = $inspectionRow;
+
+                $sheet->getRowDimension($signatureRow)->setRowHeight(30);
+
+                $sheet->mergeCells("A{$signatureRow}:F{$signatureRow}");
+                $sheet->mergeCells("G{$signatureRow}:L{$signatureRow}");
+                $sheet->mergeCells("M{$signatureRow}:S{$signatureRow}");
+
+
+                $sheet->getStyle("A{$signatureRow}:S{$signatureRow}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                ]);
+                // Prepared
+                $richText = new RichText();
+                $name = getUsername($weeklyAmbulance->created_by);
+
+                if (!empty($name)) {
+                    $richText->createTextRun("Checked by: " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
+                }
+
+                $sheet->getCell("A{$signatureRow}")->setValue($richText);
+
+                // Verified
+                $richText = new RichText();
+                $name = getUsername($weeklyAmbulance->verified_by);
+
+                if (!empty($name)) {
+                    $richText->createTextRun("Verified by : " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
+                }
+
+                $sheet->getCell("G{$signatureRow}")->setValue($richText);
+
+
+                // Approved
+                $richText = new RichText();
+                $name = getUsername($weeklyAmbulance->approved_by);
+
+                if (!empty($name)) {
+                    $richText->createTextRun("Approved by: " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
+                }
+
+                $sheet->getCell("M{$signatureRow}")->setValue($richText);
+
                 $CreatorSignature = GetOHCSignature($weeklyAmbulance->created_by, $details->inspection_id, OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
                 $VerifiedSignature = GetOHCSignature($weeklyAmbulance->verified_by, $details->inspection_id, OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
                 $ApprovedSignature = GetOHCSignature($weeklyAmbulance->approved_by, $details->inspection_id, OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
 
-                if (file_exists($CreatorSignature)) {
-                    $sheet->mergeCells("A$row:F" . ($row + 2));
+                // if (file_exists($CreatorSignature)) {
+                //     $sheet->mergeCells("A$row:F" . ($row + 2));
 
-                    $drawing = new Drawing();
-                    $drawing->setName('Creator Signature');
-                    $drawing->setPath($CreatorSignature);
-                    $drawing->setCoordinates("A$row");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($row + 2)->setRowHeight(40);
-                    // Label + Name
-                    $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($weeklyAmbulance->created_by));
-                    $sheet->mergeCells("A" . ($row + 3) . ":F" . ($row + 3));
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Creator Signature');
+                //     $drawing->setPath($CreatorSignature);
+                //     $drawing->setCoordinates("A$row");
+                //     $drawing->setOffsetX(100);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->getRowDimension($row + 2)->setRowHeight(40);
+                //     // Label + Name
+                //     $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($weeklyAmbulance->created_by));
+                //     $sheet->mergeCells("A" . ($row + 3) . ":F" . ($row + 3));
 
-                    $sheet->getStyle("A$row:F" . ($row + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
-                }
+                //     $sheet->getStyle("A$row:F" . ($row + 3))->applyFromArray([
+                //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                //     ]);
+                // }
 
-                if (file_exists($VerifiedSignature)) {
-                    $sheet->mergeCells("G$row:L" . ($row + 2));
+                // if (file_exists($VerifiedSignature)) {
+                //     $sheet->mergeCells("G$row:L" . ($row + 2));
 
-                    $drawing = new Drawing();
-                    $drawing->setName('Verified Signature');
-                    $drawing->setPath($VerifiedSignature);
-                    $drawing->setCoordinates("G$row");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($row + 2)->setRowHeight(40);
-                    // Label + Name
-                    $sheet->setCellValue("G" . ($row + 3), "Verified By: " . getUserName($weeklyAmbulance->verified_by));
-                    $sheet->mergeCells("G" . ($row + 3) . ":L" . ($row + 3));
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Verified Signature');
+                //     $drawing->setPath($VerifiedSignature);
+                //     $drawing->setCoordinates("G$row");
+                //     $drawing->setOffsetX(100);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->getRowDimension($row + 2)->setRowHeight(40);
+                //     // Label + Name
+                //     $sheet->setCellValue("G" . ($row + 3), "Verified By: " . getUserName($weeklyAmbulance->verified_by));
+                //     $sheet->mergeCells("G" . ($row + 3) . ":L" . ($row + 3));
 
-                    $sheet->getStyle("G$row:L" . ($row + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
-                }
+                //     $sheet->getStyle("G$row:L" . ($row + 3))->applyFromArray([
+                //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                //     ]);
+                // }
 
-                if (file_exists($ApprovedSignature)) {
-                    $sheet->mergeCells("M$row:S" . ($row + 2));
+                // if (file_exists($ApprovedSignature)) {
+                //     $sheet->mergeCells("M$row:S" . ($row + 2));
 
-                    $drawing = new Drawing();
-                    $drawing->setName('Approved Signature');
-                    $drawing->setPath($ApprovedSignature);
-                    $drawing->setCoordinates("M$row");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($row + 2)->setRowHeight(60);
-                    // Label + Name
-                    $sheet->setCellValue("M" . ($row + 3), "Approved By: " . getUserName($weeklyAmbulance->approved_by));
-                    $sheet->mergeCells("M" . ($row + 3) . ":S" . ($row + 3));
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Approved Signature');
+                //     $drawing->setPath($ApprovedSignature);
+                //     $drawing->setCoordinates("M$row");
+                //     $drawing->setOffsetX(100);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->getRowDimension($row + 2)->setRowHeight(60);
+                //     // Label + Name
+                //     $sheet->setCellValue("M" . ($row + 3), "Approved By: " . getUserName($weeklyAmbulance->approved_by));
+                //     $sheet->mergeCells("M" . ($row + 3) . ":S" . ($row + 3));
 
-                    $sheet->getStyle("M$row:S" . ($row + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
-                }
+                //     $sheet->getStyle("M$row:S" . ($row + 3))->applyFromArray([
+                //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                //     ]);
+                // }
                 $row = $row + 8;
             }
             $filename = 'Weekly Ambulance Inspection checklist.xlsx';
@@ -1059,7 +1126,7 @@ class WeeklyAmbulanceController extends Controller
             exit;
         } catch (Exception $ex) {
 
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
@@ -1119,7 +1186,7 @@ class WeeklyAmbulanceController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
@@ -1170,7 +1237,7 @@ class WeeklyAmbulanceController extends Controller
             $filename = "Weekly Ambulance Inspection Checklist.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
@@ -1313,16 +1380,19 @@ class WeeklyAmbulanceController extends Controller
 
                 foreach ($checkPoints as $checkPoint) {
 
-                    if ($firstRowInGroup) {
-                        $sheet->mergeCells("A$inspectionRow:A" . ($inspectionRow + $rowCount - 1))
-                            ->setCellValue("A$inspectionRow", $srNo);
+                    // if ($firstRowInGroup) {
+                    //     $sheet->mergeCells("A$inspectionRow:A" . ($inspectionRow + $rowCount - 1))
+                    //         ->setCellValue("A$inspectionRow", $srNo);
 
-                        $sheet->mergeCells("B$inspectionRow:C" . ($inspectionRow + $rowCount - 1))
-                            ->setCellValue("B$inspectionRow", getSubcategoryname($groupId));
+                    //     $sheet->mergeCells("B$inspectionRow:C" . ($inspectionRow + $rowCount - 1))
+                    //         ->setCellValue("B$inspectionRow", getSubcategoryname($groupId));
 
-                        $firstRowInGroup = false;
-                        $srNo++;
-                    }
+                    //     $firstRowInGroup = false;
+                    //     $srNo++;
+                    // }
+
+                    $sheet->mergeCells("A$inspectionRow:C$inspectionRow")
+                        ->setCellValue("A$inspectionRow", $srNo);
 
 
                     $sheet->mergeCells("D$inspectionRow:L$inspectionRow")
@@ -1360,83 +1430,135 @@ class WeeklyAmbulanceController extends Controller
                     ]);
 
                     $inspectionRow++;
+                    $srNo++;
                 }
             }
 
             $row = $inspectionRow;
 
+
+            $signatureRow = $row;
+
+            $sheet->getRowDimension($signatureRow)->setRowHeight(30);
+
+            $sheet->mergeCells("A{$signatureRow}:F{$signatureRow}");
+            $sheet->mergeCells("G{$signatureRow}:L{$signatureRow}");
+            $sheet->mergeCells("M{$signatureRow}:S{$signatureRow}");
+
+
+            $sheet->getStyle("A{$signatureRow}:S{$signatureRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+            // Prepared
+            $richText = new RichText();
+            $name = getUsername($weeklyAmbulance->created_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Checked by: " . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
+            }
+
+            $sheet->getCell("A{$signatureRow}")->setValue($richText);
+
+            // Verified
+            $richText = new RichText();
+            $name = getUsername($weeklyAmbulance->verified_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Verified by : " . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
+            }
+
+            $sheet->getCell("G{$signatureRow}")->setValue($richText);
+
+
+            // Approved
+            $richText = new RichText();
+            $name = getUsername($weeklyAmbulance->approved_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Approved by: " . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
+            }
+
+            $sheet->getCell("M{$signatureRow}")->setValue($richText);
+
             $CreatorSignature = GetOHCSignature($weeklyAmbulance->created_by, $id, OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
             $VerifiedSignature = GetOHCSignature($weeklyAmbulance->verified_by, $id, OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
             $ApprovedSignature = GetOHCSignature($weeklyAmbulance->approved_by, $id, OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
 
-            if (file_exists($CreatorSignature)) {
-                $sheet->mergeCells("A$row:F" . ($row + 2));
+            // if (file_exists($CreatorSignature)) {
+            //     $sheet->mergeCells("A$row:F" . ($row + 2));
 
-                $drawing = new Drawing();
-                $drawing->setName('Creator Signature');
-                $drawing->setPath($CreatorSignature);
-                $drawing->setCoordinates("A$row");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($row + 2)->setRowHeight(40);
-                // Label + Name
-                $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($weeklyAmbulance->created_by));
-                $sheet->mergeCells("A" . ($row + 3) . ":F" . ($row + 3));
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Creator Signature');
+            //     $drawing->setPath($CreatorSignature);
+            //     $drawing->setCoordinates("A$row");
+            //     $drawing->setOffsetX(100);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($row + 2)->setRowHeight(40);
+            //     // Label + Name
+            //     $sheet->setCellValue("A" . ($row + 3), "Checked By: " . getUserName($weeklyAmbulance->created_by));
+            //     $sheet->mergeCells("A" . ($row + 3) . ":F" . ($row + 3));
 
-                $sheet->getStyle("A$row:F" . ($row + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
-            }
+            //     $sheet->getStyle("A$row:F" . ($row + 3))->applyFromArray([
+            //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            //     ]);
+            // }
 
-            if (file_exists($VerifiedSignature)) {
-                $sheet->mergeCells("G$row:L" . ($row + 2));
+            // if (file_exists($VerifiedSignature)) {
+            //     $sheet->mergeCells("G$row:L" . ($row + 2));
 
-                $drawing = new Drawing();
-                $drawing->setName('Verified Signature');
-                $drawing->setPath($VerifiedSignature);
-                $drawing->setCoordinates("G$row");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($row + 2)->setRowHeight(40);
-                // Label + Name
-                $sheet->setCellValue("G" . ($row + 3), "Verified By: " . getUserName($weeklyAmbulance->verified_by));
-                $sheet->mergeCells("G" . ($row + 3) . ":L" . ($row + 3));
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Verified Signature');
+            //     $drawing->setPath($VerifiedSignature);
+            //     $drawing->setCoordinates("G$row");
+            //     $drawing->setOffsetX(100);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($row + 2)->setRowHeight(40);
+            //     // Label + Name
+            //     $sheet->setCellValue("G" . ($row + 3), "Verified By: " . getUserName($weeklyAmbulance->verified_by));
+            //     $sheet->mergeCells("G" . ($row + 3) . ":L" . ($row + 3));
 
-                $sheet->getStyle("G$row:L" . ($row + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
-            }
+            //     $sheet->getStyle("G$row:L" . ($row + 3))->applyFromArray([
+            //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            //     ]);
+            // }
 
-            if (file_exists($ApprovedSignature)) {
-                $sheet->mergeCells("M$row:S" . ($row + 2));
+            // if (file_exists($ApprovedSignature)) {
+            //     $sheet->mergeCells("M$row:S" . ($row + 2));
 
-                $drawing = new Drawing();
-                $drawing->setName('Approved Signature');
-                $drawing->setPath($ApprovedSignature);
-                $drawing->setCoordinates("M$row");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($row + 2)->setRowHeight(60);
-                // Label + Name
-                $sheet->setCellValue("M" . ($row + 3), "Approved By: " . getUserName($weeklyAmbulance->approved_by));
-                $sheet->mergeCells("M" . ($row + 3) . ":S" . ($row + 3));
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Approved Signature');
+            //     $drawing->setPath($ApprovedSignature);
+            //     $drawing->setCoordinates("M$row");
+            //     $drawing->setOffsetX(100);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($row + 2)->setRowHeight(60);
+            //     // Label + Name
+            //     $sheet->setCellValue("M" . ($row + 3), "Approved By: " . getUserName($weeklyAmbulance->approved_by));
+            //     $sheet->mergeCells("M" . ($row + 3) . ":S" . ($row + 3));
 
-                $sheet->getStyle("M$row:S" . ($row + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
-            }
+            //     $sheet->getStyle("M$row:S" . ($row + 3))->applyFromArray([
+            //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            //     ]);
+            // }
 
 
 
@@ -1450,6 +1572,8 @@ class WeeklyAmbulanceController extends Controller
             $writer->save('php://output');
             exit;
         } catch (\Exception $e) {
+            report($e);
+
             return back()->with('error', 'Excel Export Failed: ' . $e->getMessage());
         }
     }

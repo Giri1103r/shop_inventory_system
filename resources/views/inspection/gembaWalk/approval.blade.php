@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Gemba Walk')
+@section('title', 'Gemba Walk Inspection (Safety Observation)')
 @section('pageurl', admin_url('inspection/gemba-walk/list'))
 
 @section('content')
@@ -28,7 +28,7 @@
                                 @if ($gembaWalk)
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">Gemba Walk Inspection (Safety Walk Observation)</h4>
+                                            <h4 class="text-white">Gemba Walk Inspection (Safety Observation)</h4>
                                         </div>
                                     </div>
 
@@ -121,7 +121,7 @@
                                 @foreach ($gembaWalk_details as $gembaWalk)
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">Gemba Walk</h4>
+                                            <h4 class="text-white">{{ __('inspection.checklist_details') }}</h4>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -177,12 +177,27 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Observation Time</label>
+                                                <div class="view_data">
+                                                    {{ isset($gembaWalk->time) ? $gembaWalk->time : '' }}
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">{{ __('inspection.observation_type') }}</label>
                                                 <div class="view_data">
                                                     {{ getObservationType(isset($gembaWalk->observation_type_id) ? $gembaWalk->observation_type_id : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">{{ __('inspection.risk_category') }}</label>
+                                                <div class="view_data">
+                                                    {{ getRiskCategory(isset($gembaWalk->risk_category) ? $gembaWalk->risk_category : '') }}
                                                 </div>
                                             </div>
                                         </div>
@@ -293,6 +308,14 @@
                                                 <label class="form-label">Remark</label>
                                                 <div class="view_data">
                                                     {{ isset($gembaWalk->remark) ? $gembaWalk->remark : '' }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Name Of the Observer</label>
+                                                <div class="view_data">
+                                                    {{ getUsername(isset($gembaWalk->created_by) ? $gembaWalk->created_by : '') }}
                                                 </div>
                                             </div>
                                         </div>
@@ -527,7 +550,8 @@
 
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
-                                                            <label class="form-label">Name Of the Observer</label>
+                                                            <label
+                                                                class="form-label">{{ __('inspection.observer_person') }}</label>
                                                             <input type="text" name="officer_name"
                                                                 class="form-control" value="{{ Auth::user()->name }}"
                                                                 readonly>
@@ -665,7 +689,8 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label">Name Of the Observer</label>
+                                                        <label
+                                                            class="form-label">{{ __('inspection.observer_person') }}</label>
                                                         <div class="view_data">
                                                             {{ isset($gembaWalk_ehs_floor_manager_details->name) ? $gembaWalk_ehs_floor_manager_details->name : '' }}
                                                         </div>
@@ -892,7 +917,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 100,
-                        customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+
                     },
                     is_passed: {
                         required: true
@@ -920,7 +945,7 @@
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
                         maxlength: "Maximum 100 characters",
-                        customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+
                     },
                     is_passed: {
                         required: "Please select an option"
@@ -968,7 +993,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 100,
-                        customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+
                     },
                     capa_image: {
                         required: true,
@@ -983,7 +1008,7 @@
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
                         maxlength: "Maximum 100 characters",
-                        customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+
                     },
                     capa_image: {
                         required: "Image is required",
@@ -1023,7 +1048,7 @@
                         required: true,
                         minlength: 3,
                         maxlength: 100,
-                        customPattern: /^[a-zA-Z0-9\s\-_'"()]+$/
+
                     },
                     gemba_walk_verified_by: {
                         required: true,
@@ -1038,7 +1063,7 @@
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
                         maxlength: "Maximum 100 characters",
-                        customPattern: "Only alphanumeric characters and - _ ' \" ( ) are allowed."
+
                     },
                     gemba_walk_verified_by: {
                         required: "Signature is required",

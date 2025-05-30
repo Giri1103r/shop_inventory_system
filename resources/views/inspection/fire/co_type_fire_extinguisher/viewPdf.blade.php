@@ -299,7 +299,7 @@
                     </td>
                 </tr>
             @endforeach
-            @php
+            {{-- @php
             $prepared_by_signature = GetFireSignature(
                 $forklift_details->created_by,
                 $forklift_details->id,
@@ -343,7 +343,34 @@
                     <p>Inspection has not been Verified Yet</p>
                 @endif
             </td>
-        </tr>
+        </tr> --}}
+            <tr>
+                <td colspan="4"
+                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    @if ($forklift_details->created_by != null)
+                        <div>Checked & Prepared By: {{ getUsername($forklift_details->created_by) }}</div>
+                    @else
+                        <p>Inspection has not been Prepared Yet</p>
+                    @endif
+
+                </td>
+                <td colspan="4"
+                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    @if ($forklift_details->verified_by != null)
+                        <div>Verified By: {{ getUsername($forklift_details->verified_by) }}</div>
+                    @else
+                        <p>Inspection has not been Verified Yet</p>
+                    @endif
+                </td>
+                <td colspan="5"
+                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                    @if ($forklift_details->approved_by != null)
+                        <div>Approved By: {{ getUsername($forklift_details->approved_by) }}</div>
+                    @else
+                        <p>Inspection has not been Verified Yet</p>
+                    @endif
+                </td>
+            </tr>
         </tbody>
 
     </table>
@@ -428,7 +455,8 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->fire_associate_updated_at) }}
+                <td width="48%" style="padding:5px;">
+                    {{ Displaydateformat($forklift_details->fire_associate_updated_at) }}
                 </td>
             </tr>
             <tr>
@@ -463,7 +491,8 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->ehs_officer_verified_at) }}
+                <td width="48%" style="padding:5px;">
+                    {{ Displaydateformat($forklift_details->ehs_officer_verified_at) }}
                 </td>
             </tr>
             <tr>
@@ -499,7 +528,8 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->l1_manager_updated_at) }}
+                <td width="48%" style="padding:5px;">
+                    {{ Displaydateformat($forklift_details->l1_manager_updated_at) }}
                 </td>
             </tr>
             <tr>
@@ -534,7 +564,8 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->l2_manager_updated_at) }}
+                <td width="48%" style="padding:5px;">
+                    {{ Displaydateformat($forklift_details->l2_manager_updated_at) }}
                 </td>
             </tr>
             <tr>

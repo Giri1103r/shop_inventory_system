@@ -245,7 +245,7 @@ class PASystemInspectionController extends Controller
 
             // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
 
-            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
+            // $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -368,7 +368,7 @@ class PASystemInspectionController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->pa_system->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(FIRE_PA_SYSTEM_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(FIRE_PA_SYSTEM_INSPECTION);
             $inspection_details = $this->pa_system->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'Fire PA System Inspection Approved Successfully';
@@ -438,7 +438,7 @@ class PASystemInspectionController extends Controller
             $id = decryptId($request->id);
             $FIRE_PA_SYSTEM_INSPECTION = $this->pa_system->capaSubmit($id);
             $inspection_details = $this->pa_system->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(FIRE_PA_SYSTEM_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(FIRE_PA_SYSTEM_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -499,7 +499,7 @@ class PASystemInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $FIRE_PA_SYSTEM_INSPECTION = $this->pa_system->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(FIRE_PA_SYSTEM_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(FIRE_PA_SYSTEM_INSPECTION);
             $inspection_details = $this->pa_system->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -577,7 +577,7 @@ class PASystemInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $FIRE_PA_SYSTEM_INSPECTION = $this->pa_system->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(FIRE_PA_SYSTEM_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(FIRE_PA_SYSTEM_INSPECTION);
             $inspection_details = $this->pa_system->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -651,7 +651,7 @@ class PASystemInspectionController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $FIRE_PA_SYSTEM_INSPECTION = $this->pa_system->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(FIRE_PA_SYSTEM_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(FIRE_PA_SYSTEM_INSPECTION);
             $inspection_details = $this->pa_system->selectOne($id);
             if ($status == 1) {
                 $message = 'Fire PA System Inspection Approved Successfully!';
@@ -879,7 +879,7 @@ class PASystemInspectionController extends Controller
                     $dataRow++;
                 }
                 $signatureRowStart = $dataRow;
-                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
 
                 $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
                 $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
@@ -891,21 +891,32 @@ class PASystemInspectionController extends Controller
                     ],
                 ]);
 
-                if (file_exists($prepared_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Signature');
-                    $drawing->setDescription('Prepared By');
-                    $drawing->setPath($prepared_by_signature);
-                    $drawing->setCoordinates("B{$signatureRowStart}");
-                    $drawing->setOffsetX(60);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
+                $richText = new RichText();
+                $name = getUsername($inspection_detail->checked_by);
 
-                    $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->checked_by));
+                if (!empty($name)) {
+                    $richText->createTextRun("Prepared By: " . $name)->getFont()->setBold(true);
                 } else {
-                    $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                    $richText->createTextRun("Not Yet Prepared")->getFont()->setBold(true);
                 }
+
+                $sheet->getCell("A{$signatureRowStart}")->setValue($richText);
+
+                // if (file_exists($prepared_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Signature');
+                //     $drawing->setDescription('Prepared By');
+                //     $drawing->setPath($prepared_by_signature);
+                //     $drawing->setCoordinates("B{$signatureRowStart}");
+                //     $drawing->setOffsetX(60);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+
+                //     $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection_detail->checked_by));
+                // } else {
+                //     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
+                // }
 
                 $sheet->mergeCells("E{$signatureRowStart}:G{$signatureRowStart}");
                 $sheet->getStyle("E{$signatureRowStart}:G{$signatureRowStart}")->applyFromArray([
@@ -917,21 +928,32 @@ class PASystemInspectionController extends Controller
                     ],
                 ]);
 
-                if (file_exists($verified_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Signature');
-                    $drawing->setDescription('Verified By');
-                    $drawing->setPath($verified_by_signature);
-                    $drawing->setCoordinates("F{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
+                $richText = new RichText();
+                $name = getUsername($inspection_detail->verified_by);
 
-                    $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->updated_by));
+                if (!empty($name)) {
+                    $richText->createTextRun("Verified By: " . $name)->getFont()->setBold(true);
                 } else {
-                    $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+                    $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
                 }
+
+                $sheet->getCell("E{$signatureRowStart}")->setValue($richText);
+
+                // if (file_exists($verified_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Signature');
+                //     $drawing->setDescription('Verified By');
+                //     $drawing->setPath($verified_by_signature);
+                //     $drawing->setCoordinates("F{$signatureRowStart}");
+                //     $drawing->setOffsetX(5);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+
+                //     $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection_detail->updated_by));
+                // } else {
+                //     $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+                // }
 
                 $sheet->mergeCells("H{$signatureRowStart}:K{$signatureRowStart}");
                 $sheet->getStyle("H{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
@@ -943,21 +965,32 @@ class PASystemInspectionController extends Controller
                     ],
                 ]);
 
-                if (file_exists($approved_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Signature');
-                    $drawing->setDescription('Approved By');
-                    $drawing->setPath($approved_by_signature);
-                    $drawing->setCoordinates("J{$signatureRowStart}");
-                    $drawing->setOffsetX(5);
-                    $drawing->setOffsetY(5);
-                    $drawing->setHeight(40);
-                    $drawing->setWorksheet($sheet);
+                $richText = new RichText();
+                $name = getUsername($inspection_detail->approved_by);
 
-                    $sheet->setCellValue("H{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection_detail->approved_by));
+                if (!empty($name)) {
+                    $richText->createTextRun("Approved By :" . $name)->getFont()->setBold(true);
                 } else {
-                    $sheet->setCellValue("H{$signatureRowStart}", "Approved By:\nApproval pending");
+                    $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
                 }
+
+                $sheet->getCell("H{$signatureRowStart}")->setValue($richText);
+
+                // if (file_exists($approved_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Signature');
+                //     $drawing->setDescription('Approved By');
+                //     $drawing->setPath($approved_by_signature);
+                //     $drawing->setCoordinates("J{$signatureRowStart}");
+                //     $drawing->setOffsetX(5);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setHeight(40);
+                //     $drawing->setWorksheet($sheet);
+
+                //     $sheet->setCellValue("H{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection_detail->approved_by));
+                // } else {
+                //     $sheet->setCellValue("H{$signatureRowStart}", "Approved By:\nApproval pending");
+                // }
 
 
                 $row = $signatureRowStart + 6;
@@ -980,7 +1013,6 @@ class PASystemInspectionController extends Controller
             header("Content-Disposition: attachment; filename=\"$filename\"");
             header('Cache-Control: max-age=0');
             $writer->save('php://output');
-
         } catch (\Exception $e) {
             report($e);
             Session::flash('error', 'Something went wrong!');
@@ -1223,7 +1255,7 @@ class PASystemInspectionController extends Controller
                 $row++;
             }
             $signatureRowStart = $row;
-            $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+            $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
 
             $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
             $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
@@ -1235,20 +1267,31 @@ class PASystemInspectionController extends Controller
                 ],
             ]);
 
-            if (file_exists($prepared_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Signature');
-                $drawing->setDescription('Prepared By');
-                $drawing->setPath($prepared_by_signature);
-                $drawing->setCoordinates("C{$signatureRowStart}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("A{$signatureRowStart}", "\n\n\Checked By:\n" . getUsername($pa_system->created_by));
+            $richText = new RichText();
+            $name = getUsername($pa_system->created_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Created By :" . $name)->getFont()->setBold(true);
             } else {
-                $sheet->setCellValue("A{$signatureRowStart}", "Checked By:\nInspection not yet started");
+                $richText->createTextRun("Inspection has not been Created Yet")->getFont()->setBold(true);
             }
+
+            $sheet->getCell("A{$signatureRowStart}")->setValue($richText);
+
+            // if (file_exists($prepared_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Signature');
+            //     $drawing->setDescription('Prepared By');
+            //     $drawing->setPath($prepared_by_signature);
+            //     $drawing->setCoordinates("C{$signatureRowStart}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->setCellValue("A{$signatureRowStart}", "\n\n\Checked By:\n" . getUsername($pa_system->created_by));
+            // } else {
+            //     $sheet->setCellValue("A{$signatureRowStart}", "Checked By:\nInspection not yet started");
+            // }
 
             $sheet->mergeCells("E{$signatureRowStart}:H{$signatureRowStart}");
             $sheet->getStyle("E{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
@@ -1260,20 +1303,31 @@ class PASystemInspectionController extends Controller
                 ],
             ]);
 
-            if (file_exists($verified_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Signature');
-                $drawing->setDescription('Verified By');
-                $drawing->setPath($verified_by_signature);
-                $drawing->setCoordinates("G{$signatureRowStart}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($pa_system->updated_by));
+            $richText = new RichText();
+            $name = getUsername($pa_system->verified_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Verified By :" . $name)->getFont()->setBold(true);
             } else {
-                $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+                $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
             }
+
+            $sheet->getCell("E{$signatureRowStart}")->setValue($richText);
+
+            // if (file_exists($verified_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Signature');
+            //     $drawing->setDescription('Verified By');
+            //     $drawing->setPath($verified_by_signature);
+            //     $drawing->setCoordinates("G{$signatureRowStart}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($pa_system->updated_by));
+            // } else {
+            //     $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
+            // }
 
             $sheet->mergeCells("I{$signatureRowStart}:K{$signatureRowStart}");
             $sheet->getStyle("I{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
@@ -1285,20 +1339,31 @@ class PASystemInspectionController extends Controller
                 ],
             ]);
 
-            if (file_exists($approved_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Signature');
-                $drawing->setDescription('Approved By');
-                $drawing->setPath($approved_by_signature);
-                $drawing->setCoordinates("J{$signatureRowStart}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("I{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($pa_system->approved_by));
+            $richText = new RichText();
+            $name = getUsername($pa_system->approved_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Approved By :" . $name)->getFont()->setBold(true);
             } else {
-                $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\nApproval pending");
+                $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
             }
+
+            $sheet->getCell("I{$signatureRowStart}")->setValue($richText);
+
+            // if (file_exists($approved_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Signature');
+            //     $drawing->setDescription('Approved By');
+            //     $drawing->setPath($approved_by_signature);
+            //     $drawing->setCoordinates("J{$signatureRowStart}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->setCellValue("I{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($pa_system->approved_by));
+            // } else {
+            //     $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\nApproval pending");
+            // }
 
             $writer = new Xlsx($spreadsheet);
             $fileName = 'PA System Inspection.xlsx';
@@ -1312,6 +1377,4 @@ class PASystemInspectionController extends Controller
             return redirect(admin_url('fire/pa-system-inspection/list'));
         }
     }
-
-
 }

@@ -40,7 +40,7 @@ use App\Http\Controllers\Api\Inspection\Ohc\OHCHygieneCleaningChecklist;
 use App\Http\Controllers\Api\Inspection\Ohc\WeeklyFirstAidBoxController;
 use App\Http\Controllers\Api\Inspection\Safety\FireSafetyEquipment;
 use App\Http\Controllers\Api\Inspection\Safety\SafetyWalkObservation;
-
+use App\Http\Controllers\Api\Ims\InitialIncidentController;
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
 // })->middleware('auth:api');
@@ -56,6 +56,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
 
     Route::post('login', [LoginController::class, 'login']);
 
+   
     Route::post('password/forgot', [LoginController::class, 'forgotPassword']);
     Route::post('password/otp', [LoginController::class, 'passwordOtp']);
     Route::post('password/change', [LoginController::class, 'passwordChange']);
@@ -323,5 +324,21 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 Route::post('view', [SafetyWalkObservation::class, 'view']);
             });
         });
+
+
+        
+        Route::group(['prefix' => 'incident/initial-incident/'], function () {
+            Route::post('master/iir_type/list', [InitialIncidentController::class, 'iirTypeList']);
+            Route::post('list', [InitialIncidentController::class, 'list']);
+            Route::post('view', [InitialIncidentController::class, 'view']);
+            Route::post('store', [InitialIncidentController::class, 'store']);
+            Route::post('investigationList', [InitialIncidentController::class, 'investigationList']);
+            Route::post('investigation/view', [InitialIncidentController::class, 'investigationView']);
+            Route::post('calist', [InitialIncidentController::class, 'calist']);
+            Route::post('capa/view', [InitialIncidentController::class, 'capaView']);
+            Route::get('generate-random-id', [InitialIncidentController::class, 'generate']);
+        
+        });
+
     });
 });

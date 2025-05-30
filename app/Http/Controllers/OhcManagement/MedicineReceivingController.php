@@ -80,6 +80,9 @@ class MedicineReceivingController extends Controller
                         ->editColumn('expire_date', function ($row) {
                             return displaydateformat($row->expire_date);
                         })
+                          ->editColumn('created_date', function ($row) {
+                            return displaydateformat($row->created_at);
+                        })
                         ->addColumn('approvedStatus', function ($row) {
 
                             if ($row->approvedStatus == STATUS_OHC_OPEN) {

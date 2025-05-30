@@ -333,6 +333,8 @@
 
         @php
             $checklist = json_decode($weeklyAmbulance->checklist, true);
+            $index = 1;
+
         @endphp
 
         @foreach ($checklist['check_item'] as $groupId => $items)
@@ -340,7 +342,7 @@
                 <tr>
                     <td colspan="2"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ $loop->iteration }}</td>
+                        {{ $index }}</td>
                     <td colspan="4"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ getSubcategoryDataname($itemId) }}</td>
@@ -364,6 +366,9 @@
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ $checklist['remarks'][$itemId] ?? '' }}</td>
                 </tr>
+                @php
+                    $index++;
+                @endphp
             @endforeach
         @endforeach
 

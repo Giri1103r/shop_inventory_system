@@ -151,7 +151,6 @@ class SafetyGalleryInsepctionController extends Controller
                     return $datatables;
                 } catch (Exception $ex) {
                     report($ex);
-                    report($ex);
                     return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
                 }
             }
@@ -980,7 +979,6 @@ class SafetyGalleryInsepctionController extends Controller
             $filename = "Safety Gallery Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }

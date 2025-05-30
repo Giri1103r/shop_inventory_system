@@ -70,7 +70,7 @@ class DailyVitalEquipmentController extends Controller
                                     </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action' ,'created_date', 'created_by', 'date_of_inspection'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'date_of_inspection'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -125,7 +125,7 @@ class DailyVitalEquipmentController extends Controller
             $daily_vital = $this->daily_vital->store();
             $id = $daily_vital->id;
             $inspection_type = OHC_TYPE_DAILY_VITAL_EQUIPMENT_CHECKLIST;
-            $signature_update = $this->signature->requestorsignatureUpload($inspection_type,$id);
+            // $signature_update = $this->signature->requestorsignatureUpload($inspection_type,$id);
 
             Session::flash('success', __('common.created_msg'));
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
@@ -215,7 +215,6 @@ class DailyVitalEquipmentController extends Controller
                     $drawing->setWidth(30);
                     $drawing->setHeight(60);
                     $drawing->setWorksheet($sheet);
-
                 }
 
                 $sheet->mergeCells("I{$currentRow}:I" . ($currentRow + 2));
@@ -232,7 +231,6 @@ class DailyVitalEquipmentController extends Controller
                     $drawing->setWidth(30);
                     $drawing->setHeight(60);
                     $drawing->setWorksheet($sheet);
-
                 }
 
                 $sheet->mergeCells("D{$currentRow}:H" . ($currentRow + 2));
@@ -320,26 +318,39 @@ class DailyVitalEquipmentController extends Controller
                     }
                 }
 
-                $sheet->getRowDimension($row)->setRowHeight(60);
+                $sheet->getRowDimension($row)->setRowHeight(30);
                 $sheet->mergeCells("A{$row}:M{$row}")->setCellValue("A{$row}", "CHECKED BY (NAME & SIGNATURE) :- ");
 
                 $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,
-                    'vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER
+                    ],
                 ]);
 
-                if (file_exists($inspection_created_by)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Signature');
-                    $drawing->setPath($inspection_created_by);
-                    $drawing->setCoordinates("J{$row}");
-                    $drawing->setOffsetX(80);
-                    $drawing->setOffsetY(15);
-                    $drawing->setWidth(120);
-                    $drawing->setHeight(50);
-                    $drawing->setWorksheet($sheet);
+                $richText = new RichText();
+                $name = getUsername($daily_vital->checked_by);
+
+                if (!empty($name)) {
+                    $richText->createTextRun("Inspected and checked By: " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Not yet Checked")->getFont()->setBold(true);
                 }
+
+                $sheet->getCell("A{$row}")->setValue($richText);
+
+                // if (file_exists($inspection_created_by)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Signature');
+                //     $drawing->setPath($inspection_created_by);
+                //     $drawing->setCoordinates("J{$row}");
+                //     $drawing->setOffsetX(80);
+                //     $drawing->setOffsetY(15);
+                //     $drawing->setWidth(120);
+                //     $drawing->setHeight(50);
+                //     $drawing->setWorksheet($sheet);
+                // }
 
                 $sheet->getStyle("A{$currentRow}:M{$row}")->applyFromArray([
                     'borders' => [
@@ -380,7 +391,7 @@ class DailyVitalEquipmentController extends Controller
 
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
-            }elseif(count($allData) > 20){
+            } elseif (count($allData) > 20) {
                 return redirect()->back()->with('error',   __('inspection.excess_error'));
             }
 
@@ -443,7 +454,7 @@ class DailyVitalEquipmentController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.inspection_ohc.daily_vital_equipment.viewPdf',$data);
+            $html = view('inspection.inspection_ohc.daily_vital_equipment.viewPdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
@@ -514,7 +525,6 @@ class DailyVitalEquipmentController extends Controller
                 $drawing->setWidth(30);
                 $drawing->setHeight(60);
                 $drawing->setWorksheet($sheet);
-
             }
 
             $sheet->mergeCells("I{$row}:I" . ($row + 2));
@@ -531,7 +541,6 @@ class DailyVitalEquipmentController extends Controller
                 $drawing->setWidth(30);
                 $drawing->setHeight(60);
                 $drawing->setWorksheet($sheet);
-
             }
 
             $sheet->mergeCells("D1:H3");
@@ -626,7 +635,7 @@ class DailyVitalEquipmentController extends Controller
                 }
             }
 
-            $sheet->getRowDimension($row)->setRowHeight(60);
+            $sheet->getRowDimension($row)->setRowHeight(30);
             $sheet->mergeCells("A{$row}:M{$row}")->setCellValue("A{$row}", "CHECKED BY (NAME & SIGNATURE) :- ");
 
             $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([
@@ -634,17 +643,28 @@ class DailyVitalEquipmentController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-            if (file_exists($inspection_created_by)) {
-                $drawing = new Drawing();
-                $drawing->setName('Signature');
-                $drawing->setPath($inspection_created_by);
-                $drawing->setCoordinates("J{$row}");
-                $drawing->setOffsetX(80);
-                $drawing->setOffsetY(15);
-                $drawing->setWidth(120);
-                $drawing->setHeight(50);
-                $drawing->setWorksheet($sheet);
-            }
+            $richText = new RichText();
+                $name = getUsername($daily_vital->created_by);
+
+                if (!empty($name)) {
+                    $richText->createTextRun("Inspected and checked By: " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Not yet Checked")->getFont()->setBold(true);
+                }
+
+                $sheet->getCell("A{$row}")->setValue($richText);
+
+            // if (file_exists($inspection_created_by)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Signature');
+            //     $drawing->setPath($inspection_created_by);
+            //     $drawing->setCoordinates("J{$row}");
+            //     $drawing->setOffsetX(80);
+            //     $drawing->setOffsetY(15);
+            //     $drawing->setWidth(120);
+            //     $drawing->setHeight(50);
+            //     $drawing->setWorksheet($sheet);
+            // }
 
             $writer = new Xlsx($spreadsheet);
             $fileName = 'Daily Vital Equipment.xlsx';
@@ -658,6 +678,4 @@ class DailyVitalEquipmentController extends Controller
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
         }
     }
-
-
 }

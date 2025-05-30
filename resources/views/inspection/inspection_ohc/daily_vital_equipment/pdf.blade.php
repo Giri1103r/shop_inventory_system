@@ -179,7 +179,8 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}</td>
+                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}
+                                </td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
@@ -254,20 +255,32 @@
                             {{ $value['remark'] ?? '-' }}
                         </td>
                     </tr>
-
                 @endforeach
             @endforeach
 
             <tr>
-                <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">Checked By</th>
+                <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">Checked By
+                </th>
 
                 @php
-                    $createdSignature  = GetOHCSignature($details->checked_by, $details->id,OHC_TYPE_DAILY_VITAL_EQUIPMENT_CHECKLIST);
-               @endphp
+                    $createdSignature = GetOHCSignature(
+                        $details->checked_by,
+                        $details->id,
+                        OHC_TYPE_DAILY_VITAL_EQUIPMENT_CHECKLIST,
+                    );
+                @endphp
 
-                <th colspan="14" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;"><img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
+                {{-- <th colspan="14" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;"><img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
                     style="width: 150px; margin-top: -2px;" />
+                </th> --}}
+                <th colspan="14" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                    @if (isset($details->checked_by))
+                        <div>{{ getUsername($details->checked_by) }}</div>
+                    @else
+                        <div>Not yet Inspected</div>
+                    @endif
                 </th>
+
             </tr>
 
         </table>

@@ -167,7 +167,7 @@
                     <h3>
                         <span><b>DAILY DEPARTMENTAL FIRST-AID BOX INSPECTION CHECKLIST</b></span>
                         <br>
-                     
+
                     </h3>
                 </th>
 
@@ -180,7 +180,8 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date )}}</td>
+                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}
+                                </td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
@@ -198,7 +199,7 @@
                 </th>
                 <th colspan="6"
                     style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    FIRST AID BOX NO: {{ ($medicinerequisition->first_aid_box_no) ?? 'N/A' }}
+                    FIRST AID BOX NO: {{ $medicinerequisition->first_aid_box_no ?? 'N/A' }}
                 </th>
                 <th colspan="6"
                     style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
@@ -227,9 +228,11 @@
                     MEDICINE</th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">FREEZE
                     QUANTITY</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">AVAILABLE QUANTITY
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">AVAILABLE
+                    QUANTITY
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">MATERIAL EXPIRY
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">MATERIAL
+                    EXPIRY
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARK
                 </th>
@@ -246,8 +249,10 @@
                     </td>
                     <td style="border: 1px solid black; padding: 8px;" colspan="3">{{ $details->freeze_quantity }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px;"colspan="3">{{ $details->available_quantity }}</td>
-                    <td style="border: 1px solid black; padding: 8px;"colspan="4">{{ DisplaydateFormat($details->material_expiry) }}</td>
+                    <td style="border: 1px solid black; padding: 8px;"colspan="3">{{ $details->available_quantity }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px;"colspan="4">
+                        {{ DisplaydateFormat($details->material_expiry) }}</td>
                     <td style="border: 1px solid black; padding: 8px;"colspan="4">{{ $details->remarks }}</td>
 
                 </tr>
@@ -267,7 +272,7 @@
 
             @endphp
 
-            <tr>
+            {{-- <tr>
                 <th colspan="9" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
                     <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
@@ -277,6 +282,24 @@
                     <img src="{{ admin_url($FloorManagerSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
                     <div style="margin-top: 5px;">Floor Manager Signature</div>
+                </th>
+
+            </tr> --}}
+
+            <tr>
+                <th colspan="9" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                    @if ($medicinerequisition->created_by != null)
+                        <div style="margin-top: 5px;">First Aider Name :-
+                            {{ getUsername($medicinerequisition->created_by) }}</div>
+                    @endif
+                </th>
+                <th colspan="9" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                    @if ($medicinerequisition->verified_by != null)
+                        <div style="margin-top: 5px;">Floor Manager Name :-
+                            {{ getUsername($medicinerequisition->verified_by) }}</div>
+                    @else
+                        <div style="margin-top: 5px;">Has Not Yet Been Verified</div>
+                    @endif
                 </th>
 
             </tr>
@@ -318,7 +341,7 @@
                     {{ Displaytimeformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
                 </td>
             </tr>
-            <tr>
+            {{-- <tr>
                 <td width="50%" style="padding:5px;"><b>Signature</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
@@ -333,7 +356,7 @@
                     @endif
 
                 </td>
-            </tr>
+            </tr> --}}
             <tr>
                 <td width="50%" style="padding:5px;"><b>Remarks</b></td>
                 <td width="2%" style="padding:5px;">:</td>

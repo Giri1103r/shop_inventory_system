@@ -36,6 +36,7 @@ class MasterController extends BaseController
                     'masters_employee.login_id',
                     'masters_employee.emp_id',
                     'masters_employee.user_role',
+                    'masters_employee.designation',
                     'masters_department.id as department_id',
                     'masters_department.department_name'
                 )
@@ -49,6 +50,7 @@ class MasterController extends BaseController
                             'emp_name' => $employee->emp_name,
                             'emp_id' => $employee->emp_id,
                             'login_id' => $employee->login_id,
+                            'designation' => $employee->designation,
                             'role' => [
                                 'id' => $employee->role_id,
                                 'role_name' => $employee->role_name

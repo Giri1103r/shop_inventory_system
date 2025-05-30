@@ -89,7 +89,7 @@
                                             {{ getFrequencyname(isset($monthly_first_aid->frequency) ? $monthly_first_aid->frequency : '') }}
                                         </div>
                                     </div>
-                                    @php
+                                    {{-- @php
                                         $signature = GetOHCSignature(
                                             $monthly_first_aid->created_by,
                                             $monthly_first_aid->id,
@@ -106,7 +106,7 @@
                                                     style="width: 150px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif --}}
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">

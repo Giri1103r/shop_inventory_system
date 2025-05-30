@@ -24,6 +24,7 @@ class IncidentBodyParts extends Model
     protected $fillable = [
         'incident_id',
         'random_id',
+        'row_id',
         'injury_id',
         'injury_person_id',
         'injured_person_type',
@@ -101,29 +102,59 @@ class IncidentBodyParts extends Model
                         ->orWhere('injury_person_name', $partyname);
                 });
         }
-        // $sql = $query->toSql();
-        // $bindings = $query->getBindings();
-
-        // // Use vsprintf to replace the placeholders with the bindings
-        // $fullSql = vsprintf(str_replace('?', '%s', $sql), array_map(function ($binding) {
-        //     return is_numeric($binding) ? $binding : "'$binding'";
-        // }, $bindings));
-
-        // dd($fullSql);
-        $get_data = $query->get(); // Executes the query
-
-
-        // dd($get_data->toSql(), $query->getBindings());
+        
+        $get_data = $query->get(); 
 
         $response['empdata'] = $get_data;
 
+        return response()->json($response);
+    }
+    public function apigetEmpdetails()
+    {
+        $request = request();
+        $partyname = $request->input('partyname');
+        $random_id = $request->input('random_id');
+        $rowId = $request->input('rowId');
+        $acc_prim_add = $request->input('acc_prim_add');
+        $injury_id = $request->input('injury_id');
+        $injuredPerson_type = $request->input('injuredPerson_type');
+        // $incident_id = $request->input('incident_id');
+      
+
+
+        $query = $this->select('ims_incident_body_parts.*');
+
+        if ($acc_prim_add == "acc_prim_add") {
+            $query->where('random_id', $random_id)
+                ->where('id', $partyname)
+                ->where('row_id', $rowId)
+                ->where('injury_id', $injury_id)
+                ->where('injured_person_type', $injuredPerson_type)
+                ->where(function ($q) {
+                    $q->where('status', 'Y')
+                        ->orWhere('status', 'N')
+                        ->orWhere('status', 'T');
+                })
+                ->where('trash', 'NO');
+        } else {
+            $query->where('random_id', $random_id)
+                ->where('id', $partyname)
+                ->where('row_id', $rowId)
+                ->where('injury_id', $injury_id)
+                ->where('injured_person_type', $injuredPerson_type)
+                ->where('status', 'Y')
+                ->where('trash', 'NO');
+        }
+
+        $get_data = $query->get(); 
+             
+        $response['empdata'] = $get_data;
         return response()->json($response);
     }
 
     public function addInjury()
     {
         $request = request();
-
         $random_id = $request->random_id;
         $folderPath = 'incident/body_parts/' . $random_id;
 
@@ -228,6 +259,130 @@ class IncidentBodyParts extends Model
 
         echo json_encode($data);
     }
+
+    public function addInjuryApi()
+    {
+        $request = request();
+        $random_id = $request->random_id;
+        $folderPath = 'incident/body_parts/' . $random_id;
+        Storage::makeDirectory($folderPath);
+
+        // Set permission to 0777 (you must use chmod with full path)
+        $fullPath = storage_path("app/public/uploads/{$folderPath}");
+        chmod($fullPath, 0777);
+
+        $base64String = $request->bodypartimage;
+
+        if (preg_match('/^data:image\/(\w+);base64,/', $base64String, $matches)) {
+            $imageType = $matches[1]; // Extract extension (png, jpg, jpeg)
+            $imageData = substr($base64String, strpos($base64String, ',') + 1);
+            $imageData = base64_decode($imageData);
+
+            if ($imageData === false) {
+                return response()->json(['status' => false, 'message' => 'Invalid Base64 image'], 400);
+            }
+
+            // Generate unique filename
+            $fileName = time() . uniqid() . '.' . $imageType;
+            $filePath = $folderPath . '/' . $fileName;
+
+            Storage::put($filePath, $imageData);
+
+            $storedImagePath = $filePath;
+        }
+
+
+        if ($request['body_prim_id'] != 0 && $request['incident_id'] != 0) {
+            $locdatas = [
+                'incident_id' => $request->incident_id,
+                'random_id' => $random_id,
+                'row_id' => $request->row_id,
+                'injured_person_type' => $request->injury_person_type,
+                'imgMapdata' => postData($request, 'imgMapdata'),
+                'body_parts' => $request->humanbodyinjury,
+                'body_parts_label' => $request->humanbodyinjurylabel,
+                'body_part_image' => $storedImagePath,
+                'updated_by' => Auth::id(),
+                'status' => 'T'
+            ];
+            if ($request->injury_person_type == 3) {
+                $locdatas['injury_person_name'] = $request->injuredPerson;
+            } else {
+                $locdatas['injury_person_id'] = $request->injuredPerson;
+            }
+            $updtBody =  $this->where('id', $request['body_prim_id'])->update($locdatas);
+        } elseif ($request['body_prim_id'] != 0 && $request['incident_id'] == 0) {
+            $locdatas = [
+                'incident_id' => $request->incident_id,
+                'random_id' => $random_id,
+                'row_id' => $request->row_id,
+                'injured_person_type' => $request->injury_person_type,
+                'imgMapdata' => postData($request, 'imgMapdata'),
+                'body_parts' => $request->humanbodyinjury,
+                'body_parts_label' => $request->humanbodyinjurylabel,
+                'body_part_image' => $storedImagePath,
+                'updated_by' => Auth::id(),
+                'status' => 'T'
+            ];
+            if ($request->injury_person_type == 3) {
+                $locdatas['injury_person_name'] = $request->injuredPerson;
+            } else {
+                $locdatas['injury_person_id'] = $request->injuredPerson;
+            }
+            $updtBody =  $this->where('id', $request['body_prim_id'])->update($locdatas);
+        } elseif ($request['body_prim_id'] == 0 && $request['incident_id'] != 0) {
+            $locdatas = [
+                'incident_id' => $request->incident_id,
+                'random_id' => $random_id,
+                'row_id' => $request->row_id,
+                'injured_person_type' => $request->injury_person_type,
+                'imgMapdata' => postData($request, 'imgMapdata'),
+                'body_parts' => $request->humanbodyinjury,
+                'body_parts_label' => $request->humanbodyinjurylabel,
+                'body_part_image' => $storedImagePath,
+                'updated_by' => Auth::id(),
+                'status' => 'T'
+            ];
+            if ($request->injury_person_type == 3) {
+                $locdatas['injury_person_name'] = $request->injuredPerson;
+            } else {
+                $locdatas['injury_person_id'] = $request->injuredPerson;
+            }
+            $updtBody =  $this->create($locdatas);
+        } else {
+
+            $locdatas = [
+                'incident_id' => $request->incident_id,
+                'random_id' => $random_id,
+                'row_id' => $request->row_id,
+                'injured_person_type' => $request->injury_person_type,
+                'imgMapdata' => postData($request, 'imgMapdata'),
+                'body_parts' => $request->humanbodyinjury,
+                'body_parts_label' => $request->humanbodyinjurylabel,
+                'body_part_image' => $storedImagePath,
+                'created_by' => Auth::id(),
+                'status' => 'T'
+            ];
+            if ($request->injury_person_type == 3) {
+                $locdatas['injury_person_name'] = $request->injuredPerson;
+            } else {
+                $locdatas['injury_person_id'] = $request->injuredPerson;
+            }
+            $updtBody =  $this->create($locdatas);
+        }
+
+        if (!empty($updtBody)) {
+            $data = [
+                'status' => true
+            ];
+        } else {
+            $data = [
+                'status' => false
+            ];
+        }
+
+        echo json_encode($data);
+    }
     public function delete_temprow()
     {
         $this->where('status', 'T')->delete();
@@ -237,7 +392,6 @@ class IncidentBodyParts extends Model
     public function updateStatusForIncident($random_id, $incident_id, $injured_person_type, array $excludedEmpIds)
     {
 
-        // dd($random_id, $incident_id);
         return $this->where('random_id', $random_id)
             ->where('injured_person_type', $injured_person_type)
             ->where(function ($query) use ($excludedEmpIds) {

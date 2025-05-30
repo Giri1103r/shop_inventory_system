@@ -305,7 +305,7 @@
 
             </tr>
             @endforeach
-            @php
+            {{-- @php
                 $prepared_by_signature = GetFireSignature(
                     $forklift_details->created_by,
                     $forklift_details->id,
@@ -349,6 +349,33 @@
                         <p>Inspection has not been Verified Yet</p>
                     @endif
                 </td>
+            </tr> --}}
+
+             <tr>
+
+                <th style="border: 1px solid black; padding: 8px;" colspan="4">
+                    @if (isset($forklift_details->created_by))
+                        <div style="margin-top: 5px;">Checked By:{{ getUsername($forklift_details->created_by) }}</div>
+                    @else
+                        <div style="margin-top: 5px;"> Inspection has not been Checked Yet</div>
+                    @endif
+                </th>
+                <th style="border: 1px solid black; padding: 8px;" colspan="3">
+
+                    @if (isset($forklift_details->verified_by))
+                        <div style="margin-top: 5px;">Verified By:{{ getUsername($forklift_details->verified_by) }}</div>
+                    @else
+                        <div style="margin-top: 5px;"> Inspection has not been Verified Yet</div>
+                    @endif
+                </th>
+                <th style="border: 1px solid black; padding: 8px;" colspan="4">
+
+                    @if (isset($forklift_details->approved_by))
+                        <div style="margin-top: 5px;">Approved By:{{ getUsername($forklift_details->approved_by) }}</div>
+                    @else
+                        <div style="margin-top: 5px;">Inspection has not been Approved Yet</div>
+                    @endif
+                </th>
             </tr>
         </tbody>
     </table>

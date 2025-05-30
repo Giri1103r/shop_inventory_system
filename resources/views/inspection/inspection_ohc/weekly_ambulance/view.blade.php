@@ -101,7 +101,7 @@
                                             {{ getUnitname(isset($weekAmbualance->unit) ? $weekAmbualance->unit : '') }}
                                         </div>
                                     </div>
-                                    @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
+                                    {{-- @if (!empty($requestorsignature) && !empty($requestorsignature->requestor_file_path))
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label" style="display: block;">
@@ -121,7 +121,7 @@
                                                     alt="Signature Upload" style="width: 150px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif --}}
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -223,13 +223,13 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @php
+                                            {{-- @php
                                                 $signature = GetOHCSignature(
                                                     $weekAmbualance->verified_by,
                                                     $weekAmbualance->id,
                                                     OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
                                                 );
-                                            @endphp
+                                            @endphp --}}
                                         @endif
                                         @if (isset($weekAmbualance->created_at))
                                             <div class="col-md-4 mb-2">
@@ -241,7 +241,7 @@
                                                 </div>
                                             </div>
                                         @endif
-                                        @if (isset(Auth::user()->signature_upload))
+                                        {{-- @if (isset(Auth::user()->signature_upload))
                                             <label class="form-label"
                                                 style="display: block;">{{ __('inspection.signature') }}</label>
                                             <img src="{{ asset(Auth::user()->signature_upload) }}" alt="Signature Upload"
@@ -255,7 +255,7 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         @if ($weekAmbualance->approved_by)
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -310,7 +310,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @php
+                                            {{-- @php
                                                 $signature = GetOHCSignature(
                                                     $weekAmbualance->created_by,
                                                     $weekAmbualance->id,
@@ -326,7 +326,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -361,7 +361,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @php
+                                            {{-- @php
                                                 $signature = GetOHCSignature(
                                                     $weekAmbualance->verified_by,
                                                     $weekAmbualance->id,
@@ -377,7 +377,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -416,7 +416,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @if (isset(Auth::user()->signature_upload))
+                                        {{-- @if (isset(Auth::user()->signature_upload))
                                             <label class="form-label"
                                                 style="display: block;">{{ __('inspection.signature') }}</label>
                                             <img src="{{ asset(Auth::user()->signature_upload) }}" alt="Signature Upload"
@@ -430,7 +430,7 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label
@@ -465,28 +465,28 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @php
-                                            $signature = GetOHCSignature(
-                                                $weekAmbualance->l2_manager_verified_by,
-                                                $weekAmbualance->id,
-                                                OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
-                                            );
-                                        @endphp
-                                        @if (isset(Auth::user()->signature_upload))
-                                            <label class="form-label"
-                                                style="display: block;">{{ __('inspection.signature') }}</label>
-                                            <img src="{{ asset(Auth::user()->signature_upload) }}" alt="Signature Upload"
-                                                style="width: 150px; margin-top: -10px;">
-                                        @elseif(isset($signature))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
+                                            {{-- @php
+                                                $signature = GetOHCSignature(
+                                                    $weekAmbualance->l2_manager_verified_by,
+                                                    $weekAmbualance->id,
+                                                    OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
+                                                );
+                                            @endphp
+                                            @if (isset(Auth::user()->signature_upload))
+                                                <label class="form-label"
+                                                    style="display: block;">{{ __('inspection.signature') }}</label>
+                                                <img src="{{ asset(Auth::user()->signature_upload) }}" alt="Signature Upload"
+                                                    style="width: 150px; margin-top: -10px;">
+                                            @elseif(isset($signature))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label"
+                                                            style="display: block;">{{ __('inspection.signature') }}</label>
+                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                                            style="width: 150px; margin-top: -10px;" />
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        @endif
+                                            @endif --}}
 
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">

@@ -302,17 +302,20 @@ class GembaWalkController extends Controller
             }
 
             if ($users->count() > 0) {
+              
                 foreach ($users as $user) {
                     $email_id = $user->email;
                     if (!empty($email_id)) {
                         $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
+                        $gembaWalk_checklist = $this->gembaWalkCheckList->selectmail($gembaWalk_id);
                         $gembaWalk = $gembaWalk_details->toArray();
+                        $gembaWalkChecklist = $gembaWalk_checklist->toArray();
                         $gembaWalk['name'] = $user->name;
                         $gembaWalk['email_id'] = $email_id;
                         $gembaWalk['mail_subject'] = $mailsubject;
 
                         // Send email
-                        Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk));
+                        Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk, $gembaWalkChecklist));
                     }
                 }
             }
@@ -490,12 +493,13 @@ class GembaWalkController extends Controller
 
                         if ($gembaWalk_details) {
                             $gembaWalk_array = $gembaWalk_details->toArray();
-
+                            $gembaWalk_checklist = $this->gembaWalkCheckList->selectmail($gembaWalk_id);
+                            $gembaWalkChecklist = $gembaWalk_checklist->toArray();
                             $gembaWalk_array['name'] = $user->name;
                             $gembaWalk_array['email_id'] = $email_id;
                             $gembaWalk_array['mail_subject'] = $mailsubject;
 
-                            Mail::to($gembaWalk_array['email_id'])->queue(new GembaWalkMail($gembaWalk_array));
+                            Mail::to($gembaWalk_array['email_id'])->queue(new GembaWalkMail($gembaWalk_array, $gembaWalkChecklist));
                         }
                     }
                 }
@@ -631,13 +635,14 @@ class GembaWalkController extends Controller
                         if (!empty($email_id)) {
                             $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
                             $gembaWalk = $gembaWalk_details->toArray();
-
+                            $gembaWalk_checklist = $this->gembaWalkCheckList->selectmail($gembaWalk_id);
+                            $gembaWalkChecklist = $gembaWalk_checklist->toArray();
                             $gembaWalk['name'] = $user->name;
                             $gembaWalk['email_id'] = $email_id;
                             $gembaWalk['mail_subject'] = $mailsubject;
 
                             // Send email
-                            Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk));
+                            Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk, $gembaWalkChecklist));
                         }
                     }
                 }
@@ -702,13 +707,14 @@ class GembaWalkController extends Controller
                         if (!empty($email_id)) {
                             $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
                             $gembaWalk = $gembaWalk_details->toArray();
-
+                            $gembaWalk_checklist = $this->gembaWalkCheckList->selectmail($gembaWalk_id);
+                            $gembaWalkChecklist = $gembaWalk_checklist->toArray();
                             $gembaWalk['name'] = $user->name;
                             $gembaWalk['email_id'] = $email_id;
                             $gembaWalk['mail_subject'] = $mailsubject;
 
                             // Send email
-                            Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk));
+                            Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk,  $gembaWalkChecklist));
                         }
                     }
                 }
@@ -800,7 +806,7 @@ class GembaWalkController extends Controller
             $html = view('inspection.gembaWalk.generalpdf', $data)->render();
             $mpdf->WriteHTML($html);
 
-            $filename = "Gemba Walk Details.pdf";
+            $filename = "Gemba Walk (Safety Observation).pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
@@ -855,7 +861,7 @@ class GembaWalkController extends Controller
             ]);
 
 
-            $sheet->mergeCells("E1:K3");
+            $sheet->mergeCells("E1:M3");
             $sheet->setCellValue("E1", "DAILY GEMBA WALK INSPECTION");
             $sheet->getStyle("E1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 16],
@@ -871,13 +877,13 @@ class GembaWalkController extends Controller
             $gemba = $gembaWalk_details->first();
             $sheet->getRowDimension(4)->setRowHeight(30);
 
-            $sheet->mergeCells("A4:G4");
+            $sheet->mergeCells("A4:H4");
             $sheet->setCellValue("A4", "Date: " . Displaydateformat($gemba->date));
 
-            $sheet->mergeCells("H4:N4");
-            $sheet->setCellValue("H4", "Shift: " . getShift($gemba->shift_id));
+            $sheet->mergeCells("I4:P4");
+            $sheet->setCellValue("I4", "Shift: " . getShift($gemba->shift_id));
 
-            $sheet->getStyle('A4:G4')->applyFromArray([
+            $sheet->getStyle('A4:H4')->applyFromArray([
                 'font' => [
                     'bold' => true,
                     'size' => 12,
@@ -894,7 +900,7 @@ class GembaWalkController extends Controller
                 ],
             ]);
 
-            $sheet->getStyle('H4:N4')->applyFromArray([
+            $sheet->getStyle('I4:P4')->applyFromArray([
                 'font' => [
                     'bold' => true,
                     'size' => 12,
@@ -914,9 +920,9 @@ class GembaWalkController extends Controller
 
 
             $headerLabels = [
-                'L1:M1' => 'Doc. No.',
-                'L2:M2' => 'Issue Dt.',
-                'L3:M3' => 'Rev. & Dt.',
+                'N1:O1' => 'Doc. No.',
+                'N2:O2' => 'Issue Dt.',
+                'N3:O3' => 'Rev. & Dt.',
             ];
 
             foreach ($headerLabels as $cellRange => $label) {
@@ -932,11 +938,11 @@ class GembaWalkController extends Controller
                 ]);
             }
 
-            $sheet->setCellValue("N1", $document_no->doc_no);
-            $sheet->setCellValue("N2", Displaydateformat($document_no->issue_date));
-            $sheet->setCellValue("N3", $document_no->rev_dt);
+            $sheet->setCellValue("P1", $document_no->doc_no);
+            $sheet->setCellValue("P2", Displaydateformat($document_no->issue_date));
+            $sheet->setCellValue("P3", $document_no->rev_dt);
 
-            $sheet->getStyle("L1:N3")->applyFromArray([
+            $sheet->getStyle("N1:P3")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
@@ -950,12 +956,14 @@ class GembaWalkController extends Controller
                 'Exact Location',
                 'Date of Observation',
                 'Observation Type',
+                'Risk Category',
                 'Description',
                 'Hazard',
                 'Image',
                 'Recommended CAPA',
                 'Status',
                 'Remark',
+                'Responsible Person',
                 'Observer Person',
             ];
 
@@ -981,8 +989,11 @@ class GembaWalkController extends Controller
 
                 $sheet->setCellValue("F{$row}", displayDateFormat($data->date_of_observation ?? ''));
                 $sheet->setCellValue("G{$row}", getObservationType($data->observation_type_id ?? ''));
-                $sheet->setCellValue("H{$row}", $data->description ?? '');
-                $sheet->setCellValue("I{$row}", getGembaWalkHazardName($data->hazard ?? ''));
+                $sheet->setCellValue("H{$row}", getRiskCategory($data->risk_category ?? ''));
+
+
+                $sheet->setCellValue("I{$row}", $data->description ?? '');
+                $sheet->setCellValue("J{$row}", getGembaWalkHazardName($data->hazard ?? ''));
 
                 $hazardIds = explode(',', $data->hazard ?? '');
                 $hazardNames = [];
@@ -991,8 +1002,8 @@ class GembaWalkController extends Controller
                     $hazardNames[] = getGembaWalkHazardName(trim($id));
                 }
 
-                $sheet->setCellValue("I{$row}", implode(', ', $hazardNames));
-                $sheet->getStyle("I{$row}")->getAlignment()->setWrapText(true);
+                $sheet->setCellValue("J{$row}", implode(', ', $hazardNames));
+                $sheet->getStyle("J{$row}")->getAlignment()->setWrapText(true);
 
 
 
@@ -1002,23 +1013,23 @@ class GembaWalkController extends Controller
                     if (file_exists($imagePath)) {
                         $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
                         $drawing->setPath($imagePath);
-                        $drawing->setCoordinates("J{$row}");
+                        $drawing->setCoordinates("K{$row}");
                         $drawing->setOffsetX(5);
                         $drawing->setOffsetY(5);
                         $drawing->setWidth(80);
                         $drawing->setWorksheet($sheet);
                         $sheet->getRowDimension($row)->setRowHeight(90);
-                        $sheet->getColumnDimension('J')->setWidth(20);
+                        $sheet->getColumnDimension('K')->setWidth(20);
                     } else {
-                        $sheet->setCellValue("J{$row}", 'Image not found');
+                        $sheet->setCellValue("K{$row}", 'Image not found');
                     }
                 } else {
-                    $sheet->setCellValue("J{$row}", 'No image');
+                    $sheet->setCellValue("K{$row}", 'No image');
                 }
 
-                $sheet->setCellValue("K{$row}", $data->capa ?? '');
-                $sheet->setCellValue("L{$row}", getGembaWalkStatus($data->status ?? ''));
-                $sheet->setCellValue("M{$row}", $data->remark ?? '');
+                $sheet->setCellValue("L{$row}", $data->capa ?? 'N/A');
+                $sheet->setCellValue("M{$row}", getGembaWalkStatus($data->status ?? ''));
+                $sheet->setCellValue("N{$row}", $data->remark ?? '');
                 $responsibilityIds = explode(',', $data->responsibility_id ?? '');
                 $responsibilityNames = [];
 
@@ -1026,26 +1037,27 @@ class GembaWalkController extends Controller
                     $responsibilityNames[] = getUsername(trim($id));
                 }
 
-                $sheet->setCellValue("N{$row}", implode(', ', $responsibilityNames));
-                $sheet->getStyle("N{$row}")->getAlignment()->setWrapText(true);
+                $sheet->setCellValue("O{$row}", implode(', ', $responsibilityNames));
+                $sheet->getStyle("O{$row}")->getAlignment()->setWrapText(true);
+                $sheet->setCellValue("P{$row}", getUsername($data->gemba_walk_created_by ?? ''));
 
-                $sheet->getStyle("A{$row}:N{$row}")->applyFromArray([
+                $sheet->getStyle("A{$row}:P{$row}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER, 'horizontal' => Alignment::HORIZONTAL_CENTER],
                 ]);
 
                 $row++;
                 $sr++;
             }
 
-            foreach (range('A', 'N') as $col) {
-                if ($col !== 'J') {
+            foreach (range('A', 'P') as $col) {
+                if ($col !== 'K') {
                     $sheet->getColumnDimension($col)->setAutoSize(true);
                 }
             }
 
             $signatureRowStart = $row;
-            $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+            $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
 
             // === Prepared By ===
             $sheet->mergeCells("A{$signatureRowStart}:H{$signatureRowStart}");
@@ -1076,8 +1088,8 @@ class GembaWalkController extends Controller
             }
 
             // === Verified By ===
-            $sheet->mergeCells("I{$signatureRowStart}:N{$signatureRowStart}");
-            $sheet->getStyle("I{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+            $sheet->mergeCells("I{$signatureRowStart}:P{$signatureRowStart}");
+            $sheet->getStyle("I{$signatureRowStart}:P{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -1100,7 +1112,7 @@ class GembaWalkController extends Controller
                 $sheet->setCellValue("I{$signatureRowStart}", "Not Verified Yet");
             }
 
-            $sheet->getStyle("A{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+            $sheet->getStyle("A{$signatureRowStart}:P{$signatureRowStart}")->applyFromArray([
                 'borders' => [
                     'outline' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
                 ],
@@ -1134,13 +1146,13 @@ class GembaWalkController extends Controller
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-            
+
 
 
 
             $data = array(
                 'content' => $allData,
-                'pagetitle' => "Gemba Walk Details",
+                'pagetitle' => "Gemba Walk (Safety Observation)",
             );
 
 
@@ -1161,7 +1173,7 @@ class GembaWalkController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Gemba Walk.pdf";
+            $filename = "Gemba Walk (Safety Observation).pdf";
             $mpdf->Output($filename, 'd');
         } catch (Exception $ex) {
             report($ex);
@@ -1216,10 +1228,10 @@ class GembaWalkController extends Controller
                     'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
 
-                $sheet->mergeCells("E{$currentRow}:K" . ($currentRow + 2));
+                $sheet->mergeCells("E{$currentRow}:M" . ($currentRow + 2));
                 $sheet->setCellValue("E{$currentRow}", "DAILY GEMBA WALK INSPECTION");
 
-                $sheet->getStyle("E{$currentRow}:K" . ($currentRow + 2))->applyFromArray([
+                $sheet->getStyle("E{$currentRow}:M" . ($currentRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 16],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -1236,25 +1248,25 @@ class GembaWalkController extends Controller
 
                 $gemba = $gembaWalk_details->first();
 
-                $sheet->mergeCells("A" . ($currentRow + 3) . ":H" . ($currentRow + 3));
-                $sheet->mergeCells("I" . ($currentRow + 3) . ":N" . ($currentRow + 3));
+                $sheet->mergeCells("A" . ($currentRow + 3) . ":I" . ($currentRow + 3));
+                $sheet->mergeCells("J" . ($currentRow + 3) . ":P" . ($currentRow + 3));
                 $sheet->setCellValue("A" . ($currentRow + 3), "Date: " . Displaydateformat($gemba->date));
-                $sheet->setCellValue("I" . ($currentRow + 3), "Shift: " . getShift($gemba->shift_id));
-                $sheet->getStyle("A" . ($currentRow + 3) . ":N" . ($currentRow + 3))->applyFromArray([
+                $sheet->setCellValue("J" . ($currentRow + 3), "Shift: " . getShift($gemba->shift_id));
+                $sheet->getStyle("A" . ($currentRow + 3) . ":P" . ($currentRow + 3))->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                $sheet->mergeCells("L{$currentRow}:M{$currentRow}")->setCellValue("L{$currentRow}", 'Doc. No.');
-                $sheet->mergeCells("L" . ($currentRow + 1) . ":M" . ($currentRow + 1))->setCellValue("L" . ($currentRow + 1), 'Issue Dt.');
-                $sheet->mergeCells("L" . ($currentRow + 2) . ":M" . ($currentRow + 2))->setCellValue("L" . ($currentRow + 2), 'Rev. & Dt.');
+                $sheet->mergeCells("N{$currentRow}:O{$currentRow}")->setCellValue("N{$currentRow}", 'Doc. No.');
+                $sheet->mergeCells("N" . ($currentRow + 1) . ":O" . ($currentRow + 1))->setCellValue("N" . ($currentRow + 1), 'Issue Dt.');
+                $sheet->mergeCells("N" . ($currentRow + 2) . ":O" . ($currentRow + 2))->setCellValue("N" . ($currentRow + 2), 'Rev. & Dt.');
 
-                $sheet->setCellValue("N{$currentRow}", $document_no->doc_no ?? '');
-                $sheet->setCellValue("N" . ($currentRow + 1), Displaydateformat($document_no->issue_date ?? ''));
-                $sheet->setCellValue("N" . ($currentRow + 2), $document_no->rev_dt ?? '');
+                $sheet->setCellValue("P{$currentRow}", $document_no->doc_no ?? '');
+                $sheet->setCellValue("P" . ($currentRow + 1), Displaydateformat($document_no->issue_date ?? ''));
+                $sheet->setCellValue("P" . ($currentRow + 2), $document_no->rev_dt ?? '');
 
-                $sheet->getStyle("L{$currentRow}:N" . ($currentRow + 2))->applyFromArray([
+                $sheet->getStyle("N{$currentRow}:P" . ($currentRow + 2))->applyFromArray([
                     'borders' => [
                         'allBorders' => [
                             'borderStyle' => Border::BORDER_DOUBLE,
@@ -1276,13 +1288,15 @@ class GembaWalkController extends Controller
                     'E' => 15,
                     'F' => 18,
                     'G' => 18,
-                    'H' => 15,
-                    'I' => 20,
+                    'H' => 18,
+                    'I' => 15,
                     'J' => 20,
-                    'K' => 25,
-                    'L' => 15,
-                    'M' => 25,
+                    'K' => 20,
+                    'L' => 25,
+                    'M' => 15,
                     'N' => 25,
+                    'O' => 25,
+                    'P' => 25,
 
                 ];
 
@@ -1290,7 +1304,7 @@ class GembaWalkController extends Controller
                     $sheet->getColumnDimension($col)->setWidth($width);
                 }
 
-                $headers = ['Sr.', 'Location', 'Unit', 'Department', 'Exact Location', 'Date of Observation', 'Observation Type', 'Description', 'Hazard', 'Image', 'Recommended CAPA', 'Status', 'Remark', 'Observer Person'];
+                $headers = ['Sr.', 'Location', 'Unit', 'Department', 'Exact Location', 'Date of Observation', 'Observation Type', 'Risk Category', 'Description', 'Hazard', 'Image', 'Recommended CAPA', 'Status', 'Remark', 'Responsible Person','Observer Person'];
                 $col = 'A';
                 foreach ($headers as $header) {
                     $sheet->setCellValue("{$col}" . ($row + 4), $header);
@@ -1313,7 +1327,9 @@ class GembaWalkController extends Controller
 
                     $sheet->setCellValue("F{$detIL_row}", displayDateFormat($data->date_of_observation ?? ''));
                     $sheet->setCellValue("G{$detIL_row}", getObservationType($data->observation_type_id ?? ''));
-                    $sheet->setCellValue("H{$detIL_row}", $data->description ?? '');
+                    $sheet->setCellValue("H{$detIL_row}", getRiskCategory($data->risk_category ?? ''));
+
+                    $sheet->setCellValue("I{$detIL_row}", $data->description ?? '');
                     $hazardIds = explode(',', $data->hazard ?? '');
                     $hazardNames = [];
 
@@ -1321,25 +1337,25 @@ class GembaWalkController extends Controller
                         $hazardNames[] = getGembaWalkHazardName(trim($id));
                     }
 
-                    $sheet->setCellValue("I{$detIL_row}", implode(', ', $hazardNames));
-                    $sheet->getStyle("I{$detIL_row}")->getAlignment()->setWrapText(true);
+                    $sheet->setCellValue("J{$detIL_row}", implode(', ', $hazardNames));
+                    $sheet->getStyle("J{$detIL_row}")->getAlignment()->setWrapText(true);
 
                     if (!empty($data->file_path) && file_exists(public_path($data->file_path))) {
                         $drawing = new Drawing();
                         $drawing->setPath(public_path($data->file_path));
-                        $drawing->setCoordinates("J{$detIL_row}");
+                        $drawing->setCoordinates("K{$detIL_row}");
                         $drawing->setOffsetX(5);
                         $drawing->setOffsetY(5);
                         $drawing->setWidth(80);
                         $drawing->setWorksheet($sheet);
                         $sheet->getRowDimension($detIL_row)->setRowHeight(90);
                     } else {
-                        $sheet->setCellValue("J{$detIL_row}", 'No image');
+                        $sheet->setCellValue("K{$detIL_row}", 'No image');
                     }
 
-                    $sheet->setCellValue("K{$detIL_row}", $data->capa ?? '');
-                    $sheet->setCellValue("L{$detIL_row}", getGembaWalkStatus($data->status ?? ''));
-                    $sheet->setCellValue("M{$detIL_row}", $data->remark ?? '');
+                    $sheet->setCellValue("L{$detIL_row}", $data->capa ?? '');
+                    $sheet->setCellValue("M{$detIL_row}", getGembaWalkStatus($data->status ?? ''));
+                    $sheet->setCellValue("N{$detIL_row}", $data->remark ?? '');
                     $responsibilityIds = explode(',', $data->responsibility_id ?? '');
                     $responsibilityNames = [];
 
@@ -1347,14 +1363,15 @@ class GembaWalkController extends Controller
                         $responsibilityNames[] = getUsername(trim($id));
                     }
 
-                    $sheet->setCellValue("N{$detIL_row}", implode(', ', $responsibilityNames));
-                    $sheet->getStyle("N{$detIL_row}")->getAlignment()->setWrapText(true);
+                    $sheet->setCellValue("O{$detIL_row}", implode(', ', $responsibilityNames));
+                    $sheet->getStyle("O{$detIL_row}")->getAlignment()->setWrapText(true);
+                      $sheet->setCellValue("P{$detIL_row}", getUsername($data->gemba_walk_created_by ?? ''));
 
 
 
-                    $sheet->getStyle("A{$detIL_row}:N{$detIL_row}")->applyFromArray([
+                    $sheet->getStyle("A{$detIL_row}:P{$detIL_row}")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                        'alignment' => ['vertical' => Alignment::VERTICAL_CENTER, 'horizontal' => Alignment::HORIZONTAL_CENTER],
                     ]);
 
                     $detIL_row++;
@@ -1362,11 +1379,11 @@ class GembaWalkController extends Controller
                 }
 
                 $signatureRowStart = $detIL_row;
-                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
 
                 // === Prepared By ===
-                $sheet->mergeCells("A{$signatureRowStart}:H{$signatureRowStart}");
-                $sheet->getStyle("A{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
+                $sheet->mergeCells("A{$signatureRowStart}:I{$signatureRowStart}");
+                $sheet->getStyle("A{$signatureRowStart}:I{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -1393,8 +1410,8 @@ class GembaWalkController extends Controller
                 }
 
                 // === Verified By ===
-                $sheet->mergeCells("I{$signatureRowStart}:N{$signatureRowStart}");
-                $sheet->getStyle("I{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+                $sheet->mergeCells("J{$signatureRowStart}:P{$signatureRowStart}");
+                $sheet->getStyle("J{$signatureRowStart}:P{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
@@ -1413,12 +1430,12 @@ class GembaWalkController extends Controller
                     // $drawing->setOffsetY(5);
                     // $drawing->setHeight(60);
                     // $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("I{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($gemba->responsible_person_id));
+                    $sheet->setCellValue("J{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($gemba->responsible_person_id));
                 } else {
-                    $sheet->setCellValue("I{$signatureRowStart}", "Not Verified Yet");
+                    $sheet->setCellValue("J{$signatureRowStart}", "Not Verified Yet");
                 }
 
-                $sheet->getStyle("A{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+                $sheet->getStyle("A{$signatureRowStart}:P{$signatureRowStart}")->applyFromArray([
                     'borders' => [
                         'outline' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']],
                     ],
@@ -1426,7 +1443,7 @@ class GembaWalkController extends Controller
 
                 $row = $signatureRowStart + 7;
 
-                $sheet->getStyle("A{$currentRow}:N{$signatureRowStart}")->applyFromArray([
+                $sheet->getStyle("A{$currentRow}:P{$signatureRowStart}")->applyFromArray([
                     'borders' => [
                         'outline' => ['borderStyle' => Border::BORDER_THICK, 'color' => ['argb' => '000000']],
                     ],
@@ -1463,7 +1480,7 @@ class GembaWalkController extends Controller
         return response()->json(
             $employees->map(function ($employee) {
                 return [
-                    'id' => encryptId($employee->login_id),
+                    'id' => ($employee->login_id),
                     'text' => $employee->emp_name . ' - ' . $employee->emp_id,
                 ];
             })

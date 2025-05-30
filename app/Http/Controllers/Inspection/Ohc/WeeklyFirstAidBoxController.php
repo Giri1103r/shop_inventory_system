@@ -163,7 +163,7 @@ class WeeklyFirstAidBoxController extends Controller
                 $weekly_first_aid_id = $weekly_first_aid->id;
                 $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
                 $inspection_details = $this->weekly_first_aid->selectOne($weekly_first_aid_id);
-                $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
+                // $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
 
 
                 Session::flash('success', 'Your data has been created successfully!');
@@ -171,13 +171,12 @@ class WeeklyFirstAidBoxController extends Controller
             } catch (Exception $ex) {
                 report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
+                return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
             }
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
-
         }
     }
 
@@ -233,7 +232,6 @@ class WeeklyFirstAidBoxController extends Controller
                     'document_no' => $document_no,
 
                 );
-
             }
             $property = [
                 'tempDir' => 'public/pdf/temp/',
@@ -416,30 +414,30 @@ class WeeklyFirstAidBoxController extends Controller
             $sheet->getStyle("A{$row}:H{$row}")->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                'alignment' => ['vertical' =>  Alignment::VERTICAL_CENTER, 'horizontal' => Alignment::HORIZONTAL_CENTER],
             ]);
             $row++;
 
             // Signature
             $signatureRow = $row;
-            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+            // $sheet->getRowDimension($signatureRow)->setRowHeight(80);
             $sheet->mergeCells("A{$signatureRow}:H{$signatureRow}");
             $sheet->getStyle("A{$signatureRow}:H{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' =>  Alignment::VERTICAL_CENTER],
             ]);
 
-            if (file_exists($inspection_created_by)) {
-                $drawing = new Drawing();
-                $drawing->setName('Inspection and checked By');
-                $drawing->setPath($inspection_created_by);
-                $drawing->setCoordinates("D{$signatureRow}");
-                $drawing->setOffsetX(50);
-                $drawing->setOffsetY(10);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-            }
+            // if (file_exists($inspection_created_by)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Inspection and checked By');
+            //     $drawing->setPath($inspection_created_by);
+            //     $drawing->setCoordinates("D{$signatureRow}");
+            //     $drawing->setOffsetX(50);
+            //     $drawing->setOffsetY(10);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            // }
 
             $richText = new RichText();
             $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
@@ -496,32 +494,32 @@ class WeeklyFirstAidBoxController extends Controller
                 // Title and Document Info
                 $sheet->mergeCells("A{$headerRowStart}:B" . ($headerRowStart + 2));
                 $sheet->getStyle("A{$headerRowStart}:B" . ($headerRowStart + 2))->applyFromArray([
-                                    'font' => ['bold' => true, 'size' => 14],
-                                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-                                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
 
-                                ]);
+                ]);
 
                 $sheet->mergeCells("C{$headerRowStart}:F" . ($headerRowStart + 2));
                 $sheet->setCellValue("C{$headerRowStart}", "BUYER'S FIRST AID BAG INSPECTION CHECKLIST");
                 $sheet->getStyle("C{$headerRowStart}:F" . ($headerRowStart + 2))->applyFromArray([
-                                    'font' => ['bold' => true, 'size' => 14],
-                                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-                                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN, 'color' => ['argb' => '000000']]],
 
-                                ]);
+                ]);
 
-                                $sheet->setCellValue("G{$headerRowStart}", 'Doc. No.');
-                                $sheet->setCellValue("G" . ($headerRowStart + 1), 'Issue Dt.');
-                                $sheet->setCellValue("G" . ($headerRowStart + 2), 'Rev. & Dt.');
-                                $sheet->setCellValue("H{$headerRowStart}", $document_no->doc_no ?? '');
-                                $sheet->setCellValue("H" . ($headerRowStart + 1), Displaydateformat($document_no->issue_date ?? ''));
-                                $sheet->setCellValue("H" . ($headerRowStart + 2), $document_no->rev_dt ?? '');
+                $sheet->setCellValue("G{$headerRowStart}", 'Doc. No.');
+                $sheet->setCellValue("G" . ($headerRowStart + 1), 'Issue Dt.');
+                $sheet->setCellValue("G" . ($headerRowStart + 2), 'Rev. & Dt.');
+                $sheet->setCellValue("H{$headerRowStart}", $document_no->doc_no ?? '');
+                $sheet->setCellValue("H" . ($headerRowStart + 1), Displaydateformat($document_no->issue_date ?? ''));
+                $sheet->setCellValue("H" . ($headerRowStart + 2), $document_no->rev_dt ?? '');
 
-                                $sheet->getStyle("G{$headerRowStart}:H" . ($headerRowStart + 2))->applyFromArray([
-                                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']]],
-                                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                                ]);
+                $sheet->getStyle("G{$headerRowStart}:H" . ($headerRowStart + 2))->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE, 'color' => ['argb' => '000000']]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
 
 
                 // Details
@@ -553,10 +551,10 @@ class WeeklyFirstAidBoxController extends Controller
                 $sheet->getRowDimension($tableRowStart)->setRowHeight(20);
 
                 $sheet->getStyle("A{$tableRowStart}:H{$tableRowStart}")->applyFromArray([
-                                    'font' => ['bold' => true],
-                                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                                ]);
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
 
                 // Table Data
                 $dataRow = $tableRowStart + 1;
@@ -578,35 +576,37 @@ class WeeklyFirstAidBoxController extends Controller
 
                 // Remark
                 $sheet->mergeCells("A{$dataRow}:H{$dataRow}");
+                $sheet->getRowDimension($dataRow)->setRowHeight(30);
+
                 $sheet->setCellValue("A{$dataRow}", "Remark By:- " . $inspection_detail->remark_by);
                 $sheet->getRowDimension($dataRow)->setRowHeight(20);
                 $sheet->getStyle("A{$dataRow}:H{$dataRow}")->applyFromArray([
-                                    'font' => ['bold' => true],
-                                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
-                                ]);
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER, 'horizontal' => Alignment::HORIZONTAL_CENTER],
+                ]);
                 $dataRow++;
 
                 // Signature Section
                 $signatureRowStart = $dataRow;
-                $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
                 $sheet->mergeCells("A{$signatureRowStart}:H{$signatureRowStart}");
                 $sheet->getStyle("A{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
-                                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-                                ]);
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER, 'horizontal' => Alignment::HORIZONTAL_CENTER],
+                ]);
 
-                if (file_exists($inspection_created_by)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Signature');
-                    $drawing->setPath($inspection_created_by);
-                    $drawing->setCoordinates("D{$signatureRowStart}");
-                    $drawing->setOffsetX(50);
-                    $drawing->setOffsetY(10);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                }
+                // if (file_exists($inspection_created_by)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Signature');
+                //     $drawing->setPath($inspection_created_by);
+                //     $drawing->setCoordinates("D{$signatureRowStart}");
+                //     $drawing->setOffsetX(50);
+                //     $drawing->setOffsetY(10);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                // }
 
                 $richText = new RichText();
                 $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
@@ -629,8 +629,10 @@ class WeeklyFirstAidBoxController extends Controller
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-        } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
+        } catch (\Exception $ex) {
+            report($ex);
+
+            return back()->with('error', $ex->getMessage());
         }
     }
 

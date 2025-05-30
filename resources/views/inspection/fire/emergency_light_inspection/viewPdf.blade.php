@@ -278,7 +278,7 @@
 
             </tr>
         @endforeach
-        @php
+        {{-- @php
             $checked_by = GetSignature($emergency_light->created_by, $emergency_light->id, EMERGENCY_LIGHT_INSPECTION);
             $approved_by = GetSignature($emergency_light->approved_by, $emergency_light->id, EMERGENCY_LIGHT_INSPECTION);
             $verified_by = GetSignature($emergency_light->verified_by, $emergency_light->id, EMERGENCY_LIGHT_INSPECTION);
@@ -311,6 +311,36 @@
                     @if (!empty($emergency_light->approved_by))
                         <img src="{{ admin_url($approved_by) }}" alt=""
                             style="max-height: 60px; display: block; margin: 0 auto 5px;">
+                        <p style="margin: 0;">Approved By:- {{ getUsername($emergency_light->approved_by) }}</p>
+                    @else
+                        <p style="margin: 0;">Approved By:- Not yet approved</p>
+                    @endif
+                </div>
+            </td>
+        </tr> --}}
+
+        <tr>
+            <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                <div class="view_data">
+                    @if (!empty($emergency_light->created_by))
+                        <p style="margin: 0;">Checked By:- {{ getUsername($emergency_light->created_by) }}</p>
+                    @else
+                        <p style="margin: 0;">Checked By:- Not yet checked</p>
+                    @endif
+                </div>
+            </td>
+            <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                <div class="view_data">
+                    @if (!empty($emergency_light->updated_by))
+                        <p style="margin: 0;">Verified By:- {{ getUsername($emergency_light->verified_by) }}</p>
+                    @else
+                        <p style="margin: 0;">Verified By:- Not yet verified</p>
+                    @endif
+                </div>
+            </td>
+            <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                <div class="view_data">
+                    @if (!empty($emergency_light->approved_by))
                         <p style="margin: 0;">Approved By:- {{ getUsername($emergency_light->approved_by) }}</p>
                     @else
                         <p style="margin: 0;">Approved By:- Not yet approved</p>

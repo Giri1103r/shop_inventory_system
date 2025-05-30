@@ -65,6 +65,8 @@ class EquipmentController extends Controller
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
+                    report($ex);
+
                     return response()->json(['status' => 'error', 'msg' => __('Inspection.please_try_after_some_time')], 406);
                 }
             }
@@ -110,6 +112,7 @@ class EquipmentController extends Controller
             }
             return redirect(admin_url('safety/master/equipment/list'));
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('safety/master/equipment/list'));
         }
@@ -310,6 +313,7 @@ class EquipmentController extends Controller
             Session::flash('success', __('Equipment name Uploaded sucessfully'));
             return redirect(admin_url('safety/master/equipment/list'));
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error', __('equipment to be taken upload failed'));
             return redirect(admin_url('safety/master/equipment/list'));
         }

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Gemba Walk Inspection | KARAM</title>
+    <title>Gemba Walk Inspection (Safety Observation) | KARAM</title>
 
     <style>
         .badge {
@@ -153,7 +153,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        Gemba Walk Details
+                        Gemba Walk (Safety Observation)
                     </td>
                 </tr>
             </table>
@@ -168,7 +168,7 @@
 
                 {{-- Title --}}
                 <th colspan="9" style="text-align: center; font-size: 18px;">
-                    <strong>DAILY GEMBA WALK INSPECTION</strong>
+                    <strong>GEMBA WALK INSPECTION (SAFETY OBSERVATION)</strong>
                 </th>
 
                 {{-- Doc Details --}}
@@ -212,14 +212,17 @@
                     <th>Department</th>
                     <th>Exact Location</th>
                     <th>Date of Observation</th>
+                     <th>Observation Time</th>
                     <th>Type (Unsafe Act / Unsafe Condition)</th>
                     <th>Description</th>
+                    <th>{{ __('inspection.risk_category') }}</th>
                     <th>Hazard</th>
                     <th>Image</th>
                     <th>Recommended Corrective & Preventive</th>
                     <th>Status</th>
                     <th>Remark</th>
-                    <th>Observer Person</th>
+                    <th>{{ __('inspection.observer_person') }}</th>
+                    <th>Name of the Observer</th>
                 </tr>
             </thead>
             <tbody>
@@ -231,8 +234,10 @@
                         <td>{{ getDepartment($gembaWalk->department_id ?? 'N/A') }}</td>
                         <td>{{ $gembaWalk->exact_location ?? 'N/A' }}</td>
                         <td>{{ displaydateformat($gembaWalk->date_of_observation ?? 'N/A') }}</td>
+                        <td>{{ ($gembaWalk->time ?? 'N/A') }}</td>
                         <td>{{ getObservationType($gembaWalk->observation_type_id ?? 'N/A') }}</td>
                         <td>{{ $gembaWalk->description ?? 'N/A' }}</td>
+                        <td>{{ getRiskCategory($gembaWalk->risk_category ?? 'N/A') }}</td>
                         <td>{{ getGembaWalkHazardName($gembaWalk->hazard ?? 'N/A') }}</td>
                         <td>
                             @if (!empty($gembaWalk->file_path))
@@ -246,6 +251,7 @@
                         <td>{{ getGembaWalkStatus($gembaWalk->gemba_walk_checklist_status ?? 'N/A') }}</td>
                         <td>{{ $gembaWalk->remark ?? 'N/A' }}</td>
                         <td>{{ getUsername($gembaWalk->responsibility_id ?? 'N/A') }}</td>
+                        <td>{{ getUsername($gembaWalk->created_by ?? 'N/A') }}</td>
                     </tr>
                 @endforeach
             </tbody>
@@ -262,15 +268,14 @@
                     $verifiedSignature = GetSignature($firstItem->verified_by, $firstItem->inspection_id, GEMBA_WALK);
                 @endphp
 
-                <th colspan="7" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                <th colspan="8" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
 
                     <div style="margin-top: 5px;">Prepared By : {{ getUsername($firstItem->created_by) }} </div>
 
                 </th>
-                <th colspan="7" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                <th colspan="9" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
 
                     @if (!empty($firstItem->verified_by))
-
                         <p style="margin: 0;">Verified By:- {{ getUsername($firstItem->verified_by) }}</p>
                     @else
                         <p style="margin: 0;">Verified By:- Not yet Verified</p>

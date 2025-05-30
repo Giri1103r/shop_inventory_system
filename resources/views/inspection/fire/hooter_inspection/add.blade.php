@@ -180,7 +180,7 @@
                                                     <div class="error">{{ $message }}</div>
                                                 @enderror
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -199,7 +199,7 @@
                                             </div>
                                             @error('signature_image')
                                                 <div class="error">{{ $message }}</div>
-                                            @enderror
+                                            @enderror --}}
                                         </div>
                                         <hr>
                                         <div class="form-wrapper">
@@ -408,7 +408,7 @@
                     e.preventDefault();
                     location.reload();
                 });
-               
+
                 var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates) {

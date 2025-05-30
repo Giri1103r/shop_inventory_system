@@ -100,7 +100,7 @@
                                             {{ getUnitname(isset($occupational_health_center->unit) ? $occupational_health_center->unit : '') }}
                                         </div>
                                     </div>
-                                    @php
+                                    {{-- @php
                                         $requestorsignature = GetOHCSignature(
                                             $occupational_health_center->created_by,
                                             $occupational_health_center->id,
@@ -115,7 +115,7 @@
                                             <img src="{{ admin_url($requestorsignature) }}" alt="Signature Upload"
                                                 style="width: 150px; margin-top: -10px;" />
                                         </div>
-                                    </div>
+                                    </div> --}}
 
 
 
@@ -154,14 +154,14 @@
                                 <div class="table-responsive">
                                     <div class="col-md-12">
                                         <table class="table table-bordered">
-                                            <thead class="bg-secondary text-white">
+                                            <thead  class="bg-secondary text-white">
                                                 <tr>
-                                                    <th colspan="3">Check Points</th>
+                                                    <th style="text-align: center;" colspan="2">Check Points</th>
                                                     @foreach ($getoption as $option)
-                                                        <th>{{ $option }}</th>
+                                                        <th style="text-align: center;" >{{ $option }}</th>
                                                     @endforeach
-                                                    <th>Quantity</th>
-                                                    <th colspan="3">Remarks</th>
+                                                    <th style="text-align: center;" >Quantity</th>
+                                                    <th style="text-align: center;" colspan="3">Remarks</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -178,13 +178,13 @@
 
                                                     @foreach ($checkPoints as $index => $checkPoint)
                                                         <tr>
-                                                            @if ($index == 0)
+                                                            {{-- @if ($index == 0)
                                                                 <td rowspan="{{ $rowCount }}">
                                                                     {{ getSubcategoryname($groupId) }}
                                                                 </td>
-                                                            @endif
+                                                            @endif --}}
 
-                                                            <td colspan="2">{{ getSubcategoryDataname($checkPoint) }}
+                                                            <td style="text-align: center;" colspan="2">{{ getSubcategoryDataname($checkPoint) }}
                                                             </td>
 
                                                             @foreach ($getoption as $option)
@@ -217,12 +217,12 @@
                                                                 </td>
                                                             @endforeach
 
-                                                            <td>
+                                                            <td style="text-align: center;">
                                                                 {{ $quantity[$checkPoint] ?? 'No Quantity Available' }}
                                                             </td>
 
 
-                                                            <td colspan="3">
+                                                            <td style="text-align: center;" colspan="3">
                                                                 {{ $remarks[$checkPoint] ?? 'No Remarks' }}
                                                             </td>
                                                         </tr>
@@ -262,7 +262,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -278,7 +278,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
 
                                             <div class="col-md-12 form-input">
                                                 <label class="form-label required">Whether the Inspection has been
@@ -321,13 +321,13 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetOHCSignature(
                                                         $occupational_health_center->verified_by,
                                                         $occupational_health_center->id,
                                                         OHC_TYPE_OCCUPATIONAL_HEALTH_CENTER_INSPECTION_CHECKLIST,
                                                     );
-                                                @endphp
+                                                @endphp --}}
                                             @endif
                                             @if (isset($occupational_health_center->created_at))
                                                 <div class="col-md-4 mb-2">
@@ -339,7 +339,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -348,7 +348,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             @if ($occupational_health_center->approved_by)
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -404,7 +404,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetOHCSignature(
                                                         $occupational_health_center->created_by,
                                                         $occupational_health_center->id,
@@ -420,7 +420,7 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -456,7 +456,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetOHCSignature(
                                                         $occupational_health_center->verified_by,
                                                         $occupational_health_center->id,
@@ -472,7 +472,7 @@
                                                                 style="width: 150px; margin-top: -10px;" />
                                                         </div>
                                                     </div>
-                                                @endif
+                                                @endif --}}
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -511,7 +511,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @php
+                                            {{-- @php
                                                 $signature = GetOHCSignature(
                                                     $occupational_health_center->l1_manager_verified_by,
                                                     $occupational_health_center->id,
@@ -527,7 +527,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -562,7 +562,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @php
+                                            {{-- @php
                                                 $signature = GetOHCSignature(
                                                     $occupational_health_center->l2_manager_verified_by,
                                                     $occupational_health_center->id,
@@ -583,7 +583,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -629,7 +629,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -645,7 +645,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-12 mb-2 form-input" id="capa_remarks">
                                                 <label for="capa_remarks" class="form-label">Remarks</label>
                                                 <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
@@ -685,7 +685,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -701,7 +701,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                                 <label for="remarks" class="form-label">Remarks</label>
                                                 <textarea id="" class="form-control" rows="3" placeholder="Please Provide Remarks" name="remarks"></textarea>
@@ -738,7 +738,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -754,7 +754,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                             <label for="remarks" class="form-label">Remarks</label>
@@ -792,7 +792,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -808,7 +808,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
                                             <label for="remarks" class="form-label">Remarks</label>

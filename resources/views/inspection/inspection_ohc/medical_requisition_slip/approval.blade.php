@@ -89,19 +89,22 @@
                                             {{ getDepartment(isset($medicinerequisition->department) ? $medicinerequisition->department : '') }}
                                         </div>
                                     </div>
-                                    @php
-$signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisition->id,OHC_TYPE_MEDICINE_REQUISTION_FLOOR)
+                                    {{-- @php
+                                        $signature = GetOHCSignature(
+                                            $medicinerequisition->created_by,
+                                            $medicinerequisition->id,
+                                            OHC_TYPE_MEDICINE_REQUISTION_FLOOR,
+                                        );
                                     @endphp
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
                                             <label class="form-label"
                                                 style="display: block;">{{ __('inspection.signature') }}</label>
-                                            <img src="{{ admin_url($signature) }}"
-                                                alt="Approver Signature"
+                                            <img src="{{ admin_url($signature) }}" alt="Approver Signature"
                                                 style="width: 150px; margin-top: -10px;" />
 
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -193,7 +196,7 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
                                                                 id="floor_date" name="floor_date" readonly
                                                                 value="{{ date('d-m-Y H:i:s') }}">
                                                         </div>
-                                                        <div class="col-md-4 form-group form-input mb-2">
+                                                        {{-- <div class="col-md-4 form-group form-input mb-2">
                                                             @if (isset(Auth::user()->signature_upload))
                                                                 <label class="form-label"
                                                                     style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -211,7 +214,7 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
                                                                     <div id="signature_upload" class="text-danger"></div>
                                                                 </div>
                                                             @endif
-                                                        </div>
+                                                        </div> --}}
                                                         <div class="col-md-12 mb-3">
                                                             <div class="mb-1">
                                                                 <label for="remarks"
@@ -269,7 +272,7 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
                                                 </div>
                                             </div>
 
-                                            @if (isset($floormanagersignature))
+                                            {{-- @if (isset($floormanagersignature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -290,7 +293,7 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
 
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="mb-3 col-md-12 form-input">
                                                 <label class="form-label view_label">{{ __('Remarks') }}</label>
                                                 <div class="view_data">
@@ -305,7 +308,9 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
 
                                 @if (
                                     (checkUserRole(ROLE_SAFETY_OFFICER) && $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) ||
-                                        (checkUserRole(ROLE_SUPERADMIN) && $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) ||  (checkUserRole(ROLE_MEDICAL_ASSISTANT) && $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING))
+                                        (checkUserRole(ROLE_SUPERADMIN) && $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) ||
+                                        (checkUserRole(ROLE_MEDICAL_ASSISTANT) &&
+                                            $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING))
                                     <div class="row">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">Safety Officer Approval Pending</h4>
@@ -313,8 +318,8 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
                                     </div>
                                     <div class="row">
                                         <div class="basic-form">
-                                            <form method="POST"
-                                                id="safetyofficerApprovalForm" enctype="multipart/form-data"
+                                            <form method="POST" id="safetyofficerApprovalForm"
+                                                enctype="multipart/form-data"
                                                 action="{{ admin_url('ohc/medical-requisition-slip/safetyofficerapproval/submit') }}">
                                                 @csrf
                                                 <input type="hidden" name="id"
@@ -334,7 +339,7 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
                                                                 id="date" name="date" readonly
                                                                 value="{{ date('d-m-Y H:i:s') }}">
                                                         </div>
-                                                        <div class="col-md-4 form-group form-input mb-2">
+                                                        {{-- <div class="col-md-4 form-group form-input mb-2">
                                                             @if (isset(Auth::user()->signature_upload))
                                                                 <label class="form-label"
                                                                     style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -352,7 +357,7 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
                                                                     <div id="signature_upload" class="text-danger"></div>
                                                                 </div>
                                                             @endif
-                                                        </div>
+                                                        </div> --}}
                                                         <div class="col-md-12 mb-3">
                                                             <div class="mb-1">
                                                                 <label for="remarks"
@@ -371,7 +376,7 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
                                                 <div class="d-flex float-end gap-2 mx-auto">
                                                     <button type="submit" name="action" value="approve"
                                                         class="btn btn-success w-100">Approve</button>
-                                                        <button type="submit" name="action" value="reject"
+                                                    <button type="submit" name="action" value="reject"
                                                         class="btn btn-danger w-100">Reject</button>
 
                                                 </div>
@@ -409,7 +414,7 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
                                                     {{ displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
                                                 </div>
                                             </div>
-                                            @if (isset($safetyofficersignature))
+                                            {{-- @if (isset($safetyofficersignature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -430,7 +435,7 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
 
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="mb-3 col-md-12 form-input">
                                                 <label class="form-label view_label">{{ __('Remarks') }}</label>
                                                 <div class="view_data">
@@ -465,7 +470,7 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
                     },
                     signature_image: {
                         required: true,
-                       filesize: 15728640,
+                        filesize: 15728640,
                     }
                 },
                 messages: {
@@ -523,7 +528,7 @@ $signature = GetOHCSignature($medicinerequisition->created_by , $medicinerequisi
                     },
                     signature_image: {
                         required: true,
-                       filesize: 15728640,
+                        filesize: 15728640,
                     }
                 },
                 messages: {

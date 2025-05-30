@@ -82,13 +82,13 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
-                                            {{ getUsername(isset($msdsDetails->created_by) ? $msdsDetails->created_by : '') }}
+                                            {{ getUsername(isset($msds->created_by) ? $msds->created_by : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_date') }}</label>
                                         <div class="view_data">
-                                            {{ displaydateformat(isset($msdsDetails->created_at) ? $msdsDetails->created_at : '') }}
+                                            {{ displaydateformat(isset($msds->created_at) ? $msds->created_at : '') }}
                                         </div>
                                     </div>
                                 </div>

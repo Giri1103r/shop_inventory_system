@@ -269,7 +269,7 @@
 
 
 
-            <tr>
+            {{-- <tr>
                 @php
                     $createdSignature = GetOHCSignature(
                         $details->created_by,
@@ -295,6 +295,24 @@
                     <div style="margin-top: 5px;">Floor Manager Signature</div>
                 </th>
 
+
+            </tr> --}}
+
+             <tr>
+                <th colspan="9" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                    @if ($details->created_by != null)
+                        <div style="margin-top: 5px;">First Aider Name :-
+                            {{ getUsername($details->created_by) }}</div>
+                    @endif
+                </th>
+                <th colspan="9" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                    @if ($details->verified_by != null)
+                        <div style="margin-top: 5px;">Floor Manager Name :-
+                            {{ getUsername($details->verified_by) }}</div>
+                    @else
+                        <div style="margin-top: 5px;">Has Not Yet Been Verified</div>
+                    @endif
+                </th>
 
             </tr>
 

@@ -107,9 +107,11 @@
         .table_card td {
             text-align: center;
         }
+
         .page-break {
             page-break-before: always;
         }
+
         .table-container {
             padding: 20px;
         }
@@ -166,7 +168,7 @@
                         <span><b>MEDICAL REQUISITION ISSUE SLIP
                             </b></span>
                         <br>
-                      
+
                     </h3>
                 </th>
 
@@ -179,7 +181,8 @@
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Issue Dt.</td>
-                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}</td>
+                                <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}
+                                </td>
                             </tr>
                             <tr>
                                 <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
@@ -220,8 +223,8 @@
             @php
                 $medicineRequisitionDetails = GetOHCMedicineFDO($details->id);
             @endphp
-                @foreach ($medicineRequisitionDetails as $medicineRequisitionDetails)
-            <tr>
+            @foreach ($medicineRequisitionDetails as $medicineRequisitionDetails)
+                <tr>
 
                     <td colspan="2"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
@@ -236,8 +239,7 @@
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ $medicineRequisitionDetails->remarks }}</td>
 
-            </tr>
-
+                </tr>
             @endforeach
 
 
@@ -257,15 +259,25 @@
                 @endphp
 
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">
-                    <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
-                        style="width: 150px; margin-top: -10px;" />
-                    <div style="margin-top: 5px;">Requestor Signature </div>
+                    {{-- <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" /> --}}
+                    <div style="margin-top: 5px;">Requestor Name : {{getUsername($details->created_by)}} </div>
                 </th>
 
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">
-                    <img src="{{ admin_url($approvedSignature) }}" alt="Signature Upload"
+                    {{-- <img src="{{ admin_url($approvedSignature) }}" alt="Signature Upload"
                         style="width: 150px; margin-top: -10px;" />
-                    <div style="margin-top: 5px;">Medical Assitant / Safety Officer  Signature</div>
+                    <div style="margin-top: 5px;">Medical Assitant / Safety Officer  Signature</div> --}}
+                    @if ($details->approved_by)
+                        <div style="margin-top: 5px;">
+                            Medical Assistant / Safety Officer Signature:
+                            {{ getUsername($details->approved_by) }}
+                        </div>
+                    @else
+                        <div style="margin-top: 5px;">
+                            Medical Assistant / Safety Officer Signature: Not Yet Approved
+                        </div>
+                    @endif
                 </th>
 
             </tr>

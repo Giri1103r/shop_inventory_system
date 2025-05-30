@@ -23,13 +23,13 @@
 
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                <b>Gemba Walk  ID</b>
+                                <b>Gemba Walk ID</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{ $details['gemba_walk_auto_id'] }}</td>
                         </tr>
 
-                       {{-- <tr>
+                        {{-- <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Document No</b>
                             </td>
@@ -43,7 +43,20 @@
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{Displaydateformat($details['issue_date']) }}</td>
                         </tr> --}}
-
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Date</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ displaydateformat($details['date']) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Time</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ $details['time'] }}</td>
+                        </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Shift</b>
@@ -51,10 +64,111 @@
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{ getShift($details['shift_id']) }}</td>
                         </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Location</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ getLocationname($gembaWalkChecklist['location_id']) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Unit</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ getUnitname($gembaWalkChecklist['unit_id']) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Department</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ getDepartment($gembaWalkChecklist['department_id']) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Excat Location</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ $gembaWalkChecklist['exact_location'] }}</td>
+                        </tr>
 
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                <b>Created Name</b>
+                                <b>Type of Hazard</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top">
+                                @php
+                                    $hazardIds = explode(',', $gembaWalkChecklist['hazard'] ?? '');
+                                @endphp
+                                @foreach ($hazardIds as $hazardId)
+                                    {{ getGembaWalkHazardName($hazardId) }}@if (!$loop->last)
+                                        ,
+                                    @endif
+                                @endforeach
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Observation Date</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ displaydateformat($gembaWalkChecklist['date_of_observation']) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Risk Category</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ getRiskcategory($gembaWalkChecklist['risk_category']) }}</td>
+                        </tr>
+  <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Observation Type</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ getObservationType($gembaWalkChecklist['observation_type_id']) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Description</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ $gembaWalkChecklist['description'] }}</td>
+                        </tr>
+
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Responsible Person for Recommanded CAPA</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top">
+                                @php
+                                    $responsibilityIds = explode(',', $gembaWalkChecklist['responsibility_id'] ?? '');
+                                @endphp
+                                @foreach ($responsibilityIds as $index => $responsibilityId)
+                                    {{ getUsername($responsibilityId) }}@if (!$loop->last)
+                                        ,
+                                    @endif
+                                @endforeach
+                            </td>
+                        </tr>
+
+                        <tr>
+                            @if (isset($details['data']->verified_by))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Verified By</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top"> {{ getUsername($details['verified_by']->verified_by) }}</td>
+                            @endif
+                        </tr>
+
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Name of  the Observer</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{ getUsername($details['created_by']) }}</td>
@@ -65,10 +179,10 @@
                                 <b>Created Date</b>
                             </td>
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{Displaydateformat($details['created_at']) }}</td>
+                                valign="top"> {{ Displaydateformat($details['created_at']) }}</td>
                         </tr>
-                        
-                        
+
+
                     </tbody>
                 </table>
 

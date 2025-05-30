@@ -304,7 +304,7 @@ class CoTypeFireExtinguisherController extends Controller
             $inspection_file = $this->files->file_upload($inspection_type, $id);
 
             // $checklist_store = $this->checklist_follow->store($inspection_type, $id);
-            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
+            // $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -426,7 +426,7 @@ class CoTypeFireExtinguisherController extends Controller
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->co_type->EHSOfficerUpdate($id);
-            $signature_update = $this->signature->signatureUpload(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
             $inspection_details = $this->co_type->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'CO2 Type Fire Inspeciton Approved Successfully';
@@ -496,7 +496,7 @@ class CoTypeFireExtinguisherController extends Controller
             $id = decryptId($request->id);
             $safety_gallery_inspection = $this->co_type->capaSubmit($id);
             $inspection_details = $this->co_type->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
             $ehsOfficers = $inspection_details->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -557,7 +557,7 @@ class CoTypeFireExtinguisherController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $safety_gallery_inspection = $this->co_type->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
             $inspection_details = $this->co_type->selectOne($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -631,7 +631,7 @@ class CoTypeFireExtinguisherController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_one_manager;
             $safety_gallery_inspection = $this->co_type->levelOneManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
             $inspection_details = $this->co_type->selectOne($id);
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
@@ -705,7 +705,7 @@ class CoTypeFireExtinguisherController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->level_two_manager;
             $safety_gallery_inspection = $this->co_type->levelTwoManagerSubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
+            // $signature_update = $this->signature->signatureUpload(CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
             $inspection_details = $this->co_type->selectOne($id);
             if ($status == 1) {
                 $message = 'CO2 Type Fire Inspeciton Approved Successfully!';
@@ -784,172 +784,172 @@ class CoTypeFireExtinguisherController extends Controller
 
             foreach ($allData as $detail) {
 
-                    $inspection_detail = $detail->first();
-                    $tableStartRow = $row;
-                    $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
+                $inspection_detail = $detail->first();
+                $tableStartRow = $row;
+                $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
 
-                    $prepared_by_signature = GetFireSignature($inspection_detail->checked_by, $inspection_detail->fire_id, CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
+                $prepared_by_signature = GetFireSignature($inspection_detail->checked_by, $inspection_detail->fire_id, CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
 
-                    $verified_by_signature = GetFireSignature($inspection_detail->updated_by, $inspection_detail->fire_id, CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
-                    $approved_by_signature = GetFireSignature($inspection_detail->approved_by, $inspection_detail->fire_id, CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
+                $verified_by_signature = GetFireSignature($inspection_detail->updated_by, $inspection_detail->fire_id, CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
+                $approved_by_signature = GetFireSignature($inspection_detail->approved_by, $inspection_detail->fire_id, CO_TYPE_FIRE_EXTINGUISHER_INSPECTION);
 
-                    foreach (range('A', 'O') as $col) {
-                        $sheet->getColumnDimension($col)->setAutoSize(true);
-                    }
+                foreach (range('A', 'O') as $col) {
+                    $sheet->getColumnDimension($col)->setAutoSize(true);
+                }
 
-                    $logoPath = public_path('assets/images/logo-dark.png');
-                    if (file_exists($logoPath)) {
-                        $drawing = new Drawing();
-                        $drawing->setName('Logo');
-                        $drawing->setDescription('Company Logo');
-                        $drawing->setPath($logoPath);
-                        $drawing->setCoordinates("A$row");
-                        $drawing->setOffsetX(5);
-                        $drawing->setOffsetY(5);
-                        $drawing->setHeight(60);
-                        $drawing->setWorksheet($sheet);
-                    }
+                $logoPath = public_path('assets/images/logo-dark.png');
+                if (file_exists($logoPath)) {
+                    $drawing = new Drawing();
+                    $drawing->setName('Logo');
+                    $drawing->setDescription('Company Logo');
+                    $drawing->setPath($logoPath);
+                    $drawing->setCoordinates("A$row");
+                    $drawing->setOffsetX(5);
+                    $drawing->setOffsetY(5);
+                    $drawing->setHeight(60);
+                    $drawing->setWorksheet($sheet);
+                }
 
-                    $sheet->mergeCells("A{$row}:B" . ($row + 2));
-                    $sheet->mergeCells("C{$row}:M" . ($row + 2));
-                    $sheet->setCellValue("C{$row}", "FIRE EXTINGUISHER INSPECTION CHECKLIST (CO2 TYPE)");
-                    $sheet->getStyle("C{$row}:M" . ($row + 2))->applyFromArray([
-                        'font' => ['bold' => true, 'size' => 14],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    ]);
-                    $sheet->getStyle("A{$row}:B" . ($row + 2))->applyFromArray([
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                        'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
-                    ]);
+                $sheet->mergeCells("A{$row}:B" . ($row + 2));
+                $sheet->mergeCells("C{$row}:M" . ($row + 2));
+                $sheet->setCellValue("C{$row}", "FIRE EXTINGUISHER INSPECTION CHECKLIST (CO2 TYPE)");
+                $sheet->getStyle("C{$row}:M" . ($row + 2))->applyFromArray([
+                    'font' => ['bold' => true, 'size' => 14],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
+                $sheet->getStyle("A{$row}:B" . ($row + 2))->applyFromArray([
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
 
-                    $labelMap = [
-                        "N{$row}" => ['value' => 'Doc. No.', 'valueCell' => "O{$row}", 'data' => $document_no->doc_no],
-                        "N" . ($row + 1) => ['value' => 'Issue Dt.', 'valueCell' => "O" . ($row + 1), 'data' => Displaydateformat($document_no->issue_date)],
-                        "N" . ($row + 2) => ['value' => 'Rev. & Dt.', 'valueCell' => "O" . ($row + 2), 'data' => $document_no->rev_dt],
-                    ];
+                $labelMap = [
+                    "N{$row}" => ['value' => 'Doc. No.', 'valueCell' => "O{$row}", 'data' => $document_no->doc_no],
+                    "N" . ($row + 1) => ['value' => 'Issue Dt.', 'valueCell' => "O" . ($row + 1), 'data' => Displaydateformat($document_no->issue_date)],
+                    "N" . ($row + 2) => ['value' => 'Rev. & Dt.', 'valueCell' => "O" . ($row + 2), 'data' => $document_no->rev_dt],
+                ];
 
-                    foreach ($labelMap as $labelCell => $info) {
-                        $sheet->setCellValue($labelCell, $info['value']);
-                        $sheet->setCellValue($info['valueCell'], $info['data']);
-                        $sheet->getStyle($labelCell)->applyFromArray([
-                            'font' => ['bold' => true],
-                            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
-                        ]);
-                        $sheet->getStyle($info['valueCell'])->applyFromArray([
-                            'font' => ['bold' => true],
-                            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
-                        ]);
-                    }
-
-                    $row += 3;
-
-
-
-                    $sheet->mergeCells("A{$row}:E{$row}")->setCellValue("A{$row}", "Date of Inspection:- " . Displaydateformat($inspection_detail->inspection_date));
-                    $sheet->mergeCells("F{$row}:L{$row}")->setCellValue("F{$row}", "Location :- " . getLocationname($inspection_detail->location));
-                    $sheet->mergeCells("M{$row}:O{$row}")->setCellValue("M{$row}", "Shift:- " . $inspection_detail->shift);
-
-                    $row++;
-                    $sheet->mergeCells("A{$row}:E{$row}")->setCellValue("A{$row}", "Next Due date:- " . Displaydateformat($inspection_detail->next_due));
-                    $sheet->mergeCells("F{$row}:L{$row}")->setCellValue("F{$row}", "Unit:- " . getUnitname($inspection_detail->unit));
-                    $sheet->mergeCells("M{$row}:O{$row}")->setCellValue("M{$row}", "Frequency:- " . getFrequencyname($inspection_detail->frequency));
-
-                    $sheet->getStyle("A" . ($row - 1) . ":O{$row}")->applyFromArray([
+                foreach ($labelMap as $labelCell => $info) {
+                    $sheet->setCellValue($labelCell, $info['value']);
+                    $sheet->setCellValue($info['valueCell'], $info['data']);
+                    $sheet->getStyle($labelCell)->applyFromArray([
                         'font' => ['bold' => true],
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     ]);
-
-                    $row++;
-
-                    $sheet->mergeCells("A{$row}:A" . ($row + 2))->setCellValue("A{$row}", "SR. NO");
-                    $sheet->mergeCells("B{$row}:B" . ($row + 2))->setCellValue("B{$row}", "FIRE POINT NO.");
-                    $sheet->mergeCells("C{$row}:D" . ($row + 2))->setCellValue("C{$row}", "DEPARTMENT");
-                    $sheet->mergeCells("E{$row}:F" . ($row + 2))->setCellValue("E{$row}", "LOCATION");
-                    $sheet->mergeCells("G{$row}:N{$row}")->setCellValue("G{$row}", "CHECK ITEMS");
-                    $sheet->mergeCells("O{$row}:O" . ($row + 2))->setCellValue("O{$row}", "REMARK");
-
-                    $row++;
-
-                    $sheet->mergeCells("G{$row}:I{$row}")->setCellValue("G{$row}", "DESCRIPTION");
-                    $sheet->mergeCells("J{$row}:N{$row}")->setCellValue("J{$row}", "CONDITION");
-
-                    $row++;
-
-                    $sheet->setCellValue("G{$row}", "TYPE");
-                    $sheet->setCellValue("H{$row}", "CAPACITY");
-                    $sheet->setCellValue("I{$row}", "QUANTITY");
-                    $sheet->setCellValue("J{$row}", "DISCHARGE TUBE");
-                    $sheet->setCellValue("K{$row}", "DISCHARGE HORN");
-                    $sheet->setCellValue("L{$row}", "WEIGHT OF CO2 IN FE");
-                    $sheet->setCellValue("M{$row}", "SAFETY PIN");
-                    $sheet->setCellValue("N{$row}", "APPROACH");
-
-                    $sheet->getStyle("A" . ($row - 2) . ":O{$row}")->applyFromArray([
+                    $sheet->getStyle($info['valueCell'])->applyFromArray([
                         'font' => ['bold' => true],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    ]);
+                }
+
+                $row += 3;
+
+
+
+                $sheet->mergeCells("A{$row}:E{$row}")->setCellValue("A{$row}", "Date of Inspection:- " . Displaydateformat($inspection_detail->inspection_date));
+                $sheet->mergeCells("F{$row}:L{$row}")->setCellValue("F{$row}", "Location :- " . getLocationname($inspection_detail->location));
+                $sheet->mergeCells("M{$row}:O{$row}")->setCellValue("M{$row}", "Shift:- " . $inspection_detail->shift);
+
+                $row++;
+                $sheet->mergeCells("A{$row}:E{$row}")->setCellValue("A{$row}", "Next Due date:- " . Displaydateformat($inspection_detail->next_due));
+                $sheet->mergeCells("F{$row}:L{$row}")->setCellValue("F{$row}", "Unit:- " . getUnitname($inspection_detail->unit));
+                $sheet->mergeCells("M{$row}:O{$row}")->setCellValue("M{$row}", "Frequency:- " . getFrequencyname($inspection_detail->frequency));
+
+                $sheet->getStyle("A" . ($row - 1) . ":O{$row}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $row++;
+
+                $sheet->mergeCells("A{$row}:A" . ($row + 2))->setCellValue("A{$row}", "SR. NO");
+                $sheet->mergeCells("B{$row}:B" . ($row + 2))->setCellValue("B{$row}", "FIRE POINT NO.");
+                $sheet->mergeCells("C{$row}:D" . ($row + 2))->setCellValue("C{$row}", "DEPARTMENT");
+                $sheet->mergeCells("E{$row}:F" . ($row + 2))->setCellValue("E{$row}", "LOCATION");
+                $sheet->mergeCells("G{$row}:N{$row}")->setCellValue("G{$row}", "CHECK ITEMS");
+                $sheet->mergeCells("O{$row}:O" . ($row + 2))->setCellValue("O{$row}", "REMARK");
+
+                $row++;
+
+                $sheet->mergeCells("G{$row}:I{$row}")->setCellValue("G{$row}", "DESCRIPTION");
+                $sheet->mergeCells("J{$row}:N{$row}")->setCellValue("J{$row}", "CONDITION");
+
+                $row++;
+
+                $sheet->setCellValue("G{$row}", "TYPE");
+                $sheet->setCellValue("H{$row}", "CAPACITY");
+                $sheet->setCellValue("I{$row}", "QUANTITY");
+                $sheet->setCellValue("J{$row}", "DISCHARGE TUBE");
+                $sheet->setCellValue("K{$row}", "DISCHARGE HORN");
+                $sheet->setCellValue("L{$row}", "WEIGHT OF CO2 IN FE");
+                $sheet->setCellValue("M{$row}", "SAFETY PIN");
+                $sheet->setCellValue("N{$row}", "APPROACH");
+
+                $sheet->getStyle("A" . ($row - 2) . ":O{$row}")->applyFromArray([
+                    'font' => ['bold' => true],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+
+                $row++;
+
+                $sr = 1;
+                foreach ($detail as $detail) {
+
+                    $sheet->setCellValue("A{$row}", $sr++);
+                    $sheet->setCellValue("B{$row}", $detail['fire_point_no']);
+                    $sheet->mergeCells("C{$row}:D{$row}")->setCellValue("C{$row}", getDepartment($detail['department']));
+                    $sheet->mergeCells("E{$row}:F{$row}")->setCellValue("E{$row}", getLocationname($detail['location']));
+                    $sheet->setCellValue("G{$row}", getExtinguisherTypeName($detail['extinguisher_type']));
+                    $sheet->setCellValue("H{$row}", $detail['capacity']);
+                    $sheet->setCellValue("I{$row}", $detail['quantity']);
+
+                    $dischargeTubeStatus = $detail['discharge_tube'] ?? '';
+                    if ($dischargeTubeStatus == FUNCTIONAL) {
+                        $sheet->setCellValue("J{$row}", __('inspection.functional'));
+                    } elseif ($dischargeTubeStatus == NON_FUNCTIONAL) {
+                        $sheet->setCellValue("J{$row}", __('inspection.non_functional'));
+                    } else {
+                        $sheet->setCellValue("J{$row}", '');
+                    }
+
+                    $dischargeHornStatus = $detail['discharge_horn'] ?? '';
+                    if ($dischargeHornStatus == FUNCTIONAL) {
+                        $sheet->setCellValue("K{$row}", __('inspection.functional'));
+                    } elseif ($dischargeHornStatus == NON_FUNCTIONAL) {
+                        $sheet->setCellValue("K{$row}", __('inspection.non_functional'));
+                    } else {
+                        $sheet->setCellValue("K{$row}", '');
+                    }
+
+                    $sheet->setCellValue("L{$row}", $detail['weight_of_co2_in_fe'] ?? '');
+
+                    $safetyPinStatus = $detail['safety_pin'] ?? '';
+                    if ($safetyPinStatus == PRESENT) {
+                        $sheet->setCellValue("M{$row}", __('inspection.present'));
+                    } elseif ($safetyPinStatus == MISSING) {
+                        $sheet->setCellValue("M{$row}", __('inspection.missing'));
+                    } else {
+                        $sheet->setCellValue("M{$row}", '');
+                    }
+
+                    $sheet->setCellValue("N{$row}", $detail['approach'] ?? '');
+                    $sheet->setCellValue("O{$row}", $detail['remarks'] ?? '');
+
+                    $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
 
                     $row++;
-
-                    $sr = 1;
-                    foreach ($detail as $detail) {
-
-                        $sheet->setCellValue("A{$row}", $sr++);
-                        $sheet->setCellValue("B{$row}", $detail['fire_point_no']);
-                        $sheet->mergeCells("C{$row}:D{$row}")->setCellValue("C{$row}", getDepartment($detail['department']));
-                        $sheet->mergeCells("E{$row}:F{$row}")->setCellValue("E{$row}", getLocationname($detail['location']));
-                        $sheet->setCellValue("G{$row}", getExtinguisherTypeName($detail['extinguisher_type']));
-                        $sheet->setCellValue("H{$row}", $detail['capacity']);
-                        $sheet->setCellValue("I{$row}", $detail['quantity']);
-
-                        $dischargeTubeStatus = $detail['discharge_tube'] ?? '';
-                        if ($dischargeTubeStatus == FUNCTIONAL) {
-                            $sheet->setCellValue("J{$row}", __('inspection.functional'));
-                        } elseif ($dischargeTubeStatus == NON_FUNCTIONAL) {
-                            $sheet->setCellValue("J{$row}", __('inspection.non_functional'));
-                        } else {
-                            $sheet->setCellValue("J{$row}", '');
-                        }
-
-                        $dischargeHornStatus = $detail['discharge_horn'] ?? '';
-                        if ($dischargeHornStatus == FUNCTIONAL) {
-                            $sheet->setCellValue("K{$row}", __('inspection.functional'));
-                        } elseif ($dischargeHornStatus == NON_FUNCTIONAL) {
-                            $sheet->setCellValue("K{$row}", __('inspection.non_functional'));
-                        } else {
-                            $sheet->setCellValue("K{$row}", '');
-                        }
-
-                        $sheet->setCellValue("L{$row}", $detail['weight_of_co2_in_fe'] ?? '');
-
-                        $safetyPinStatus = $detail['safety_pin'] ?? '';
-                        if ($safetyPinStatus == PRESENT) {
-                            $sheet->setCellValue("M{$row}", __('inspection.present'));
-                        } elseif ($safetyPinStatus == MISSING) {
-                            $sheet->setCellValue("M{$row}", __('inspection.missing'));
-                        } else {
-                            $sheet->setCellValue("M{$row}", '');
-                        }
-
-                        $sheet->setCellValue("N{$row}", $detail['approach'] ?? '');
-                        $sheet->setCellValue("O{$row}", $detail['remarks'] ?? '');
-
-                        $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
-                            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                        ]);
-
-                        $row++;
-                    }
+                }
 
 
                 $signatureRow = $row;
-                $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+                $sheet->getRowDimension($signatureRow)->setRowHeight(30);
 
                 $sheet->mergeCells("A{$signatureRow}:E{$signatureRow}");
                 $sheet->mergeCells("F{$signatureRow}:K{$signatureRow}");
@@ -959,45 +959,80 @@ class CoTypeFireExtinguisherController extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                 ]);
+                // Prepared
+                $richText = new RichText();
+                $name = getUsername($detail->created_by);
 
-                if (file_exists($prepared_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Prepared Signature');
-                    $drawing->setPath($prepared_by_signature);
-                    $drawing->setCoordinates("C{$signatureRow}");
-                    $drawing->setHeight(40);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("A{$signatureRow}", "\n\n\nPrepared By:\n" . getUsername($detail->checked_by));
+                if (!empty($name)) {
+                    $richText->createTextRun("Prepared By :" . $name)->getFont()->setBold(true);
                 } else {
-                    $sheet->setCellValue("A{$signatureRow}", "Prepared By:\nInspection not yet started");
+                    $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
                 }
 
-                if (file_exists($verified_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Verified Signature');
-                    $drawing->setPath($verified_by_signature);
-                    $drawing->setCoordinates("I{$signatureRow}");
-                    $drawing->setHeight(40);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("F{$signatureRow}", "\n\n\nVerified By:\n" . getUsername($detail->updated_by));
+                $sheet->getCell("A{$signatureRow}")->setValue($richText);
+
+                // Verified
+                $richText = new RichText();
+                $name = getUsername($detail->verified_by);
+
+                if (!empty($name)) {
+                    $richText->createTextRun("Verified By :" . $name)->getFont()->setBold(true);
                 } else {
-                    $sheet->setCellValue("F{$signatureRow}", "Verified By:\nInspection not yet completed");
+                    $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
                 }
 
-                if (file_exists($approved_by_signature)) {
-                    $drawing = new Drawing();
-                    $drawing->setName('Approved Signature');
-                    $drawing->setPath($approved_by_signature);
-                    $drawing->setCoordinates("M{$signatureRow}");
-                    $drawing->setHeight(40);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->setCellValue("L{$signatureRow}", "\n\n\nApproved By:\n" . getUsername($detail->approved_by));
+                $sheet->getCell("F{$signatureRow}")->setValue($richText);
+
+                // approved
+                $richText = new RichText();
+                $name = getUsername($detail->approved_by);
+
+                if (!empty($name)) {
+                    $richText->createTextRun("Approved By :" . $name)->getFont()->setBold(true);
                 } else {
-                    $sheet->setCellValue("L{$signatureRow}", "Approved By:\nApproval pending");
+                    $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
                 }
+
+                $sheet->getCell("L{$signatureRow}")->setValue($richText);
+
+                // if (file_exists($prepared_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Prepared Signature');
+                //     $drawing->setPath($prepared_by_signature);
+                //     $drawing->setCoordinates("C{$signatureRow}");
+                //     $drawing->setHeight(40);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->setCellValue("A{$signatureRow}", "\n\n\nPrepared By:\n" . getUsername($detail->checked_by));
+                // } else {
+                //     $sheet->setCellValue("A{$signatureRow}", "Prepared By:\nInspection not yet started");
+                // }
+
+                // if (file_exists($verified_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Verified Signature');
+                //     $drawing->setPath($verified_by_signature);
+                //     $drawing->setCoordinates("I{$signatureRow}");
+                //     $drawing->setHeight(40);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->setCellValue("F{$signatureRow}", "\n\n\nVerified By:\n" . getUsername($detail->updated_by));
+                // } else {
+                //     $sheet->setCellValue("F{$signatureRow}", "Verified By:\nInspection not yet completed");
+                // }
+
+                // if (file_exists($approved_by_signature)) {
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Approved Signature');
+                //     $drawing->setPath($approved_by_signature);
+                //     $drawing->setCoordinates("M{$signatureRow}");
+                //     $drawing->setHeight(40);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->setCellValue("L{$signatureRow}", "\n\n\nApproved By:\n" . getUsername($detail->approved_by));
+                // } else {
+                //     $sheet->setCellValue("L{$signatureRow}", "Approved By:\nApproval pending");
+                // }
 
                 $row += 5;
 
@@ -1009,7 +1044,6 @@ class CoTypeFireExtinguisherController extends Controller
                         ],
                     ],
                 ]);
-
             }
 
             $writer = new Xlsx($spreadsheet);
@@ -1294,67 +1328,99 @@ class CoTypeFireExtinguisherController extends Controller
             }
 
             $signatureRow = $row;
-            $sheet->getRowDimension($signatureRow)->setRowHeight(80);
+            $sheet->getRowDimension($signatureRow)->setRowHeight(30);
 
             $sheet->mergeCells("A{$signatureRow}:E{$signatureRow}");
             $sheet->getStyle("A{$signatureRow}:E{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
-            if (file_exists($prepared_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Prepared Signature');
-                $drawing->setDescription('Prepared By');
-                $drawing->setPath($prepared_by_signature);
-                $drawing->setCoordinates("C{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("A{$signatureRow}", "\n\n\nPrepared By:\n" . getUsername($co_type->created_by));
+
+            $richText = new RichText();
+            $name = getUsername($co_type->created_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Prepared By :" . $name)->getFont()->setBold(true);
             } else {
-                $sheet->setCellValue("A{$signatureRow}", "Prepared By:\nInspection not yet started");
+                $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
             }
+
+            $sheet->getCell("A{$signatureRow}")->setValue($richText);
+            // if (file_exists($prepared_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Prepared Signature');
+            //     $drawing->setDescription('Prepared By');
+            //     $drawing->setPath($prepared_by_signature);
+            //     $drawing->setCoordinates("C{$signatureRow}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->setCellValue("A{$signatureRow}", "\n\n\nPrepared By:\n" . getUsername($co_type->created_by));
+            // } else {
+            //     $sheet->setCellValue("A{$signatureRow}", "Prepared By:\nInspection not yet started");
+            // }
 
             $sheet->mergeCells("F{$signatureRow}:K{$signatureRow}");
             $sheet->getStyle("F{$signatureRow}:K{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
-            if (file_exists($verified_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Verified Signature');
-                $drawing->setDescription('Verified By');
-                $drawing->setPath($verified_by_signature);
-                $drawing->setCoordinates("I{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("F{$signatureRow}", "\n\n\nVerified By:\n" . getUsername($co_type->updated_by));
+
+            $richText = new RichText();
+            $name = getUsername($co_type->verified_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Verified By :" . $name)->getFont()->setBold(true);
             } else {
-                $sheet->setCellValue("F{$signatureRow}", "Verified By:\nInspection not yet completed");
+                $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
             }
+
+            $sheet->getCell("F{$signatureRow}")->setValue($richText);
+            // if (file_exists($verified_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Verified Signature');
+            //     $drawing->setDescription('Verified By');
+            //     $drawing->setPath($verified_by_signature);
+            //     $drawing->setCoordinates("I{$signatureRow}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->setCellValue("F{$signatureRow}", "\n\n\nVerified By:\n" . getUsername($co_type->updated_by));
+            // } else {
+            //     $sheet->setCellValue("F{$signatureRow}", "Verified By:\nInspection not yet completed");
+            // }
 
             $sheet->mergeCells("L{$signatureRow}:O{$signatureRow}");
             $sheet->getStyle("L{$signatureRow}:O{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
-            if (file_exists($approved_by_signature)) {
-                $drawing = new Drawing();
-                $drawing->setName('Approved Signature');
-                $drawing->setDescription('Approved By');
-                $drawing->setPath($approved_by_signature);
-                $drawing->setCoordinates("M{$signatureRow}");
-                $drawing->setOffsetX(5);
-                $drawing->setOffsetY(5);
-                $drawing->setHeight(40);
-                $drawing->setWorksheet($sheet);
-                $sheet->setCellValue("L{$signatureRow}", "\n\n\nApproved By:\n" . getUsername($co_type->approved_by));
+            $richText = new RichText();
+            $name = getUsername($co_type->approved_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Approved By :" . $name)->getFont()->setBold(true);
             } else {
-                $sheet->setCellValue("L{$signatureRow}", "Approved By:\nApproval pending");
+                $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
             }
+
+            $sheet->getCell("L{$signatureRow}")->setValue($richText);
+            // if (file_exists($approved_by_signature)) {
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Approved Signature');
+            //     $drawing->setDescription('Approved By');
+            //     $drawing->setPath($approved_by_signature);
+            //     $drawing->setCoordinates("M{$signatureRow}");
+            //     $drawing->setOffsetX(5);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setHeight(40);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->setCellValue("L{$signatureRow}", "\n\n\nApproved By:\n" . getUsername($co_type->approved_by));
+            // } else {
+            //     $sheet->setCellValue("L{$signatureRow}", "Approved By:\nApproval pending");
+            // }
 
             $writer = new Xlsx($spreadsheet);
             $fileName = 'CO2 Type Fire Extinguisher Inspection.xlsx';

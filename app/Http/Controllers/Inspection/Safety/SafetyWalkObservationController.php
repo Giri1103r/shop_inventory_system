@@ -249,6 +249,7 @@ class SafetyWalkObservationController extends Controller
             Session::flash('success', 'Safety Walk Observation added successfully!');
             return redirect(admin_url('safety/safety-walk-observation/list'));
         } catch (Exception $ex) {
+            report($ex)
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/safety-walk-observation/list'));
         }

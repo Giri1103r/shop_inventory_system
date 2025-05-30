@@ -124,6 +124,7 @@
                                         <th>Batch Number</th>
                                         <th>Rate</th>
                                         <th>Expire Date</th>
+                                        <th>Stock Entry Date</th>
                                         <th>Approve Status</th>
                                         <th data-priority="1">Action</th>
                                     </tr>
@@ -160,7 +161,7 @@
 
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
-               
+
             });
             $('#expire_date').flatpickr({
                 dateFormat: "d-m-Y",
@@ -271,6 +272,10 @@
                 {
                     data: 'expire_date',
                     name: 'expire_date'
+                },
+                 {
+                    data: 'created_date',
+                    name: 'created_date'
                 },
                 {
                     data: 'approvedStatus',

@@ -501,7 +501,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                     'approved_by' => Auth::id(),
                 ];
 
-                $signature_update = $this->signature->signatureUpload(OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX);
+                // $signature_update = $this->signature->signatureUpload(OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX);
                 $this->inspection_ohc_status_log->store($data);
 
                 $this->daily_department_first_aid_box_details->floormanagerapprovalupdate($id, $nextStatus);
@@ -646,7 +646,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 // Title Section
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", "OCCUPATIONAL HEALTH CENTER");
-                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                $sheet->getStyle("G{$currentRow}:M{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -745,65 +745,100 @@ class DailyDepartmentFirstAidBoxController extends Controller
 
                     $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
 
                     $inspectionRow++;
                 }
 
                 $signatureStartRow = $inspectionRow;
-                $signatureEndRow = $signatureStartRow + 3;
+                $signatureRow = $signatureStartRow;
 
-                if (file_exists($CreatorSignature)) {
-                    $sheet->mergeCells("A$signatureStartRow:I" . ($signatureStartRow + 2));
+                $sheet->getRowDimension($signatureRow)->setRowHeight(30);
 
-                    $drawing = new Drawing();
-                    $drawing->setName('Creator Signature');
-                    $drawing->setPath($CreatorSignature);
-                    $drawing->setCoordinates("A$signatureStartRow");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+                $sheet->mergeCells("A{$signatureRow}:I{$signatureRow}");
+                $sheet->mergeCells("J{$signatureRow}:S{$signatureRow}");
 
-                    // Label + Name
-                    $sheet->setCellValue("A" . ($signatureStartRow + 3), "First Aider Signature: " . getUserName($medicinerequisition->created_by));
-                    $sheet->mergeCells("A" . ($signatureStartRow + 3) . ":I" . ($signatureStartRow + 3));
+                $sheet->getStyle("A{$signatureRow}:S{$signatureRow}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                ]);
+                // Prepared
+                $richText = new RichText();
+                $name = getUsername($details->created_by);
 
-                    $sheet->getStyle("A$signatureStartRow:I" . ($signatureStartRow + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
+                if (!empty($name)) {
+                    $richText->createTextRun("FIRST AIDER NAME: " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
                 }
 
-                if (file_exists($floorManagerSignature)) {
-                    $sheet->mergeCells("J$signatureStartRow:S" . ($signatureStartRow + 2));
+                $sheet->getCell("A{$signatureRow}")->setValue($richText);
 
-                    $drawing = new Drawing();
-                    $drawing->setName('Floor Manager Signature');
-                    $drawing->setPath($floorManagerSignature);
-                    $drawing->setCoordinates("J$signatureStartRow");
-                    $drawing->setOffsetX(100);
-                    $drawing->setOffsetY(5);
-                    $drawing->setWidth(70);
-                    $drawing->setHeight(70);
-                    $drawing->setWorksheet($sheet);
-                    $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+                // Verified
+                $richText = new RichText();
+                $name = getUsername($details->verified_by);
 
-                    // Label + Name
-                    $sheet->setCellValue("J" . ($signatureStartRow + 3), "Floor Manager/Medical Assistant Signature: " . getUserName($medicinerequisition->created_by));
-                    $sheet->mergeCells("J" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
-
-                    $sheet->getStyle("J$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([
-                        'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    ]);
+                if (!empty($name)) {
+                    $richText->createTextRun("FLOOR MANAGER NAME : " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
                 }
 
+                $sheet->getCell("J{$signatureRow}")->setValue($richText);
 
-                $row =   $signatureStartRow + 8;
+
+
+                // if (file_exists($CreatorSignature)) {
+                //     $sheet->mergeCells("A$signatureStartRow:I" . ($signatureStartRow + 2));
+
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Creator Signature');
+                //     $drawing->setPath($CreatorSignature);
+                //     $drawing->setCoordinates("A$signatureStartRow");
+                //     $drawing->setOffsetX(100);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+
+                //     // Label + Name
+                //     $sheet->setCellValue("A" . ($signatureStartRow + 3), "First Aider Signature: " . getUserName($medicinerequisition->created_by));
+                //     $sheet->mergeCells("A" . ($signatureStartRow + 3) . ":I" . ($signatureStartRow + 3));
+
+                //     $sheet->getStyle("A$signatureStartRow:I" . ($signatureStartRow + 3))->applyFromArray([
+                //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                //     ]);
+                // }
+
+                // if (file_exists($floorManagerSignature)) {
+                //     $sheet->mergeCells("J$signatureStartRow:S" . ($signatureStartRow + 2));
+
+                //     $drawing = new Drawing();
+                //     $drawing->setName('Floor Manager Signature');
+                //     $drawing->setPath($floorManagerSignature);
+                //     $drawing->setCoordinates("J$signatureStartRow");
+                //     $drawing->setOffsetX(100);
+                //     $drawing->setOffsetY(5);
+                //     $drawing->setWidth(70);
+                //     $drawing->setHeight(70);
+                //     $drawing->setWorksheet($sheet);
+                //     $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+
+                //     // Label + Name
+                //     $sheet->setCellValue("J" . ($signatureStartRow + 3), "Floor Manager/Medical Assistant Signature: " . getUserName($medicinerequisition->created_by));
+                //     $sheet->mergeCells("J" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
+
+                //     $sheet->getStyle("J$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([
+                //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                //     ]);
+                // }
+
+
+                $row =   $signatureRow + 4;
             }
 
 
@@ -1028,62 +1063,98 @@ class DailyDepartmentFirstAidBoxController extends Controller
 
                 $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
                 $inspectionRow++;
             }
 
             $signatureStartRow = $inspectionRow;
-            $signatureEndRow = $signatureStartRow + 3;
+            $signatureRow = $signatureStartRow;
 
-            if (file_exists($CreatorSignature)) {
-                $sheet->mergeCells("A$signatureStartRow:I" . ($signatureStartRow + 2));
 
-                $drawing = new Drawing();
-                $drawing->setName('Creator Signature');
-                $drawing->setPath($CreatorSignature);
-                $drawing->setCoordinates("A$signatureStartRow");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+                $sheet->getRowDimension($signatureRow)->setRowHeight(30);
 
-                // Label + Name
-                $sheet->setCellValue("A" . ($signatureStartRow + 3), "First Aider Signature: " . getUserName($medicinerequisition->created_by));
-                $sheet->mergeCells("A" . ($signatureStartRow + 3) . ":I" . ($signatureStartRow + 3));
+                $sheet->mergeCells("A{$signatureRow}:I{$signatureRow}");
+                $sheet->mergeCells("J{$signatureRow}:S{$signatureRow}");
 
-                $sheet->getStyle("A$signatureStartRow:I" . ($signatureStartRow + 3))->applyFromArray([
+                $sheet->getStyle("A{$signatureRow}:S{$signatureRow}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                 ]);
-            }
+                // Prepared
+                $richText = new RichText();
+                $name = getUsername($medicinerequisition->created_by);
 
-            if (file_exists($floorManagerSignature)) {
-                $sheet->mergeCells("J$signatureStartRow:S" . ($signatureStartRow + 2));
+                if (!empty($name)) {
+                    $richText->createTextRun("FIRST AIDER NAME: " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
+                }
 
-                $drawing = new Drawing();
-                $drawing->setName('Floor Manager Signature');
-                $drawing->setPath($floorManagerSignature);
-                $drawing->setCoordinates("J$signatureStartRow");
-                $drawing->setOffsetX(100);
-                $drawing->setOffsetY(5);
-                $drawing->setWidth(70);
-                $drawing->setHeight(70);
-                $drawing->setWorksheet($sheet);
-                $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+                $sheet->getCell("A{$signatureRow}")->setValue($richText);
 
-                // Label + Name
-                $sheet->setCellValue("J" . ($signatureStartRow + 3), "Floor Manager/Medical Assistant Signature: " . getUserName($medicinerequisition->created_by));
-                $sheet->mergeCells("J" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
+                // Verified
+                $richText = new RichText();
+                $name = getUsername($medicinerequisition->verified_by);
 
-                $sheet->getStyle("J$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                ]);
-            }
+                if (!empty($name)) {
+                    $richText->createTextRun("FLOOR MANAGER NAME : " . $name)->getFont()->setBold(true);
+                } else {
+                    $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
+                }
+
+                $sheet->getCell("J{$signatureRow}")->setValue($richText);
+
+
+
+            // if (file_exists($CreatorSignature)) {
+            //     $sheet->mergeCells("A$signatureStartRow:I" . ($signatureStartRow + 2));
+
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Creator Signature');
+            //     $drawing->setPath($CreatorSignature);
+            //     $drawing->setCoordinates("A$signatureStartRow");
+            //     $drawing->setOffsetX(100);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+
+            //     // Label + Name
+            //     $sheet->setCellValue("A" . ($signatureStartRow + 3), "First Aider Signature: " . getUserName($medicinerequisition->created_by));
+            //     $sheet->mergeCells("A" . ($signatureStartRow + 3) . ":I" . ($signatureStartRow + 3));
+
+            //     $sheet->getStyle("A$signatureStartRow:I" . ($signatureStartRow + 3))->applyFromArray([
+            //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            //     ]);
+            // }
+
+            // if (file_exists($floorManagerSignature)) {
+            //     $sheet->mergeCells("J$signatureStartRow:S" . ($signatureStartRow + 2));
+
+            //     $drawing = new Drawing();
+            //     $drawing->setName('Floor Manager Signature');
+            //     $drawing->setPath($floorManagerSignature);
+            //     $drawing->setCoordinates("J$signatureStartRow");
+            //     $drawing->setOffsetX(100);
+            //     $drawing->setOffsetY(5);
+            //     $drawing->setWidth(70);
+            //     $drawing->setHeight(70);
+            //     $drawing->setWorksheet($sheet);
+            //     $sheet->getRowDimension($signatureStartRow + 2)->setRowHeight(40);
+
+            //     // Label + Name
+            //     $sheet->setCellValue("J" . ($signatureStartRow + 3), "Floor Manager/Medical Assistant Signature: " . getUserName($medicinerequisition->created_by));
+            //     $sheet->mergeCells("J" . ($signatureStartRow + 3) . ":S" . ($signatureStartRow + 3));
+
+            //     $sheet->getStyle("J$signatureStartRow:S" . ($signatureStartRow + 3))->applyFromArray([
+            //         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            //         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+            //     ]);
+            // }
 
 
 

@@ -89,7 +89,7 @@
                                             {{ getDepartment(isset($medicinerequisition->department) ? $medicinerequisition->department : '') }}
                                         </div>
                                     </div>
-                                    @php
+                                    {{-- @php
                                         $signature = GetOHCSignature(
                                             $medicinerequisition->created_by,
                                             $medicinerequisition->id,
@@ -104,7 +104,7 @@
                                                 style="width: 150px; margin-top: -10px;" />
 
                                         </div>
-                                    </div>
+                                    </div> --}}
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
@@ -198,7 +198,7 @@
                                                 </div>
                                             </div>
 
-                                            @if (isset($floormanagersignature))
+                                            {{-- @if (isset($floormanagersignature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -219,7 +219,7 @@
 
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="mb-3 col-md-12 form-input">
                                                 <label class="form-label view_label">{{ __('Remarks') }}</label>
                                                 <div class="view_data">
@@ -260,7 +260,7 @@
                                                     {{ displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
                                                 </div>
                                             </div>
-                                            @if (isset($safetyofficersignature))
+                                            {{-- @if (isset($safetyofficersignature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -281,7 +281,7 @@
 
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="mb-3 col-md-12 form-input">
                                                 <label class="form-label view_label">{{ __('Remarks') }}</label>
                                                 <div class="view_data">
