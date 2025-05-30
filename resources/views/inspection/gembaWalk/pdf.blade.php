@@ -153,7 +153,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        Gemba Walk Details
+                        Gemba Walk (Safety Observation)
                     </td>
                 </tr>
             </table>
@@ -168,7 +168,7 @@
 
                 {{-- Title --}}
                 <th colspan="9" style="text-align: center; font-size: 18px;">
-                    <strong>DAILY GEMBA WALK INSPECTION</strong>
+                    <strong>GEMBA WALK INSPECTION (SAFETY OBSERVATION)</strong>
                 </th>
 
                 {{-- Doc Details --}}

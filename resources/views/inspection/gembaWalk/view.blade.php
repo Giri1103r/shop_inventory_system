@@ -28,7 +28,7 @@
                                 @if ($gembaWalk)
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">Gemba Walk Inspection (Safety Walk Observation)</h4>
+                                            <h4 class="text-white">Gemba Walk Inspection (Safety Observation)</h4>
                                         </div>
                                     </div>
 
