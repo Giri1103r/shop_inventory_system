@@ -52,12 +52,12 @@ class LoginController extends Controller
         $rules = [
             'email' => 'required',
             'password' => 'required',
-            'g-recaptcha-response' => 'required',
+            // 'g-recaptcha-response' => 'required',
         ];
         $messages = [
             'email.required' => 'Please enter your email address!',
             'password.required' => 'Please enter your password',
-            'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification',
+            // 'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
@@ -98,7 +98,7 @@ class LoginController extends Controller
             Session::flash('success', 'Login successful');
             return redirect()->intended(admin_url('dashboard'));
         }
-        RateLimiter::hit($throttleKey, 1800);
+        RateLimiter::hit($throttleKey, 18000);
 
         Session::flash('error', 'Invalid Email or Password');
         return back()->withErrors(['email' => 'Email or Password is incorrect']);

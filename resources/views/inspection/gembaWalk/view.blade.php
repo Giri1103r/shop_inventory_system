@@ -77,14 +77,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label">Time</label>
-                                                <div class="view_data">
-                                                    {{ isset($gembaWalk->time) ? $gembaWalk->time : '' }}
-                                                </div>
-                                            </div>
-                                        </div>
+
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">Shift</label>
@@ -183,7 +176,14 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Observation Time</label>
+                                                <div class="view_data">
+                                                    {{ isset($gembaWalk->time) ? $gembaWalk->time : '' }}
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">{{ __('inspection.risk_category') }}</label>
@@ -281,7 +281,7 @@
 
                                                 <div class="view_data">
                                                     @foreach ($responsibility_id as $responsibilityId)
-                                                        {{ getUsername($responsibilityId) }}@if (!$loop->last)
+                                                        {{ getUsername($responsibilityId) ?: '-'  }}@if (!$loop->last)
                                                             ,
                                                         @endif
                                                     @endforeach

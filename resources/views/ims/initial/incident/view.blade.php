@@ -863,6 +863,17 @@
                                                                 class="fas fa-check text-success"></i></span><br>
                                                     @endif
 
+                                                    <span>Unsafe Act: {!! in_array('1', $ua_uc_values)
+                                                        ? '<i class="fas fa-check text-success"></i>'
+                                                        : '<i class="fas fa-times text-danger"></i>' !!}</span>
+                                                    <br>
+                                                    <span>Unsafe Condition: {!! in_array('2', $ua_uc_values)
+                                                        ? '<i class="fas fa-check text-success"></i>'
+                                                        : '<i class="fas fa-times text-danger"></i>' !!}</span>
+                                                    <br>
+                                                    <span>Natural Causes: {!! in_array('3', $ua_uc_values)
+                                                        ? '<i class="fas fa-check text-success"></i>'
+                                                        : '<i class="fas fa-times text-danger"></i>' !!}</span>
                                                 </div>
 
 

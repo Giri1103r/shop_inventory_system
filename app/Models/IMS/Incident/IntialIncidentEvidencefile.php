@@ -2,6 +2,8 @@
 
 namespace App\Models\IMS\Incident;
 
+use Illuminate\Http\Request;
+
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -93,6 +95,89 @@ class IntialIncidentEvidencefile extends Model
             }
         }
     }
+    public function evidenceStore_api($incidentId)
+    {
+        $request = request();
+        $evidencefiles = $request->evidence;
+
+        if ($evidencefiles != null) {
+            foreach ($evidencefiles as $evidencefile) {
+                $base64File = $evidencefile;
+
+                // Clean the base64 string
+                $data = preg_replace('#^data:.*?;base64,#i', '', $base64File);
+                $decodedFile = base64_decode($data);
+
+                // Detect MIME type
+                $finfo = finfo_open();
+                $mimeType = finfo_buffer($finfo, $decodedFile, FILEINFO_MIME_TYPE);
+                finfo_close($finfo);
+
+                // Allowed MIME types
+                $validFormats = [
+                    'image/jpeg',
+                    'image/jpg',
+                    'image/png',
+                    'application/pdf',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'video/mp4'
+                ];
+
+                if (!in_array($mimeType, $validFormats)) {
+                    // Skip invalid formats
+                    continue;
+                }
+
+                // Map MIME type to file extension
+                $mimetypes = [
+                    'image/jpeg' => 'jpeg',
+                    'image/jpg' => 'jpg',
+                    'image/png' => 'png',
+                    'application/pdf' => 'pdf',
+                    'application/msword' => 'doc',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'docx',
+                    'video/mp4' => 'mp4'
+                ];
+
+                $extension = $mimetypes[$mimeType] ?? 'file';
+
+                // Set folder and file path
+                $folderPath = public_path('uploads/initial/incident/' . $incidentId);
+                $relativePath = 'uploads/initial/incident/' . $incidentId;
+
+                if (!File::exists($folderPath)) {
+                    File::makeDirectory($folderPath, 0755, true);
+                }
+
+                // Generate file name
+                $filenewname = time() . Str::random(10) . '.' . $extension;
+                $filePath = $folderPath . '/' . $filenewname;
+
+                // Save decoded content to file
+                file_put_contents($filePath, $decodedFile);
+
+                // File details
+                $fileSize = filesize($filePath);
+                $user_id = Auth::id();
+
+                // Insert into DB
+                $insert_data = [
+                    'incident_id'     => $incidentId,
+                    'file_name'       => $filenewname,
+                    'file_orgname'    => $filenewname,
+                    'file_path'       => $relativePath . '/' . $filenewname,
+                    'file_size'       => $fileSize,
+                    'file_extension'  => $extension,
+                    'created_by'      => $user_id,
+                ];
+
+                $this->create($insert_data);
+            }
+        }
+    }
+
+
 
     public function capaEvidence($initialincident, $capa_id)
     {
@@ -214,13 +299,13 @@ class IntialIncidentEvidencefile extends Model
 
     public function selectOne($id)
     {
+
         $data = $this->select(
             'ims_initial_incident_evidence_upload.*',
         )
             ->where('ims_initial_incident_evidence_upload.incident_id', $id)
             ->where('ims_initial_incident_evidence_upload.capa_id', null)
             ->get();
-
         return $data;
     }
     public function SelectcapaEvidence($id, $incident_id)

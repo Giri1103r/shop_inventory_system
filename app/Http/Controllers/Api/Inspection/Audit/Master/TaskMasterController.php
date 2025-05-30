@@ -2,13 +2,14 @@
 
 namespace App\Http\Controllers\Api\Inspection\Audit\Master;
 
+use App\Http\Controllers\Api\BaseController;
 use App\Http\Controllers\Controller;
 use App\Models\Inspection\audit\Master\Task;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
-class TaskMasterController extends Controller
+class TaskMasterController extends BaseController
 {
     private $audit_task;
 
@@ -17,6 +18,8 @@ class TaskMasterController extends Controller
     {
         $this->audit_task = new Task();
     }
+
+    
     public function list()
     {
         if (Auth::check()) {
@@ -36,7 +39,7 @@ class TaskMasterController extends Controller
                     ], 200);
                 }
             } catch (Exception $ex) {
-                report($ex);
+                dd($ex);
                 return $this->sendError(
                     'Unauthorised.',
                     ['error' => 'Please try again after sometimes'],

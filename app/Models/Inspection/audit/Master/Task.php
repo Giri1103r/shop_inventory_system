@@ -90,6 +90,52 @@ class Task extends Model
         return $datas;
     }
 
+    public function listApi()
+    {
+        $request = request();
+        $per_page = $perPage = $request->input('per_page', 10);
+        $search = '';
+        $query = $this->select('inspection_audit_master_task.*')->where('status', 1)->where('trash', 'NO');
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
+
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('inspection_audit_master_task.task_auto_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_audit_master_task.task_name', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+        $paginatedData = $query->orderBy('inspection_audit_master_task.id')->paginate($per_page);
+
+        $inspection_data = $paginatedData->toArray();
+
+        $task_data = [];
+        $refined_data = [];
+
+        foreach ($inspection_data['data'] as $index => $data) {
+            $task_data['id'] = $data['id'];
+            $task_data['task_auto_id'] = $data['task_auto_id'];
+            $task_data['task_name'] = $data['task_name'];
+            $refined_data[$index] = $task_data;
+        }
+
+        $response = [
+            'per_page' => $paginatedData->perPage(),
+            'current_page' => $paginatedData->currentPage(),
+            'from' => $paginatedData->firstItem(),
+            'to' => $paginatedData->lastItem(),
+            'total' => $paginatedData->total(),
+            'total_page' => $paginatedData->lastPage(),
+            'list' => $refined_data,
+        ];
+
+        return $response;
+    }
+
     public function store()
     {
         $request = request();

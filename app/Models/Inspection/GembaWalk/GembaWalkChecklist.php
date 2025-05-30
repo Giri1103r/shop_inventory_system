@@ -26,6 +26,7 @@ class GembaWalkChecklist extends Model
         'exact_location',
         'date_of_observation',
         'observation_type_id',
+        'time',
         'risk_category',
         'description',
         'hazard',
@@ -58,6 +59,7 @@ class GembaWalkChecklist extends Model
         if (!empty($gembaWalkData) && is_array($gembaWalkData)) {
             foreach ($gembaWalkData as $index => $walk) {
 
+
                 // for Hazard
                 $decryptedHazards = array_map(function ($id) {
                     return decryptId($id);
@@ -66,10 +68,15 @@ class GembaWalkChecklist extends Model
 
                 // for responsible person
 
-                $decryptedObserverPerson = array_map(function ($id) {
-                    return ($id);
-                }, $walk['responsible_person_id']);
-                $ObserversIds = implode(',', $decryptedObserverPerson);
+                if (!empty($walk['responsible_person_id'])) {
+                    $decryptedObserverPerson = array_map(function ($id) {
+                        return ($id); // You can add decryption here if needed
+                    }, $walk['responsible_person_id']);
+
+                    $ObserversIds = implode(',', $decryptedObserverPerson);
+                } else {
+                    $ObserversIds = '';
+                }
 
                 $data = [
                     'gemba_walk_id' => $gembaWalk_id,
@@ -83,6 +90,7 @@ class GembaWalkChecklist extends Model
                     'description' => $walk['checklist_description'],
                     'hazard' =>  $hazardIds,
                     'capa' => $walk['checklist_capa'],
+                    'time' => $walk['time'],
                     // 'date_of_compliance' => DBdateformat($walk['date_of_compliance']),
                     'responsibility_id' =>  $ObserversIds,
                     'gemba_walk_checklist_status' => $walk['current_status'],
