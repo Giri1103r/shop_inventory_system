@@ -846,7 +846,7 @@
                         shift: {
                             required: true
                         },
-                        time: {
+                        'gemba_walk[0][time]': {
                             required: true
                         },
                         gemba_walk_prepared_by: {
@@ -935,7 +935,7 @@
                         document_upload_date: {
                             required: "Please select a date."
                         },
-                        time: {
+                       'gemba_walk[0][time]': {
                             required: "Please select a time."
                         },
                         shift: {
