@@ -134,7 +134,7 @@ class InitialIncident extends Model
         if ($request->has('dash_month') && $request->dash_month) {
             $query = $query->whereMonth('ims_initial_incident.created_at', $request->dash_month);
         }
-        
+
         if ($request->has('unit_id') && $request->unit_id) {
 
             $query = $query->where('ims_initial_incident.unit_id', decryptId($request->unit_id));
@@ -234,7 +234,7 @@ class InitialIncident extends Model
         $data_count = $query;
         $total_records = $data_count->count();
 
-        $query->orderBy('id', 'DESC');
+        $query->orderBy('ims_initial_incident.id', 'DESC');
 
         if ($request->length != -1) {
             $query->offset($request->start)->limit($request->length);
@@ -300,6 +300,43 @@ class InitialIncident extends Model
         return $this->create($insert_array);
     }
 
+    public function incidentStore_api($randomID)
+    {
+        $request = request();
+        if (is_array($request->reporting_media)) {
+            $reporting_media = implode(',', array_map(function ($item) {
+                return $item;
+            }, $request->reporting_media));
+        } else {
+
+            $reporting_media = decryptId($request->reporting_media);
+        }
+        $insert_array = array(
+            'random_id' => $randomID,
+            'sr_no' => getsequence('incident'),
+            'incident_date_time' => DBdatetimeformat($request->incident_date_time),
+            'unit_id' => $request->unit_id,
+            'company_id' => $request->company_id,
+            'shift' => $request->shift,
+            'location_id' => $request->location_id,
+            'exact_location' => $request->exact_location,
+            'iir_type' => $request->iir_type,
+            'employee_code' => $request->employee_code,
+            'reported_name' => $request->reported_name,
+            'designation' => $request->designation,
+            'department' => $request->department,
+            'time_of_reporting' => $request->time_of_reporting,
+            'reporting_media' => $reporting_media,
+            'reporting_media_others' => $request->reporting_media_others,
+            'brief_description' => $request->brief_description,
+            'immediate_action_taken' => $request->immediate_action_taken,
+            'anyone_injured' => $request->anyone_injured,
+            'incident_status' => STATUS_INCIDENT_REPORT,
+            'created_by' => Auth::id()
+        );
+        return $this->create($insert_array);
+    }
+
     public function getTotalIncidentCountData($request)
     {
         $query = DB::table('ims_initial_incident')
@@ -314,7 +351,7 @@ class InitialIncident extends Model
             ->leftJoin('ims_master_incident_type', 'ims_master_incident_type.id', '=', 'ims_initial_incident.iir_type')
             ->whereNotNull('ims_initial_incident.id');
 
-            // Apply company Filter
+        // Apply company Filter
         if ($request->CompanyId != null) {
             $company_id = decryptId($request->CompanyId);
             $query->where('ims_initial_incident.company_id', $company_id);
@@ -626,7 +663,6 @@ class InitialIncident extends Model
             ->leftJoin('ims_incident_body_parts', 'ims_incident_body_parts.incident_id', '=', 'ims_initial_incident.id')
             ->leftJoin('ims_injury_details', 'ims_injury_details.incident_id', '=', 'ims_initial_incident.id')
             ->first();
-
         return $data;
     }
 
@@ -873,7 +909,7 @@ class InitialIncident extends Model
                 DB::raw('COUNT(DISTINCT iii.id) as total_incident'),
                 DB::raw('COUNT(rcpa.id) as total_rcpa')
             )
-            ->groupBy('imit.incident_type_name','iii.iir_type')
+            ->groupBy('imit.incident_type_name', 'iii.iir_type')
             ->orderBy('imit.incident_type_name');
 
 
@@ -944,7 +980,7 @@ class InitialIncident extends Model
             ->where('status', 1)
             ->pluck('id')
             ->toArray();
-           
+
         $query = DB::table('ims_initial_incident as iii')
             ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
             ->whereIn('iii.iir_type', $nearMissIds)
@@ -955,7 +991,7 @@ class InitialIncident extends Model
                 DB::raw('YEAR(iii.created_at) as year'),
                 DB::raw('COUNT(DISTINCT iii.id) as incident_count')
             )
-            ->groupBy('imit.incident_type_name','iii.iir_type', 'month', 'year')
+            ->groupBy('imit.incident_type_name', 'iii.iir_type', 'month', 'year')
             ->orderBy('year')
             ->orderBy('month')
             ->orderBy('imit.incident_type_name');

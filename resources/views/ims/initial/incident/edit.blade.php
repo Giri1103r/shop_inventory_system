@@ -2586,8 +2586,8 @@
                 return false;
             } else {
 
-                $('#injuredPerson').val(injuredPerson);
-                $('#injury_person_type').val(injury_person_type);
+                $('#injurdPerson').val(injuredPerson);
+                $('#injurye_person_type').val(injury_person_type);
                 $('#injury_id').val(injury_id);
                 var random_id = $('#random_id').val();
                 var incident_id = $('#incident_id').val();

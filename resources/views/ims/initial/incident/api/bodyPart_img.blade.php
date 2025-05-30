@@ -1,665 +1,411 @@
-@extends('admin.layouts.admin')
-@section('title', 'Initial Incident/Accident Report')
-@section('pageurl', admin_url('incident/initial-incident/list'))
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>Document</title>
+    <link href="{{ public_plugins('datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ public_plugins('datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css') }}" rel="stylesheet"
+        type="text/css" />
+    <link href="{{ public_plugins('datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
+        rel="stylesheet" type="text/css" />
+    <link href="{{ public_plugins('admin-resources/rwd-table/rwd-table.min.css') }}" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        .modal-content {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            pointer-events: auto;
+            background-color: var(--ct-modal-content-bg);
+            background-clip: padding-box;
+            border: 1px solid transparent;
+            border-radius: 0.2rem;
+            outline: 0;
+        }
+
+        .row {
+            --ct-gutter-x: 1.5rem;
+            --ct-gutter-y: 0;
+            display: flex;
+            flex-wrap: wrap;
+            margin-top: calc(-1 * var(--ct-gutter-y));
+            margin-right: calc(-.5 * var(--ct-gutter-x));
+            margin-left: calc(-.5 * var(--ct-gutter-x))
+        }
+
+        .row>* {
+            flex-shrink: 0;
+            width: 100%;
+            max-width: 100%;
+            padding-right: calc(var(--ct-gutter-x) * .5);
+            padding-left: calc(var(--ct-gutter-x) * .5);
+            margin-top: var(--ct-gutter-y)
+        }
+
+        .col {
+            flex: 1 0 0%
+        }
+
+        .col-lg-12 {
+            flex: 0 0 auto;
+            width: 100%;
+        }
+
+        .col-md-12 {
+            flex: 0 0 auto;
+            width: 100%
+        }
+
+        .col-sm-12 {
+            flex: 0 0 auto;
+            width: 100%;
+        }
+
+        .form-control {
+            display: block;
+            width: 100%;
+            padding: 0.45rem 0.9rem;
+            font-size: 0.9rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #6c757d;
+            background-color: #fff;
+            background-clip: padding-box;
+            border: 1px solid #ced4da;
+            -webkit-appearance: none;
+            appearance: none;
+            border-radius: 0.2rem;
+            transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .btn {
+            display: inline-block;
+            font-weight: 400;
+            line-height: 1.5;
+            color: #6c757d;
+            text-align: center;
+            vertical-align: middle;
+            cursor: pointer;
+            -webkit-user-select: none;
+            user-select: none;
+            background-color: transparent;
+            border: 1px solid transparent;
+            padding: 0.45rem 0.9rem;
+            font-size: 0.9rem;
+            border-radius: 0.15rem;
+            transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+        }
+
+        .btn-secondary {
+            color: #fff;
+            background-color: #6c757d;
+            border-color: #6c757d;
+        }
+
+        .btn-secondary:hover {
+            color: #fff;
+            background-color: #5c636a;
+            border-color: #565e64;
+        }
+
+        .btn-warning {
+            color: #343a40;
+            background-color: #f9c851;
+            border-color: #f9c851;
+        }
+
+        .btn-warning:hover {
+            color: #343a40;
+            background-color: #fad06b;
+            border-color: #face62;
+        }
+
+        .text-center {
+            text-align: center !important;
+        }
+
+        label {
+            display: inline-block
+        }
+
+        button {
+            border-radius: 0
+        }
+
+        button:focus:not(:focus-visible) {
+            outline: 0
+        }
+
+        button,
+        input,
+        optgroup,
+        select,
+        textarea {
+            margin: 0;
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit
+        }
+
+        [type=button]:not(:disabled),
+        [type=reset]:not(:disabled),
+        [type=submit]:not(:disabled),
+        button:not(:disabled) {
+            cursor: pointer
+        }
+
+        .addbodyparts {
+            display: none;
+        }
+
+        canvas {
+            pointer-events: none;
+            position: absolute;
+        }
+
+        audio,
+        canvas,
+        progress,
+        video {
+            display: inline-block;
+            vertical-align: baseline;
+        }
+
+        .imgmap_css_container {
+            height: 250px !important;
+            width: 250px !important;
+        }
+
+        .col-lg-4,
+        .col-md-4,
+        .col-sm-4 {
+            float: left;
+            position: relative;
+            min-height: 1px;
+            padding-right: 15px;
+            padding-left: 15px;
+        }
 
 
 
-@section('content')
-    @push('style')
-        <style>
-            .addbodyparts {
-                display: none;
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked+.slider {
+            background-color: #2196F3;
+        }
+
+        input:focus+.slider {
+            box-shadow: 0 0 1px #2196F3;
+        }
+
+        input:checked+.slider:before {
+            -webkit-transform: translateX(26px);
+            -ms-transform: translateX(26px);
+            transform: translateX(26px);
+        }
+
+        /* Rounded sliders */
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        .fishbone-container {
+            display: inline-grid;
+            grid-template-columns: repeat(4, auto);
+            grid-template-rows: auto .2em auto;
+            padding-left: 2em;
+            font-family: Arial;
+            --bone-color: #85A0B2;
+            --yellow: #FDBE22;
+            --green: #69E982;
+            --blue: #5CB2FB;
+        }
+
+        .cause {
+            display: flex;
+            flex-direction: column;
+            transform: skew(20deg);
+            transform-origin: bottom;
+            margin-left: .8em;
+        }
+
+        .rootcause {
+            text-align: center;
+            position: relative;
+            left: 100%;
+            transform: translateX(-50%) skewX(-20deg);
+            font-size: 1.5em;
+            color: #fff;
+            padding: .2em;
+            border-radius: .2em;
+
+            &.yellow {
+                background-color: var(--yellow);
             }
 
-            canvas {
-                pointer-events: none;
-                position: absolute;
+            &.green {
+                background-color: var(--green);
             }
 
-            audio,
-            canvas,
-            progress,
-            video {
-                display: inline-block;
-                vertical-align: baseline;
+            &.blue {
+                background-color: var(--blue);
             }
+        }
 
-            .imgmap_css_container {
-                height: 250px !important;
-                width: 250px !important;
-            }
+        .subcause {
+            flex-grow: 1;
+            border-right: .2em solid var(--bone-color);
+            padding-bottom: .75em;
+            padding-top: .75em
+        }
 
-            .col-lg-4,
-            .col-md-4,
-            .col-sm-4 {
-                float: left;
-                position: relative;
-                min-height: 1px;
-                padding-right: 15px;
-                padding-left: 15px;
-            }
+        .stat {
+            text-align: right;
+            padding-right: 3em;
+            position: relative;
+            transform: skewX(-20deg);
+            line-height: 1.5em;
+            font-size: 1em;
+        }
 
-            .fa-trash-o {
-                margin-top: 5px !important;
-            }
+        .stat:before {
+            content: '';
+            display: block;
+            background-color: var(--bone-color);
+            position: absolute;
+            width: 3em;
+            height: .2em;
+            right: 0;
+            top: 50%;
+            transform: translate(.2em, -50%);
+        }
 
-            .fa-trash-o:before {
-                color: red !important;
-                content: "\f014" !important;
-            }
+        .line {
+            grid-column-start: 1;
+            grid-column-end: 4;
+            background-color: var(--bone-color);
 
-
-            .switch {
-                position: relative;
-                display: inline-block;
-                width: 60px;
-                height: 34px;
-            }
-
-            .switch input {
-                opacity: 0;
-                width: 0;
-                height: 0;
-            }
-
-            .slider {
-                position: absolute;
-                cursor: pointer;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background-color: #ccc;
-                -webkit-transition: .4s;
-                transition: .4s;
-            }
-
-            .slider:before {
-                position: absolute;
-                content: "";
-                height: 26px;
-                width: 26px;
-                left: 4px;
-                bottom: 4px;
-                background-color: white;
-                -webkit-transition: .4s;
-                transition: .4s;
-            }
-
-            input:checked+.slider {
-                background-color: #2196F3;
-            }
-
-            input:focus+.slider {
-                box-shadow: 0 0 1px #2196F3;
-            }
-
-            input:checked+.slider:before {
-                -webkit-transform: translateX(26px);
-                -ms-transform: translateX(26px);
-                transform: translateX(26px);
-            }
-
-            /* Rounded sliders */
-            .slider.round {
-                border-radius: 34px;
-            }
-
-            .slider.round:before {
-                border-radius: 50%;
-            }
-
-            .fishbone-container {
-                display: inline-grid;
-                grid-template-columns: repeat(4, auto);
-                grid-template-rows: auto .2em auto;
-                padding-left: 2em;
-                font-family: Arial;
-                --bone-color: #85A0B2;
-                --yellow: #FDBE22;
-                --green: #69E982;
-                --blue: #5CB2FB;
-            }
-
-            .cause {
-                display: flex;
-                flex-direction: column;
-                transform: skew(20deg);
-                transform-origin: bottom;
-                margin-left: .8em;
-            }
-
-            .rootcause {
-                text-align: center;
-                position: relative;
-                left: 100%;
-                transform: translateX(-50%) skewX(-20deg);
-                font-size: 1.5em;
-                color: #fff;
-                padding: .2em;
-                border-radius: .2em;
-
-                &.yellow {
-                    background-color: var(--yellow);
-                }
-
-                &.green {
-                    background-color: var(--green);
-                }
-
-                &.blue {
-                    background-color: var(--blue);
-                }
-            }
-
-            .subcause {
-                flex-grow: 1;
-                border-right: .2em solid var(--bone-color);
-                padding-bottom: .75em;
-                padding-top: .75em
-            }
-
-            .stat {
-                text-align: right;
-                padding-right: 3em;
-                position: relative;
+            ~.cause {
                 transform: skewX(-20deg);
-                line-height: 1.5em;
-                font-size: 1em;
+                transform-origin: top;
             }
 
-            .stat:before {
-                content: '';
-                display: block;
-                background-color: var(--bone-color);
-                position: absolute;
-                width: 3em;
-                height: .2em;
-                right: 0;
-                top: 50%;
-                transform: translate(.2em, -50%);
+            ~.cause .rootcause {
+                transform: translateX(-50%) skewX(20deg);
             }
 
-            .line {
-                grid-column-start: 1;
-                grid-column-end: 4;
-                background-color: var(--bone-color);
-
-                ~.cause {
-                    transform: skewX(-20deg);
-                    transform-origin: top;
-                }
-
-                ~.cause .rootcause {
-                    transform: translateX(-50%) skewX(20deg);
-                }
-
-                ~.cause .stat {
-                    transform: skewX(20deg);
-                }
+            ~.cause .stat {
+                transform: skewX(20deg);
             }
+        }
 
-            .defect-spacer-top {
-                grid-column-start: 4;
-                grid-column-end: 4;
-                grid-row-start: 1;
-                grid-row-end: 2;
-            }
+        .defect-spacer-top {
+            grid-column-start: 4;
+            grid-column-end: 4;
+            grid-row-start: 1;
+            grid-row-end: 2;
+        }
 
-            .defect {
-                grid-column-start: 4;
-                grid-column-end: 4;
-                grid-row-start: 2;
-                grid-row-end: 3;
-            }
+        .defect {
+            grid-column-start: 4;
+            grid-column-end: 4;
+            grid-row-start: 2;
+            grid-row-end: 3;
+        }
 
-            .defect-spacer-bottom {
-                grid-column-start: 4;
-                grid-column-end: 4;
-                grid-row-start: 3;
-                grid-row-end: 4;
-            }
+        .defect-spacer-bottom {
+            grid-column-start: 4;
+            grid-column-end: 4;
+            grid-row-start: 3;
+            grid-row-end: 4;
+        }
 
-            .defect-text {
-                position: relative;
-                top: 50%;
-                transform: translateY(-50%);
-                padding: 1em;
-                margin-left: .5em;
-                background-color: var(--bone-color);
-                border-radius: .5em;
-                color: #fff;
-                text-align: center;
-            }
+        .defect-text {
+            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
+            padding: 1em;
+            margin-left: .5em;
+            background-color: var(--bone-color);
+            border-radius: .5em;
+            color: #fff;
+            text-align: center;
+        }
 
-            .subcause .stat {
-                margin-bottom: 15px;
-                /* Adjust the spacing between input fields */
-            }
+        .subcause .stat {
+            margin-bottom: 15px;
+            /* Adjust the spacing between input fields */
+        }
 
-            .subcause {
-                margin-bottom: 20px;
-                /* Add spacing between rows of input fields */
-            }
-        </style>
-    @endpush
+        .subcause {
+            margin-bottom: 20px;
+            /* Add spacing between rows of input fields */
+        }
+    </style>
+</head>
+
+
+<body>
     @php
         $is_ready_only = '';
     @endphp
-    <div class="clearfix"></div>
-    <div class="page-titles">
-        <div class="d-flex align-items-center">
-
-
-        </div>
-
-    </div>
-
-    <div class="content-body  default-height">
-        <div class="container-fluid main-content">
-            <!-- row -->
-            <div class="row">
-
-                <div class="col-12">
-                    <div class="col-12">
-                        <div class="card">
-                            <div class="card-header">
-
-                                <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('incident/initial-incident/list') }}"></x-button-back>
-                                </div>
-                            </div>
-
-                            <div class="card-body">
-
-                                <div class="basic-form">
-                                    <form method="POST" id="incidentAdd"
-                                        action="{{ admin_url('incident/initial-incident/add/submit') }}"
-                                        enctype="multipart/form-data">
-                                        @csrf
-                                        <input type="hidden" name="random_id" id="" value="{{ $randomID }}">
-                                        <input type="hidden" name="acc_prim_add" id="acc_prim_add"
-                                            value="{{ 'acc_prim_add' }} ">
-                                        <div class="row mt-3">
-                                            <div class="card-header-inner">
-                                                <h4 class="text-white">Incident Reported By</h4>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Employee Code</label>
-                                                    <select name="employee_code" id="employee_code" style="width: 100%"
-                                                        class="form-control employee_code">
-                                                        <option value="">Select Employee Code</option>
-                                                    </select>
-
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Name</label>
-                                                    <div class="col-sm-6" style="width: 100%">
-                                                        <input type="text" name="reported_name"
-                                                            class="form-control reported_name" placeholder="Name" readonly>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Designation</label>
-                                                    <input type="text" name="designation"
-                                                        class="form-control designation" placeholder="Designation">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Department</label>
-                                                    <select name="department" class="form-control department">
-                                                        <option value="">Select Department</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Time of reporting</label>
-                                                    <input type="text" name="time_of_reporting" id = "time_of_reporting"
-                                                        class="form-control time_of_reporting"
-                                                        placeholder="Time of reporting">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Reporting Media</label>
-                                                    <div class="form-check">
-                                                        <input type="checkbox" name="reporting_media[]"
-                                                            id="reporting_media_phone" class="form-check-input"
-                                                            value="1">
-                                                        <label class="form-check-label"
-                                                            for="reporting_media_phone">Phone</label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input type="checkbox" name="reporting_media[]"
-                                                            id="reporting_media_walkietalkie" class="form-check-input"
-                                                            value="2">
-                                                        <label class="form-check-label"
-                                                            for="reporting_media_walkietalkie">Walkie Talkie</label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input type="checkbox" name="reporting_media[]"
-                                                            id="reporting_media_extension" class="form-check-input"
-                                                            value="3">
-                                                        <label class="form-check-label"
-                                                            for="reporting_media_extension">Extension</label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input type="checkbox" name="reporting_media[]"
-                                                            id="reporting_media_others" class="form-check-input"
-                                                            value="4">
-                                                        <label class="form-check-label"
-                                                            for="reporting_media_others">Others</label>
-                                                    </div>
-                                                    <div class="text-danger "></div>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-4" id = "reporting_media_othersdiv" style="display: none">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Others</label>
-                                                    <input type="text" name="reporting_media_othersdesc"
-                                                        id = "reporting_media_othersdesc"
-                                                        class="form-control reporting_media_othersdesc" placeholder="">
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="row mt-3">
-                                            <div class="card-header-inner">
-                                                <h4 class="text-white">Incident/Accident Details</h4>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Sr. No</label>
-                                                    <input type="text" name="sr_no" id="sr_no"
-                                                        class="form-control" placeholder=""
-                                                        value = "{{ getsequence('incident') }}" readonly>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Date and Time</label>
-                                                    <input type="text" name="incident_date_time"
-                                                        id="incident_date_time" class="form-control">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-3 form-input">
-                                                <label for="company_id" class="form-label ">Company</label>
-                                                <select name="company_id" id="company_id"
-                                                    class="form-control single-select form-control-sm"
-                                                    style="width: 100%">
-                                                    <option value="">Select the company</option>
-                                                    @foreach ($companyList as $list)
-                                                        <option value="{{ encryptId($list->id) }}">
-                                                            {{ $list->company_name }}</option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md-4 mb-3 form-input">
-                                                <label for="location_id" class="form-label ">Location</label>
-                                                <select name="location_id" id="location_id"
-                                                    class="form-control single-select form-control-sm"
-                                                    style="width: 100%">
-                                                    <option value="">Select the Location</option>
-
-                                                </select>
-                                            </div>
-
-                                            <div class="col-md-4 mb-3 form-input">
-                                                <label for="unit_id" class="form-label">Unit</label>
-                                                <select name="unit_id" id="unit_id"
-                                                    class="form-control single-select form-control-sm"
-                                                    style="width: 100%">
-                                                    <option value="">Select the Unit</option>
-
-                                                </select>
-                                            </div>
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Shift</label>
-                                                    <input type="text" name="shift" id="shift"
-                                                        class="form-control">
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-md-4">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Exact Location</label>
-                                                    <input type="text" name="exact_location" id="exact_location"
-                                                        class="form-control" placeholder="Exact Location">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mt-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">IIR Type</label>
-                                                    @foreach ($incTypeList as $incType)
-                                                        <div class="form-check">
-                                                            <input type="radio" name="iir_type"
-                                                                id="iir_type_{{ $incType->id }}" class="form-check-input"
-                                                                value="{{ $incType->id }}">
-                                                            <label class="form-check-label"
-                                                                for="iir_type_{{ $incType->id }}">{{ $incType->incident_type_name }}</label>
-                                                        </div>
-                                                    @endforeach
-                                                </div>
-                                            </div>
-
-                                        </div>
-
-                                        <div class="row mt-2">
-                                            <div class="col-md-12">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Brief Description</label>
-                                                    <textarea type="text" name="brief_description" id = "brief_description" class="form-control brief_description"
-                                                        placeholder=""></textarea>
-                                                </div>
-                                            </div>
-                                            <div id="file-upload-container" class="row mt-3">
-                                                <div class="col-12 mb-3">
-                                                    <button class="btn btn-primary addmorebutton" type="button"
-                                                        id="dynamic-add-more">
-                                                        Add
-                                                    </button>
-                                                </div>
-
-                                                <div class="col-md-4 mb-3 file-upload-block" id="file-upload-0">
-                                                    <label for="evidence_0" class="form-label require">Evidence</label>
-                                                    <input type="file" class="form-control validate-file-required"
-                                                        name="evidence[0][]" id="evidence_0" multiple>
-                                                    <div class="text-danger"></div>
-                                                    <small>Allowed file types: png, jpeg , jpg, pdf, doc, docx, mp4</small>
-                                                    <div class="preview-container mt-2 d-flex flex-wrap gap-2"
-                                                        id="preview-container-0"></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-12">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Immediate Action Taken</label>
-                                                    <textarea type="text" name="immediate_action_taken" id = "immediate_action_taken"
-                                                        class="form-control immediate_action_taken" placeholder=""></textarea>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-4 mt-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">If any person has injured?</label>
-                                                    <div class="form-check">
-                                                        <input type="radio" name="anyone_injured" id="injured_yes"
-                                                            class="form-check-input" value="1">
-                                                        <label class="form-check-label" for="injured_yes">Yes</label>
-                                                    </div>
-                                                    <div class="form-check">
-                                                        <input type="radio" name="anyone_injured" id="injured_no"
-                                                            class="form-check-input" value="0">
-                                                        <label class="form-check-label" for="injured_no">No</label>
-                                                    </div>
-                                                    <div class="text-danger"></div>
-                                                </div>
-
-                                            </div>
-
-                                            <div class="row mt-2 injuryDetails" style="display: none;">
-
-                                                <div class="card-header-inner d-flex justify-content-between">
-                                                    <a class="text-white card-link">Injured Person Details</a>
-                                                    <div class="btn btn-warning btn-sm addMoreInjuryDetails">Add</div>
-                                                </div>
-
-
-                                                <div class="injury-details-templat">
-                                                    <div class="row injury-append" style="margin-top: 20px;">
-                                                        <div class="col-md-4 form-input">
-                                                            <label for="" class="form-label require">Injury Person
-                                                                Type</label>
-                                                            <select
-                                                                class="form-control require single-select selectInjPersontype"
-                                                                name="injury_person[0][injury_person_type]" alt="0"
-                                                                style="width: 100%" id="RowInjTypedata_0">
-                                                                <option value="">Select Person Type</option>
-                                                                <option value="{{ encryptId('1') }}">Employee</option>
-                                                                <option value="{{ encryptId('2') }}">Worker</option>
-                                                                <option value="{{ encryptId('3') }}">Others</option>
-                                                            </select>
-                                                        </div>
-                                                        <!-- Injury Person Name (Text Inputs) -->
-                                                        <div class="col-md-4 form-input" id="injuryPersonTextContainer_0">
-                                                            <label class="form-label require">Injury Person Name</label>
-                                                            <input type="text"
-                                                                class="form-control injuryPersonName require"
-                                                                name="injury_person[0][injury_person_name]" alt="0"
-                                                                id="RowInjothersdata_0"
-                                                                placeholder="Enter Injury Person Name">
-                                                        </div>
-                                                        <!-- Injury Person Name (Dropdown) -->
-                                                        <div class="col-md-4 form-input d-none"
-                                                            id="injuryPersonDropdownContainer_0">
-                                                            <label class="form-label require">Injury Person Name</label>
-                                                            <select alt="0"
-                                                                class="form-control require injuryPersonName single-select"
-                                                                style="width: 100%"
-                                                                name="injury_person[0][injury_person_id]"
-                                                                id="RowInjEmpdata_0">
-                                                                <option value="" disabled selected>Select Injury
-                                                                    Person
-                                                                    Name
-                                                                </option>
-                                                            </select>
-                                                        </div>
-
-
-
-                                                        <!-- Designation -->
-                                                        <div class="col-md-4 form-input">
-                                                            <label class="form-label require">Injury Person
-                                                                Designation</label>
-                                                            <input type="text" alt="0"
-                                                                name="injury_person[0][injury_person_designation]"
-                                                                class="form-control InjPerDest" id="InjPerDest_0">
-                                                        </div>
-
-                                                        <!-- Department -->
-                                                        <div class="col-md-4 form-input " id="injuryPersonDepttexxt_0">
-                                                            <label class="form-label require">Injury Person
-                                                                Department</label>
-                                                            <input type="text" alt="0"
-                                                                name="injury_person[0][injury_person_department_id]"
-                                                                class="form-control InjPerDept" id="InjPerDept_0">
-                                                        </div>
-
-                                                        <!-- Department Dropdown for Others -->
-                                                        {{-- <div class="col-md-4 form-input" id="injuryPersonDeptDropdown_0">
-                                                            <label class="form-label require">Injury Person Department</label>
-                                                            <select alt="0" class="form-control single-select"
-                                                                name="injury_person[0][injury_person_department_id]"
-                                                                style="width: 100%">
-                                                                <option value="">Select Department</option>
-                                                                @foreach ($departmentList as $department)
-                                                                    <option value="{{ encryptId($department->id) }}">
-                                                                        {{ $department->department_name }}</option>
-                                                                @endforeach
-                                                            </select>
-                                                        </div> --}}
-                                                        <div class="col-md-4">
-                                                            <div class="form-group form-input">
-                                                                <label for="nature_of_injury" class="form-label">Nature of
-                                                                    Injury</label>
-                                                                <select alt="0"
-                                                                    name="injury_person[0][nature_of_injury]"
-                                                                    id="nature_of_injury_0" style="width: 100%"
-                                                                    class="form-control single-select">
-                                                                    <option value="">Select Nature of Injury</option>
-                                                                    <option value="{{ encryptId('1') }}">Major</option>
-                                                                    <option value="{{ encryptId('2') }}">Minor</option>
-                                                                    <option value="{{ encryptId('3') }}">Fatal</option>
-                                                                </select>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-md-2 form-input">
-                                                            <label for="inputFirstName" class="form-label">Location of
-                                                                the
-                                                                Injury</label>
-                                                            <br>
-                                                            <span class="input-group-addon injury-btn btn btn-info"
-                                                                data-id="0" data-injid="0" attr_emp=""
-                                                                alt="0"><i class="fa fa-male"
-                                                                    aria-hidden="true"></i></span>
-                                                        </div>
-                                                        <div class="col-md-2 text-right">
-                                                            <button type="button"
-                                                                class="btn btn-danger btn-sm removeInjuryDetails"
-                                                                style="margin-top: 35px;">Remove</button>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                            </div>
-                                        </div>
-                                        <hr>
-                                        <div class="submit-button" style="text-align: right;">
-                                            <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-reset class=""></x-button-reset>
-                                            <x-button-cancel
-                                                href="{{ admin_url('incident/initial-incident/list') }}"></x-button-cancel>
-                                        </div>
-                                    </form>
-                                </div>
-
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!--injury model-->
 
     <div id="injury_model" class="modal  fade" role="dialog" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog modal-lg">
 
             <!-- Modal content-->
             <div class="modal-content">
-                <div class="modal-header panel-box-header" style="display: flex;justify-content: end">
 
-                    <h4 class="modal-title panel-box-title" style="color:#000000 !important;"></h4>
-                    <button type="button" class="close" style="opacity: 1;" data-bs-dismiss="modal">&times;</button>
-                </div>
                 <div class="modal-body modal-pic ">
                     <!-- model content here -->
                     <!-- invetigation form start-->
+
 
                     <form id="injuryform" autocomplete="off" enctype="multipart/form-data">
                         <input type="hidden" name="humanbodyinjury" id="humanbodyinjury1">
@@ -669,6 +415,10 @@
                         <input type="hidden" name="injury_id" id="injury_id" value="">
                         <input type="hidden" name="bodypartimage" id="bodypartimage">
                         <input type="hidden" name="random_id" id="random_id" value="{{ $randomID }}">
+                        <input type="hidden" name="row_id" id="row_id" value="{{ $rowId }}">
+                        <input type="hidden" name="injury_person_type" id="injury_person_type"
+                            value="{{ $injury_person_type }}">
+                        <input type="hidden" name="injuredPerson" id="injuredPerson" value="{{ $injured_person_id }}">
                         <div class="container-fluid1">
 
                             <div class="box-body1 box-group">
@@ -838,19 +588,24 @@
                                                                     <map id='imgmap201293016112' data-map="foot-right"
                                                                         name='imgmap_css_container_imgmap201293016112'>
                                                                         <area alt="" title="A. Right Finger 1"
-                                                                            data-map='foot-right-finger1' shape="poly"
+                                                                            data-map='foot-right-finger1'
+                                                                            shape="poly"
                                                                             coords="599,779,604,796,591,823,586,844,592,868,605,883,616,890,631,897,648,898,667,895,678,886,692,878,701,861,701,845,700,814,701,789,702,764,705,747,703,737" />
                                                                         <area alt="" title="B. Right Finger 2"
-                                                                            data-map='foot-right-finger2' shape="poly"
+                                                                            data-map='foot-right-finger2'
+                                                                            shape="poly"
                                                                             coords="506,779,503,808,496,835,487,868,486,885,493,898,505,904,525,902,549,892,565,860,568,845,573,818,590,784,593,779" />
                                                                         <area alt="" title="C. Right Finger 3"
-                                                                            data-map='foot-right-finger3' shape="poly"
+                                                                            data-map='foot-right-finger3'
+                                                                            shape="poly"
                                                                             coords="444,757,430,793,415,832,410,859,417,874,444,877,466,867,478,829,491,796,502,779" />
                                                                         <area alt="" title="D. Right Finger 4"
-                                                                            data-map='foot-right-finger4' shape="poly"
+                                                                            data-map='foot-right-finger4'
+                                                                            shape="poly"
                                                                             coords="403,731,416,740,440,756,434,776,426,794,416,812,407,835,390,846,374,843,362,833,359,816,367,792" />
                                                                         <area alt="" title="E. Right Finger 5"
-                                                                            data-map='foot-right-finger5' shape="poly"
+                                                                            data-map='foot-right-finger5'
+                                                                            shape="poly"
                                                                             coords="373,687,404,730,378,765,361,780,344,777,333,756,339,732" />
                                                                     </map>
                                                                 </div>
@@ -866,19 +621,24 @@
                                                                     <map id='imgmap201293016112' data-map="foot-left"
                                                                         name='imgmap_css_container_imgmap201293016112'>
                                                                         <area alt="" title="A. Left Finger 1"
-                                                                            data-map='foot-left-finger1' shape="poly"
+                                                                            data-map='foot-left-finger1'
+                                                                            shape="poly"
                                                                             coords="336,737,442,777,438,787,441,796,447,810,456,835,447,868,432,887,396,897,369,892,358,881,347,866,343,850" />
                                                                         <area alt="" title="B. Left Finger 2"
-                                                                            data-map='foot-left-finger2' shape="poly"
+                                                                            data-map='foot-left-finger2'
+                                                                            shape="poly"
                                                                             coords="443,780,459,788,466,813,471,834,478,861,488,887,501,896,526,903,540,903,549,894,558,877,554,857,545,831,541,811,537,799,537,777" />
                                                                         <area alt="" title="C. Left Finger 3"
-                                                                            data-map='foot-left-finger3' shape="poly"
+                                                                            data-map='foot-left-finger3'
+                                                                            shape="poly"
                                                                             coords="540,779,598,756,618,798,627,835,637,861,622,874,596,876,582,872,574,868,553,801" />
                                                                         <area alt="" title="D. Left Finger 4"
-                                                                            data-map='foot-left-finger4' shape="poly"
+                                                                            data-map='foot-left-finger4'
+                                                                            shape="poly"
                                                                             coords="598,760,636,730,660,766,674,788,684,808,683,821,680,836,666,844,645,847,632,830" />
                                                                         <area alt="" title="E. Left Finger 5"
-                                                                            data-map='foot-left-finger5' shape="poly"
+                                                                            data-map='foot-left-finger5'
+                                                                            shape="poly"
                                                                             coords="642,730,667,686,689,718,704,739,708,759,703,776,688,779,674,779,657,756" />
                                                                     </map>
                                                                 </div>
@@ -964,22 +724,27 @@
                                                                         <area alt="" title="A. Right Palm"
                                                                             data-map='hand-right-palm' shape="poly"
                                                                             coords="383,283,384,269,384,256,384,250,382,235,382,221,379,209,376,197,374,187,371,178,368,170,365,164,364,160,243,135,231,140,225,144,218,149,212,155,205,160,198,169,196,171,191,230,201,236,206,243,212,255,212,268,210,278,207,289,207,298,196,312,194,314,240,322,253,325,275,325,293,324,332,312,347,307,336,308,347,306" />
-                                                                        <area alt="" title="B. Right Thumb Finger"
+                                                                        <area alt=""
+                                                                            title="B. Right Thumb Finger"
                                                                             data-map='hand-right-thumb' shape="poly"
                                                                             coords="136,203,145,199,153,195,161,193,169,189,171,189,175,185,179,180,184,179,186,176,191,173,197,171,191,233,183,236,173,239,164,242,157,245,151,249,138,252,129,252,117,253,105,255,97,254,91,250,87,244,83,238,83,230,90,222,102,216,112,211,120,208,124,206" />
-                                                                        <area alt="" title="C. Right Index Finger"
+                                                                        <area alt=""
+                                                                            title="C. Right Index Finger"
                                                                             data-map='hand-right-index' shape="poly"
                                                                             coords="197,426,195,434,192,439,188,442,183,444,178,445,168,443,162,437,159,430,159,426,159,421,161,412,162,404,165,396,167,389,170,379,172,373,176,358,182,347,183,343,187,331,189,325,194,316,194,315,241,323,218,375,207,397,205,405,203,405" />
                                                                         <area alt=""
                                                                             title="D. Right Middle Finger"
-                                                                            data-map='hand-right-middle' shape="poly"
+                                                                            data-map='hand-right-middle'
+                                                                            shape="poly"
                                                                             coords="249,324,293,325,289,333,287,342,288,351,289,361,285,379,281,389,279,394,280,403,278,416,278,426,278,437,278,452,278,464,276,473,271,479,264,480,258,480,251,480,243,473,240,465,237,447,237,423,237,408,236,390,240,376,241,357" />
-                                                                        <area alt="" title="E. Right Ring Finger"
+                                                                        <area alt=""
+                                                                            title="E. Right Ring Finger"
                                                                             data-map='hand-right-ring' shape="poly"
                                                                             coords="295,324,331,313,334,327,334,339,334,351,335,359,334,366,333,371,333,381,333,391,331,400,331,407,331,413,330,423,329,429,327,436,325,444,322,450,315,451,305,453,296,447,291,439,291,410,294,404,294,393,293,377,291,362,291,352,291,347" />
                                                                         <area alt=""
                                                                             title="F. Right Little Finger"
-                                                                            data-map='hand-right-little' shape="poly"
+                                                                            data-map='hand-right-little'
+                                                                            shape="poly"
                                                                             coords="347,306,382,284,394,306,399,321,406,340,411,352,412,359,415,370,416,384,415,392,408,397,397,397,385,393,377,368,369,354,366,339,359,334" />
 
                                                                     </map>
@@ -998,19 +763,24 @@
                                                                         <area alt="" title="A. Left Palm"
                                                                             data-map='hand-left-palm' shape="poly"
                                                                             coords="130,158,258,132,269,135,277,141,284,146,291,152,297,158,304,166,305,168,312,232,301,234,297,240,291,252,290,257,293,280,296,298,309,317,260,326,251,326,205,327,165,314,150,308,112,285,110,260,112,231,115,209" />
-                                                                        <area alt="" title="B. Left Thumb Finger"
+                                                                        <area alt=""
+                                                                            title="B. Left Thumb Finger"
                                                                             data-map='hand-left-thumb' shape="poly"
                                                                             coords="311,233,304,168,318,174,327,181,331,186,346,191,361,197,367,201,380,205,392,210,405,216,413,219,419,224,422,228,423,235,421,241,415,249,411,253,397,255,371,253,345,243" />
-                                                                        <area alt="" title="C. Left Index Finger"
+                                                                        <area alt=""
+                                                                            title="C. Left Index Finger"
                                                                             data-map='hand-left-index' shape="poly"
                                                                             coords="261,325,309,318,317,333,319,343,321,348,324,353,328,364,337,393,339,404,343,416,345,430,343,440,340,446,333,450,319,452,309,444,307,434,299,413,293,399,279,368,274,362,261,330" />
-                                                                        <area alt="" title="D. Left Middle Finger"
+                                                                        <area alt=""
+                                                                            title="D. Left Middle Finger"
                                                                             data-map='hand-left-middle' shape="poly"
                                                                             coords="252,325,256,342,257,351,259,361,261,372,261,381,264,391,264,400,264,408,264,418,264,426,264,438,262,454,262,465,257,480,249,488,235,490,225,483,221,474,220,454,220,432,219,416,219,401,220,397,216,390,213,382,211,368,211,358,211,349,211,342,210,334,208,328" />
-                                                                        <area alt="" title="E. Left Ring Finger"
+                                                                        <area alt=""
+                                                                            title="E. Left Ring Finger"
                                                                             data-map='hand-left-ring' shape="poly"
                                                                             coords="203,327,205,336,207,343,208,354,208,364,206,372,206,385,206,394,205,403,205,411,206,422,207,434,207,444,206,452,203,455,199,458,193,460,187,461,181,461,174,457,171,450,169,438,169,431,166,425,166,416,166,408,163,396,164,387,165,379,163,371,164,367,163,364,162,356,162,349,163,339,163,331,164,320,167,315" />
-                                                                        <area alt="" title="F. Left Little Finger"
+                                                                        <area alt=""
+                                                                            title="F. Left Little Finger"
                                                                             data-map='hand-left-little' shape="poly"
                                                                             coords="113,284,151,309,143,322,137,336,132,342,129,345,129,351,126,360,120,369,118,378,114,386,109,396,105,401,98,404,91,404,82,402,78,395,76,385,82,358,95,323" />
 
@@ -1032,19 +802,24 @@
                                                                     <map id='imgmap201293016112' data-map="foot-right"
                                                                         name='imgmap_css_container_imgmap201293016112'>
                                                                         <area alt="" title="A. Right Finger 1"
-                                                                            data-map='foot-right-finger1' shape="poly"
+                                                                            data-map='foot-right-finger1'
+                                                                            shape="poly"
                                                                             coords="573,764,629,760,626,781,625,796,627,802,629,836,629,857,621,885,603,903,590,906,566,896,552,884,547,855,552,826" />
                                                                         <area alt="" title="B. Right Finger 2"
-                                                                            data-map='foot-right-finger2' shape="poly"
+                                                                            data-map='foot-right-finger2'
+                                                                            shape="poly"
                                                                             coords="514,778,569,763,555,817,546,844,536,874,523,885,508,886,497,879,496,852" />
                                                                         <area alt="" title="C. Right Finger 3"
-                                                                            data-map='foot-right-finger3' shape="poly"
+                                                                            data-map='foot-right-finger3'
+                                                                            shape="poly"
                                                                             coords="507,796,508,775,494,767,475,758,469,788,461,814,458,843,462,857,475,860,487,856,498,843" />
                                                                         <area alt="" title="D. Right Finger 4"
-                                                                            data-map='foot-right-finger4' shape="poly"
+                                                                            data-map='foot-right-finger4'
+                                                                            shape="poly"
                                                                             coords="439,703,458,732,472,754,469,775,462,810,453,829,436,829,427,816,422,797" />
                                                                         <area alt="" title="E. Right Finger 5"
-                                                                            data-map='foot-right-finger5' shape="poly"
+                                                                            data-map='foot-right-finger5'
+                                                                            shape="poly"
                                                                             coords="430,697,431,744,424,773,420,781,406,781,400,763,399,708,397,674,399,674" />
                                                                     </map>
                                                                 </div>
@@ -1059,19 +834,24 @@
                                                                     <map id='imgmap201293016112' data-map="foot-left"
                                                                         name='imgmap_css_container_imgmap201293016112'>
                                                                         <area alt="" title="A. Left Finger 1"
-                                                                            data-map='foot-left-finger1' shape="poly"
+                                                                            data-map='foot-left-finger1'
+                                                                            shape="poly"
                                                                             coords="413,761,468,764,483,801,495,833,499,863,489,883,481,897,462,904,444,907,431,898,422,883,411,850,415,790" />
                                                                         <area alt="" title="B. Left Finger 2"
-                                                                            data-map='foot-left-finger2' shape="poly"
+                                                                            data-map='foot-left-finger2'
+                                                                            shape="poly"
                                                                             coords="469,765,523,777,527,795,533,808,540,830,543,845,545,851,546,858,546,870,543,885,529,887,517,885,503,869,488,820" />
                                                                         <area alt="" title="C. Left Finger 3"
-                                                                            data-map='foot-left-finger3' shape="poly"
+                                                                            data-map='foot-left-finger3'
+                                                                            shape="poly"
                                                                             coords="532,777,534,799,538,825,546,853,561,862,571,858,582,849,582,823,580,797,567,756" />
                                                                         <area alt="" title="D. Left Finger 4"
-                                                                            data-map='foot-left-finger4' shape="poly"
+                                                                            data-map='foot-left-finger4'
+                                                                            shape="poly"
                                                                             coords="569,754,599,706,613,770,617,802,610,823,600,829,583,828" />
                                                                         <area alt="" title="E. Left Finger 5"
-                                                                            data-map='foot-left-finger5' shape="poly"
+                                                                            data-map='foot-left-finger5'
+                                                                            shape="poly"
                                                                             coords="611,701,612,744,619,780,637,777,643,763,644,720,645,669" />
                                                                     </map>
                                                                 </div>
@@ -1088,22 +868,27 @@
                                                                         <area alt="" title="A. Right Palm"
                                                                             data-map='hand-right-palm' shape="poly"
                                                                             coords="348,136,348,92,349,29,347,21,291,14,231,18,235,52,232,91,225,116,210,141,189,160,175,175,196,232,203,239,214,250,222,275,226,299,224,317,249,319,285,325,308,326,351,305,374,292,370,228,362,174" />
-                                                                        <area alt="" title="B. Right Thumb Finger"
+                                                                        <area alt=""
+                                                                            title="B. Right Thumb Finger"
                                                                             data-map='hand-right-thumb' shape="poly"
                                                                             coords="177,175,193,231,181,243,170,254,155,273,127,287,111,285,107,277,124,260" />
-                                                                        <area alt="" title="C. Right Index Finger"
+                                                                        <area alt=""
+                                                                            title="C. Right Index Finger"
                                                                             data-map='hand-right-index' shape="poly"
                                                                             coords="246,456,251,419,257,379,256,348,260,324,224,318,220,380,221,425,221,439,219,453,233,461" />
                                                                         <area alt=""
                                                                             title="D. Right Middle Finger"
-                                                                            data-map='hand-right-middle' shape="poly"
+                                                                            data-map='hand-right-middle'
+                                                                            shape="poly"
                                                                             coords="264,322,272,412,271,433,272,456,272,473,277,482,284,485,295,482,300,471,303,439,303,363,303,331,305,325" />
-                                                                        <area alt="" title="E. Right Ring Finger"
+                                                                        <area alt=""
+                                                                            title="E. Right Ring Finger"
                                                                             data-map='hand-right-ring' shape="poly"
                                                                             coords="308,324,344,310,347,345,348,395,348,433,346,453,342,461,330,463,320,449,321,410" />
                                                                         <area alt=""
                                                                             title="F. Right Little Finger"
-                                                                            data-map='hand-right-little' shape="poly"
+                                                                            data-map='hand-right-little'
+                                                                            shape="poly"
                                                                             coords="364,365,370,395,381,404,389,406,392,395,394,377,392,363,388,341,384,315,376,289,347,308" />
 
                                                                     </map>
@@ -1121,19 +906,24 @@
                                                                         <area alt="" title="A. Left Palm"
                                                                             data-map='hand-left-palm' shape="poly"
                                                                             coords="152,20,177,14,209,13,230,13,250,16,268,18,267,36,266,54,267,68,267,79,269,94,274,106,278,120,284,133,294,144,305,152,314,162,322,173,316,198,309,221,304,235,291,243,283,258,280,272,277,286,276,295,277,315,267,318,239,326,221,326,201,326,194,325,173,317,159,310,148,302,124,289,126,262,128,242,132,210,138,187,142,158,146,151,150,134,153,106" />
-                                                                        <area alt="" title="B. Left Thumb Finger"
+                                                                        <area alt=""
+                                                                            title="B. Left Thumb Finger"
                                                                             data-map='hand-left-thumb' shape="poly"
                                                                             coords="364,237,372,253,378,261,388,269,394,275,391,283,384,287,366,283,350,275,335,263,319,243,312,236,304,234,311,211,320,185,325,174" />
-                                                                        <area alt="" title="C. Left Index Finger"
+                                                                        <area alt=""
+                                                                            title="C. Left Index Finger"
                                                                             data-map='hand-left-index' shape="poly"
                                                                             coords="269,461,277,455,280,450,282,421,279,364,275,316,262,320,249,323,240,324,243,360,245,398,251,440,258,459" />
-                                                                        <area alt="" title="D. Left Middle Finger"
+                                                                        <area alt=""
+                                                                            title="D. Left Middle Finger"
                                                                             data-map='hand-left-middle' shape="poly"
                                                                             coords="193,325,214,326,236,324,235,327,234,340,233,361,232,388,231,409,228,422,228,448,226,478,218,488,204,484,197,461,198,335" />
-                                                                        <area alt="" title="E. Left Ring Finger"
+                                                                        <area alt=""
+                                                                            title="E. Left Ring Finger"
                                                                             data-map='hand-left-ring' shape="poly"
                                                                             coords="155,308,172,317,189,324,190,339,186,371,181,400,180,423,176,451,171,462,164,463,153,456,151,422,151,374" />
-                                                                        <area alt="" title="F. Left Little Finger"
+                                                                        <area alt=""
+                                                                            title="F. Left Little Finger"
                                                                             data-map='hand-left-little' shape="poly"
                                                                             coords="105,389,106,398,111,407,120,406,123,401,130,392,133,379,138,356,143,339,146,324,149,317,151,307,144,302,137,295,125,289,117,312" />
 
@@ -1256,8 +1046,10 @@
                                     </div>
                                     <!-- /.box-body -->
                                 </div>
-                                <input type="hidden" name="injuredPerson" id="injuredPerson" value="">
-                                <input type="hidden" name="injury_person_type" id="injury_person_type" value="">
+                                <input type="hidden" name="injury_person_type" id="injury_person_type"
+                                    value="{{ $injury_person_type }}">
+                                <input type="hidden" name="injuredPerson" id="injuredPerson"
+                                    value="{{ $injured_person_id }}">
 
                                 @if ($is_ready_only != 1)
                                     <div class="savesubmit text-center">
@@ -1282,921 +1074,73 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                   </div>-->
+                                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                               </div>-->
             </div>
         </div>
     </div>
-    <!--end model-->
-@stop
 
-@push('script')
-    <script type="text/javascript" nonce="projectcab">
+    <script src="{{ public_plugins('jquery/jquery.min.js') }}"></script>
+    <script src="{{ public_plugins('bootstrap/js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ public_plugins('jqueryvalidation/jquery.validate.min.js') }}"></script>
+    {{-- <script src="{{ public_plugins('datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js') }}"></script>
+    <script src="{{ public_plugins('datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js') }}"></script> --}}
+    <script src="{{ public_plugins('sweetalert/SweetAlertFull.js') }}"></script>
+
+    <script src="{{ url('public/assets/js/rwdImageMaps.js') }}"></script>
+    <script>
         $(document).ready(function() {
-            $('#resetform').on('click', function(e) {
-                e.preventDefault();
-                location.reload();
-            });
-        });
-
-        flatpickr("#incident_date_time", {
-            enableTime: true,
-            dateFormat: "d-m-Y H:i",
-            time_24hr: true,
-            maxDate: new Date(),
-            onChange: function(selectedDates, dateStr, instance) {
-                validateReportingTime();
-            }
-        });
-
-        flatpickr("#time_of_reporting", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-            time_24hr: true,
-            // onChange: function(selectedDates, dateStr, instance) {
-            //     validateReportingTime();
-            // }
-        });
-
-        function validateReportingTime() {
-            var incidentDateTimeStr = $("#incident_date_time").val();
-            var reportingTimeStr = $("#time_of_reporting").val();
-
-            if (incidentDateTimeStr && reportingTimeStr) {
-                // Parse incident full datetime
-                var incidentDateTime = moment(incidentDateTimeStr, "D-M-YYYY HH:mm");
-
-                // Extract just the date portion
-                var incidentDateOnly = moment(incidentDateTimeStr, "D-M-YYYY HH:mm").format("D-M-YYYY");
-
-                // Combine the same date with the reporting time
-                var reportingDateTime = moment(incidentDateOnly + " " + reportingTimeStr, "D-M-YYYY HH:mm");
-
-                // Check if reporting is BEFORE incident
-                // if (reportingDateTime.isBefore(incidentDateTime)) {
-                //     Swal.fire({
-                //         icon: 'error',
-                //         title: 'Invalid Time',
-                //         text: 'Time of reporting cannot be before the Incident Date an  d Time.',
-                //         confirmButtonText: 'OK'
-                //     });
-                //     $("#time_of_reporting").val('');
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                // statusCode: {
+                //     419: function() {
+                //         window.location.href = '{{ url('') }}';
+                //     }
                 // }
-            }
-        }
-
-
-        const maxUploads = 5;
-
-        $('#dynamic-add-more').on('click', function() {
-            let currentFileUploads = $('.file-upload-block').length;
-
-            if (currentFileUploads >= maxUploads) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Sorry!',
-                    text: 'Maximum 5 records only.',
-                });
-                return;
-            }
-
-            // Create the new file upload block
-            let newFileUploadBlock = `
-                <div class="col-md-4 mb-3 file-upload-block" id="file-upload-${currentFileUploads}">
-                    <label for="evidence_${currentFileUploads}" class="form-label require">Evidence</label>
-                    <input type="file" class="form-control  validate-file-required"
-                        name="evidence[${currentFileUploads}][]" id="evidence_${currentFileUploads}" multiple>
-                    <div class="text-danger"></div>
-                    <small>Allowed file types: png, jpeg , jpg, pdf, doc,docx, mp4</small>
-                    <button type="button" class="btn btn-danger btn-sm remove-upload-block">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                    <div class="preview-container mt-2 d-flex flex-wrap gap-2" id="preview-container-${currentFileUploads}"></div>
-                </div>
-            `;
-
-            // Append new block
-            $('#file-upload-container').append(newFileUploadBlock);
-
-            $('#evidence_' + currentFileUploads).rules("add", {
-                required: true,
-                extension: "png|jpeg|jpg|pdf|doc|docx|mp4",
-                messages: {
-                    required: "This field is required.",
-                    extension: "Allowed file types: png, jpeg, jpg, pdf, doc, docx, mp4",
-                }
             });
+            $('#humanBody').rwdImageMaps();
 
 
         });
 
-        // Handling file input validation for dynamic removal of blocks (if applicable)
-        $(document).on('click', '.remove-upload-block', function() {
-            $(this).closest('.file-upload-block').remove();
-        });
 
-
-
-        $(document).on('change', 'input[type="file"]', function(event) {
-            let input = $(this);
-            let fileInputId = input.attr('id').split('_')[2];
-            let previewContainer = $('#preview-container-' + fileInputId);
-
-            previewContainer.html("");
-
-            let files = event.target.files;
-            if (files.length > 0) {
-                Array.from(files).forEach(file => {
-                    if (file.type.startsWith("image/")) {
-                        let reader = new FileReader();
-                        reader.onload = function(e) {
-                            let img = $("<img>").attr("src", e.target.result)
-                                .addClass("img-thumbnail")
-                                .css({
-                                    width: "100px",
-                                    height: "100px",
-                                    objectFit: "cover",
-                                    marginRight: "5px"
-                                });
-
-                            previewContainer.append(img);
-                        };
-                        reader.readAsDataURL(file);
-                    }
-                });
-            }
-        });
-
-
-        $('#reporting_media_others').on('change', function() {
-            if ($(this).is(':checked')) {
-                $('#reporting_media_othersdiv').show();
-            } else {
-                $('#reporting_media_othersdiv').hide();
-            }
-        });
-        $('.employee_code').select2({
-            ajax: {
-                url: "{{ admin_url('incident/initial-incident/employeeid') }}",
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search: params.term
-                    };
-                },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
-                            return {
-                                id: item.id,
-                                text: item.text
-                            };
-                        })
-                    };
-                },
-                error: function(xhr, textStatus, errorThrown) {
-                    console.log("Error in AJAX request:", textStatus, errorThrown);
-                }
-            },
-            minimumInputLength: 3,
-            dropdownCssClass: 'form-control',
-            selectionCssClass: 'form-control'
-        });
-
-        $(document).on("change", ".employee_code", function() {
-            var emp_id = $(this).val();
-            var currentRow = $(this).closest(".row");
-
-            if (emp_id) {
-                $.ajax({
-                    url: "{{ url('incident/initial-incident/fetchEmployeeDetails') }}/" + emp_id,
-                    type: "GET",
-                    success: function(data) {
-                        if (data.employee) {
-                            currentRow.find('.reported_name').val(data.employee.emp_name).prop(
-                                "readonly",
-                                true);
-                            currentRow.find('.designation').val(data.employee.designation).prop(
-                                "readonly", true);
-
-                            var departmentDropdown = currentRow.find('.department');
-                            departmentDropdown.empty();
-                            departmentDropdown.append('<option value="">Select Department</option>');
-
-                            if (data.departments && data.departments.length > 0) {
-                                data.departments.forEach(function(department) {
-                                    var selected = data.employee.department == department.id ?
-                                        "selected" : "";
-                                    departmentDropdown.append(
-                                        `<option value="${department.id}" ${selected}>${department.department_name}</option>`
-                                    );
-                                });
-                                console.log(data.employee.department);
-                                if (data.employee.department) {
-                                    departmentDropdown.prop("disabled",
-                                        false);
-                                    departmentDropdown.css("pointer-events",
-                                        "none");
-                                    if (!currentRow.find('input.department_hidden').length) {
-                                        currentRow.append(`
-                                            <input type="hidden" class="department_hidden"
-                                                name="${departmentDropdown.attr('name')}"
-                                                value="${data.employee.department}">
-                                        `);
-                                    }
-                                } else {
-
-                                    departmentDropdown.css("pointer-events", "auto");
-                                    departmentDropdown.css("background-color", "white");
-                                    currentRow.find('input.department_hidden').remove();
-                                }
-                            } else {
-                                departmentDropdown.append(
-                                    '<option value="">No departments available</option>');
-                            }
-                        } else {
-                            Swal.fire({
-                                icon: "error",
-                                title: "Error",
-                                text: "Employee data could not be fetched.",
-                            });
-                        }
-                    },
-                    error: function() {
-                        Swal.fire({
-                            icon: "error",
-                            title: "Error",
-                            text: "An error occurred while fetching employee details.",
-                        });
-                    }
-                });
-            } else {
-                currentRow.find('.employee_code').val("").prop("readonly", false);
-                currentRow.find('.designation').val("").prop("readonly", false);
-                var departmentDropdown = currentRow.find('.department');
-                departmentDropdown.empty();
-                departmentDropdown.append('<option value="">Select Department</option>');
-                departmentDropdown.prop("readonly", false);
-            }
-        });
-
-
-        $(document).ready(function() {
-            $('input[name="anyone_injured"]').on('change', function() {
-                if ($(this).val() == '1') {
-                    $('.injuryDetails').show();
-                } else {
-                    $('.injuryDetails').hide();
-                }
-            });
-
-            function initializeSelect2() {
-                $('.responsible_person').select2({
-                    ajax: {
-                        url: "{{ url('incident/initial-incident/getemployeename') }}",
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(params) {
-                            return {
-                                search: params.term
-                            };
-                        },
-                        processResults: function(data) {
-                            return {
-                                results: $.map(data, function(item) {
-                                    return {
-                                        id: item.id,
-                                        text: item.text
-                                    };
-                                })
-                            };
-                        },
-                        error: function(xhr, textStatus, errorThrown) {
-                            console.log("Error in AJAX request:", textStatus, errorThrown);
-                        }
-                    },
-                    minimumInputLength: 1,
-                    dropdownCssClass: 'form-control',
-                    selectionCssClass: 'form-control'
-                });
-            }
-
-            // Initialize select2 on page load
-            initializeSelect2();
-
-            let injuryIndex = 0;
-
-            // Add new injury details row
-            $(document).on("click", ".addMoreInjuryDetails", function() {
-                injuryIndex++;
-                let newRow = `
-           <div class="row injury-append" style="margin-top: 20px;" id="injuryDetails_${injuryIndex}">
-            <div class="col-md-4 form-input">
-                    <label for="" class="form-label require">Injury Person Type</label>
-                    <select class="form-control require single-select selectInjPersontype" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_type]" style="width: 100%" id="RowInjTypedata_${injuryIndex}">
-                        <option value="">Select Person Type</option>
-                        <option value="{{ encryptId('1') }}">Employee</option>
-                        <option value="{{ encryptId('2') }}">Worker</option>
-                        <option value="{{ encryptId('3') }}">Others</option>
-                    </select>
-            </div>
-            <div class="col-md-4 form-input" id="injuryPersonTextContainer_${injuryIndex}">
-                    <label class="form-label require">Injury Person Name</label>
-                <input type="text"  alt="${injuryIndex}" class="form-control injuryPersonNamerequire"
-                    name="injury_person[${injuryIndex}][injury_person_name]" id="RowInjothersdata_${injuryIndex}"
-                    placeholder="Enter Injury Person Name">
-            </div>
-                    <!-- Injury Person Name (Dropdown) -->
-                <div class="col-md-4 form-input d-none" id="injuryPersonDropdownContainer_${injuryIndex}">
-                    <label class="form-label require">Injury Person Name</label>
-                    <select class="form-control require injuryPersonName single-select" alt="${injuryIndex}"  style="width: 100%" name="injury_person[${injuryIndex}][injury_person_id]"  id="RowInjEmpdata_${injuryIndex}">
-                        <option value="" disabled selected>Select Injury Person Name  </option> </select>
-                </div>
-
-            <div class="col-md-4 form-input">
-                <label class="form-label require">Injury Person Designation</label>
-                <input type="text" alt="${injuryIndex}" name="injury_person[${injuryIndex}][injury_person_designation]" id="InjPerDest_${injuryIndex}" class="form-control InjPerDest">
-            </div>
-                <div class="col-md-4 form-input" id="injuryPersonDepttexxt_${injuryIndex}">
-                    <label class="form-label require">Injury Person Department</label>
-                    <input type="text" alt="${injuryIndex}"  name="injury_person[${injuryIndex}][injury_person_department_id]"
-                    class="form-control InjPerDept" id="InjPerDept_${injuryIndex}">
-
-                </div>
-
-
-
-            <div class="col-md-4">
-                <div class="form-group form-input">
-                <label for="nature_of_injury_${injuryIndex}" class="form-label">Nature of  Injury</label>
-                    <select name="injury_person[${injuryIndex}][nature_of_injury]" alt="${injuryIndex}"  id="nature_of_injury_${injuryIndex}"
-                    style="width: 100%" class="form-control single-select">
-                        <option value="">Nature of Injury</option>
-                        <option value="{{ encryptId('1') }}">Major</option>
-                        <option value="{{ encryptId('2') }}">Minor</option>
-                        <option value="{{ encryptId('3') }}">Fatal</option>
-                            </select>
-                </div>
-             </div>
-
-                <div class="col-md-2 form-input">
-                    <label for="inputFirstName" class="form-label require">Location of the Injury</label></br>
-                    <span class="input-group-addon injury-btn btn btn-info" data-id='${injuryIndex}' data-injid="${injuryIndex}" attr_emp="" alt="${injuryIndex}"><i class="fa fa-male" aria-hidden="true"></i></span>
-                </div>
-            <div class="col-md-2 text-right">
-                <button type="button" class="btn btn-danger btn-sm removeInjuryDetails" data-index="${injuryIndex}" style="margin-top: 35px;">Remove</button>
-            </div>
-              </div>`;
-
-                $(".injury-details-templat").append(newRow);
-                $(".single-select").select2();
-
-                addInjuryPersonValidation(injuryIndex);
-                initializeSelect2();
-
-            });
-
-            $(document).on("change", "[name^='injury_person'][name$='[injury_person_type]']", function() {
-                var injury_person_type = $(this).val();
-                var injuryIndex = $(this).attr("alt");
-                // Get the index of the current row
-                var injuryPersonDropdownContainer = $("#injuryPersonDropdownContainer_" + injuryIndex);
-                var injuryPersonTextContainer = $("#injuryPersonTextContainer_" + injuryIndex);
-                var injuryPersonDropdown = $('#RowInjEmpdata_' + injuryIndex);
-                var injuryPersonDeptDropdown = $("#injuryPersonDeptDropdown_" + injuryIndex);
-                var injuryPersonDepttexxt = $("#injuryPersonDepttexxt_" + injuryIndex);
-
-                // Reset Fields
-                injuryPersonDropdown.empty().append('<option value="">Select Injury Person Name</option>');
-                $('#RowInjothersdata_' + injuryIndex).val("");
-                $('#InjPerDest_' + injuryIndex).val("");
-                $('#InjPerDept_' + injuryIndex).val("");
-
-                if (injury_person_type === "{{ encryptId('1') }}" || injury_person_type ===
-                    "{{ encryptId('2') }}") {
-                    // Show Injury Person Name Dropdown, Hide Text Field
-                    injuryPersonDropdownContainer.removeClass("d-none");
-                    injuryPersonTextContainer.addClass("d-none");
-                    injuryPersonDeptDropdown.addClass("d-none");
-
-                    // Fetch Employee/Worker List
-                    $.ajax({
-                        url: "{{ url('incident/initial-incident/fetchEmployeeOrWorkerList') }}/" +
-                            injury_person_type,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(data) {
-                            if (data.length > 0) {
-                                $.each(data, function(index, item) {
-                                    injuryPersonDropdown.append(
-                                        `<option value="${item.id}">${item.text}</option>`
-                                    );
-                                });
-                            } else {
-                                Swal.fire("No Data", "No records found for the selected type.",
-                                    "info");
-                            }
-                        },
-                        error: function() {
-                            Swal.fire("Error", "An error occurred while fetching the list.",
-                                "error");
-                        }
-                    });
-
-                } else if (injury_person_type === "{{ encryptId('3') }}") {
-                    // Show Input Fields for Others
-                    injuryPersonTextContainer.removeClass("d-none");
-                    injuryPersonDropdownContainer.addClass("d-none");
-                    injuryPersonDeptDropdown.removeClass("d-none");
-
-                } else {
-                    injuryPersonDropdownContainer.addClass("d-none");
-                    injuryPersonTextContainer.addClass("d-none");
-                    injuryPersonDeptDropdown.removeClass("d-none");
-                }
-            });
-
-            $(document).on("change", ".injuryPersonName", function() {
-                var $this = $(this);
-                var injury_person_id = $this.val();
-                var injuryIndex = $this.attr("alt");
-                var injury_person_type = $("#RowInjTypedata_" + injuryIndex).val();
-                var isAlreadySelected = false;
-                $(".injuryPersonName").not(this).each(function() {
-                    var existing_person_id = $(this).val();
-                    var existing_index = $(this).attr("alt");
-                    var existing_person_type = $("#RowInjTypedata_" + existing_index).val();
-                    if (existing_person_id === injury_person_id && existing_person_type ===
-                        injury_person_type && injury_person_id !== "") {
-                        isAlreadySelected = true;
-                        return false; // Exit loop
-                    }
-                });
-
-                if (isAlreadySelected) {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error",
-                        text: "Selected value already exists for the same injury type.",
-                        confirmButtonText: "OK"
-                    }).then(() => {
-                        $this.val("").trigger("change"); // Reset field after alert is closed
-                    });
-                }
-
-                // Define Designation and Department fields
-                var injuryPersonDesignation = $("#InjPerDest_" + injuryIndex);
-                var injuryPersonDeptInput = $("#InjPerDept_" + injuryIndex);
-                if (injury_person_type != 'R1ZPdDJJQnR5WmZNUVJUaDhaelhIdz09') {
-                    $.ajax({
-                        url: "{{ url('incident/initial-incident/fetchPersonDetails') }}/" +
-                            injury_person_id +
-                            "/" + injury_person_type,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(response) {
-                            if (response.employee || response.worker) {
-                                let person = response.employee || response.worker;
-
-                                if (person.designation) {
-                                    injuryPersonDesignation.val(person.designation).prop(
-                                        "readonly",
-                                        true);
-                                } else {
-                                    injuryPersonDesignation.val("").prop("readonly", false);
-                                }
-
-                                if (person.department_name) {
-                                    injuryPersonDeptInput.val(person.department_name).prop(
-                                        "readonly", true);
-
-
-                                } else {
-                                    injuryPersonDeptInput.val("").prop("readonly", false);
-                                }
-                            } else {
-                                Swal.fire("Error", "Data could not be fetched.", "error");
-                            }
-                        },
-                        error: function() {
-                            Swal.fire("Error", "An error occurred while fetching details.",
-                                "error");
-                        }
-                    });
-                }
-            });
-
-            // Remove injury details row
-            $(document).on("click", ".removeInjuryDetails", function() {
-                var $row = $(this).closest(".injury-append");
-
-                if ($(".injury-append").length > 1) {
-                    Swal.fire({
-                        title: 'Are you sure?',
-                        text: "Do you really want to delete this row?",
-                        icon: 'warning',
-                        showCancelButton: true,
-                        confirmButtonColor: '#d33',
-                        cancelButtonColor: '#3085d6',
-                        confirmButtonText: 'Yes, delete it!',
-                        cancelButtonText: 'Cancel'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $row.remove();
-                            Swal.fire(
-                                'Deleted!',
-                                'The row has been deleted.',
-                                'success'
-                            );
-                        }
-                    });
-                } else {
-                    Swal.fire(
-                        'Action Denied',
-                        'At least one row is required.',
-                        'warning'
-                    );
-                }
-            });
-
-            function addInjuryPersonValidation(injuryIndex) {
-                $(`select[name="injury_person[${injuryIndex}][injury_person_type]"]`).rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Injury Person Type is required."
-                    }
-                });
-                $(`input[name="injury_person[${injuryIndex}][injury_person_id]"]`).rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Injury Person Name is required."
-                    }
-                });
-                $(`input[name="injury_person[${injuryIndex}][injury_person_name]"]`).rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Injury Person Name is required."
-                    }
-                });
-                $(`input[name="injury_person[${injuryIndex}][injury_person_designation]"]`).rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Injury Person Designation is required."
-                    }
-                });
-                $(`select[name="injury_person[${injuryIndex}][injury_person_department_id]"], input[name="injury_person[${injuryIndex}][injury_person_department_id]"]`)
-                    .rules("add", {
-                        required: true,
-                        messages: {
-                            required: "Injury Person Department is required."
-                        }
-                    });
-            }
-            $(function() {
-                $('#accidentinvestigation').validate({
-                    rules: {
-                        'injury_person[0][injury_person_type]': {
-                            required: true,
-                        },
-                        'injury_person[0][injury_person_id]': {
-                            required: true,
-                        },
-                        'injury_person[0][injury_person_name]': {
-                            required: true,
-                        },
-                        'injury_person[0][injury_person_designation]': {
-                            required: true,
-                        },
-                        'injury_person[0][injury_person_department_id]': {
-                            required: true,
-                        },
-                        'witness_id[]': {
-                            required: true,
-                        },
-                        'is_damaged[]': {
-                            required: true,
-                        },
-                        root_cause_analysis: {
-                            required: true,
-                        },
-                        is_treatment: {
-                            required: true,
-                        },
-                        action_taken: {
-                            required: true,
-                            minlength: 10,
-                            maxlength: 2000,
-                        },
-                        details: {
-                            required: function(element) {
-                                return $('input[name="is_treatment"]:checked').val() === '1';
-                            },
-                            minlength: 3,
-                            maxlength: 2000,
-                        },
-                        corrective_preventive_action: {
-                            required: true,
-                            minlength: 10,
-                            maxlength: 2000,
-                        },
-                        responsible_person_id: {
-                            required: true,
-                        },
-                        target_date: {
-                            required: true,
-                        },
-                        risk_analysis: {
-                            required: true,
-                        },
-                        risk_analysis_remark: {
-                            required: function(element) {
-                                return $('input[name="risk_analysis"]:checked').val() === '2';
-                            },
-                            minlength: 3,
-                            maxlength: 2000,
-                        },
-                        remark: {
-                            minlength: 10,
-                            maxlength: 2000,
-                        },
-                    },
-                    messages: {
-                        'injury_person[0][injury_person_type]': {
-                            required: "Injury Person Type is required."
-                        },
-                        'injury_person[0][injury_person_id]': {
-                            required: "Injury Person Name is required."
-                        },
-                        'injury_person[0][injury_person_name]': {
-                            required: "Injury Person Name is required."
-                        },
-                        'injury_person[0][injury_person_designation]': {
-                            required: "Injury Person Designation is required."
-                        },
-                        'injury_person[0][injury_person_department_id]': {
-                            required: "Injury Person Department is required."
-                        },
-                        'witness_id[]': {
-                            required: "Witness ID is required.",
-                        },
-                        'is_damaged[]': {
-                            required: "Was anything damaged is required.",
-                        },
-                        root_cause_analysis: {
-                            required: "Root cause analysis is required.",
-                        },
-                        is_treatment: {
-                            required: "Where the injured person receiving any treatment at present is required.",
-                        },
-                        action_taken: {
-                            required: "Action taken is required.",
-                            minlength: "Minimum 10 characters required.",
-                            maxlength: "Maximum 2000 characters allowed.",
-                        },
-                        details: {
-                            required: "Please provide details of the treatment.",
-                            minlength: "Details must be at least 3 characters long.",
-                            maxlength: "Details cannot exceed 2000 characters.",
-                        },
-                        corrective_preventive_action: {
-                            required: "Corrective/preventive action is required.",
-                            minlength: "Minimum 10 characters required.",
-                            maxlength: "Maximum 2000 characters allowed.",
-                        },
-                        responsible_person_id: {
-                            required: "Responsible person ID is required.",
-                        },
-                        target_date: {
-                            required: "Target date is required.",
-                        },
-                        risk_analysis: {
-                            required: "Risk Analysis is required.",
-                        },
-                        risk_analysis_remark: {
-                            required: "Risk Analysis Remarks is required.",
-                            minlength: "Details must be at least 3 characters long.",
-                            maxlength: "Details cannot exceed 2000 characters.",
-                        },
-                        remark: {
-                            minlength: "Minimum 10 characters required.",
-                            maxlength: "Maximum 2000 characters allowed.",
-                        },
-                    },
-
-                    errorElement: 'span',
-                    errorPlacement: function(error, element) {
-                        error.addClass('invalid-feedback');
-                        element.closest('.form-input').append(error);
-                    },
-                    highlight: function(element) {
-                        $(element).addClass('is-invalid');
-                    },
-                    unhighlight: function(element) {
-                        $(element).removeClass('is-invalid');
-                    },
-                    submitHandler: function(form) {
-                        // Form is valid, proceed with capturing the fishbone diagram
-                        let fishboneContainer = $(".fishbone-container")[
-                            0]; // Get the fishbone diagram container
-
-                        // Capture the fishbone diagram as an image
-                        html2canvas(fishboneContainer, {
-                            scale: 2
-                        }).then(function(canvas) {
-                            let imageData = canvas.toDataURL(
-                                "image/png"); // Convert canvas to base64
-
-                            // Set the image data to the hidden input field
-                            $("#fishbone_image").val(imageData);
-
-                            // Now submit the form programmatically
-                            form.submit();
-                        });
-                    },
-                    invalidHandler: function(event, validator) {
-                        var errors = validator.numberOfInvalids();
-                        if (errors) {
-                            console.log(`There are ${errors} validation errors.`);
-                            validator.errorList.forEach(function(error) {
-                                console.log(
-                                    `Field: ${error.element.name}, Error: ${error.message}`
-                                );
-                            });
-                        }
-                    },
-                });
-
-            });
-        });
-
-        $(function() {
-            $('#incidentAdd').validate({
-                rules: {
-                    incident_date_time: {
-                        required: true,
-                    },
-                    unit_id: {
-                        required: true,
-                    },
-                    shift: {
-                        required: true,
-                        minlength: 2,
-                        maxlength: 2000,
-                    },
-                    location_id: {
-                        required: true,
-                    },
-                    exact_location: {
-                        required: true,
-                        minlength: 2,
-                        maxlength: 2000,
-                    },
-                    iir_type: {
-                        required: true,
-                    },
-                    reported_name: {
-                        required: true,
-                    },
-                    designation: {
-                        required: true,
-                    },
-                    department: {
-                        required: true,
-                    },
-                    employee_code: {
-                        required: true,
-                    },
-                    time_of_reporting: {
-                        required: true,
-                    },
-                    'reporting_media[]': {
-                        required: true,
-                        minlength: 1,
-                    },
-                    brief_description: {
-                        required: true,
-                        minlength: 2,
-                        maxlength: 2000,
-
-                    },
-                    immediate_action_taken: {
-                        required: true,
-                        minlength: 2,
-                        maxlength: 2000,
-
-                    },
-                    'evidence[0][]': {
-                        required: true,
-                        extension: "png|jpeg|jpg|pdf|doc|docx|mp4"
-                    },
-
-                    anyone_injured: {
-                        required: true,
-                    },
-                },
-                messages: {
-                    incident_date_time: {
-                        required: "Date and Time is required.",
-                    },
-                    unit_id: {
-                        required: "Unit is required.",
-                    },
-                    shift: {
-                        required: "Shift is required.",
-                        minlength: "Shift Required must be exactly 2 characters.",
-                        maxlength: "Shift Required must be exactly 2000 characters.",
-                    },
-                    location_id: {
-                        required: "Location is required.",
-                    },
-                    exact_location: {
-                        required: "Exact Location is required.",
-                        minlength: "Exact Location Required must be exactly 2 characters.",
-                        maxlength: "Exact Location Required must be exactly 2000 characters.",
-                    },
-                    iir_type: {
-                        required: "IIR Type is required.",
-                    },
-                    reported_name: {
-                        required: "Name is required.",
-                    },
-                    designation: {
-                        required: "Designation is required.",
-                    },
-                    department: {
-                        required: "Department is required.",
-                    },
-                    employee_code: {
-                        required: "Employee Code is required.",
-                    },
-                    time_of_reporting: {
-                        required: "Time of reporting is required.",
-                    },
-                    'reporting_media[]': {
-                        required: "At least one Reporting Media is required.",
-                        minlength: "At least one Reporting Media must be selected.",
-                    },
-                    brief_description: {
-                        required: "Brief Description is required.",
-                        minlength: "Brief Description Required must be exactly 2 characters.",
-                        maxlength: "Brief Description Required must be exactly 2000 characters.",
-
-                    },
-                    immediate_action_taken: {
-                        required: "Immediate Action Taken is required.",
-                        minlength: "Immediate Action Taken Required must be exactly 2 characters.",
-                        maxlength: "Immediate Action Taken Required must be exactly 2000 characters.",
-
-                    },
-                    'evidence[0][]': {
-                        required: "Evidence is required.",
-                        extension: "Invalid file type (Allowed: png, jpeg, jpg, pdf, doc, docx, mp4)"
-                    },
-                    anyone_injured: {
-                        required: "If any person has injured is required.",
-                    },
-                },
-                errorElement: 'span',
-                errorPlacement: function(error, element) {
-                    error.addClass('invalid-feedback');
-
-                    // Handle error placement for checkboxes
-                    if (element.attr("name") === "reporting_media[]") {
-                        element.closest('.form-input').find('.text-danger').html(error);
-                    } else {
-                        element.closest('.form-input').append(error);
-                    }
-                },
-                highlight: function(element) {
-                    $(element).addClass('is-invalid');
-                },
-                unhighlight: function(element) {
-                    $(element).removeClass('is-invalid');
-                },
-                submitHandler: function(form) {
-                    form.submit();
-                },
-                invalidHandler: function(event, validator) {
-                    var errors = validator.numberOfInvalids();
-                    if (errors) {
-                        console.log(`There are ${errors} validation errors.`);
-                        validator.errorList.forEach(function(error) {
-                            console.log(
-                                `Field: ${error.element.name}, Error: ${error.message}`);
-                        });
-                    }
-                },
-            });
-
-        });
-
-
-        //injury script
         $("#injury_model").on("shown.bs.modal", function() {
 
             $('.injury-box').removeClass('hide');
+
+        });
+
+        $(document).on('click', '.injcancel', function() {
+
+            $("#injury_model").modal("hide");
+        });
+
+        $(document).on('click', '.getbody', function() {
+            var injurydetails = $(this).attr('id');
+            var res = injurydetails.split('_');
+            var inval = res['1'];
+            var alt = $(this).attr('alt');
+            alert(alt);
+            $.ajax({
+                type: 'post',
+                url: "{{ admin_url('incident/initial-incident/fetchEmployeeDetails') }}",
+                method: 'POST',
+                data: {
+                    injury_id: inval,
+                    _token: '{{ csrf_token() }}'
+                },
+                success: function(data) {
+                    //alert(data);
+                    var empdat = JSON.parse(data);
+                    //alert(empdat['empdata']['imgMapdata']);
+                    //alert(empdat['empdata']['body_parts']);
+                    if (empdat['empdata'] != null) {
+                        $("#bp" + inval).html(empdat['empdata']['body_parts']);
+                    }
+                }
+            });
         });
 
         $(document).on('click', '.injury-btn', function() {
@@ -2261,7 +1205,7 @@
                 url: url,
                 data: data,
                 success: function(data) {
-                    console.log(data['empdata']); 
+                    console.log(data); // Inspect the response
                     if (data['empdata'] && data['empdata'].length > 0) {
                         $.each(data['empdata'], function(i, emp) {
                             $("#imgMapdata1").val(emp['imgMapdata']);
@@ -2281,6 +1225,34 @@
             });
         }
 
+        $('.clearbodyparts').on('click', function() {
+            var bpid = $("#injury_model [name='inc_body_id']").val();
+            var injurydetails = $("#injury_model [name='injurydetails']").val();
+            //alert(bpid);
+            if (bpid == '') {
+
+            } else {
+                //alert(bpid);
+                $.ajax({
+                    type: 'post',
+                    url: "{{ admin_url('incident/initial-incident/deletebodayparts') }}",
+                    method: 'POST',
+                    data: {
+                        bid: bpid,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    success: function(data) {
+                        //alert(data);
+                        //  if(data == 1){
+                        $('#text_injbodypart_' + injurydetails).val('');
+                        $("#injury_model").modal("hide");
+                        // location.reload();
+                        //}
+                    }
+
+                });
+            }
+        });
 
         function clearInjuryBasicDetails() {
 
@@ -2288,10 +1260,96 @@
 
             $(modalsrc).find("[name='imgMapdata1']").val('');
             $(modalsrc).find(':input[name="save_inj"]').prop('disabled', false);
+            $(modalsrc).find(':input[name="draft_inj"]').prop('disabled', false);
             $('.others').addClass('hide');
 
         }
 
+        $("document").ready(function(e) {
+
+            window.trigger = this;
+            //clearInjuryBasicDetails();
+            /* var table = $('.injtable');
+                        var tableRows = table.find('tr').length;
+                        console.log(tableRows);
+            
+                        if (tableRows > 10) {
+                            $('.injtable').css('overflow-y', 'auto');
+                            $('.injtable').css('max-height', '300px'); // Example maximum height
+                        }*/
+
+            var alt = $(this).attr('alt');
+
+            var injuredPerson = $('#employeeInvesName' + alt).val();
+            if (injuredPerson == '') {
+
+                Swal.fire('Error', 'Please Select Victim Name', 'error');
+
+            } else {
+
+                empcourse = [];
+                var errorcount = '0';
+
+                $('.invesEmployeeName ').each(function(i, obj) {
+
+                    var newstring = ''
+
+                    empname = this.value;
+                    if (empname == '') {
+                        name = '';
+                    } else {
+                        name = $(this).val();
+
+                    }
+
+                    coursename = $(this).closest("div.row").find("#employeeInvesName" + i).val();
+
+                    if (errorcount == '0') {
+
+                        if (empname != '' && coursename != '') {
+
+
+                            var newstring = this.value + '_' + coursename;
+
+
+
+                            if (jQuery.inArray(newstring, empcourse) > -1) {
+
+                                Swal.fire('Error', 'Details on the Victim Employee Name already selected',
+                                    'error');
+                                errorcount = '1';
+
+
+                            } else {
+                                empcourse.push(newstring);
+
+                            }
+                        }
+
+                    }
+                });
+
+
+                if (errorcount == '1') {
+
+                    return false;
+                } else {
+
+
+                    $('#injuredPerson').val(injuredPerson);
+
+                    $("#injury_model [name='injperson']").val(injuredPerson);
+                    $("#injury_model").modal("show");
+
+
+                }
+
+
+
+            }
+
+
+        });
 
         $("#injury_model").on("shown.bs.modal", function() {
             $(window).resize();
@@ -2321,7 +1379,6 @@
         window.mapEdit = false;
         window.canvas_obj = {};
         $("#injury_model").on("shown.bs.modal", function() {
-            alert(453);
             setTimeout(function() {
                 $(".img-map").css("opacity", "0");
                 $(".img-map").html($("#tmp-male").html())
@@ -2403,7 +1460,6 @@
 
 
         function getAllValues(data) {
-
             var data = {};
             return data;
         }
@@ -3003,34 +2059,17 @@
         }
 
         $(document).ready(function() {
-
-            $.validator.addMethod('alpha_dash_space', function(value) {
-                    return /^[A-Z%()a-z/,.]*$/.test(value);
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                 },
-                "Please Enter valid Alphabetic characters with allowed special charters are /,.%()");
+
+            });
 
             $("#injuryform").validate({
-
-                // rules: {
-                //     "inci_event_related": {
-                //         required: true,
-                //         maxlength: 100,
-                //         //programming_char:true,
-                //         minlength: 3
-                //     },
-
-                // },
-                // messages: {
-
-                //     "inci_event_related": {
-                //         required: "Incident Event Related Name is required"
-                //     },
-
-                // },
                 submitHandler: function(form) {
 
                     var data = getAllValues();
-
                     data['map'] = getMapValues();
 
                     var data1 = JSON.stringify(data);
@@ -3039,7 +2078,6 @@
 
                     $('#injury_body_parts_' + $('#injurydetails').val()).val(data1);
                     var descLabels = $(".desc-label");
-
 
                     var labelTextArray = [];
 
@@ -3071,6 +2109,7 @@
 
                     var formDatas = $('#injuryform').serialize();
 
+
                     var imgdata = $('#injuryform').serializeArray();
 
                     if (imgdata[1]['name'] == "imgMapdata" && imgdata[1]['value'] ==
@@ -3093,7 +2132,7 @@
                         } else {
 
                             var url =
-                                "{{ admin_url('incident/initial-incident/addInjury') }}";
+                                "{{ admin_url('incident/initial-incident/addInjury/api') }}";
 
                             $("#bodypartimage").val("");
                             const image = document.getElementById('img-imgmap1');
@@ -3118,7 +2157,6 @@
                             formDatas.append('random_id',
                                 random_id); // Append the new key-value pair
                             var data = formDatas.toString()
-
 
                             $.ajax({
                                 type: 'ajax',
@@ -3153,65 +2191,10 @@
                         }
                     }
                 }
-
             });
         });
-
-        // injury script
-
-        // company and location and unit
-
-        $(document).on('change', '#company_id', function() {
-            var companyId = $(this).val();
-            if (companyId) {
-                $.ajax({
-                    url: "{{ admin_url('location/ajax-list') }}/" + companyId + "/0",
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#location_id').empty().append(
-                            '<option value="">Select Location</option>');
-                        $.each(data, function(key, value) {
-                            $('#location_id').append('<option value="' + value
-                                .id + '">' + value.name + '</option>');
-                        });
-                        $('#location_id').trigger('change.');
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching location. Please try again.');
-                    }
-                });
-            } else {
-                $('#location_id').empty().append('<option value="">Select Location</option>');
-                $('#location_id').trigger('change.');
-            }
-        });
-        // location
-
-        $(document).on('change', '#location_id', function() {
-            var locationId = $(this).val();
-            if (locationId) {
-                $.ajax({
-                    url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#unit_id').empty().append(
-                            '<option value="">Select unit</option>');
-                        $.each(data, function(key, value) {
-                            $('#unit_id').append('<option value="' + value
-                                .id + '">' + value.name + '</option>');
-                        });
-                        $('#unit_id').trigger('change.');
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching unit. Please try again.');
-                    }
-                });
-            } else {
-                $('#unit_id').empty().append('<option value="">Select unit</option>');
-                $('#unit_id').trigger('change.');
-            }
-        });
     </script>
-@endpush
+
+</body>
+
+</html>

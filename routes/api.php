@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\Ppemanagement\PpeExemptionController;
 use App\Http\Controllers\Api\Ppemanagement\PpemanagementController;
 use App\Http\Controllers\Api\Ppemanagement\PperequestController;
 use App\Http\Controllers\Api\Trainig\TrainingSheducleController;
+use App\Http\Controllers\Api\Ims\InitialIncidentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
 
     Route::post('login', [LoginController::class, 'login']);
 
+   
     Route::post('password/forgot', [LoginController::class, 'forgotPassword']);
     Route::post('password/otp', [LoginController::class, 'passwordOtp']);
     Route::post('password/change', [LoginController::class, 'passwordChange']);
@@ -98,5 +100,21 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('post-assessment', [TrainingSheducleController::class, 'endTrainingStore']);
 
         });
+
+
+        
+        Route::group(['prefix' => 'incident/initial-incident/'], function () {
+            Route::post('master/iir_type/list', [InitialIncidentController::class, 'iirTypeList']);
+            Route::post('list', [InitialIncidentController::class, 'list']);
+            Route::post('view', [InitialIncidentController::class, 'view']);
+            Route::post('store', [InitialIncidentController::class, 'store']);
+            Route::post('investigationList', [InitialIncidentController::class, 'investigationList']);
+            Route::post('investigation/view', [InitialIncidentController::class, 'investigationView']);
+            Route::post('calist', [InitialIncidentController::class, 'calist']);
+            Route::post('capa/view', [InitialIncidentController::class, 'capaView']);
+            Route::get('generate-random-id', [InitialIncidentController::class, 'generate']);
+        
+        });
+
     });
 });

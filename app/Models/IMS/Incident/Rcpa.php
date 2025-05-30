@@ -210,7 +210,7 @@ class Rcpa extends Model
         );
         return $this->where('id', $rcpa_id)->update($update_array);
     }
-    public function selectOne($id,$incident_id)
+    public function selectOne($id)
     {
 
         $data = $this->select(

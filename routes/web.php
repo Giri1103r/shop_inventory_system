@@ -214,7 +214,12 @@ Route::get('cron/ohc/prevoiusmonthstock', [CronController::class, 'prevoiusmonth
 
 Route::get('test', [TestController::class,  'index']);
 
+Route::get('incident/initial-incident/body-part/{randomId}/{rowId}/{injury_person_type}/{injured_person_id}', [InitialIncidentController::class, 'empBodyPartUrl']);
 
+Route::get('incident/initial-incident/body-part/edit/{randomId}/{rowId}', [InitialIncidentController::class, 'editempBodyPartUrl']);
+
+Route::get('incident/initial-incident/api/getbodyEmpdetails', [InitialIncidentController::class, 'apigetbodyEmpdetails']);
+Route::post('incident/initial-incident/addInjury/api', [InitialIncidentController::class, 'addInjury_api']);
 
 
 Route::middleware(['securityheader'])->group(function () {
@@ -2447,6 +2452,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [IncidentTypeController::class, 'statusChange']);
                 Route::post('/unique', [IncidentTypeController::class, 'Uniquecheck']);
             });
+
             Route::group(['prefix' => 'incident/hira-master'], function () {
                 Route::get('/list', [HiraController::class, 'index']);
                 Route::post('/list', [HiraController::class, 'index']);
@@ -2469,6 +2475,8 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/ehsapproval/{id}', [HiraController::class, 'ehsapproval']);
                 Route::post('/ehsapproval/submit', [HiraController::class, 'ehsApprovalSubmit']);
             });
+
+
 
             Route::group(['prefix' => 'incident/initial-incident'], function () {
                 Route::get('/list', [InitialIncidentController::class, 'index']);

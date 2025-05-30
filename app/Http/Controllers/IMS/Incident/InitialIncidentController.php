@@ -598,10 +598,31 @@ class InitialIncidentController extends Controller
         }
     }
 
+    public function apigetbodyEmpdetails(Request $request)
+    {     
+        try {
+            $getEmpdetails = $this->incident_body_parts->apigetEmpdetails();
+            return $getEmpdetails;
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+        }
+    }
+
     public function addInjury(Request $request)
     {
         try {
             $addInjury = $this->incident_body_parts->addInjury();
+            return $addInjury;
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
+        }
+    }
+    public function addInjury_api(Request $request)
+    {
+        try {
+            $addInjury = $this->incident_body_parts->addInjuryApi();
             return $addInjury;
         } catch (Exception $ex) {
             report($ex);
@@ -795,7 +816,7 @@ class InitialIncidentController extends Controller
             $incident_id = decryptId($request->incident_id);
             if (Auth::check()) {
                 $incident_report = $this->initialincident->selectOne($incident_id);
-                $rcpa = $this->rcpa->selectOne($id, $incident_id);
+                $rcpa = $this->rcpa->selectOne($id);
                 $getEHSVerify = $this->initialincident->getEHSVerifyincident($incident_id);
                 $getEHSReview = $this->initialincident->getEHSReviewincident($incident_id);
                 $getInvestigation = $this->initialincident->getInvestigation($incident_id);
@@ -1809,6 +1830,57 @@ class InitialIncidentController extends Controller
             return Response::json($isUnique);
         }
     }
+    public function empBodyPartUrl($randomId = '', $rowId = '', $injury_person_type = ' ', $injured_person_id = '')
+    {
+        try {
+            $body_parts = $this->incident_body_parts->delete_temprow();
+
+            $data = [
+                'randomID' => $randomId,
+                'rowId' => $rowId,
+                'injury_person_type' => $injury_person_type,
+                'injured_person_id' => $injured_person_id,
+                'body_parts' => $body_parts,
+            ];
+            return view('ims.initial.incident.api.bodyPart_img', $data);
+        } catch (Exception $ex) {
+            Session::flash('error', 'Something went wrong, Please try again!');
+            return redirect(admin_url('incident/initial-incident/list'));
+        }
+    }
+    public function editempBodyPartUrl($randomId = '', $rowId = '')
+    {
+       
+        try {
+            $body_parts = $this->incident_body_parts->delete_temprow();
+            $getbodyParts = IncidentBodyParts::where('random_id', $randomId)
+                ->where('row_id', $rowId)
+                ->first();
+
+
+            $bobypart_id = $getbodyParts->id;
+            $injury_id = $getbodyParts->injury_id;
+            $injuryPersonType = $getbodyParts->injured_person_type;
+
+            $data = [
+                'randomID' => $randomId,
+                'rowId' => $rowId,
+                'body_parts' => $body_parts,
+                'bobypart_id' => $bobypart_id,
+                'injury_id' => $injury_id,
+                'injuryPersonType' => $injuryPersonType,
+                'getbodyParts' => $getbodyParts,
+            ];
+
+            return view('ims.initial.incident.api.editbodyPart_img', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try again!');
+            return redirect(admin_url('incident/initial-incident/list'));
+        }
+    }
+
+   
 
     public function StatusChange(Request $request)
     {
