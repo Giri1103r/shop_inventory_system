@@ -15,43 +15,45 @@ use App\Models\Master\Location;
 
 use App\Models\Master\UserRole;
 use App\Models\Master\Department;
+use App\Models\Master\PpeRequest;
 use Illuminate\Support\Facades\DB;
+use App\Models\Master\PpeExemption;
 use App\Models\Permit\SafetyPermit;
+use App\Models\Inspection\Fire\Fire;
 use Illuminate\Support\Facades\Crypt;
 use App\Models\IMS\Master\IncidentType;
+use App\Models\Master\TrainingSchedule;
+use App\Models\IMS\Incident\InjuryDetails;
+use App\Models\OhcManagement\Opd\FirstAid;
 use App\Models\IMS\Incident\AccidentReport;
 use Kreait\Firebase\Messaging\CloudMessage;
 use App\Models\IMS\Incident\InitialIncident;
+use App\Models\Inspection\audit\Master\Task;
 use Kreait\Firebase\Messaging\AndroidConfig;
 use Kreait\Firebase\Messaging\WebPushConfig;
+use App\Models\Inspection\GembaWalkChecklist;
 use App\Models\OhcManagement\Master\Medicine;
+use App\Models\IMS\Incident\IncidentBodyParts;
+use App\Models\Inspection\audit\AuditAnalysis;
+use App\Models\Inspection\GembaWalk\GembaWalk;
+use App\Models\Inspection\audit\InterUnitAudit;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\OhcManagement\MedicineReceiving;
 use App\Models\IMS\Incident\InitialFireIncident;
-use App\Models\Inspection\GembaWalk\GembaWalk;
-use App\Models\Inspection\GembaWalkChecklist;
-use App\Models\OhcManagement\UserMedicineIssuance;
-use App\Models\OhcManagement\Opd\PrescribetoPatient;
-use App\Models\OhcManagement\Opd\FirstAid;
-use App\Models\OhcManagement\UserMedicineRequisition;
-use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\audit\AuditAssessment;
-use App\Models\Inspection\audit\AuditAnalysis;
-use App\Models\Inspection\audit\Master\Task;
-use App\Models\Inspection\Environment\Environment;
-use App\Models\Inspection\Fire\Fire;
-use App\Models\Inspection\Ohc\SafetyPettyChecklist;
-use App\Models\Inspection\Fire\DailyFireHouseInspection;
-use App\Models\Inspection\audit\InterUnitAudit;
-use App\Models\Inspection\Fire\FirePreNocInspection;
-use App\Models\Inspection\Fire\FireCheckListFollowUp;
-use App\Models\Inspection\Ohc\HealthInstrumentCalibration;
-use App\Models\IMS\Incident\IncidentBodyParts;
-use App\Models\IMS\Incident\InjuryDetails;
 use App\Models\Inspection\audit\MonthlyAuditPlan;
-use App\Models\Master\PpeRequest;
-use App\Models\Master\PpeExemption;
-use App\Models\Master\TrainingSchedule;
+use App\Models\Inspection\Environment\Environment;
+use App\Models\Inspection\Master\ChecklistSubType;
+use App\Models\OhcManagement\UserMedicineIssuance;
+use App\Models\Inspection\Ohc\SafetyPettyChecklist;
+use App\Models\Inspection\Fire\FirePreNocInspection;
+use App\Models\OhcManagement\Opd\PrescribetoPatient;
+use App\Models\Inspection\Fire\FireCheckListFollowUp;
+use App\Models\OhcManagement\UserMedicineRequisition;
+use App\Models\Inspection\Fire\FireMockDrillInspection;
+use App\Models\Inspection\Safety\SafetyWalkObservation;
+use App\Models\Inspection\Fire\DailyFireHouseInspection;
+use App\Models\Inspection\Ohc\HealthInstrumentCalibration;
 
 /*
  * Menu bar start
@@ -399,10 +401,10 @@ if (!function_exists('gettotalCount')) {
                 $count = Department::count();
                 break;
             case 'employee':
-                $count = Employee::where('status',1)->count();
+                $count = Employee::where('status', 1)->count();
                 break;
             case 'work':
-                $count = Work::where('status',1)->count();
+                $count = Work::where('status', 1)->count();
                 break;
             case 'ppe_request':
                 $count = PpeRequest::count();
@@ -434,6 +436,10 @@ if (!function_exists('gettotalCount')) {
             case 'ohc_first_aid':
                 $count = FirstAid::count();
                 break;
+            case 'training_men_hours':
+                $count = TrainingSchedule::whereYear('created_at', date('Y'))
+                    ->sum(DB::raw('CAST(training_man_hours AS DECIMAL(10,2))')).' hrs';
+                break;
             case 'major_accident':
                 $count = InjuryDetails::where('nature_of_injury', MAJOR_ACCIDENT)->count();
                 break;
@@ -445,6 +451,9 @@ if (!function_exists('gettotalCount')) {
                 break;
             case 'un_safe_condition':
                 $count = InitialIncident::whereRaw("FIND_IN_SET(?, ua_or_uc)", [UNSAFE_CONDITION])->count();
+                break;
+            case 'training_schedule':
+                $count = TrainingSchedule::whereYear('created_at', date('Y'))->count();
                 break;
             case 'near_miss':
                 $nearmiss = DB::table('ims_master_incident_type')
@@ -467,6 +476,14 @@ if (!function_exists('gettotalCount')) {
                     ->pluck('id')
                     ->toArray();
                 $count = InitialIncident::whereIn('iir_type', $fireIncidence)->count();
+                break;
+            
+            case 'fire_mock_drill':
+                $count = FireMockDrillInspection::count();
+                break;
+
+            case 'safety_walk':
+                $count = SafetyWalkObservation::count();
                 break;
             default:
                 $count = 0;
