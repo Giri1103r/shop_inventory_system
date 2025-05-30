@@ -287,7 +287,7 @@
                                                                     <input type="text" class="form-control"
                                                                         name="gemba_walk[0][observer_name][]"
                                                                         id="observer_name"
-                                                                        value="{{ Auth::user()->name }}">
+                                                                        value="{{ Auth::user()->name }}" readonly>
                                                                 </div>
                                                             </div>
 
