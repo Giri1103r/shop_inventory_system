@@ -245,8 +245,10 @@ class GembaWalkController extends Controller
             $ResponsibleId = $this->gembaWalkCheckList->selectone($gembaWalk_id);
 
             $capa_needed = decryptId($request->is_passed);
+           $status_closed = $request->gemba_walk[0]['current_status'];
 
-            if ($capa_needed == 2) {
+
+            if ($capa_needed == 2  ||  $status_closed == 2  ) {
                 $gembaWalk_status = GEMBA_WALK_INSPECTION_CLOSED;
                 $gembaWalk_status_details = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
                 $to_status = GEMBA_WALK_INSPECTION_CLOSED;
