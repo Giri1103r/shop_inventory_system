@@ -13,6 +13,7 @@ class FirstAid extends Model
 
     protected $fillable = [
         'emp_id',
+        'is_outside_employee',
         'emp_name',
         'date_of_incident',
         'time_of_incident',
@@ -123,8 +124,14 @@ class FirstAid extends Model
 
             $commaSeparatedRoles = implode(',', $decryptedRoleIds);
         }
+        if ($request->has('is_outside_worker') == 1) {
+            $employeeId =  $request->outside_emp_id;
+        } else {
+            $employeeId =   $request->emp_id;
+        }
         $insert_array = [
-            'emp_id' => $request->emp_id,
+            'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
+            'emp_id' =>  $employeeId,
             'emp_name' => $request->emp_name,
             'date_of_incident' => DBdateformat($request->date_of_incident),
             'time_of_incident' => $request->time_of_incident,
@@ -154,8 +161,14 @@ class FirstAid extends Model
 
             $commaSeparatedRoles = implode(',', $decryptedRoleIds);
         }
+        if ($request->has('is_outside_worker') == 1) {
+            $employeeId =  $request->outside_emp_id;
+        } else {
+            $employeeId =   $request->emp_id;
+        }
         $update_array = [
-            'emp_id' => $request->emp_id,
+            'emp_id' =>  $employeeId,
+            'is_outside_employee' => $request->has('is_outside_worker') ? 1 : 0,
             'emp_name' => $request->emp_name,
             'date_of_incident' => DBdateformat($request->date_of_incident),
             'time_of_incident' => $request->time_of_incident,

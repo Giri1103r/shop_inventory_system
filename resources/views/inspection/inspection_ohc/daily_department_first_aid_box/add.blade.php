@@ -117,7 +117,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">First Aid Box Number</label>
-                                                    <input type="number" min="1" name="first_aid_box_no"
+                                                    <input type="text"  name="first_aid_box_no"
                                                         id = "first_aid_box_no" class="form-control">
                                                 </div>
                                             </div>
@@ -156,137 +156,72 @@
                                                 <h4 class="text-white">Medicine details</h4>
 
                                             </div>
-                                            <div
-                                                class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
-                                                <button class="btn btn-primary add-row me-3" type="button"
-                                                    id="add-row" style="width: 84px;">
-                                                    Add
-                                                </button>
+                                        </div>
 
-                                            </div>
+                                        <div class="mb-3 mt-3">
+                                            <table class="table table-bordered table-striped">
+                                                <thead class="table-secondary">
+                                                    <tr>
+                                                        <th style="text-align: center">Sr. No.</th>
+                                                        <th style="text-align: center">Medicine Name</th>
+                                                        <th style="text-align: center">Freeze Quantity</th>
+                                                        <th style="text-align: center">Available Quantity</th>
+                                                        <th style="text-align: center">Expiry Date</th>
+                                                        <th style="text-align: center">Remark</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($medicines as $medicines)
+                                                        <tr>
+                                                            <td class="text-center">{{ $loop->iteration }}</td>
+                                                            <td class="text-center">
+                                                                {{ getMedicinename($medicines->medicine_id) }} <input
+                                                                    type="hidden"
+                                                                    name="medicine_id[{{ $medicines->id }}]"
+                                                                    value="{{ encryptId($medicines->id) }}"></td>
+
+                                                            <td class="text-center">{{ $medicines->freeze_quantity }}
+                                                                <input type="hidden"
+                                                                    name="freeze_quantity[{{ $medicines->id }}]"
+                                                                    value="{{ $medicines->freeze_quantity }}">
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-input">
+                                                                    <input class="form-control" type="number"
+                                                                        min="1"
+                                                                        name="available_quantity[{{ $medicines->id }}]" />
+                                                                </div>
+                                                            </td>
+                                                            <td>
+                                                                <div class="form-input">
+
+
+                                                                    <div class="input-group date form-input custom-height">
+                                                                        <input class="form-control expired_date"
+                                                                            type="date"
+                                                                            name="expired_date[{{ $medicines->id }}]" />
+                                                                        <div class="input-group-addon input-group-text">
+                                                                            <span class="fa fa-calendar"></span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </td>
+
+                                                            <td>
+                                                                <div class="form-input">
+                                                                    <textarea class="form-control" type="text" style="resize: none" name="remarks[{{ $medicines->id }}]"></textarea>
+                                                                </div>
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
 
 
                                         </div>
 
-                                        <div class="table-responsive">
-                                            <div class="col-md-12">
-                                                <table class="table table-bordered ">
-
-                                                    <thead class="bg-secondary" style="color: #ffff">
-                                                        <tr>
-                                                            <th>Medicine</th>
-                                                            <th>Available Quantity</th>
-                                                            <th>Freeze Quantity</th>
-                                                            <th>Material Expiry</th>
-                                                            <th>Remarks</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody id="medicine-tbody">
-                                                        <tr>
-                                                            <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="medicine_id" class="require">Medicine
-                                                                        Name</label>
-                                                                    <select name="medicine_id[0]" id="medicine_id"
-                                                                        class="form-control single-select medicine_id"
-                                                                        style="width: 100%">
-                                                                        <option value="">Select the Medicine Name
-                                                                        </option>
-                                                                        @foreach ($medicine as $list)
-                                                                            <option
-                                                                                value="{{ encryptId($list->medicine_id) }}">
-                                                                                {{ getMedicinename($list->medicine_id) }}
-                                                                            </option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="available_quantity"
-                                                                        class="require">Available
-                                                                        Quantity</label>
-                                                                    <input type="number" min="1" name="available_quantity[0]"
-                                                                        id="available_quantity" value=""
-                                                                        placeholder="Available quantity"
-                                                                        class="form-control">
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="quantity" class="require">Freeze
-                                                                        Quantity</label>
-                                                                    <input type="text" name="freeze_quantity[0]"
-                                                                        id="freeze_quantity"
-                                                                        placeholder="Enter the Freeze quantity"
-                                                                        class="form-control freeze_quantity" readonly>
-
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="quantity" class="require">Material
-                                                                        Expiry</label>
-                                                                    <input type="text" name="material_expiry[0]"
-                                                                        id="material_expiry" placeholder=""
-                                                                        class="form-control">
-
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="remarks"class="">Remarks</label>
-                                                                    <textarea name="remarks[0]" id="remarks" cols="10" rows="2" class="form-control"></textarea>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-
-                                                                <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
-                                                                    style="width: 30px; height: 30px;">
-                                                                    <i class="fa-solid fa-trash"></i>
-                                                                </div>
 
 
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-
-
-                                        {{-- @if ($signature_upload->signature_upload != '')
-                                            <label class="form-label view_label">Requestor Signature</label>
-
-                                            <p>
-                                                <a href="{{ asset($signature_upload->signature_upload) }}"
-                                                    target="_blank">
-                                                    <img src="{{ asset($signature_upload->signature_upload) }}"
-                                                        style="width: 100px" alt="image">
-                                                </a>
-                                            </p>
-                                        @else
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-                                                <label for="signature_image" class="form-label fw-bold require">Requestor
-                                                    Signature</label>
-                                                <input type="file"
-                                                    class="form-control validate-file-accept validate-file-required"
-                                                    accept="image/png, image/jpeg, image/jpg" name="signature_image"
-                                                    id="signature_image">
-                                                <div class="text-danger"></div>
-                                                <small>Allowed file types: png, jpeg, jpg</small>
-
-                                                <!-- Preview Container -->
-                                                <div id="imagePreviewContainer" class="mt-2" style="display: none;">
-                                                    <img id="imagePreview" src="#" alt="Signature Preview"
-                                                        class="img-thumbnail" width="200">
-                                                </div>
-                                            </div>
-                                            </div>
-                                        @endif --}}
                                 </div>
                                 <hr>
                                 <div class="submit-button" style="text-align: right;">
@@ -318,7 +253,9 @@
                 location.reload();
             });
         });
-
+        flatpickr(".expired_date", {
+            dateFormat: "d-m-Y",
+        });
         var Datepicker = flatpickr("#date_of_inspection", {
             dateFormat: "d-m-Y",
             minDate: new Date()
@@ -364,266 +301,7 @@
                 $('#department_id').trigger('change.');
             }
         });
-        $(document).on('change', '.medicine_id', function() {
-            var $row = $(this).closest('tr'); // Get current row
-            var medicineId = $(this).val();
 
-            if (medicineId) {
-                $.ajax({
-                    url: "{{ admin_url('ohc/medical-requisition-slip/freeze-medicine-quantity') }}",
-                    type: 'GET',
-                    dataType: 'json',
-                    data: {
-                        medicineId: medicineId
-                    },
-                    success: function(data) {
-                        if (data && data.freeze_quantity !== undefined) {
-                            $row.find('.freeze_quantity').val(data
-                                .freeze_quantity);
-                        } else {
-                            $row.find('.freeze_quantity').val('');
-                        }
-                    },
-                    error: function(xhr) {
-                        alert(
-                            'Error fetching freeze quantity. Please try again.');
-                    }
-                });
-            } else {
-                $row.find('.freeze_quantity').val('');
-            }
-        });
-        $(document).ready(function() {
-
-            let medicine_requisition_row_count = 1;
-
-
-
-            $(".add-row").click(function() {
-                var rowCount = $('#medicine-tbody tr').length;
-
-
-                var newRow = `
-            <tr>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="medicine_id" class="require">Medicine Name</label>
-                        <select name="medicine_id[${medicine_requisition_row_count}]" class="form-control medicine_id single-select" style="width: 100%">
-                            <option value="">Select the Medicine Name</option>
-                            @foreach ($medicine as $list)
-                                                                            <option value="{{ encryptId($list->medicine_id) }}">
-                                                                                {{ getMedicinename($list->medicine_id) }}
-                                                                            </option>
-                                                                        @endforeach
-                        </select>
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="quantity" class="require">Available Quantity</label>
-                        <input type="number" min="1" name="available_quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
-                         <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
-
-
-                    </div>
-                </td>
-  <td>
-                    <div class="form-group form-input">
-                        <label for="quantity" class="require">Freeze Quantity</label>
-                        <input type="text" name="freeze_quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control freeze_quantity" readonly>
-                         <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
-
-
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="quantity" class="require">Material Expiry</label>
-                        <input type="text" name="material_expiry[${medicine_requisition_row_count}]"  id="material_expiry"   class="form-control">
-
-
-
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group form-input">
-                        <label for="remarks" class="">Remarks</label>
-                        <textarea name="remarks[${medicine_requisition_row_count}]" cols="10" rows="2" class="form-control"></textarea>
-                    </div>
-                </td>
-                <td>
-                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row" style="width: 30px; height: 30px;">
-                        <i class="fa-solid fa-trash"></i>
-                    </div>
-                </td>
-            </tr>`;
-
-                $('#medicine-tbody').append(newRow);
-
-
-                $('select[name="medicine_id[' + medicine_requisition_row_count + ']"]').select2({
-                    placeholder: "Select the Medicine Name",
-                    width: '100%'
-                });
-
-
-                $('select[name="medicine_id[' + medicine_requisition_row_count + ']"]').rules('add', {
-                    required: true,
-                    messages: {
-                        required: 'This Medicine name is required'
-                    }
-                });
-                $('input[name="available_quantity[' + medicine_requisition_row_count + ']"]').rules('add', {
-                    required: true,
-                    digits: true,
-                    messages: {
-                        required: 'Available Quantity is required',
-                        digits: 'Available Quantity must be numeric',
-                    }
-                });
-                $('input[name="material_expiry[' + medicine_requisition_row_count + ']"]').rules('add', {
-                    required: true,
-
-                    messages: {
-                        required: 'material_expiry is required',
-
-                    }
-                });
-                $('input[name="freeze_quantity[' + medicine_requisition_row_count + ']"]').rules('add', {
-                    required: true,
-                    digits: true,
-                    messages: {
-                        required: 'Freeze Quantity is required',
-                        digits: 'Freeze Quantity must be numeric',
-                    }
-                });
-
-                $('textarea[name="remarks[' + medicine_requisition_row_count + ']"]').rules('add', {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 600,
-                    messages: {
-                        required: 'Remarks are required',
-                        minlength: 'Minimum 3 characters are required',
-                        maxlength: 'Remarks should not exceed 600 characters',
-                    }
-                });
-                filterMedicineOptions();
-                $(document).on('change', '.medicine_id', function() {
-                    var $row = $(this).closest('tr'); // Get current row
-                    var medicineId = $(this).val();
-
-                    if (medicineId) {
-                        $.ajax({
-                            url: "{{ admin_url('ohc/medical-requisition-slip/freeze-medicine-quantity') }}",
-                            type: 'GET',
-                            dataType: 'json',
-                            data: {
-                                medicineId: medicineId
-                            },
-                            success: function(data) {
-                                if (data && data.freeze_quantity !== undefined) {
-                                    $row.find('.freeze_quantity').val(data
-                                        .freeze_quantity);
-                                } else {
-                                    $row.find('.freeze_quantity').val('');
-                                }
-                            },
-                            error: function(xhr) {
-                                alert(
-                                    'Error fetching freeze quantity. Please try again.'
-                                );
-                            }
-                        });
-                    } else {
-                        $row.find('.freeze_quantity').val('');
-                    }
-                });
-                medicine_requisition_row_count++;
-                var materialExpiryDatepicker = flatpickr("#material_expiry", {
-                    dateFormat: "d-m-Y",
-
-
-                });
-            });
-
-            function filterMedicineOptions() {
-                let selectedValues = [];
-
-                // Collect all selected values
-                $('select[name^="medicine_id"]').each(function() {
-                    let selectedVal = $(this).val();
-                    if (selectedVal) {
-                        selectedValues.push(selectedVal);
-                    }
-                });
-
-                $('select[name^="medicine_id"]').each(function() {
-                    let currentSelect = $(this);
-                    let currentValue = currentSelect.val();
-
-                    currentSelect.find('option').each(function() {
-                        let optionValue = $(this).val();
-
-                        // Always enable all options first
-                        $(this).prop('disabled', false);
-
-                        // Disable option if it's selected in another dropdown
-                        if (selectedValues.includes(optionValue) && optionValue !== currentValue) {
-                            $(this).prop('disabled', true);
-                        }
-                    });
-                });
-            }
-
-
-            $(document).on('change', 'select[name^="medicine_id"]', function() {
-                var selectedMedicineId = $(this).val();
-                var row = $(this).closest('tr');
-                var duplicateFound = false;
-
-
-                $('select[name^="medicine_id"]').not(this).each(function() {
-                    if ($(this).val() === selectedMedicineId && selectedMedicineId !== "") {
-                        duplicateFound = true;
-                    }
-                });
-
-                if (duplicateFound) {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Duplicate Medicine Selected',
-                        text: 'This medicine is already selected. Please choose a different one.',
-                        confirmButtonColor: '#3085d6'
-                    });
-
-                    $(this).val('').trigger('change');
-                    row.find('input[name^="available_quantity"]').val('');
-                    row.find('input[name^="freeze_quantity"]').val('');
-
-                    row.find('input[name^="quantity"]').val('');
-                }
-            });
-
-
-
-
-
-            $(document).on("click", ".delete-row", function() {
-                var rowCount = $('#medicine-tbody tr').length;
-
-                if (rowCount > 1) {
-                    $(this).closest("tr").remove();
-                } else {
-                    Swal.fire({
-                        icon: 'warning',
-                        title: 'Warning',
-                        text: 'At least one row is required.',
-                        confirmButtonColor: '#3085d6'
-                    });
-                }
-            });
-        });
 
         $(function() {
 
@@ -657,7 +335,7 @@
                     },
                     first_aid_box_no: {
                         required: true,
-                        digits: true,
+
                     },
                     shift: {
                         required: true,
@@ -668,29 +346,7 @@
                     date: {
                         required: true,
                     },
-                    'medicine_id[0]': {
-                        required: true,
-                    },
-                    'material_expiry[0]': {
-                        required: true,
 
-                    },
-                    'available_quantity[0]': {
-                        required: true,
-                        digits: true,
-                    },
-                    'freeze_quantity[0]': {
-                        required: true,
-                        digits: true,
-                    },
-                    'remarks[0]': {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 600,
-                    },
-                    signature_image:{
-                       filesize: 15728640,
-                    }
 
                 },
                 messages: {
@@ -720,35 +376,12 @@
                     },
                     first_aid_box_no: {
                         required: 'First Aid Box Number is required',
-                        digits: 'First Aid Box Number should be numeric',
+                    
                     },
                     review_date: {
                         required: "Please select the request date.",
                     },
-                    'medicine_id[0]': {
-                        required: 'Medicine Name is required',
-                    },
-                    'freeze_quantity[0]': {
-                        required: 'Freeze Quantity is required',
-                        digits: 'Freeze Quantity should be numeric',
-                    },
-                    'available_quantity[0]': {
-                        required: 'Available Quantity is required',
-                        digits: 'Available Quantity should be numeric',
-                    },
-                    'material_expiry[0]': {
-                        required: 'material expiry is required',
 
-                    },
-                    'remarks[0]': {
-                        required: 'Remarks is required',
-                        minlength: 'Minimum 3 character is required',
-                        maxlength: 'Remarks should not exceed more than the 600 characters',
-
-                    },
-                    signature_image:{
-                        filesize: "File size must be less than 15MB."
-                    }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
@@ -770,7 +403,59 @@
                 },
             });
 
+            $('#medicineRequisitionFloor').on('change input',
+                'input[name^="available_quantity"], input[name^="expired_date"], select[name^="emp_id"], textarea[name^="remarks"]',
+                function() {
+                    $(this).valid();
+                });
 
+            $(document).ready(function() {
+                $('input[name^="available_quantity"]').each(function() {
+                    $(this).rules('add', {
+                        required: true,
+                        number: true,
+                        min: 1,
+                        messages: {
+                            required: "Available Quantity is required",
+                            number: "Please enter a valid number",
+                            min: "Quantity must be at least 1"
+                        }
+                    });
+                });
+
+                $('input[name^="expired_date"]').each(function() {
+                    $(this).rules('add', {
+                        required: true,
+
+                        messages: {
+                            required: "Expiry Date is required",
+
+                        }
+                    });
+                });
+
+                $('select[name^="emp_id"]').each(function() {
+                    $(this).rules('add', {
+                        required: true,
+                        messages: {
+                            required: "Employee is required",
+                        }
+                    });
+                });
+
+                $('textarea[name^="remarks"]').each(function() {
+                    $(this).rules('add', {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 300,
+                        messages: {
+                            required: "Remarks is required",
+                            minlength: "Minimum 3 characters required",
+                            maxlength: "Maximum character does not exceed 300"
+                        }
+                    });
+                });
+            });
         });
     </script>
 @endpush

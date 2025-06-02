@@ -15,6 +15,7 @@ use App\Models\Inspection\Ohc\InspectionOhcStatuslog;
 
 use App\Models\Inspection\Ohc\DailyDepartmentFirstAidBox;
 use App\Models\Inspection\Ohc\DailyDepartmentFirstAidBoxDetails;
+use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
 use App\Models\OhcManagement\Master\CertifiedFirstAider;
 use App\Models\OhcManagement\Master\FirstAidLocation;
 use App\Models\OhcManagement\Report\Inventory;
@@ -55,7 +56,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
     private $signature;
     private $document_reference;
     private $inventory;
-
+    private $medicine;
 
     private $location;
     public function __construct()
@@ -68,6 +69,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
         $this->location = new Location();
         $this->daily_department_first_aid_box_details = new DailyDepartmentFirstAidBoxDetails();
         $this->First_aid = new FirstAidLocation();
+        $this->medicine = new FirstAidEquipment();
         $this->certified_First_aid = new CertifiedFirstAider();
         $this->signature = new OhcSignature();
         $this->document_reference = new InspectionStaticDocno();
@@ -185,6 +187,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
             $First_aid = $this->certified_First_aid->getFirsaid();
             $document_no = $this->document_reference->selectUsingName('DailyDepartmentalFirstAidBox');
             $location = $this->location->getLocationname();
+            $medicines = $this->medicine->getFirstAidData();
             $data = array(
                 'unit' => $unit,
                 'shift' => $shift,
@@ -192,12 +195,15 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 'document_no' => $document_no,
                 'signature_upload' => $signature_upload,
                 'First_aid' => $First_aid,
+                'medicines' => $medicines,
 
 
             );
             return view('inspection.inspection_ohc.daily_department_first_aid_box.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
     }
 
@@ -225,7 +231,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 // Store user medicine requisition
                 $daily_department_first_aid_box_details = $this->daily_department_first_aid_box_details->store();
 
-                $daily_department_first_aid_box = $this->daily_department_first_aid_box->store($daily_department_first_aid_box_details);
+
                 $data = [
                     'type' => OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX,
                     'from_status' => OHC_CREATION,
@@ -314,6 +320,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 $daily_department_first_aid_box = $this->daily_department_first_aid_box->Selectone($id);
 
                 // status log
+                $inspection_data = json_decode($medicinerequisition->checklist, true);
 
                 $type = OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX;
                 $statuslog = $this->inspection_ohc_status_log->getStatuslog($id, $type);
@@ -343,6 +350,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                     'statuslog' => $statuslog,
                     'floormanger' => $floormanger,
                     'floorapproversignatureview' => $floorapproversignatureview,
+                    'inspection_data' => $inspection_data,
                     'signatureview' => $signatureview,
                     'floormanagersignature' => $floormanagersignature,
                     'document_no' => $document_no,
@@ -366,7 +374,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 $daily_department_first_aid_box = $this->daily_department_first_aid_box->Selectone($id);
 
                 // status log
-
+                $inspection_data = json_decode($medicinerequisition->checklist, true);
                 $type = OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX;
                 $statuslog = $this->inspection_ohc_status_log->getStatuslog($id, $type);
 
@@ -396,6 +404,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                     'floorapproversignatureview' => $floorapproversignatureview,
                     'signatureview' => $signatureview,
                     'floormanagersignature' => $floormanagersignature,
+                    'inspection_data' => $inspection_data,
                     'document_no' => $document_no,
                 );
             }
@@ -1073,38 +1082,38 @@ class DailyDepartmentFirstAidBoxController extends Controller
             $signatureRow = $signatureStartRow;
 
 
-                $sheet->getRowDimension($signatureRow)->setRowHeight(30);
+            $sheet->getRowDimension($signatureRow)->setRowHeight(30);
 
-                $sheet->mergeCells("A{$signatureRow}:I{$signatureRow}");
-                $sheet->mergeCells("J{$signatureRow}:S{$signatureRow}");
+            $sheet->mergeCells("A{$signatureRow}:I{$signatureRow}");
+            $sheet->mergeCells("J{$signatureRow}:S{$signatureRow}");
 
-                $sheet->getStyle("A{$signatureRow}:S{$signatureRow}")->applyFromArray([
-                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-                ]);
-                // Prepared
-                $richText = new RichText();
-                $name = getUsername($medicinerequisition->created_by);
+            $sheet->getStyle("A{$signatureRow}:S{$signatureRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+            // Prepared
+            $richText = new RichText();
+            $name = getUsername($medicinerequisition->created_by);
 
-                if (!empty($name)) {
-                    $richText->createTextRun("FIRST AIDER NAME: " . $name)->getFont()->setBold(true);
-                } else {
-                    $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
-                }
+            if (!empty($name)) {
+                $richText->createTextRun("FIRST AIDER NAME: " . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
+            }
 
-                $sheet->getCell("A{$signatureRow}")->setValue($richText);
+            $sheet->getCell("A{$signatureRow}")->setValue($richText);
 
-                // Verified
-                $richText = new RichText();
-                $name = getUsername($medicinerequisition->verified_by);
+            // Verified
+            $richText = new RichText();
+            $name = getUsername($medicinerequisition->verified_by);
 
-                if (!empty($name)) {
-                    $richText->createTextRun("FLOOR MANAGER NAME : " . $name)->getFont()->setBold(true);
-                } else {
-                    $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
-                }
+            if (!empty($name)) {
+                $richText->createTextRun("FLOOR MANAGER NAME : " . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
+            }
 
-                $sheet->getCell("J{$signatureRow}")->setValue($richText);
+            $sheet->getCell("J{$signatureRow}")->setValue($richText);
 
 
 

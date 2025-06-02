@@ -138,25 +138,25 @@ class FirstAidController extends Controller
     {
         try {
 
-            $rules = [
-                'emp_name' => 'required',
-                'emp_id' => 'required',
-                'date_of_incident' => 'required',
-                'time_of_incident' => 'required',
-            ];
+            // $rules = [
+            //     'emp_name' => 'required',
+            //     'emp_id' => 'required',
+            //     'date_of_incident' => 'required',
+            //     'time_of_incident' => 'required',
+            // ];
 
-            $messages = [
-                'emp_name.required' => 'Employee name is required.',
-                'emp_id.required' => 'Please select an employee Id.',
-                'date_of_incident.required' => 'Date of Incident is required.',
-                'time_of_incident.required' => 'Time of Incident is required.',
+            // $messages = [
+            //     'emp_name.required' => 'Employee name is required.',
+            //     'emp_id.required' => 'Please select an employee Id.',
+            //     'date_of_incident.required' => 'Date of Incident is required.',
+            //     'time_of_incident.required' => 'Time of Incident is required.',
 
-            ];
+            // ];
 
-            $validator = Validator::make($request->all(), $rules, $messages);
-            if ($validator->fails()) {
-                return redirect()->back()->withErrors($validator)->withInput();
-            }
+            // $validator = Validator::make($request->all(), $rules, $messages);
+            // if ($validator->fails()) {
+            //     return redirect()->back()->withErrors($validator)->withInput();
+            // }
 
             try {
 
@@ -281,8 +281,8 @@ class FirstAidController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Employee Code',
-                'Employee Name',
+                'Worker/Employee Code',
+                'Worker/Employee Name',
                 'Date of Incident',
                 'Time of Incident',
                 'Medicine',
@@ -305,7 +305,7 @@ class FirstAidController extends Controller
                 $medicineNames = [];
 
                 foreach ($medicine as $list) {
-                    if (in_array($list->id, $medicineIds)){
+                    if (in_array($list->id, $medicineIds)) {
                         $medicineNames[] = $list->medicine;
                     }
                 }
@@ -359,8 +359,8 @@ class FirstAidController extends Controller
             $medicine = $this->medicine->select('id', 'medicine')->where('status', '1')->get();
             $header = [
                 __("common.sno"),
-                'Employee Code',
-                'Employee Name',
+                'Worker/Employee Code',
+                'Worker/Employee Name',
                 'Date of Incident',
                 'Time of Incident',
                 'Medicine Name',

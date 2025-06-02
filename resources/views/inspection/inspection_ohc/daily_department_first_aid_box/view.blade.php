@@ -153,38 +153,26 @@
 
                                 <div class="table-responsive">
                                     <div class="col-md-12">
-                                        <table class="table table-bordered ">
-
-                                            <thead class="bg-secondary" style="color: #ffff">
-                                                <tr>
-                                                    <th>S.No</th>
-                                                    <th>Medicine Name</th>
-                                                    <th>Available Quantity</th>
-                                                    <th>Freeze Quantity</th>
-                                                    <th>Material Expiry</th>
-                                                    <th>Remarks</th>
-
-                                                </tr>
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="table-secondary">
+                                                <th style="text-align: center">Sr. No.</th>
+                                                <th style="text-align: center">Medicine Name</th>
+                                                <th style="text-align: center">Available Quantity</th>
+                                                <th style="text-align: center">Expiry Date</th>
+                                                <th style="text-align: center">Remark</th>
                                             </thead>
                                             <tbody>
-                                                @if ($daily_department_first_aid_box->isEmpty())
+                                                @foreach ($inspection_data as $medicines)
                                                     <tr>
-                                                        <td colspan="4" class="text-center">No data is available</td>
+                                                        <td class="text-center">{{ $loop->iteration }}</td>
+                                                        <td class="text-center">
+                                                            {{ getMedicinename($medicines['medicine_id']) }}
+                                                        <td class="text-center">{{ $medicines['available_quantity'] }}
+                                                        <td class="text-center">
+                                                            {{ Displaydateformat($medicines['expired_date']) }}
+                                                        <td class="text-center">{{ $medicines['remarks'] }}
                                                     </tr>
-                                                @else
-                                                    @foreach ($daily_department_first_aid_box as $data)
-                                                        <tr>
-                                                            <td>{{ $loop->iteration }}</td>
-                                                            <td>{{ getMedicinename($data->medicine_id) }}</td>
-                                                            <td>{{ $data->available_quantity }}</td>
-                                                            <td>{{ $data->freeze_quantity }}</td>
-                                                            <td>{{ Displaydateformat($data->material_expiry) }}</td>
-
-                                                            <td>{{ $data->remarks }}</td>
-
-                                                        </tr>
-                                                    @endforeach
-                                                @endif
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>
