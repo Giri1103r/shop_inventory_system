@@ -2261,7 +2261,7 @@
                 url: url,
                 data: data,
                 success: function(data) {
-                    console.log(data['empdata']); 
+                    console.log(data['empdata']);
                     if (data['empdata'] && data['empdata'].length > 0) {
                         $.each(data['empdata'], function(i, emp) {
                             $("#imgMapdata1").val(emp['imgMapdata']);
@@ -2321,7 +2321,7 @@
         window.mapEdit = false;
         window.canvas_obj = {};
         $("#injury_model").on("shown.bs.modal", function() {
-            alert(453);
+          
             setTimeout(function() {
                 $(".img-map").css("opacity", "0");
                 $(".img-map").html($("#tmp-male").html())

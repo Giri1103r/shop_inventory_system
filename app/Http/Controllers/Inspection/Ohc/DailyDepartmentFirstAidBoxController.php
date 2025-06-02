@@ -628,7 +628,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
 
                 $floorManagerSignature = GetOHCSignature($medicinerequisition->verified_by, $details->id, OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX);
 
-
+                $inspection_data = json_decode($details->checklist, true);
 
 
                 $logoLeftPath = public_path('assets/images/logo-dark.png');
@@ -742,15 +742,19 @@ class DailyDepartmentFirstAidBoxController extends Controller
 
                 $inspectionRow = $headerRow + 1;
 
-                foreach ($daily_department_first_aid_box as $index => $detail) {
+             
+
+                foreach ($inspection_data as $index => $detail) {
                     $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $index + 1);
-                    $medicineName = getMedicinename($detail->medicine_id) ?? '';
-                    $material_expiry = Displaydateformat($detail->material_expiry) ?? '';
+
+                    $medicineName = getMedicinename($detail['medicine_id'] ?? '') ?? '';
+                    $material_expiry = Displaydateformat($detail['material_expiry'] ?? '') ?? '';
+
                     $sheet->mergeCells("D$inspectionRow:G$inspectionRow")->setCellValue("D$inspectionRow", $medicineName);
-                    $sheet->mergeCells("H$inspectionRow:J$inspectionRow")->setCellValue("H$inspectionRow", $detail->freeze_quantity ?? '');
-                    $sheet->mergeCells("K$inspectionRow:M$inspectionRow")->setCellValue("K$inspectionRow", $detail->available_quantity ?? '');
-                    $sheet->mergeCells("N$inspectionRow:P$inspectionRow")->setCellValue("N$inspectionRow", $material_expiry);
-                    $sheet->mergeCells("Q$inspectionRow:S$inspectionRow")->setCellValue("Q$inspectionRow", $detail->remarks ?? '');
+                    $sheet->mergeCells("H$inspectionRow:J$inspectionRow")->setCellValue("H$inspectionRow", $detail['freeze_quantity'] ?? '');
+                    $sheet->mergeCells("K$inspectionRow:M$inspectionRow")->setCellValue("K$inspectionRow", $detail['available_quantity'] ?? '');
+                    $sheet->mergeCells("N$inspectionRow:P$inspectionRow")->setCellValue("N$inspectionRow", Displaydateformat($detail['expired_date'] ?? ''));
+                    $sheet->mergeCells("Q$inspectionRow:S$inspectionRow")->setCellValue("Q$inspectionRow", $detail['remarks'] ?? '');
 
                     $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -919,7 +923,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Daily Department First Aid Box.pdf";
-            $mpdf->Output($filename, 'D');
+            $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
 
             report($ex);
@@ -939,7 +943,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
             $medicinerequisition = $this->daily_department_first_aid_box_details->Selectone($id);
             $daily_department_first_aid_box = $this->daily_department_first_aid_box->Selectone($id);
             $CreatorSignature = GetOHCSignature($medicinerequisition->created_by, $id, OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX);
-
+            $inspection_data = json_decode($medicinerequisition->checklist, true);
             $floorManagerSignature = GetOHCSignature($medicinerequisition->verified_by, $id, OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX);
 
             for ($i = 1; $i <= 200; $i++) {
@@ -1060,15 +1064,17 @@ class DailyDepartmentFirstAidBoxController extends Controller
 
             $inspectionRow = $headerRow + 1;
 
-            foreach ($daily_department_first_aid_box as $index => $detail) {
+            foreach ($inspection_data as $index => $detail) {
                 $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $index + 1);
-                $medicineName = getMedicinename($detail->medicine_id) ?? '';
-                $material_expiry = Displaydateformat($detail->material_expiry) ?? '';
+
+                $medicineName = getMedicinename($detail['medicine_id'] ?? '') ?? '';
+                $material_expiry = Displaydateformat($detail['material_expiry'] ?? '') ?? '';
+
                 $sheet->mergeCells("D$inspectionRow:G$inspectionRow")->setCellValue("D$inspectionRow", $medicineName);
-                $sheet->mergeCells("H$inspectionRow:J$inspectionRow")->setCellValue("H$inspectionRow", $detail->freeze_quantity ?? '');
-                $sheet->mergeCells("K$inspectionRow:M$inspectionRow")->setCellValue("K$inspectionRow", $detail->available_quantity ?? '');
-                $sheet->mergeCells("N$inspectionRow:P$inspectionRow")->setCellValue("N$inspectionRow", $material_expiry);
-                $sheet->mergeCells("Q$inspectionRow:S$inspectionRow")->setCellValue("N$inspectionRow", $detail->remarks ?? '');
+                $sheet->mergeCells("H$inspectionRow:J$inspectionRow")->setCellValue("H$inspectionRow", $detail['freeze_quantity'] ?? '');
+                $sheet->mergeCells("K$inspectionRow:M$inspectionRow")->setCellValue("K$inspectionRow", $detail['available_quantity'] ?? '');
+                $sheet->mergeCells("N$inspectionRow:P$inspectionRow")->setCellValue("N$inspectionRow", Displaydateformat($detail['expired_date'] ?? ''));
+                $sheet->mergeCells("Q$inspectionRow:S$inspectionRow")->setCellValue("Q$inspectionRow", $detail['remarks'] ?? '');
 
                 $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -1077,6 +1083,8 @@ class DailyDepartmentFirstAidBoxController extends Controller
 
                 $inspectionRow++;
             }
+
+
 
             $signatureStartRow = $inspectionRow;
             $signatureRow = $signatureStartRow;

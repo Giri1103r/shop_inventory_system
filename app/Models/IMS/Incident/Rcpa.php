@@ -35,6 +35,7 @@ class Rcpa extends Model
         'action_submission_description',
         'incident_status',
         'remark',
+        'ehs_remarks',
         'status',
         'trash',
         'created_by',
@@ -206,6 +207,7 @@ class Rcpa extends Model
         $update_array = array(
             'incident_status' => $incident_status,
             'updated_by' => Auth::id(),
+            'ehs_remarks' =>$request->remark,
             'updated_at' => now(),
         );
         return $this->where('id', $rcpa_id)->update($update_array);
@@ -220,6 +222,8 @@ class Rcpa extends Model
             ->first();
         return $data;
     }
+
+
 
     public function statuschange($id)
     {
@@ -239,7 +243,7 @@ class Rcpa extends Model
         return $this->where('incident_id', $id)->update($update_data);
     }
 
-  
+
 
     public function getRCPA($id)
     {

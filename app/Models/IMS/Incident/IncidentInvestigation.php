@@ -56,7 +56,7 @@ class IncidentInvestigation extends Model
         $commaSeparatedDamaged = is_array($request->anything_damaged)
         ? implode(',', $request->anything_damaged)
         : $request->anything_damaged;
-    
+
         $witnessIds = is_array($request->witness_id)
         ? implode(',', $request->witness_id)
         : null;
@@ -81,6 +81,10 @@ class IncidentInvestigation extends Model
         // dd($insert_array); // Debugging
 
         return $this->create($insert_array);
+    }
+
+    public function SelectOne($id){
+        return $this->where('incident_id',$id)->first();
     }
 
 

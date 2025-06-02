@@ -14,6 +14,8 @@ use App\Models\Master\Employee;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportvendorJob;
+use App\Mail\IMS\InvestigationEmail;
+use App\Mail\IMS\RcpaEmail;
 use Illuminate\Support\Facades\Auth;
 use Exception;
 use Illuminate\Support\Facades\File;
@@ -192,7 +194,7 @@ class InitialIncidentController extends Controller
         return view('ims.initial.incident.list', $data);
     }
 
-      public function redirectindex(Request $request)
+    public function redirectindex(Request $request)
     {
 
         if (Auth::check()) {
@@ -699,7 +701,7 @@ class InitialIncidentController extends Controller
     }
 
     public function apigetbodyEmpdetails(Request $request)
-    {     
+    {
         try {
             $getEmpdetails = $this->incident_body_parts->apigetEmpdetails();
             return $getEmpdetails;
@@ -906,6 +908,8 @@ class InitialIncidentController extends Controller
             return view('ims.initial.incident.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -964,6 +968,8 @@ class InitialIncidentController extends Controller
             return view('ims.initial.incident.caView', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
     }
 
@@ -996,7 +1002,7 @@ class InitialIncidentController extends Controller
 
             return view('ims.initial.incident.edit', $data);
         } catch (Exception $error) {
-            report($ex);
+            report($error);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('incident/initial-incident/list/all/type'));
         }
@@ -1471,6 +1477,7 @@ class InitialIncidentController extends Controller
     public function investigationSubmit(Request $request)
     {
         try {
+            // dd($request->all());
             $incident_id = decryptId($request->incident_id);
             if ($request->root_cause ==  3) {
                 $incident_status = STATUS_INCIDENT_CLOSED;
@@ -1492,7 +1499,8 @@ class InitialIncidentController extends Controller
                 $this->fishboneAnalysis->storeFishbone($incident_id, $incidentinvestigation->id);
             }
             $incidentDetails = $this->initialincident->selectOne($incident_id);
-
+            $investigationDetails = $this->incidentinvestigation->SelectOne($incident_id);
+            $rcpaDetails = $this->rcpa->getRCPA($incident_id);
             foreach ($rcpa as $item) {
                 $responsibilityIds = is_array($item['responsibility']) ? $item['responsibility'] : [$item['responsibility']];
 
@@ -1507,6 +1515,8 @@ class InitialIncidentController extends Controller
 
                 $mailsubject = 'Investigation Submitted CAPA Pending';
                 $incidentarray = $incidentDetails->toArray();
+                $investigationarray = $investigationDetails->toArray();
+                $rcpaarray = $rcpaDetails->toArray();
 
                 foreach ($users as $user) {
                     $email_id = $user->email;
@@ -1516,7 +1526,7 @@ class InitialIncidentController extends Controller
                         $incidentarray['email_id'] = $email_id;
                         $incidentarray['mail_subject'] = $mailsubject;
 
-                        Mail::to($email_id)->queue(new IncidentEmail($incidentarray));
+                        Mail::to($email_id)->queue(new InvestigationEmail($incidentarray,  $investigationarray, $rcpaarray));
                     }
                 }
 
@@ -1690,6 +1700,7 @@ class InitialIncidentController extends Controller
     {
 
         try {
+
             $incident_id = decryptId($request->incident_id);
             $rcpa_id = decryptId($request->rcpa_id);
             $initialincident = $this->initialincident->selectOne($incident_id);
@@ -1700,21 +1711,24 @@ class InitialIncidentController extends Controller
             $mailsubject = 'Action Submitted';
             $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
             $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
-
+            $investigationDetails = $this->incidentinvestigation->SelectOne($incident_id);
+            $rcpaDetails = $this->rcpa->getRCPA($incident_id);
+            $rcpaActionTaken = $this->rcpa->selectOne($rcpa_id);
             if (count($users) > 0) {
-                foreach ($users as $user) {
+                $incidentarray = $initialincident->toArray();
+                $investigationarray = $investigationDetails->toArray();
+                $rcpaarray = $rcpaDetails->toArray();
+                $rcpaActionTakenarray = $rcpaActionTaken->toArray();
 
+                foreach ($users as $user) {
                     $email_id = $user->email;
 
-                    if ($email_id != '' || $email_id != null) {
-                        // $incidentDetails =  $this->initialincident->selectOne($incident_id);
-                        $incidentarray  = $initialincident->toArray();
-
+                    if ($email_id) {
                         $incidentarray['name'] = $user->name;
-                        $incidentarray['email_id'] =  $email_id;
+                        $incidentarray['email_id'] = $email_id;
                         $incidentarray['mail_subject'] = $mailsubject;
 
-                        Mail::to($incidentarray['email_id'])->queue(new IncidentEmail($incidentarray));
+                        Mail::to($email_id)->queue(new RcpaEmail($incidentarray,  $investigationarray, $rcpaarray, $rcpaActionTakenarray));
                     }
                 }
             }
@@ -1759,6 +1773,7 @@ class InitialIncidentController extends Controller
     public function ehsApprovalSubmit(Request $request)
     {
         try {
+
             $incident_id = decryptId($request->incident_id);
             $rcpa_id = decryptId($request->rcpa_id);
             $initialincident = $this->initialincident->selectOne($incident_id);
@@ -1771,6 +1786,9 @@ class InitialIncidentController extends Controller
             }
             $incident_id = $ehsApproval->inicdent_report_id;
             $incident = $this->rcpa->updateStatus($rcpa_id, $incident_status);
+            $investigationDetails = $this->incidentinvestigation->SelectOne($incident_id);
+            $rcpaDetails = $this->rcpa->getRCPA($incident_id);
+            $rcpaActionTaken = $this->rcpa->selectOne($rcpa_id);
             if ($request->has('approve')) {
                 $mailsubject = 'Incident Closed';
                 $Assignedusers = User::where('id', $initialincident->created_by)
@@ -1781,7 +1799,10 @@ class InitialIncidentController extends Controller
                 if ($Assignedusers != null) {
 
                     foreach ($Assignedusers as $user) {
-
+                        $incidentarray = $initialincident->toArray();
+                        $investigationarray = $investigationDetails->toArray();
+                        $rcpaarray = $rcpaDetails->toArray();
+                        $rcpaActionTakenarray = $rcpaActionTaken->toArray();
                         $email_id = $user->email;
 
                         if ($email_id != '' || $email_id != null) {
@@ -1792,7 +1813,7 @@ class InitialIncidentController extends Controller
                             $incidentarray['email_id'] =  $email_id;
                             $incidentarray['mail_subject'] = $mailsubject;
 
-                            Mail::to($incidentarray['email_id'])->queue(new IncidentEmail($incidentarray));
+                          Mail::to($email_id)->queue(new RcpaEmail($incidentarray,  $investigationarray, $rcpaarray, $rcpaActionTakenarray));
                         }
                     }
                 }
@@ -1844,7 +1865,7 @@ class InitialIncidentController extends Controller
                             $incidentarray['email_id'] =  $email_id;
                             $incidentarray['mail_subject'] = $mailsubject;
 
-                            Mail::to($incidentarray['email_id'])->queue(new IncidentEmail($incidentarray));
+                             Mail::to($email_id)->queue(new RcpaEmail($incidentarray,  $investigationarray, $rcpaarray, $rcpaActionTakenarray));
                         }
                     }
                 }
@@ -1950,7 +1971,7 @@ class InitialIncidentController extends Controller
     }
     public function editempBodyPartUrl($randomId = '', $rowId = '')
     {
-       
+
         try {
             $body_parts = $this->incident_body_parts->delete_temprow();
             $getbodyParts = IncidentBodyParts::where('random_id', $randomId)
@@ -1980,7 +2001,7 @@ class InitialIncidentController extends Controller
         }
     }
 
-   
+
 
     public function StatusChange(Request $request)
     {
@@ -1990,7 +2011,7 @@ class InitialIncidentController extends Controller
 
             $this->initialincident->statuschange($id);
             $this->rcpa->statuschange($id);
-            
+
             return response()->json(['status' => 'success', 'msg' => 'Your status has changed successfully'], 200);
         } catch (Exception $ex) {
             report($ex);

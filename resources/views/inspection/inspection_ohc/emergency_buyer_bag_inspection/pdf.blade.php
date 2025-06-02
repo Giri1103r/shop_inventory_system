@@ -249,7 +249,7 @@
                             {{ $medicines['available_quantity'] }}
                         </td>
                         <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                            {{ Displaydateformat($medicines['freeze_quantity']) }}
+                            {{ Displaydateformat($medicines['expired_date']) }}
                         </td>
                         <td style="border: 1px solid black; padding: 8px; text-align: center;">
                             {{ $medicines['remarks'] }}

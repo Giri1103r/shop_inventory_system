@@ -2702,6 +2702,36 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getIncidentStatus')) {
+        function getIncidentStatus($type_id)
+        {
+            if ($type_id == 1) {
+                return 'Open';
+            } elseif ($type_id == 2) {
+                return 'In-Progress';
+            } elseif ($type_id == 3) {
+                return 'closed';
+            } else {
+                return 'Unknown';
+            }
+        }
+    }
+
+      if (!function_exists('getRootCause')) {
+        function getRootCause($type_id)
+        {
+            if ($type_id == 1) {
+                return 'Why - Why Analysis';
+            } elseif ($type_id == 2) {
+                return 'Fish Born Diagram';
+            } elseif ($type_id == 3) {
+                return 'N/A';
+            } else {
+                return 'Unknown';
+            }
+        }
+    }
+
 
     if (!function_exists('getGembaWalkLogStatus')) {
 
@@ -2742,7 +2772,7 @@ if (!function_exists('getMonth')) {
         {
             $file = GembaWalkChecklistFile::where('gemba_walk_id', $id)
                 ->where('file_type', $type)
-                ->where('trash','NO')
+                ->where('trash', 'NO')
                 ->first();
 
             return $file->file_path ?? '';

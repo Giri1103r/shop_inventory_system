@@ -74,8 +74,7 @@ class DailyDepartmentFirstAidBoxDetails extends Model
         $userRole = string_to_array($user->role);
         $empId = $user->employee_id;
         // dd($query);
-        $org_total =  $query;
-        $org_total_counts = $org_total->count();
+
 
         if (isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -92,6 +91,8 @@ class DailyDepartmentFirstAidBoxDetails extends Model
         } else {
             $query->where('inspection_ohc_daily_department_first_aid_box_details.created_by', Auth::id());
         }
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
         if (isset($request->unit_id) && $request->unit_id) {
             $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.unit', decryptId($request->unit_id));
         }
