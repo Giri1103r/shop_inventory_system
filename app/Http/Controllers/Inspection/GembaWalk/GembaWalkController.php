@@ -1197,7 +1197,7 @@ class GembaWalkController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Gemba Walk (Safety Observation).pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
