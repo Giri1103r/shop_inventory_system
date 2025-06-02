@@ -263,7 +263,7 @@
                             <th>Remark</th>
                             <th>Recommanded Person for CAPA</th>
                             <th>Name Of the Observer</th>
-                         
+
 
 
                         </tr>
@@ -474,7 +474,7 @@
                         </tr>
                     @endif
 
-                    @if ($gembaWalk)
+                    {{-- @if ($gembaWalk)
                         <tr>
                             <td width="50%" style="padding:5px;"><b>Images</b></td>
                             <td width="2%" style="padding:5px;">:</td>
@@ -486,7 +486,7 @@
                         </tr>
                     @else
                         <small class="text-muted">No file uploaded yet.</small>
-                    @endif
+                    @endif --}}
 
                     @if (isset($gembaWalk_ehs_floor_manager_details->capa_action_date))
                         <tr>
