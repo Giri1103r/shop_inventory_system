@@ -243,7 +243,7 @@
                                                     <div class="view_data">
                                                         @if ($gembaWalk)
                                                             <a href="{{ asset($gembaWalk->file_path) }}" target="_blank">
-                                                                <img src="{{ asset('public/' . $gembaWalk->file_path) }}"
+                                                                <img src="{{ asset($gembaWalk->file_path) }}"
                                                                     alt="image"
                                                                     style="max-width: 100px; max-height: 100px;">
                                                             </a>
@@ -283,7 +283,28 @@
                                                 </div>
                                             </div>
                                         </div>
+                                       
+                                        @if ($gembaWalk->gemba_walk_checklist_status == 2)
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Closing Evidence</label>
+                                                    <div class="view_data">
+                                                        @if ($closingEvidence)
+                                                            <a href="{{ asset($closingEvidence->file_path) }}"
+                                                                target="_blank">
+                                                                <img src="{{ asset($closingEvidence->file_path) }}"
+                                                                    alt="image"
+                                                                    style="max-width: 100px; max-height: 100px;">
+                                                            </a>
+                                                        @else
+                                                            <small class="text-muted">No file uploaded yet.</small>
+                                                        @endif
 
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">{{ __('inspection.observer_person') }}</label>
@@ -944,7 +965,7 @@
                     capa_remark: {
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
-                         maxlength: "Maximum 600 characters",
+                        maxlength: "Maximum 600 characters",
 
                     },
                     is_passed: {
@@ -1007,7 +1028,7 @@
                     capa_remark: {
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
-                         maxlength: "Maximum 600 characters",
+                        maxlength: "Maximum 600 characters",
 
                     },
                     capa_image: {
@@ -1062,7 +1083,7 @@
                     capa_remark: {
                         required: "Remark is required",
                         minlength: "Minimum 3 characters",
-                         maxlength: "Maximum 600 characters",
+                        maxlength: "Maximum 600 characters",
 
                     },
                     gemba_walk_verified_by: {

@@ -217,9 +217,10 @@
                     <th>Description</th>
                     <th>{{ __('inspection.risk_category') }}</th>
                     <th>Hazard</th>
-                    <th>Image</th>
+                    <th>Evidence</th>
                     <th>Recommended Corrective & Preventive</th>
                     <th>Status</th>
+
                     <th>Remark</th>
                     <th>{{ __('inspection.observer_person') }}</th>
                     <th>Name of the Observer</th>
@@ -258,6 +259,7 @@
                         </td>
                         <td>{{ $gembaWalk->capa ?? 'N/A' }}</td>
                         <td>{{ getGembaWalkStatus($gembaWalk->gemba_walk_checklist_status ?? 'N/A') }}</td>
+                      
                         <td>{{ $gembaWalk->remark ?? 'N/A' }}</td>
                         <td>
                             @php

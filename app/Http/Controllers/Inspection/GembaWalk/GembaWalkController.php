@@ -245,8 +245,10 @@ class GembaWalkController extends Controller
             $ResponsibleId = $this->gembaWalkCheckList->selectone($gembaWalk_id);
 
             $capa_needed = decryptId($request->is_passed);
+           $status_closed = $request->gemba_walk[0]['current_status'];
 
-            if ($capa_needed == 2) {
+
+            if ($capa_needed == 2  ||  $status_closed == 2  ) {
                 $gembaWalk_status = GEMBA_WALK_INSPECTION_CLOSED;
                 $gembaWalk_status_details = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
                 $to_status = GEMBA_WALK_INSPECTION_CLOSED;
@@ -382,6 +384,7 @@ class GembaWalkController extends Controller
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
                 $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->getEHSOfficerReview($id);
                 $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
+                $closingEvidence = $this->gembaWalkChecklistFile->getClosingEvidence($id);
 
 
 
@@ -394,6 +397,7 @@ class GembaWalkController extends Controller
                     'gembaWalk_ehs_floor_manager_details' => $gembaWalk_ehs_floor_manager_details,
                     'gembaWalk_ehs_verificatioin_details' => $gembaWalk_ehs_verificatioin_details,
                     'document_no' => $document_no,
+                    'closingEvidence' => $closingEvidence,
 
 
                 );
@@ -420,13 +424,14 @@ class GembaWalkController extends Controller
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($gembaWalk_id);
                 $floorID = $this->gembaWalkInspectionEhsAprroval->select('id')->where('type', 2)->where('gemba_walk_id', $gembaWalk_id)->where('status', 1)->first();
                 $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
-
+                $closingEvidence = $this->gembaWalkChecklistFile->getClosingEvidence($gembaWalk_id);
                 $data = array(
                     'gembaWalk_details' => $gembaWalk_details,
                     'gembaWalk_ehs_capa_details' => $gembaWalk_ehs_capa_details,
                     'floorID' => $floorID,
                     'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature,
                     'document_no' => $document_no,
+                    'closingEvidence' => $closingEvidence,
 
 
                 );
@@ -558,6 +563,7 @@ class GembaWalkController extends Controller
                 $gembaWalk_approved_singnature = GetSignature($getUserId->created_by, $id, $type);
                 $ehsId = $this->gembaWalkInspectionEhsAprroval->select('id')->where('type', 3)->where('gemba_walk_id', $gembaWalk_id)->where('status', 1)->first();
                 $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
+                   $closingEvidence = $this->gembaWalkChecklistFile->getClosingEvidence($gembaWalk_id);
 
                 $data = array(
                     'gembaWalk_details' => $gembaWalk_details,
@@ -566,6 +572,7 @@ class GembaWalkController extends Controller
                     'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature,
                     'ehsId' => $ehsId,
                     'document_no' => $document_no,
+                    'closingEvidence' => $closingEvidence,
                 );
             }
             return view('inspection.gembaWalk.approval', $data);
@@ -776,6 +783,7 @@ class GembaWalkController extends Controller
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
                 $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->getEHSOfficerReview($id);
                 $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
+                 $closingEvidence = $this->gembaWalkChecklistFile->getClosingEvidence($id);
 
 
                 $data = [
@@ -787,6 +795,7 @@ class GembaWalkController extends Controller
                     'gembaWalk_approved_singnature' => $gembaWalk_approved_singnature,
                     'gembaWalk_verified_singnature' => $gembaWalk_verified_singnature,
                     'document_no' => $document_no,
+                    'closingEvidence' => $closingEvidence,
 
 
                 ];
@@ -1188,7 +1197,7 @@ class GembaWalkController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Gemba Walk (Safety Observation).pdf";
-            $mpdf->Output($filename, 'd');
+            $mpdf->Output($filename, 'I');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
