@@ -40,13 +40,13 @@
                                 <div class="row">
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Employee Id') }}</label>
+                                        <label class="form-label view_label">{{ __('Worker/Employee Code') }}</label>
                                         <div class="view_data">
                                             {{ isset($opd_first_aid->emp_id) ? $opd_first_aid->emp_id : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Employee Name') }}</label>
+                                        <label class="form-label view_label">{{ __('Worker/Employee Name') }}</label>
                                         <div class="view_data">
                                             {{ isset($opd_first_aid->emp_name) ? $opd_first_aid->emp_name : '' }}
                                         </div>

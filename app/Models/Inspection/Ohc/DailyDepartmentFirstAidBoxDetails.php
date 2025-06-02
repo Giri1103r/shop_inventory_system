@@ -171,6 +171,20 @@ class DailyDepartmentFirstAidBoxDetails extends Model
 
         $request = request();
 
+        $id = $request->medicine_id;
+        foreach ($id as $index => $value) {
+            $id = decryptId($value);
+            $updated_medicine_checklist[$id] = [
+                'medicine_id' => $id,
+                'freeze_quantity' => $request->freeze_quantity[$index],
+                'available_quantity' => $request->available_quantity[$index],
+                'expired_date' => dbdateformat($request->expired_date[$index]),
+                'remarks' => $request->remarks[$index],
+
+            ];
+        }
+        $updated_medicine_checklist = json_encode($updated_medicine_checklist);
+
         $insert_array = [
 
             'shift' => decryptId($request->shift),
@@ -182,6 +196,7 @@ class DailyDepartmentFirstAidBoxDetails extends Model
             'first_aid_box_no' => $request->first_aid_box_no,
             'first_aider' => decryptId($request->first_aider),
             'date_of_inspection' => !empty($request->date_of_inspection) ? DBdateformat($request->date_of_inspection) : null,
+            'checklist' => $updated_medicine_checklist,
             'created_by' => Auth::id(),
             'approve_status' => MEDICAL_ASSISTANT_APPROVAL_PENDING,
         ];
@@ -244,7 +259,7 @@ class DailyDepartmentFirstAidBoxDetails extends Model
         if (isset($request->status) && $request->status) {
             $query = $query->where('inspection_ohc_daily_department_first_aid_box_details.approve_status',  decryptId($request->status));
         }
-  if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_ohc_daily_department_first_aid_box_details.created_at', '>=', $startDate);

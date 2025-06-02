@@ -31,15 +31,12 @@
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_id" class="form-label ">Emp Id</label>
-                                            <select name="emp_id" id="emp_id" class="form-control form-control-sm"
-                                                style="width: 100%">
-                                                <option value="">Select the Employee Id</option>
-                                            </select>
+                                             <input type="text" class="form-control" name="emp_id" id="emp_id">
+
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_id" class="form-label ">Emp Name</label>
-                                            <input type="text" class="form-control" name="emp_name" id="emp_name"
-                                                readonly>
+  <input type="text" class="form-control" name="emp_name" id="emp_name">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -96,8 +93,8 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
 
-                                        <th>Employee Code</th>
-                                        <th>Employee Name</th>
+                                        <th>Worker/Employee Name</th>
+                                        <th>Worker/Employee Code</th>
                                         <th>Date of Incident</th>
                                         <th>Time Of Incident</th>
                                         <th>Treatment Start Time</th>
@@ -152,55 +149,7 @@
             });
         });
 
-        $('#emp_id').select2({
-            ajax: {
-                url: '{{ admin_url('ohc/first-aid/employeename') }}',
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search: params.term
-                    };
-                },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
-                            return {
-                                id: item.id,
-                                text: item.text
-                            };
-                        })
-                    };
-                }
-            },
-            minimumInputLength: 1,
-            dropdownCssClass: 'form-control',
-            selectionCssClass: 'form-control'
-        });
-
-        $(document).on('change', '#emp_id', function() {
-            var empId = $(this).val();
-            if (empId) {
-                $.ajax({
-                    url: "{{ admin_url('ohc/first-aid/emp-details/') }}" + empId,
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.employee) {
-                            $('#emp_name').val(response.employee.emp_name).prop('readonly', false);
-
-                        } else {
-                            alert("No employee details found.");
-                        }
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching . Please try again.');
-                    }
-                });
-            } else {
-                $('#emp_name').val('').prop('disabled', true);
-            }
-        });
+     
         $(function() {
             /* Initialize DataTable */
             var table = $('.datatable-list').DataTable({
@@ -324,7 +273,7 @@
                                         '&emp_name=' + emp_name +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
-                                        '&emp_id=' + emp_id+
+                                        '&emp_id=' + emp_id +
                                         '&status=' + status
                                 }
                             },
@@ -344,7 +293,7 @@
                                         '&emp_name=' + emp_name +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
-                                        '&emp_id=' + emp_id+
+                                        '&emp_id=' + emp_id +
                                         '&status=' + status
                                 }
                             }
@@ -380,8 +329,8 @@
                 table.draw();
             });
 
-           /* Status Change */
-           $(document).on('click', '.statusChange', function() {
+            /* Status Change */
+            $(document).on('click', '.statusChange', function() {
                 var id = $(this).data('id');
                 var types = $(this).data('type');
                 if (types == 1) {

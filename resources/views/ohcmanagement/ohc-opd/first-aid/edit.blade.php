@@ -40,7 +40,16 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Employee code</label>
+                                                    <label class="form-label" for="is_outside_worker"> Is OutSide
+                                                        Worker</label><br>
+                                                    <input type="checkbox" id="is_outside_worker" name="is_outside_worker"
+                                                        value="1"
+                                                        {{ $opd_first_aid->is_outside_employee == 1 ? 'checked' : '' }}>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 employee-id mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">Employee code</label>
                                                     <select name="emp_id" class="form-control " id="emp_id"
                                                         style="width: 100%">
                                                         <option value="">Select the Employee ID</option>
@@ -51,12 +60,18 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="col-md-4 employecode mb-2" style="display: none">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Employee code</label>
+                                                    <input type="text" name="outside_emp_id" id="outside_emp_id"
+                                                        value="{{ $opd_first_aid->emp_id }}" class="form-control">
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Employee Name</label>
                                                     <input type="text" name="emp_name" id="emp_name"
-                                                        class="form-control" placeholder="Employee Name"
-                                                        value="{{ $opd_first_aid->emp_name }}" readonly>
+                                                        class="form-control" placeholder="Employee Name" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2 department">
@@ -249,8 +264,6 @@
                 noCalendar: true,
                 dateFormat: "H:i",
                 time_24hr: true,
-
-                minTime: currentTime,
             });
 
             // treatment start and time
@@ -291,56 +304,148 @@
 
         });
         // getting the employee/worker details
-        $('#emp_id').select2({
-            ajax: {
-                url: '{{ admin_url('ohc/prescribe-to-patient/fetchemployeename') }}',
-                dataType: 'json',
-                delay: 250,
-                data: function(params) {
-                    return {
-                        search: params.term
-                    };
+        $(document).ready(function() {
+            let formValidator = $("#firstaid").validate({
+                errorClass: "text-danger",
+                rules: {
+                    emp_name: {
+                        required: true,
+                        minlength: 3,
+                        regex: /^[a-zA-Z\s]+$/
+                    },
+                    mobile_no: {
+                        required: true,
+                        regex: /^[0-9]{10}$/
+                    }
                 },
-                processResults: function(data) {
-                    return {
-                        results: $.map(data, function(item) {
-                            return {
-                                id: item.id,
-                                text: item.text
-                            };
-                        })
-                    };
+                messages: {
+                    emp_name: {
+                        required: "Employee name is required",
+                        minlength: "Employee name must be at least 3 characters",
+                        regex: "Only alphabets and spaces are allowed"
+                    },
+                    mobile_no: {
+                        required: "Mobile number is required",
+                        regex: "Enter a valid 10-digit mobile number"
+                    }
                 }
-            },
-            minimumInputLength: 1,
-            dropdownCssClass: 'form-control',
-            selectionCssClass: 'form-control'
-        });
+            });
 
-        // department and number & emp name
+            $.validator.addMethod("regex", function(value, element, regexp) {
+                let re = (regexp instanceof RegExp) ? regexp : new RegExp(regexp);
+                return this.optional(element) || re.test(value);
+            }, "Invalid format.");
 
-        $(document).on('change', '#emp_id', function() {
-            var empId = $(this).val();
-            if (empId) {
-                $.ajax({
-                    url: "{{ admin_url('ohc/prescribe-to-patient/emp-details/') }}" + empId,
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(response) {
-                        if (response.employee) {
-                            $('#emp_name').val(response.employee.emp_name).prop('readonly', false);
+            function fetchEmployeeDetails(empId) {
+                if (empId) {
+                    $.ajax({
+                        url: "{{ admin_url('ohc/prescribe-to-patient/emp-details/') }}" + empId,
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.employee) {
+                                $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
 
-                        } else {
-                            alert("No employee details found.");
+                            } else {
+                                alert("No employee details found.");
+                            }
+                        },
+                        error: function() {
+                            alert('Error fetching employee details. Please try again.');
+                        }
+                    });
+                }
+            }
+
+            function toggleWorkerFields() {
+                if ($("#is_outside_worker").is(":checked")) {
+
+
+                    $(" .employecode").show();
+                    $(".employee-id").hide();
+                    $("#emp_name").val("{{ $opd_first_aid->emp_name ?? '' }}").prop("readonly", false);
+                    $("#emp_id").val("").trigger("change").hide();
+
+                    if (formValidator) {
+                        $("select[name='emp_id']").rules("remove");
+                        $("input[name='outside_emp_id']").rules("add", {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 30,
+                            regex: /^[a-zA-Z0-9_-]+$/,
+                            messages: {
+                                required: "Employee code is required",
+                                minlength: "Employee code must be at least 3 characters",
+                                maxlength: "Employee code must not exceed 30 characters",
+                                regex: "Employee code has invalid characters"
+                            }
+                        });
+                    }
+                } else {
+
+                    $(".employecode").hide();
+                    $(".employee-id").show();
+
+
+                    if ($.fn.select2 && $("#emp_id").hasClass("select2-hidden-accessible")) {
+                        $("#emp_id").select2("destroy");
+                    }
+                    $("#emp_name").val("{{ $opd_first_aid->emp_name ?? '' }}").prop("readonly", false);
+                    // $("#emp_name").val("").prop("readonly", false);
+                    $("#outside_emp_id").val("");
+                    initializeSelect2();
+                }
+
+                formValidator.resetForm();
+            }
+
+            function initializeSelect2() {
+                $('#emp_id').select2({
+                    ajax: {
+                        url: '{{ admin_url('ohc/prescribe-to-patient/fetchemployeename') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
                         }
                     },
-                    error: function(xhr) {
-                        alert('Error fetching mobile number and department. Please try again.');
-                    }
+                    minimumInputLength: 1,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
                 });
-            } else {
-                $('#emp_name, #mobile_no, #department_id').val('').prop('disabled', true);
             }
+
+            toggleWorkerFields();
+
+            $("#is_outside_worker").change(function() {
+                toggleWorkerFields();
+            });
+
+            if (!$('#is_outside_worker').is(':checked')) {
+                initializeSelect2();
+            }
+
+            $(document).on('change', '#emp_id', function() {
+                var empId = $(this).val();
+                if (!$('#is_outside_worker').is(':checked') && empId) {
+                    fetchEmployeeDetails(empId);
+                } else {
+                    $('#emp_name').val('').prop('readonly', false);
+
+                }
+            });
         });
         // first aider
 

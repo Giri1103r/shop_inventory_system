@@ -239,22 +239,29 @@
 
             </tr>
             @php
-                $medicineRequisitionDetails = GetOHCDailyDepartment($medicinerequisition->id);
+                $inspection_data = json_decode($medicinerequisition->checklist, true);
             @endphp
-            @foreach ($medicineRequisitionDetails as $details)
+            @foreach ($inspection_data as $medicines)
                 <tr>
-                    <td style="border: 1px solid black; padding: 8px;" colspan="2">{{ $loop->iteration }}</td>
-                    <td style="border: 1px solid black; padding: 8px;" colspan="4">
-                        {{ getMedicinename($details->medicine_id) }}
+                    <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ $loop->iteration }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px;" colspan="3">{{ $details->freeze_quantity }}
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ getMedicinename($medicines['medicine_id']) }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px;"colspan="3">{{ $details->available_quantity }}
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $medicines['freeze_quantity'] }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px;"colspan="4">
-                        {{ DisplaydateFormat($details->material_expiry) }}</td>
-                    <td style="border: 1px solid black; padding: 8px;"colspan="4">{{ $details->remarks }}</td>
 
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $medicines['available_quantity'] }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ Displaydateformat($medicines['freeze_quantity']) }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $medicines['remarks'] }}
+                    </td>
                 </tr>
             @endforeach
 
