@@ -255,14 +255,15 @@
                             <th>Description</th>
                             <th>Risk Category</th>
                             <th>Hazard</th>
-                            <th>Image</th>
+                            <th>Evidence</th>
                             <th>Recommended CAPA</th>
-                            {{-- <th>Date of Compliance</th> --}}
+
                             <th>Status</th>
+                            <th>Closing Evidence</th>
                             <th>Remark</th>
                             <th>Recommanded Person for CAPA</th>
                             <th>Name Of the Observer</th>
-                            {{-- <th>Observation</th> --}}
+                         
 
 
                         </tr>
@@ -276,7 +277,7 @@
                                 <td>{{ getDepartment($gembaWalk->department_id ?? 'N/A') }}</td>
                                 <td>{{ $gembaWalk->exact_location ?? 'N/A' }}</td>
                                 <td>{{ displaydateformat($gembaWalk->date_of_observation ?? 'N/A') }}</td>
-                                <td>{{ ($gembaWalk->time ?? 'N/A') }}</td>
+                                <td>{{ $gembaWalk->time ?? 'N/A' }}</td>
                                 <td>{{ getObservationType($gembaWalk->observation_type_id ?? 'N/A') }}</td>
                                 <td>{{ $gembaWalk->description ?? 'N/A' }}</td>
                                 <td>{{ getRiskcategory($gembaWalk->risk_category ?? 'N/A') }}</td>
@@ -292,15 +293,23 @@
                                 </td>
                                 <td>
                                     @if (!empty($gembaWalk->file_path))
-                                        <img src="{{ public_path($gembaWalk->file_path) }}"
+                                        <img src="{{ $gembaWalk->file_path }}" style="width: 100px; height: auto;">
+                                    @else
+                                        N/A
+                                    @endif
+                                </td>
+
+                                <td>{{ $gembaWalk->capa ?? 'N/A' }}</td>
+
+                                <td>{{ getGembaWalkStatus($gembaWalk->gemba_walk_checklist_status ?? 'N/A') }}</td>
+                                 <td>
+                                    @if (!empty($closingEvidence->file_path))
+                                        <img src="{{ $closingEvidence->file_path }}"
                                             style="width: 100px; height: auto;">
                                     @else
                                         N/A
                                     @endif
                                 </td>
-                                <td>{{ $gembaWalk->capa ?? 'N/A' }}</td>
-
-                                <td>{{ getGembaWalkStatus($gembaWalk->gemba_walk_checklist_status ?? 'N/A') }}</td>
                                 <td>{{ $gembaWalk->remark ?? 'N/A' }}</td>
                                 <td>
                                     @php

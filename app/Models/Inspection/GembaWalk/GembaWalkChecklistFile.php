@@ -119,7 +119,10 @@ class GembaWalkChecklistFile extends Model
         }
     }
 
-  
+
+    public function getClosingEvidence($id){
+        return $this->where('gemba_walk_id',$id)->where('file_type',4)->first();
+    }
 
 
     // Api

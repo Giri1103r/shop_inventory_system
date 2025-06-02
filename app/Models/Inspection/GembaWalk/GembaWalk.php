@@ -379,8 +379,10 @@ class GembaWalk extends Model
             ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
             ->leftJoin('inspection_gemba_walk_checklist_files', function ($join) {
                 $join->on('inspection_gemba_walk_checklist_files.gemba_walk_checklist_id', '=', 'inspection_gemba_walk_checklist.id')
-                    ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3);
+                    ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3)
+                    ;
             })
+
             ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
             ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status')
             ->leftJoin('inspection_static_docno', 'inspection_gemba_walk.document_reference_id', '=', 'inspection_static_docno.id');
