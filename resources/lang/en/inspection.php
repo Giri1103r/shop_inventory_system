@@ -286,6 +286,7 @@ return [
     'exact_location' => 'Exact Location',
     'hazard' => 'Hazard',
     'evidence' => 'Evidence',
+    'closing_evidence' => 'Closing Evidence',
     'capa' => 'Recommended CAPA',
     'capa_is_passed' =>'Recommended CAPA Action'
 

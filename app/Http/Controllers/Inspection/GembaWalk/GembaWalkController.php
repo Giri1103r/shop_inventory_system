@@ -238,6 +238,7 @@ class GembaWalkController extends Controller
             $gembaWalk_id = $gembaWalk->id;
 
             $gembaWalk_singnature = $this->gembaWalkChecklistFile->storeSignature($gembaWalk->id);
+
             $gembaWalkChecklist = $this->gembaWalkCheckList->store($gembaWalk->id);
 
             $gembaWalk_details = $this->gembaWalk->getUserId($gembaWalk_id);
@@ -302,7 +303,7 @@ class GembaWalkController extends Controller
             }
 
             if ($users->count() > 0) {
-              
+
                 foreach ($users as $user) {
                     $email_id = $user->email;
                     if (!empty($email_id)) {

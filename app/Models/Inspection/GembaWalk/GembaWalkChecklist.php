@@ -101,7 +101,7 @@ class GembaWalkChecklist extends Model
 
                 $gembaWalkChecklist = $this->create($data);
 
-                if ($request->hasFile("gemba_walk.$index.evidence")) {
+                if ($request->hasFile("gemba_walk.$index.closing_evidence")) {
                     $intendent = $request->file("gemba_walk.$index.evidence");
 
                     $uploadpath = 'uploads/gembaWalk/' . $gembaWalkChecklist->id;
@@ -117,13 +117,44 @@ class GembaWalkChecklist extends Model
                     $fileExt = $intendent->getClientOriginalExtension();
 
                     $intendent->move($folderPath, $filenewname);
-                    $path = $uploadpath . "/" . $filenewname;
+                    $path = "public/" . $uploadpath . "/" . $filenewname;
                     $user_id = Auth::id();
 
                     GembaWalkChecklistFile::create([
                         'gemba_walk_id' => $gembaWalk_id,
                         'gemba_walk_checklist_id' => $gembaWalkChecklist->id,
                         'file_type' => 3,
+                        'file_name' => $filenewname,
+                        'file_orgname' => $fileName,
+                        'file_path' => $path,
+                        'file_size' => $fileSize,
+                        'file_extension' => $fileExt,
+                        'created_by' => $user_id,
+                    ]);
+                }
+                if ($request->hasFile("gemba_walk.$index.closing_evidence")) {
+                    $intendent = $request->file("gemba_walk.$index.closing_evidence");
+
+                    $uploadpath = 'uploads/gembaWalk/' . $gembaWalkChecklist->id;
+                    $folderPath = public_path($uploadpath);
+
+                    if (!File::exists($folderPath)) {
+                        File::makeDirectory($folderPath, 0755, true);
+                    }
+
+                    $filenewname = time() . Str::random(10) . '.' . $intendent->getClientOriginalExtension();
+                    $fileName = $intendent->getClientOriginalName();
+                    $fileSize = $intendent->getSize();
+                    $fileExt = $intendent->getClientOriginalExtension();
+
+                    $intendent->move($folderPath, $filenewname);
+                    $path = "public/" . $uploadpath . "/" . $filenewname;
+                    $user_id = Auth::id();
+
+                    GembaWalkChecklistFile::create([
+                        'gemba_walk_id' => $gembaWalk_id,
+                        'gemba_walk_checklist_id' => $gembaWalkChecklist->id,
+                        'file_type' => 4,
                         'file_name' => $filenewname,
                         'file_orgname' => $fileName,
                         'file_path' => $path,

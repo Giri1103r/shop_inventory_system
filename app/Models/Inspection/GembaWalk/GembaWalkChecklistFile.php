@@ -119,6 +119,8 @@ class GembaWalkChecklistFile extends Model
         }
     }
 
+  
+
 
     // Api
     public function storeSignatureApi($gembaWalk_id)
