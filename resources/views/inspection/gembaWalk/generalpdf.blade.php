@@ -281,14 +281,6 @@
                                 <td>{{ $gembaWalk->description ?? 'N/A' }}</td>
                                 <td>{{ getRiskcategory($gembaWalk->risk_category ?? 'N/A') }}</td>
                                 <td>
-                                    @php
-                                        $hazards = explode(',', $gembaWalk->hazard);
-                                    @endphp
-                                    @foreach ($hazards as $hazardId)
-                                        {{ getGembaWalkHazardName($hazardId) }}@if (!$loop->last)
-                                            ,
-                                        @endif
-                                    @endforeach
                                 </td>
                                 <td>
                                     @if (!empty($gembaWalk->file_path))

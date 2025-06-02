@@ -212,7 +212,7 @@
                     <th>Department</th>
                     <th>Exact Location</th>
                     <th>Date of Observation</th>
-                     <th>Observation Time</th>
+                    <th>Observation Time</th>
                     <th>Type (Unsafe Act / Unsafe Condition)</th>
                     <th>Description</th>
                     <th>{{ __('inspection.risk_category') }}</th>
@@ -223,6 +223,7 @@
                     <th>Remark</th>
                     <th>{{ __('inspection.observer_person') }}</th>
                     <th>Name of the Observer</th>
+                    <th>Closing Image</th>
                 </tr>
             </thead>
             <tbody>
@@ -234,15 +235,23 @@
                         <td>{{ getDepartment($gembaWalk->department_id ?? 'N/A') }}</td>
                         <td>{{ $gembaWalk->exact_location ?? 'N/A' }}</td>
                         <td>{{ displaydateformat($gembaWalk->date_of_observation ?? 'N/A') }}</td>
-                        <td>{{ ($gembaWalk->time ?? 'N/A') }}</td>
+                        <td>{{ $gembaWalk->time ?? 'N/A' }}</td>
                         <td>{{ getObservationType($gembaWalk->observation_type_id ?? 'N/A') }}</td>
                         <td>{{ $gembaWalk->description ?? 'N/A' }}</td>
                         <td>{{ getRiskCategory($gembaWalk->risk_category ?? 'N/A') }}</td>
-                        <td>{{ getGembaWalkHazardName($gembaWalk->hazard ?? 'N/A') }}</td>
+                        <td>
+                            @php
+                                $hazards = explode(',', $gembaWalk->hazard);
+                            @endphp
+                            @foreach ($hazards as $hazardId)
+                                {{ getGembaWalkHazardName($hazardId) }}@if (!$loop->last)
+                                    ,
+                                @endif
+                            @endforeach
+                        </td>
                         <td>
                             @if (!empty($gembaWalk->file_path))
-                                <img src="{{ public_path($gembaWalk->file_path) }}"
-                                    style="width: 100px; height: auto;">
+                                <img src="{{ $gembaWalk->file_path }}" style="width: 100px; height: auto;">
                             @else
                                 N/A
                             @endif
@@ -250,8 +259,29 @@
                         <td>{{ $gembaWalk->capa ?? 'N/A' }}</td>
                         <td>{{ getGembaWalkStatus($gembaWalk->gemba_walk_checklist_status ?? 'N/A') }}</td>
                         <td>{{ $gembaWalk->remark ?? 'N/A' }}</td>
-                        <td>{{ getUsername($gembaWalk->responsibility_id ?? 'N/A') }}</td>
+                        <td>
+                            @php
+                                $responsibility_id = explode(',', $gembaWalk->responsibility_id);
+                            @endphp
+                            @foreach ($responsibility_id as $responsibilityId)
+                                {{ getUsername($responsibilityId) }}@if (!$loop->last)
+                                    ,
+                                @endif
+                            @endforeach
+                        </td>
                         <td>{{ getUsername($gembaWalk->created_by ?? 'N/A') }}</td>
+                        @php
+                            $type = 4;
+                            $closing_file = getGembaWalkClosingImage($gembaWalk->gemba_walk_id, $type);
+                        @endphp
+
+                        <td>
+                            @if (!empty($closing_file))
+                                <img src="{{ $closing_file }}" style="width: 100px; height: auto;">
+                            @else
+                                N/A
+                            @endif
+                        </td>
                     </tr>
                 @endforeach
             </tbody>
@@ -273,7 +303,7 @@
                     <div style="margin-top: 5px;">Prepared By : {{ getUsername($firstItem->created_by) }} </div>
 
                 </th>
-                <th colspan="9" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                <th colspan="10" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
 
                     @if (!empty($firstItem->verified_by))
                         <p style="margin: 0;">Verified By:- {{ getUsername($firstItem->verified_by) }}</p>

@@ -2737,6 +2737,19 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getGembaWalkClosingImage')) {
+        function getGembaWalkClosingImage($id, $type)
+        {
+            $file = GembaWalkChecklistFile::where('gemba_walk_id', $id)
+                ->where('file_type', $type)
+                ->where('trash','NO')
+                ->first();
+
+            return $file->file_path ?? '';
+        }
+    }
+
+
     // Fire Inspection Hooter Sequence
     if (!function_exists('FireSequence')) {
         function FireSequence($type)
