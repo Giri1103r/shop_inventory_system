@@ -63,13 +63,7 @@
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{ $details['exact_location'] }}</td>
                         </tr>
-                        <tr>
-                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                <b>Reported Name</b>
-                            </td>
-                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ $details['reported_name'] }}</td>
-                        </tr>
+                       
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Description</b>
@@ -77,43 +71,48 @@
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{ $details['immediate_action_taken'] }}</td>
                         </tr>
-                       <tr>
-    @if (isset($details['investigation_assigned']))
-        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-            <b>IM Team Members</b>
-        </td>
-        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-            @php
-                $responsibilityIds = explode(',', $details['investigation_assigned'] ?? '');
-            @endphp
-            @foreach ($responsibilityIds as $index => $responsibilityId)
-                {{ getUsername($responsibilityId) }}@if (!$loop->last), @endif
-            @endforeach
-        </td>
-    @endif
-</tr>
+                        <tr>
+                            @if (isset($details['investigation_assigned']))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>IM Team Members</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top">
+                                    @php
+                                        $responsibilityIds = explode(',', $details['investigation_assigned'] ?? '');
+                                    @endphp
+                                    @foreach ($responsibilityIds as $index => $responsibilityId)
+                                        {{ getUsername($responsibilityId) }}@if (!$loop->last)
+                                            ,
+                                        @endif
+                                    @endforeach
+                                </td>
+                            @endif
+                        </tr>
 
-<tr>
-    @if (isset($details['investigation_reported_by']))
-        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-            <b>Investigation Report Prepared By</b>
-        </td>
-        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-            {{ getUsername($details['investigation_reported_by']) }}
-        </td>
-    @endif
-</tr>
+                        <tr>
+                            @if (isset($details['investigation_reported_by']))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Investigation Report Prepared By</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top">
+                                    {{ getUsername($details['investigation_reported_by']) }}
+                                </td>
+                            @endif
+                        </tr>
 
-<tr>
-    @if (isset($details['investigation_remarks']))
-        <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-            <b>Remarks By EHS Head</b>
-        </td>
-        <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-            {{ $details['investigation_remarks'] }}
-        </td>
-    @endif
-</tr>
+                        <tr>
+                            @if (isset($details['investigation_remarks']))
+                                <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Remarks By EHS Head</b>
+                                </td>
+                                <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                    valign="top">
+                                    {{ $details['investigation_remarks'] }}
+                                </td>
+                            @endif
+                        </tr>
 
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">

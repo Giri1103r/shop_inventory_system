@@ -53,14 +53,15 @@
                             <td colspan="3">{{ $details['exact_location'] }}</td>
                         </tr>
 
-                        <tr>
-                            <td style="font-family: sans-serif; font-size: 14px;"><b>Reported Name</b></td>
-                            <td colspan="3">{{ $details['reported_name'] }}</td>
-                        </tr>
+
+
 
                         <tr>
-                            <td style="font-family: sans-serif; font-size: 14px;"><b>Description</b></td>
-                            <td colspan="3">{!! nl2br(e($details['immediate_action_taken'])) !!}</td>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Description</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top"> {{ $details['immediate_action_taken'] }}</td>
                         </tr>
 
                         @if (!empty($details['investigation_assigned']))
