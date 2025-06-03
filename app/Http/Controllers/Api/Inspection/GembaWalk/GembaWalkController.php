@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Inspection\GembaWalk;
 use Exception;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Master\Employee;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
@@ -27,9 +28,6 @@ class GembaWalkController extends BaseController
     private $gembaWalkInspectionEhsAprroval;
     private $statusLog;
     private $gembaWalkChecklistFile;
-
-
-
 
     public function __construct()
     {
@@ -79,12 +77,14 @@ class GembaWalkController extends BaseController
             if (Auth::check()) {
                 $id = $request->id;
                 $inspections = $this->gembaWalk->getInspectionDetails($id);
-                $inspection_details = $this->gembaWalkCheckList->getChecklistDetails($inspections->id);
+                $inspection_details = $this->gembaWalk->getChecklistDetails($inspections->id);
                 $type = GEMBA_WALK;
+                $image_type = 4;
                 $prepared_by_signature = GetSignature($inspections->created_by, $inspections->id, $type);
                 $gembaWalk_ehs_capa_details = $this->gembaWalkInspectionEhsAprroval->getEHSCapaReview($id);
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
                 $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->getEHSOfficerReview($id);
+                $closing_image = getGembaWalkClosingImage($id, $image_type);
 
                 // status log
                 $statuslog = $this->statusLog->getDetails($inspections->id);
@@ -143,21 +143,22 @@ class GembaWalkController extends BaseController
                         'date_of_observation' => Displaydateformat($data->date_of_observation),
                         'observation_time' => $data->time,
                         'risk_category' => getRiskCategory($data->risk_category),
-                        'observation_type' => getObservationType($data->observation_type_id),
                         'description' => $data->description,
+                        'observation_type' => getObservationType($data->observation_type_id),
                         'hazard' => $hazard_data,
                         'recommended_capa_action' => $data->capa_needed == 1 ? 'Yes' : 'No',
                         'recommended_capa' => $data->capa,
+                        'responsible_person' => $responsible_person_data,
                         'gemba_walk_status' => getGembaWalkStatus($data->gemba_walk_checklist_status),
                         'remarks' => $data->remark,
-                        'responsible_person' => $responsible_person_data,
                         'observer_person' => getUsername($data->created_by),
                         'evidence' => admin_url($data->file_path),
+                        'closing_evidence' => admin_url($closing_image)
                     ];
 
                     $inspection_checklist_details[] = $inspection_data;
                 }
-                // FLOOR MANAGER ACTION
+                // action taken
                 if (!empty($gembaWalk_ehs_floor_manager_details)) {
                     $inspection_checklist_details += [
                         'responsible_person_action_taken' => $gembaWalk_ehs_floor_manager_details->name,
@@ -209,26 +210,24 @@ class GembaWalkController extends BaseController
                 'document_no' => 'required',
                 'document_upload_date' => 'required',
                 'document_revision_date' => 'required',
-                'observation_needed' => 'required',
                 'is_passed' => 'required',
                 'gemba_walk.*.location_id' => 'required',
                 'gemba_walk.*.unit_id' => 'required',
                 'gemba_walk.*.date_of_observation' => 'required',
-                'gemba_walk.*.observation_type' => 'required|integer',
-                'gemba_walk.*.checklist_description' => 'nullable|string',
-                'gemba_walk.*.hazard' => 'nullable|string',
-                'gemba_walk.*.checklist_capa' => 'nullable|string',
+                'gemba_walk.*.observation_type' => 'required',
+                'gemba_walk.*.checklist_description' => 'required',
+                'gemba_walk.*.hazard' => 'required',
+                'gemba_walk.*.checklist_capa' => 'required',
                 // 'gemba_walk.*.date_of_compliance' => 'nullable',
                 // 'gemba_walk.*.responsibility_id' => 'nullable',
-                'gemba_walk.*.current_status' => 'nullable|string',
-                'gemba_walk.*.checklist_remark' => 'nullable|string',
+                'gemba_walk.*.current_status' => 'required',
+                'gemba_walk.*.checklist_remark' => 'required',
             ];
 
             $messages = [
                 'document_no.required' => 'Document number is required.',
                 'document_upload_date.required' => 'Please provide the document upload date.',
                 'document_revision_date.required' => 'Please provide the document revision date.',
-                'observation_needed.required' => 'Please provide the observation.',
                 'capa_needed.required' => 'Please provide the CAPA.',
                 'gemba_walk.*.location_id.required' => 'Location ID is required.',
                 'gemba_walk.*.unit_id.required' => 'Unit ID is required.',
@@ -251,157 +250,125 @@ class GembaWalkController extends BaseController
 
             $gembawalk_data = $this->gembaWalk->storeApi();
             $gembaWalk_checklist_data = $this->gembaWalkCheckList->storeApi($gembawalk_data->id);
-            $gembaWalk_singnature = $this->gembaWalkChecklistFile->storeSignatureApi($gembawalk_data->id);
 
             $gembaWalk_id = $gembawalk_data->id;
 
-            if ($gembawalk_data->capa_needed == "2") {
-                $resposible_person = $request->responsible_person_id;
-                $capa_type = GEMBA_WALK_INSPECTION_PASS_L1;
 
-                $gembaWalk_ehs = $this->gembaWalkInspectionEhsAprroval->capaSubmit($gembaWalk_id, $capa_type);
+            $gembaWalk_details = $this->gembaWalk->getUserId($gembaWalk_id);
+            $ResponsibleId = $this->gembaWalkCheckList->selectone($gembaWalk_id);
 
-                $gembaWalk_status = GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION;
+            $capa_needed = $request->is_passed;
+            $status_closed = $request->gemba_walk[0]['current_status'];
 
-
-                $gembaWalk_status = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
-                $to_status = GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION;
-                //mail
-                $mailsubject = 'Gemba Walk CAPA Action  Report has been Submitted';
-                $user_roles = [ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
-                $userids = [$resposible_person];
-                $users = collect();
-
-                foreach ($user_roles as $user_role) {
-                    $roleUsers = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')
-                        ->get();
-
-                    $userids = array_merge($userids, $roleUsers->pluck('id')->toArray());
-                    $users = $users->merge($roleUsers);
-                }
-
-                $userids = array_unique($userids);
-
-                $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
-                $gembaWalk_status = $this->gembaWalkInspectionEhsAprroval->getStatus($gembaWalk_id);
-
-                if ($users->count() > 0) {
-                    foreach ($users as $user) {
-                        $email_id = $user->email;
-
-                        if (!empty($email_id)) {
-                            $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
-                            $gembaWalk = $gembaWalk_details->toArray();
-
-                            $gembaWalk['name'] = $user->name;
-                            $gembaWalk['email_id'] = $email_id;
-                            $gembaWalk['mail_subject'] = $mailsubject;
-
-                            // Send email
-                            Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk));
-                        }
-                    }
-                }
-
-                $notificationData = array(
-                    'notification_type' => GEMBA_WALK_NOTIIFCATION,
-                    'module_type' => 3,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => 'CAPA Action  ' . $gembaWalk_details->gemba_walk_auto_id . ' Submmited by ' . getUsername($gembaWalk_details->created_by),
-                        'icon' => admin_url('public/assets/icons/permit_to_work.png'),
-                        'id' => $gembaWalk_details->id,
-                        'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('inspection/gemba-walk/list'),
-                    'assigned_user' => implode(',', $userids),
-                    'created_by' => Auth::id(),
-                );
-
-                notificationSave($notificationData);
-
-                $insert_array = array(
-                    'gemba_walk_id' => $gembaWalk_details->id,
-                    'from_status' => GEMBA_WALK_INSPECTION_START,
-                    'to_status' => $to_status,
-                    'is_reject' => $gembaWalk_status->capa,
-                    'remarks' => $gembaWalk_status->remarks,
-                    'approved_by' => Auth::id(),
-                );
-
-                $this->statusLog->create($insert_array);
-            } else {
-                $resposible_person = $request->responsible_person_id;
+            if ($capa_needed == 2  ||  $status_closed == 2) {
                 $gembaWalk_status = GEMBA_WALK_INSPECTION_CLOSED;
-                $capa_type = GEMBA_WALK_INSPECTION_PASS;
-                // $gembaWalk_id = decryptId($request->id);
-                $gembaWalk_ehs = $this->gembaWalkInspectionEhsAprroval->capaSubmit($gembaWalk_id, $capa_type);
-
-                $gembaWalk_singnature = $this->gembaWalkChecklistFile->storeVerifiedSignatureApi($gembaWalk_id);
-                $gembaWalk_status = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
-
-                //mail
-                $mailsubject = 'Gemba Walk has been Approved';
-                $user_roles = [ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
-                $userids = [$resposible_person];
-                $users = collect();
-
-                foreach ($user_roles as $user_role) {
-                    $roleUsers = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')
-                        ->get();
-
-                    $userids = array_merge($userids, $roleUsers->pluck('id')->toArray());
-                    $users = $users->merge($roleUsers);
-                }
-
-                $userids = array_unique($userids);
-                $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
-                $gembaWalk_status = $this->gembaWalkInspectionEhsAprroval->getApproveStatus($gembaWalk_id);
+                $gembaWalk_status_details = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
                 $to_status = GEMBA_WALK_INSPECTION_CLOSED;
 
-                if ($users->count() > 0) {
-                    foreach ($users as $user) {
-                        $email_id = $user->email;
-                        if (!empty($email_id)) {
-                            $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
-                            $gembaWalk = $gembaWalk_details->toArray();
-                            $gembaWalk['name'] = $user->name;
-                            $gembaWalk['email_id'] = $email_id;
-                            $gembaWalk['mail_subject'] = $mailsubject;
-                            Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk));
+                $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->usercapaSubmit($gembaWalk_id);
+                $mailsubject = 'Gemba Walk has been Closed';
+                $user_roles = [ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
+
+                $users = User::where(function ($query) use ($user_roles) {
+                    foreach ($user_roles as $role) {
+                        $query->orWhereRaw("FIND_IN_SET(?, role)", [$role]);
+                    }
+                })->where('status', 1)->get();
+
+                $userIds = $users->pluck('id')->toArray();
+            } else {
+                $gembaWalk_status = GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION;
+                $gembaWalk_status_details = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
+                $to_status = GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION;
+
+                $mailsubject = 'Gemba Walk has been Created';
+                $user_roles = [ROLE_EHS_OFFICER, ROLE_UNIT_HEAD, ROLE_EHS_HEAD];
+
+                $responsible_person_id = $ResponsibleId->responsibility_id;
+                $observer_person_ids = explode(',', $responsible_person_id);
+
+                $users = collect(); // Laravel Collection
+                $userIds = [];       // For notification assignment
+
+                foreach ($observer_person_ids as $employeeLoginId) {
+                    $employee = Employee::where('login_id', $employeeLoginId)->where('status', 1)->first();
+
+                    if ($employee) {
+                        // Observer user
+                        $observerUser = User::where('id', $employee->login_id)->first();
+                        if ($observerUser) {
+                            $users->push($observerUser);
+                            $userIds[] = $observerUser->id;
+                        }
+
+                        // Reporting manager user
+                        if (!empty($employee->reporting_manager)) {
+                            $managerUser = User::where('employee_id', $employee->reporting_manager)->first();
+                            // dd(   $managerUser);
+                            if ($managerUser) {
+                                $users->push($managerUser);
+                                $userIds[] = $managerUser->id;
+                            }
                         }
                     }
                 }
 
-                $notificationData = array(
-                    'notification_type' => GEMBA_WALK_NOTIIFCATION,
-                    'module_type' => 3,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => 'Gemba Walk ' . $gembaWalk_details->gemba_walk_auto_id . ' has been Approved by ' . getUsername($gembaWalk_details->created_by),
-                        'icon' => admin_url('public/assets/icons/permit_to_work.png'),
-                        'id' => $gembaWalk_details->id,
-                        'module' => 1,
-                    )),
-                    'web_link' =>  admin_url('inspection/gemba-walk/list'),
-                    'assigned_user' => implode(',', $userids),
-                    'created_by' => Auth::id(),
-                );
-                notificationSave($notificationData);
-
-                $insert_array = array(
-                    'gemba_walk_id' => $gembaWalk_details->id,
-                    'from_status' => GEMBA_WALK_INSPECTION_START,
-                    'to_status' => $to_status,
-                    'is_reject' => $gembaWalk_status->capa,
-                    'remarks' =>  $gembaWalk_status->remarks,
-                    'approved_by' => Auth::id(),
-                );
-
-                $this->statusLog->create($insert_array);
+                $userIds = array_unique($userIds);
             }
+
+            if ($users->count() > 0) {
+
+                foreach ($users as $user) {
+                    $email_id = $user->email;
+                    if (!empty($email_id)) {
+                        $gembaWalk_details = $this->gembaWalk->selectmail($gembaWalk_id);
+                        $gembaWalk_checklist = $this->gembaWalkCheckList->selectmail($gembaWalk_id);
+                        $gembaWalk = $gembaWalk_details->toArray();
+                        $gembaWalkChecklist = $gembaWalk_checklist->toArray();
+                        $gembaWalk['name'] = $user->name;
+                        $gembaWalk['email_id'] = $email_id;
+                        $gembaWalk['mail_subject'] = $mailsubject;
+
+                        // Send email
+                        Mail::to($gembaWalk['email_id'])->queue(new GembaWalkMail($gembaWalk, $gembaWalkChecklist));
+                    }
+                }
+            }
+
+            // Ensure $gembaWalk_details is available
+            $gembaWalk_details = $gembaWalk_details ?? $this->gembaWalk->selectmail($gembaWalk_id);
+
+            // Send notification
+            $notificationData = [
+                'notification_type' => GEMBA_WALK_NOTIIFCATION,
+                'module_type' => 3,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode([
+                    'title' => $mailsubject,
+                    'message' => 'CAPA Action ' . $gembaWalk_details->gemba_walk_auto_id . ' Submitted by ' . getUsername($gembaWalk_details->created_by),
+                    'icon' => admin_url('public/assets/icons/permit_to_work.png'),
+                    'id' => $gembaWalk_details->id,
+                    'module' => 1,
+                ]),
+                'web_link' => admin_url('inspection/gemba-walk/list'),
+                'assigned_user' => implode(',', $userIds),
+                'created_by' => Auth::id(),
+            ];
+
+            notificationSave($notificationData);
+
+
+
+            $insert_array = array(
+                'gemba_walk_id' => $gembaWalk_id,
+                'from_status' => GEMBA_WALK_INSPECTION_START,
+                'to_status' => $to_status,
+                'is_reject' => $ResponsibleId->capa,
+                'remarks' => ($ResponsibleId->remarks) ? $request->capa_remarks : '-',
+                'approved_by' => Auth::id(),
+            );
+
+            $this->statusLog->create($insert_array);
 
 
             $success = [
