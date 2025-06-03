@@ -159,7 +159,7 @@ class ChecklistSubTypeDataController extends Controller
             $id = decryptId($id);
             if (Auth::check()) {
                 $checklist_type =   $this->checklist_subtype_data->selectOne($id);
-                $checklistSubTypeDataNameList  = $this->checklist_subtype_dataName->where('checklist_sub_type_data_id', $id)->where('status', '1')->get();
+                $checklistSubTypeDataNameList  = $this->checklist_subtype_dataName->where('checklist_sub_type_data_id', $id)->where('trash','NO')->get();
 
                 $data = array(
                     'checklist_type' => $checklist_type,
