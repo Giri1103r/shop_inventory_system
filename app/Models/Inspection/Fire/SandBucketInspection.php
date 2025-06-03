@@ -153,8 +153,6 @@ class SandBucketInspection extends Model
     {
         $request = request();
 
-        dd($request->all());
-
         $data = array(
             'doc_no' => $request->doc_no,
             'document_reference_id' => decryptId($request->document_reference_id),

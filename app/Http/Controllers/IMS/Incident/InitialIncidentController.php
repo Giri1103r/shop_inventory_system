@@ -1813,6 +1813,8 @@ class InitialIncidentController extends Controller
                 $rcpaarray = $rcpaDetails->toArray();
                 $rcpaActionTakenarray = $rcpaActionTaken->toArray();
 
+                $mailsubject = 'Incident Closed';
+
                 // Collect user IDs
                 $userIds = [
                     $initialincident->created_by,
@@ -1821,10 +1823,16 @@ class InitialIncidentController extends Controller
                 ];
 
 
-                $userIds = array_unique(array_filter($userIds));
+                $ehsHeads = User::whereRaw("FIND_IN_SET(?, role)", [ROLE_EHS_HEAD])
+                    ->select('id', 'name', 'email')
+                    ->get();
+                $ehsHeadIds = $ehsHeads->pluck('id')->toArray();
 
 
-                $users = User::whereIn('id', $userIds)->select('name', 'email','id')->get();
+                $userIds = array_unique(array_filter(array_merge($userIds, $ehsHeadIds)));
+
+
+                $users = User::whereIn('id', $userIds)->select('name', 'email', 'id')->get();
 
                 foreach ($users as $user) {
                     $email_id = $user->email;
@@ -1839,7 +1847,7 @@ class InitialIncidentController extends Controller
                     }
                 }
 
-                // Send notification
+
                 $notificationData = array(
                     'notification_type' => 5,
                     'module_type' => 1,
