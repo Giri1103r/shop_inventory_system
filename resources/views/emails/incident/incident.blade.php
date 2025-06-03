@@ -63,7 +63,7 @@
                             <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                 valign="top"> {{ $details['exact_location'] }}</td>
                         </tr>
-                       
+
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
                                 <b>Description</b>
@@ -101,7 +101,10 @@
                                 </td>
                             @endif
                         </tr>
-
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px;"><b>Reported by</b></td>
+                            <td colspan="3">{{ $details['reported_name'] }}</td>
+                        </tr>
                         <tr>
                             @if (isset($details['investigation_remarks']))
                                 <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">

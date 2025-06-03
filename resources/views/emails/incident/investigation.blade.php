@@ -56,12 +56,10 @@
 
 
                         <tr>
-                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
-                                <b>Description</b>
-                            </td>
-                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                valign="top"> {{ $details['immediate_action_taken'] }}</td>
+                            <td style="font-family: sans-serif; font-size: 14px;"><b>Description</b></td>
+                            <td colspan="3">{!! nl2br(e($details['immediate_action_taken'])) !!}</td>
                         </tr>
+
                         @if (!empty($details['investigation_assigned']))
                             <tr>
                                 <td style="font-family: sans-serif; font-size: 14px;"><b>IM Team Members</b></td>
@@ -99,7 +97,10 @@
                                 <td colspan="3">{{ $investigationarray['main_root_cause'] }}</td>
                             </tr>
                         @endif
-
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px;"><b>Reported by</b></td>
+                            <td colspan="3">{{ $details['reported_name'] }}</td>
+                        </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px;"><b>Created By</b></td>
                             <td colspan="3">{{ getUsername($details['created_by']) }}</td>
