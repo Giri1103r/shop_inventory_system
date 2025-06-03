@@ -160,10 +160,10 @@
         <table
             style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black; margin-top:10px">
             <tr>
-                <th colspan="6" style="border:1px solid black;height:50;width:40">
+                <th colspan="5" style="border:1px solid black;height:50;width:40">
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
                 </th>
-                <th colspan="6" style="border:1px solid black;">
+                <th colspan="7" style="border:1px solid black;">
                     <h3>
                         <span><b>DAILY DEPARTMENTAL FIRST-AID BOX INSPECTION CHECKLIST
                             </b></span>
@@ -221,46 +221,48 @@
             </tr>
 
 
-            <tr>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NAME OF
-                    MEDICINE
-                </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">FREEZE
-                    QUANTITY
-                </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">AVAILABLE
-                    QUANTITY
-                </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">MATERIAL
-                    EXPIRY
-                </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARKS
-                </th>
-
-            </tr>
+             <tr>
+                    <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                        {{ __('inspection.sr_no') }}
+                    </th>
+                    <th  colspan="3" style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                      Medicine Name
+                    </th>
+                    <th  colspan="3" style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                        Frezee Quantity
+                    </th>
+                    <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                        Available Quantity
+                    </th>
+                    <th  colspan="3" style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                        Date Of Expiry
+                    </th>
+                    <th colspan="3" style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                        {{ __('inspection.remarks') }}
+                    </th>
+                </tr>
             @php
                 $inspection_data = json_decode($details->checklist, true);
             @endphp
             @foreach ($inspection_data as $medicines)
                 <tr>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                    <td colspan="3" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ $loop->iteration }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    <td  colspan="3" style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ getMedicinename($medicines['medicine_id']) }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    <td colspan="3" style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ $medicines['freeze_quantity'] }}
                     </td>
 
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    <td colspan="3" style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ $medicines['available_quantity'] }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ Displaydateformat($medicines['freeze_quantity']) }}
+                    <td colspan="3" style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ Displaydateformat($medicines['expired_date']) }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    <td colspan="3" style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ $medicines['remarks'] }}
                     </td>
                 </tr>

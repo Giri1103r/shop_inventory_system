@@ -49,6 +49,7 @@ class InitialIncident extends Model
         'ua_or_uc',
         'description_uauc',
         'incident_status',
+        'investigation_remarks',
         'status',
         'trash',
         'created_by',
@@ -563,6 +564,7 @@ class InitialIncident extends Model
             'investigation_assigned' => $commaSeparatedTeamMembers,
             'investigation_reported_by' => decryptId($request->reported_by),
             'target_date' => DBdateformat($request->target_date),
+            'investigation_remarks' => ($request->remark),
             'updated_by' => Auth::id(),
             'updated_at' => now(),
         );

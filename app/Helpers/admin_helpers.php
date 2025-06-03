@@ -389,16 +389,16 @@ if (!function_exists('gettotalCount')) {
         switch ($type) {
 
             case 'company':
-                $count = Company::count();
+                $count = Company::where('status', 1)->count();
                 break;
             case 'location':
-                $count = Location::count();
+                $count = Location::where('status', 1)->count();
                 break;
             case 'unit':
-                $count = Unit::count();
+                $count = Unit::where('status', 1)->count();
                 break;
             case 'department':
-                $count = Department::count();
+                $count = Department::where('status', 1)->count();
                 break;
             case 'employee':
                 $count = Employee::where('status', 1)->count();
@@ -422,19 +422,19 @@ if (!function_exists('gettotalCount')) {
                 $count = AuditAssessment::count();
                 break;
             case 'audit_analysis':
-                $count = AuditAnalysis::count();
+                $count = AuditAnalysis::where('status', 1)->count();
                 break;
             case 'monthly_audit':
-                $count = MonthlyAuditPlan::count();
+                $count = MonthlyAuditPlan::where('status', 1)->count();
                 break;
             case 'inter_unit_audit':
-                $count = InterUnitAudit::count();
+                $count = InterUnitAudit::where('status', 1)->count();
                 break;
             case 'prescribe_to_patient':
-                $count = PrescribetoPatient::count();
+                $count = PrescribetoPatient::where('status', 1)->count();
                 break;
             case 'ohc_first_aid':
-                $count = FirstAid::count();
+                $count = FirstAid::where('status', 1)->count();
                 break;
             case 'training_men_hours':
                 $count = TrainingSchedule::whereYear('created_at', date('Y'))
@@ -477,7 +477,7 @@ if (!function_exists('gettotalCount')) {
                     ->toArray();
                 $count = InitialIncident::whereIn('iir_type', $fireIncidence)->count();
                 break;
-            
+
             case 'fire_mock_drill':
                 $count = FireMockDrillInspection::count();
                 break;

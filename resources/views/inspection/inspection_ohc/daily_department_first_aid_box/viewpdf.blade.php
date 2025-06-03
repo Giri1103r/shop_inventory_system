@@ -221,9 +221,9 @@
                 </th>
             </tr>
             <tr>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">SR. NO
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NAME OF
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">NAME OF
                     THE
                     MEDICINE</th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">FREEZE
@@ -231,10 +231,10 @@
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">AVAILABLE
                     QUANTITY
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">MATERIAL
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">MATERIAL
                     EXPIRY
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARK
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">REMARK
                 </th>
 
             </tr>
@@ -243,23 +243,23 @@
             @endphp
             @foreach ($inspection_data as $medicines)
                 <tr>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                    <td colspan="3" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ $loop->iteration }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    <td  colspan="3" style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ getMedicinename($medicines['medicine_id']) }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    <td colspan="3" style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ $medicines['freeze_quantity'] }}
                     </td>
 
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    <td  colspan="3" style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ $medicines['available_quantity'] }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ Displaydateformat($medicines['freeze_quantity']) }}
+                    <td  colspan="3" style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ Displaydateformat($medicines['expired_date']) }}
                     </td>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                    <td colspan="3" style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ $medicines['remarks'] }}
                     </td>
                 </tr>
