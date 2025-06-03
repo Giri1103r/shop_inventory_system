@@ -833,9 +833,9 @@ class InitialIncident extends Model
         if ($data && $data->team_member) {
             $teamMemberIds = explode(',', $data->team_member);
 
-            $employees = DB::table('masters_employee')
+            $employees = DB::table('users')
                 ->whereIn('id', $teamMemberIds)
-                ->pluck('emp_name')
+                ->pluck('name')
                 ->toArray();
             $data->team_member_names = implode(', ', $employees);
         }

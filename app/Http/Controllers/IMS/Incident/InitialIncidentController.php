@@ -1251,7 +1251,9 @@ class InitialIncidentController extends Controller
     {
         $name = $request->input('search');
 
-        $employees = Employee::select('id', 'emp_id', 'emp_name')
+       $name = $request->input('search');
+
+        $employees = Employee::select('id', 'emp_id', 'emp_name', 'login_id')
             ->where(function ($query) use ($name) {
                 $query->where('emp_name', 'like', '%' . $name . '%')
                     ->orWhere('emp_id', 'like', '%' . $name . '%');
@@ -1263,7 +1265,7 @@ class InitialIncidentController extends Controller
         return response()->json(
             $employees->map(function ($employee) {
                 return [
-                    'id' => encryptId($employee->id),
+                    'id' => encryptId($employee->login_id),
                     'text' => $employee->emp_name . ' - ' . $employee->emp_id,
                 ];
             })
@@ -1313,14 +1315,25 @@ class InitialIncidentController extends Controller
             $investigationassigned = $this->initialincident->investigationassigned($incident_id);
             $incident = $this->initialincident->updateStatus($incident_id, $incident_status);
 
-            if ($request->reported_by) {
-                $notifywhere = array(
-                    'id' => decryptId($request->reported_by),
-                );
-                $userids = User::where($notifywhere)->pluck('id')->toArray();
-                $users = User::where($notifywhere)->get();
-                // $employees = Employee::where('id', $investigated_by)->get(['emp_name', 'email', 'login_id']);
-                // $loginIds = $employees->pluck('login_id')->toArray();
+            $decryptedTeamMemberIds = is_array($request->team_member)
+                ? array_map('decryptId', $request->team_member)
+                : [];
+            $commaSeparatedTeamMembers = !empty($decryptedTeamMemberIds) ? implode(',', $decryptedTeamMemberIds) : null;
+
+            // Combine all recipient IDs
+            $allUserIds = $decryptedTeamMemberIds;
+
+            if (!empty($request->reported_by)) {
+                $reportedById = decryptId($request->reported_by);
+                $allUserIds[] = $reportedById;
+            }
+
+            // Remove duplicates
+            $allUserIds = array_unique($allUserIds);
+
+            if (!empty($allUserIds)) {
+                $users = User::whereIn('id', $allUserIds)->get();
+                $userids = $users->pluck('id')->toArray(); // for notification
 
                 $mailsubject = 'Investigation Assigned';
 
@@ -1329,7 +1342,7 @@ class InitialIncidentController extends Controller
 
                 foreach ($users as $user) {
                     $email_id = $user->email;
-                    if (!empty($email_id)) { // Corrected email validation
+                    if (!empty($email_id)) {
                         $incidentarray['name'] = $user->name;
                         $incidentarray['email_id'] = $email_id;
                         $incidentarray['mail_subject'] = $mailsubject;
@@ -1338,6 +1351,7 @@ class InitialIncidentController extends Controller
                     }
                 }
 
+                // Send notification
                 $notificationData = array(
                     'notification_type' => 5,
                     'module_type' => 1,
@@ -1367,6 +1381,7 @@ class InitialIncidentController extends Controller
                 );
                 $this->Statuslog->create($insert_array);
             }
+
 
 
             Session::flash('success', 'Your data has been updated successfully!');
@@ -1789,6 +1804,7 @@ class InitialIncidentController extends Controller
             $investigationDetails = $this->incidentinvestigation->SelectOne($incident_id);
             $rcpaDetails = $this->rcpa->getRCPA($incident_id);
             $rcpaActionTaken = $this->rcpa->selectOne($rcpa_id);
+            $rcpaResponsibility =   $rcpaActionTaken->responsibility;
             if ($request->has('approve')) {
                 $mailsubject = 'Incident Closed';
                 $Assignedusers = User::where('id', $initialincident->created_by)
@@ -1813,7 +1829,7 @@ class InitialIncidentController extends Controller
                             $incidentarray['email_id'] =  $email_id;
                             $incidentarray['mail_subject'] = $mailsubject;
 
-                          Mail::to($email_id)->queue(new RcpaEmail($incidentarray,  $investigationarray, $rcpaarray, $rcpaActionTakenarray));
+                            Mail::to($email_id)->queue(new RcpaEmail($incidentarray,  $investigationarray, $rcpaarray, $rcpaActionTakenarray));
                         }
                     }
                 }
@@ -1865,7 +1881,7 @@ class InitialIncidentController extends Controller
                             $incidentarray['email_id'] =  $email_id;
                             $incidentarray['mail_subject'] = $mailsubject;
 
-                             Mail::to($email_id)->queue(new RcpaEmail($incidentarray,  $investigationarray, $rcpaarray, $rcpaActionTakenarray));
+                            Mail::to($email_id)->queue(new RcpaEmail($incidentarray,  $investigationarray, $rcpaarray, $rcpaActionTakenarray));
                         }
                     }
                 }

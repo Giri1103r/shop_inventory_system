@@ -32,7 +32,10 @@
                             <td style="font-family: sans-serif; font-size: 14px;"><b>Incident Date & Time</b></td>
                             <td colspan="3">{{ $details['incident_date_time'] }}</td>
                         </tr>
-
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px;"><b>Company</b></td>
+                            <td colspan="3">{{ getCompanyname($details['company_id']) }}</td>
+                        </tr>
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px;"><b>Unit</b></td>
                             <td colspan="3">{{ getUnitname($details['unit_id']) }}</td>
@@ -53,11 +56,23 @@
                             <td colspan="3">{{ $details['exact_location'] }}</td>
                         </tr>
 
-
-
                         <tr>
-                            <td style="font-family: sans-serif; font-size: 14px;"><b>Description</b></td>
-                            <td colspan="3">{!! nl2br(e($details['immediate_action_taken'])) !!}</td>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Brief Description</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top">
+                                {{ $details['brief_description'] }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                <b>Description</b>
+                            </td>
+                            <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
+                                valign="top">
+                                {{ $details['immediate_action_taken'] }}
+                            </td>
                         </tr>
 
                         @if (!empty($details['investigation_assigned']))
@@ -98,7 +113,7 @@
                             </tr>
                         @endif
                         <tr>
-                            <td style="font-family: sans-serif; font-size: 14px;"><b>Reported by</b></td>
+                            <td style="font-family: sans-serif; font-size: 14px;"><b>Incidence Reported by</b></td>
                             <td colspan="3">{{ $details['reported_name'] }}</td>
                         </tr>
                         <tr>
@@ -179,10 +194,6 @@
                         @endif
                     </tbody>
                 </table>
-
-
-
-
             </td>
         </tr>
     </table>
