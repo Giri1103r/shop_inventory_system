@@ -239,14 +239,13 @@ class GembaWalk extends Model
 
         if ($request->is_passed == 2) {
 
-            $insert_array = array(
+           $insert_array = array(
                 'document_reference_id' => $request->document_reference_id,
                 'date' => DBdateformat($request->document_upload_date),
+
                 'shift_id' => $request->shift,
                 'company_id' => Auth::user()->company_id,
-                'observation_needed' => $request->observation_needed,
                 'capa_needed' => $request->is_passed,
-                'responsible_person_id' => $request->responsible_person_id,
                 'gemba_walk_status' => GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION,
                 'created_by' => Auth::id(),
             );
@@ -256,9 +255,7 @@ class GembaWalk extends Model
                 'date' => DBdateformat($request->document_upload_date),
                 'shift_id' => $request->shift,
                 'company_id' => Auth::user()->company_id,
-                'observation_needed' => $request->observation_needed,
                 'capa_needed' => $request->is_passed,
-                'responsible_person_id' => $request->responsible_person_id,
                 'gemba_walk_status' => GEMBA_WALK_INSPECTION_CLOSED,
                 'created_by' => Auth::id(),
                 'verified_by' => Auth::id()
@@ -457,6 +454,24 @@ class GembaWalk extends Model
             ->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_gemba_walk.document_reference_id')
             ->where('inspection_gemba_walk.id', $id)
             ->first();
+        return $data;
+    }
+
+     public function getChecklistDetails($id)
+    {
+        $data = $this->select(
+            'inspection_gemba_walk.capa_needed',
+            'inspection_gemba_walk_checklist.*',
+            'inspection_gemba_walk_checklist_files.file_path'
+        )
+            ->leftJoin('inspection_gemba_walk_checklist','inspection_gemba_walk_checklist.gemba_walk_id','=','inspection_gemba_walk.id')
+            ->leftJoin('inspection_gemba_walk_checklist_files', function ($join) {
+                $join->on('inspection_gemba_walk_checklist_files.gemba_walk_checklist_id', '=', 'inspection_gemba_walk_checklist.id')
+                    ->where('inspection_gemba_walk_checklist_files.file_type', '=', 3);
+            })
+            ->where('inspection_gemba_walk_checklist.gemba_walk_id', $id)
+            ->get();
+
         return $data;
     }
 
