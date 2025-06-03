@@ -1251,7 +1251,7 @@ class InitialIncidentController extends Controller
     {
         $name = $request->input('search');
 
-       $name = $request->input('search');
+        $name = $request->input('search');
 
         $employees = Employee::select('id', 'emp_id', 'emp_name', 'login_id')
             ->where(function ($query) use ($name) {
@@ -1804,51 +1804,60 @@ class InitialIncidentController extends Controller
             $investigationDetails = $this->incidentinvestigation->SelectOne($incident_id);
             $rcpaDetails = $this->rcpa->getRCPA($incident_id);
             $rcpaActionTaken = $this->rcpa->selectOne($rcpa_id);
-            $rcpaResponsibility =   $rcpaActionTaken->responsibility;
+            $rcpaResponsibility = $rcpaActionTaken->responsibility;
+            $mailsubject = 'Incident Closed';
+
             if ($request->has('approve')) {
-                $mailsubject = 'Incident Closed';
-                $Assignedusers = User::where('id', $initialincident->created_by)
-                    ->select('name', 'email')
-                    ->get()
-                    ->unique('email');
+                $incidentarray = $initialincident->toArray();
+                $investigationarray = $investigationDetails->toArray();
+                $rcpaarray = $rcpaDetails->toArray();
+                $rcpaActionTakenarray = $rcpaActionTaken->toArray();
 
-                if ($Assignedusers != null) {
+                // Collect user IDs
+                $userIds = [
+                    $initialincident->created_by,
+                    $initialincident->investigation_reported_by,
+                    $rcpaActionTaken->responsibility,
+                ];
 
-                    foreach ($Assignedusers as $user) {
-                        $incidentarray = $initialincident->toArray();
-                        $investigationarray = $investigationDetails->toArray();
-                        $rcpaarray = $rcpaDetails->toArray();
-                        $rcpaActionTakenarray = $rcpaActionTaken->toArray();
-                        $email_id = $user->email;
 
-                        if ($email_id != '' || $email_id != null) {
-                            // $safetypermitdetails =  $this->initialincident->selectmail($id);
-                            $incidentarray  = $initialincident->toArray();
+                $userIds = array_unique(array_filter($userIds));
 
-                            $incidentarray['name'] = $user->name;
-                            $incidentarray['email_id'] =  $email_id;
-                            $incidentarray['mail_subject'] = $mailsubject;
 
-                            Mail::to($email_id)->queue(new RcpaEmail($incidentarray,  $investigationarray, $rcpaarray, $rcpaActionTakenarray));
-                        }
+                $users = User::whereIn('id', $userIds)->select('name', 'email','id')->get();
+
+                foreach ($users as $user) {
+                    $email_id = $user->email;
+
+                    if (!empty($email_id)) {
+                        $mailData = $incidentarray;
+                        $mailData['name'] = $user->name;
+                        $mailData['email_id'] = $email_id;
+                        $mailData['mail_subject'] = $mailsubject;
+
+                        Mail::to($email_id)->queue(new RcpaEmail($mailData, $investigationarray, $rcpaarray, $rcpaActionTakenarray));
                     }
                 }
+
+                // Send notification
                 $notificationData = array(
                     'notification_type' => 5,
                     'module_type' => 1,
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
-                        'message' => 'Incident' . $initialincident->sr_no . ' submitted by ' . getUsername($initialincident->created_by),
-                        'icon' =>  admin_url('public/assets/icons/incident.png'),
+                        'message' => 'Incident ' . $initialincident->sr_no . ' submitted by ' . getUsername($initialincident->created_by),
+                        'icon' => admin_url('public/assets/icons/incident.png'),
                         'id' => $initialincident->id,
                         'module' => 1,
                     )),
-                    'web_link' =>  admin_url('incident/initial-incident/view/' . encryptId($initialincident->id)),
-                    'assigned_user' => $initialincident->created_by,
+                    'web_link' => admin_url('incident/initial-incident/view/' . encryptId($initialincident->id)),
+                    'assigned_user' => array_to_string($userIds),
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
+
+                // Log status update
                 $insert_array = array(
                     'ims_type' => 1,
                     'ims_id' => $initialincident->id,
@@ -1859,7 +1868,6 @@ class InitialIncidentController extends Controller
                     'remarks' => $ehsApproval->remark,
                     'approved_by' => Auth::id(),
                 );
-
                 $this->Statuslog->create($insert_array);
             } else {
 
