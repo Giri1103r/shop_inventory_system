@@ -119,8 +119,8 @@ class AuditAnalysisController extends BaseController
                     'audit_analysis_id' => $details->audit_analysis_id,
                     'audit_analysis' => $details->audit_analysis,
                     'doc_no' => $documentNo->doc_no,
-                    'issue_date' => Displaydateformat($details->issue_date),
-                    'rev_dt' => $details->rev_dt,
+                    'issue_date' => Displaydateformat($documentNo->issue_date),
+                    'rev_dt' => $documentNo->rev_dt,
                     'status' => $details->status == 1 ? 'Active' : 'In-Active',
                     'created_by' => getUsername($details->created_by),
                 ];
@@ -128,23 +128,23 @@ class AuditAnalysisController extends BaseController
 
                 $audit_analysis_checklist = [];
                 foreach ($checklist_details as $checklist) {
-                     $marks = json_decode(
-                    $checklist->marks ?? '{}',
-                    true,
-                );
+                    $marks = json_decode(
+                        $checklist->marks ?? '{}',
+                        true,
+                    );
 
-                $monthWithMark = collect($marks)
-                    ->filter(function ($value) {
-                        return $value != 0;
-                    })
-                    ->first();
+                    $monthWithMark = collect($marks)
+                        ->filter(function ($value) {
+                            return $value != 0;
+                        })
+                        ->first();
 
-                $monthName = collect($marks)
-                    ->filter(function ($value) {
-                        return $value != 0;
-                    })
-                    ->keys()
-                    ->first();
+                    $monthName = collect($marks)
+                        ->filter(function ($value) {
+                            return $value != 0;
+                        })
+                        ->keys()
+                        ->first();
                     $audit_analysis_checklist[] = [
                         'sr_no' => $checklist->serial_number,
                         'unit' => getUnitname($checklist->unit_id),
@@ -168,6 +168,48 @@ class AuditAnalysisController extends BaseController
             }
         } catch (Exception $ex) {
             report($ex);
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
+
+    public function add(Request $request)
+    {
+
+
+        try {
+
+            if (Auth::user()) {
+
+                $rules = [
+                    'audit_analysis_id' => 'required',
+                    'audit_analysis' => 'required',
+                ];
+                $messages = [
+                    'audit_analysis_id' => 'Audit Analysis is required',
+                    'audit_analysis' => 'Audit analysis report  is required',
+
+                ];
+
+                $validator = Validator::make($request->all(), $rules, $messages);
+
+                if ($validator->fails()) {
+                    return $this->sendError('Validation Error', $validator->errors(), 422);
+                }
+                $staticDocno  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
+                    ['type', "6SAuditAnalysis"],
+                    ['status', '1']
+                ])->first();
+
+                $audit_analysis =  $this->auditAnalysis->store_api($staticDocno);
+                $auditanalysis_id = $audit_analysis->id;
+                $this->auditAnalysisCheckList->store_api($auditanalysis_id);
+                $success = [
+                    'audit_analysis' => $audit_analysis,
+                ];
+                return $this->sendResponse($success, 'Audit Analysis Details Created Successfully');
+            }
+        } catch (Exception $ex) {
+            dd($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

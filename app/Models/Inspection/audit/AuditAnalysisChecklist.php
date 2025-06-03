@@ -95,6 +95,7 @@ class AuditAnalysisChecklist extends Model
     public function store($auditanalysis_id)
     {
         $request = request();
+
         $audits = $request->input('audit');
 
         if (!empty($audits) && is_array($audits)) {
@@ -131,6 +132,58 @@ class AuditAnalysisChecklist extends Model
                     'serial_number'     => $auditsData['serial_number'],
                     'department_id'     => decryptId($auditsData['department_id']),
                     'unit_id'           => decryptId($auditsData['unit_id']),
+                    'marks'             => json_encode($marksPerMonth),
+                    'no_of_audit'       => $auditsData['no_of_audit'],
+                    'total_marks'       => $auditsData['total_marks'],
+                    'marks_obtained'    => $auditsData['marks_obtained'],
+                    'percentage'        => $auditsData['percentage'],
+                    'created_by'        => Auth::id(),
+                ];
+                $this->create($data);
+            }
+        }
+    }
+
+      public function store_api($auditanalysis_id)
+    {
+        $request = request();
+
+        $audits = $request->input('audit');
+
+        if (!empty($audits) && is_array($audits)) {
+            foreach ($audits as $auditsData) {
+                $marksPerMonth = [];
+
+                // Month from the form (e.g., 'Sep')
+                $inputMonth = $auditsData['month'];
+                $mark = $auditsData['mark'] ?? 0;
+
+                // Normalize month keys: April to March
+                $months = [
+                    'April',
+                    'May',
+                    'June',
+                    'July',
+                    'August',
+                    'September',
+                    'October',
+                    'November',
+                    'December',
+                    'January',
+                    'February',
+                    'March'
+                ];
+
+                foreach ($months as $month) {
+                    $monthKey = strtolower($month);
+                    $marksPerMonth[$monthKey] = (strcasecmp($inputMonth, substr($month, 0, 3)) === 0) ? $mark : 0;
+                }
+
+                $data = [
+                    'audit_analysis_id' => $auditanalysis_id,
+                    'serial_number'     => $auditsData['serial_number'],
+                    'department_id'     => ($auditsData['department_id']),
+                    'unit_id'           => ($auditsData['unit_id']),
                     'marks'             => json_encode($marksPerMonth),
                     'no_of_audit'       => $auditsData['no_of_audit'],
                     'total_marks'       => $auditsData['total_marks'],

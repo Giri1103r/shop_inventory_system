@@ -98,6 +98,20 @@ class AuditAnalysis extends Model
         return $this->create($insert_array);
     }
 
+    public function store_api($staticDocno)
+    {
+        $request = request();
+
+        $insert_array = array(
+            'audit_analysis_id' => $request->audit_analysis_id,
+            'audit_analysis' => $request->audit_analysis,
+            'docNo_id' =>  $staticDocno->id,
+            'created_by' => Auth::id(),
+        );
+
+        return $this->create($insert_array);
+    }
+
 
     public function selectOne($id)
     {
@@ -109,10 +123,10 @@ class AuditAnalysis extends Model
     {
         $request = request();
 
-        $query = $this->select('inspection_audit_analysis.*', 'inspection_audit_analysis_checklist.*','masters_unit.*','masters_department.*')
-                      ->leftJoin('inspection_audit_analysis_checklist', 'inspection_audit_analysis.id', '=', 'inspection_audit_analysis_checklist.audit_analysis_id')
-                      ->leftJoin('masters_unit', 'inspection_audit_analysis_checklist.unit_id', '=', 'masters_unit.id')
-                      ->leftJoin('masters_department', 'inspection_audit_analysis_checklist.department_id', '=', 'masters_department.id');
+        $query = $this->select('inspection_audit_analysis.*', 'inspection_audit_analysis_checklist.*', 'masters_unit.*', 'masters_department.*')
+            ->leftJoin('inspection_audit_analysis_checklist', 'inspection_audit_analysis.id', '=', 'inspection_audit_analysis_checklist.audit_analysis_id')
+            ->leftJoin('masters_unit', 'inspection_audit_analysis_checklist.unit_id', '=', 'masters_unit.id')
+            ->leftJoin('masters_department', 'inspection_audit_analysis_checklist.department_id', '=', 'masters_department.id');
 
         if ($request->has('audit_analysis_id') && $request->audit_analysis_id) {
             $query->where('inspection_audit_analysis.id', decryptId($request->audit_analysis_id));

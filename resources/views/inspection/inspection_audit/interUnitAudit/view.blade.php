@@ -56,7 +56,7 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Shift</label>
+                                        <label class="form-label view_label">Unit</label>
                                         <div class="view_data">
                                             {{ getUnitname(isset($inter_unit_audit->unit_id) ? $inter_unit_audit->unit_id : '') }}
                                         </div>
@@ -79,7 +79,7 @@
 
                                                 <th
                                                     style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                                                    YES/NO</th>
+                                                    Ok/Not Ok</th>
                                                 <th
                                                     style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                                                     Remarks</th>
@@ -115,9 +115,11 @@
                                                     </td>
                                                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                                                         @if (($data['response'] ?? '') == 'Ok')
-                                                            <span style="color: green; font-size: 20px;">✓</span>
+                                                            <span style="color: green; font-size: 20px;">Ok</span>
                                                         @elseif (($data['response'] ?? '') == 'Not Ok')
-                                                            <span style="color: red; font-size: 20px;">X</span>
+                                                            <span style="color: red; font-size: 20px;">Not Ok</span>
+                                                        @else
+                                                            <span style="color: red; font-size: 20px;">N/A</span>
                                                         @endif
                                                     </td>
                                                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
