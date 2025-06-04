@@ -224,7 +224,7 @@
                         @if (!empty($rcpaActionTakenarray['updated_at']))
                             <tr>
                                 <td style="font-family: sans-serif; font-size: 14px;"><b>Action Taken at</b></td>
-                                <td colspan="3">{{ Displaydateformat($rcpaActionTakenarray['updated_at']) }}</td>
+                                <td colspan="3">{{ now()->format('d-m-y H:i:s') }}</td>
                             </tr>
                         @endif
 
@@ -234,20 +234,56 @@
                                 <td colspan="3">{{ $rcpaActionTakenarray['action_submission_description'] }}</td>
                             </tr>
                         @endif
-                        @if (!empty($rcpaActionTakenarray['updated_by']))
-                            <tr>
-                                <td style="font-family: sans-serif; font-size: 14px;"><b>EHS Approver Name</b></td>
-                                <td colspan="3">{{ getUsername($rcpaActionTakenarray['updated_by']) }}</td>
-                            </tr>
-                        @endif
-                        @if (!empty($rcpaActionTakenarray['ehs_remarks']))
-                            <tr>
-                                <td style="font-family: sans-serif; font-size: 14px;"><b>EHS Approver Remarks</b></td>
-                                <td colspan="3">{{ $rcpaActionTakenarray['ehs_remarks'] }}</td>
-                            </tr>
-                        @endif
+
                     </tbody>
                 </table>
+                @if (!empty($rcpaActionTakenarray['updated_by']))
+                    <table role="presentation" border="1" cellpadding="0" cellspacing="0"
+                        style="border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; margin-top: 7%;"
+                        width="100%">
+                        <tbody style="font-family:Nakheel Headline">
+                            <tr>
+                                <td colspan="4" align="center"
+                                    style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                    <b>Incident Closed/Rejected</b>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td style="font-family: sans-serif; font-size: 14px;"><b>Status</b></td>
+                                <td colspan="3">
+                                    @if ($rcpaActionTakenarray['incident_status'] == 9)
+                                        Closed
+                                    @elseif ($rcpaActionTakenarray['incident_status'] == 8)
+                                        Rejected
+                                    @else
+                                        Unknown
+                                    @endif
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td style="font-family: sans-serif; font-size: 14px;"><b>Incident Closed/Rejected At</b>
+                                </td>
+                                <td colspan="3">{{ now()->format('d-m-y H:i:s') }}</td>
+                            </tr>
+
+                            @if (!empty($rcpaActionTakenarray['updated_by']))
+                                <tr>
+                                    <td style="font-family: sans-serif; font-size: 14px;"><b>Incident Closed/Rejected
+                                            By</b>
+                                    </td>
+                                    <td colspan="3">{{ getUsername($rcpaActionTakenarray['updated_by']) }}</td>
+                                </tr>
+                            @endif
+                            @if (!empty($rcpaActionTakenarray['ehs_remarks']))
+                                <tr>
+                                    <td style="font-family: sans-serif; font-size: 14px;"><b>Remarks</b></td>
+                                    <td colspan="3">{{ $rcpaActionTakenarray['ehs_remarks'] }}</td>
+                                </tr>
+                            @endif
+                        </tbody>
+                    </table>
+                @endif
             </td>
         </tr>
     </table>

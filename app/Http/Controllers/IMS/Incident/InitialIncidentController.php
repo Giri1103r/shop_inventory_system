@@ -1881,26 +1881,43 @@ class InitialIncidentController extends Controller
 
                 $user_role = ROLE_EHS_HEAD;
                 $mailsubject = 'EHS Rejected';
-                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+                $incidentarray = $initialincident->toArray();
+                $investigationarray = $investigationDetails->toArray();
+                $rcpaarray = $rcpaDetails->toArray();
+                $rcpaActionTakenarray = $rcpaActionTaken->toArray();
 
-                if (count($users) > 0) {
-                    foreach ($users as $user) {
+                // Collect user IDs
+                $userIds = [
+                    $initialincident->created_by,
+                    $initialincident->investigation_reported_by,
+                    $rcpaActionTaken->responsibility,
+                ];
 
-                        $email_id = $user->email;
 
-                        if ($email_id != '' || $email_id != null) {
-                            // $incidentDetails =  $this->initialincident->selectOne($incident_id);
-                            $incidentarray  = $initialincident->toArray();
+                $ehsHeads = User::whereRaw("FIND_IN_SET(?, role)", [ROLE_EHS_HEAD])
+                    ->select('id', 'name', 'email')
+                    ->get();
+                $ehsHeadIds = $ehsHeads->pluck('id')->toArray();
 
-                            $incidentarray['name'] = $user->name;
-                            $incidentarray['email_id'] =  $email_id;
-                            $incidentarray['mail_subject'] = $mailsubject;
 
-                            Mail::to($email_id)->queue(new RcpaEmail($incidentarray,  $investigationarray, $rcpaarray, $rcpaActionTakenarray));
-                        }
+                $userIds = array_unique(array_filter(array_merge($userIds, $ehsHeadIds)));
+
+
+                $users = User::whereIn('id', $userIds)->select('name', 'email', 'id')->get();
+
+                foreach ($users as $user) {
+                    $email_id = $user->email;
+
+                    if (!empty($email_id)) {
+                        $mailData = $incidentarray;
+                        $mailData['name'] = $user->name;
+                        $mailData['email_id'] = $email_id;
+                        $mailData['mail_subject'] = $mailsubject;
+
+                        Mail::to($email_id)->queue(new RcpaEmail($mailData, $investigationarray, $rcpaarray, $rcpaActionTakenarray));
                     }
                 }
+
 
                 $notificationData = array(
                     'notification_type' => 5,
@@ -1914,7 +1931,7 @@ class InitialIncidentController extends Controller
                         'module' => 1,
                     )),
                     'web_link' =>  admin_url('incident/initial-incident/review/' . encryptId($initialincident->id)),
-                    'assigned_user' => array_to_string($userids),
+                    'assigned_user' => array_to_string($userIds),
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);

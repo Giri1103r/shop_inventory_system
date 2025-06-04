@@ -53,15 +53,9 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Issue Date</label>
-                                                    <div class="input-group date form-input custom-height">
-                                                        <input type="text" name ="issue_date" id="issue_date"
-                                                            class="form-control" placeholder="Issue Date"
-                                                            value="{{ displaydateformat($document_no->issue_date) }}"
-                                                            readonly>
-                                                        <div class="input-group-addon input-group-text">
-                                                            <span class="fa fa-calendar"></span>
-                                                        </div>
-                                                    </div>
+                                                    <input type="text" name ="issue_date" id="issue_date"
+                                                        class="form-control" placeholder="Issue Date"
+                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
                                                 </div>
                                             </div>
 
@@ -123,18 +117,19 @@
                                             </div>
 
                                             <div id="form-wrapper">
-
                                                 <div class="form-set mb-3">
-                                                    <div class="card-header-inner d-flex justify-content-between">
-                                                        <h4 class="text-white ms-2">MSDS CheckList</h4>
-                                                        <button class="btn btn-primary add-row mb-2 " type="button"
-                                                            id="add-row"
-                                                            style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                    <div class="card-header-inner">
+                                                        <h4 class="text-white">MSDS CheckList</h4>
+                                                    </div>
+                                                    <div class="d-flex justify-content-end">
+                                                        <button class="btn btn-primary add-row me-3" type="button"
+                                                            id="add-row" style="width: 84px;">
                                                             Add
                                                         </button>
+                                                        <button type="button" class="btn btn-danger remove-row">
+                                                            <i class="fa-solid fa-trash"></i> Remove
+                                                        </button>
                                                     </div>
-
-
                                                     <div class="row">
                                                         <div class="col-md-4 mb-3">
                                                             <div class="form-group form-input">
@@ -177,6 +172,50 @@
                                                         </div>
 
 
+                                                        <div class="col-md-4 mb-3 mt-2 form-group form-input">
+                                                            <div class="form-group">
+                                                                <label for="nfpa_rating" class="require form-label">NFPA
+                                                                    Rating</label>
+                                                                <div class="d-flex flex-wrap gap-2">
+                                                                    @foreach ($nfaratings as $nfarating)
+                                                                        <div class="form-check form-check-inline">
+                                                                            <input type="radio" name="nfa_rating[1]"
+                                                                                value="{{ encryptId($nfarating->id) }}"
+                                                                                class="form-check-input"
+                                                                                id="nfa_rating_{{ $loop->index }}">
+                                                                            <label class="form-check-label"
+                                                                                for="nfa_rating_{{ $loop->index }}">
+                                                                                {{ $nfarating->nfa_rating }}
+                                                                            </label>
+                                                                        </div>
+                                                                    @endforeach
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-4 mb-3 mt-2">
+                                                            <div class="form-group form-input">
+                                                                <div class="form-group">
+                                                                    <label for="nfpa_rating"
+                                                                        class="require form-label">NFPA Rating Value</label>
+                                                                    <div class="d-flex flex-wrap gap-2">
+                                                                        @foreach ($nfaratingvalues as $nfaratingvalue)
+                                                                            <div class="form-check form-check-inline">
+                                                                                <input type="radio"
+                                                                                    name="value_nfa_rating[1]"
+                                                                                    value="{{ encryptId($nfaratingvalue->id) }}"
+                                                                                    class="form-check-input"
+                                                                                    id="value_nfa_rating_{{ $loop->index }}">
+                                                                                <label class="form-check-label"
+                                                                                    for="value_nfa_rating_{{ $loop->index }}">
+                                                                                    {{ $nfaratingvalue->rating_value }}
+                                                                                </label>
+                                                                            </div>
+                                                                        @endforeach
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
 
                                                         <div class="col-md-4 mb-3 mt-2">
                                                             <div class="form-group form-input">
@@ -193,19 +232,13 @@
                                                             </div>
                                                         </div>
 
-                                                        <div class="col-md-8 mt-2">
+                                                        <div class="col-md-12 mt-2">
                                                             <div class="form-group form-input">
                                                                 <label class="form-label require">Remark</label>
                                                                 <textarea name="remark[1]" class="form-control" placeholder="Remark" rows="3"></textarea>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-2 text-right  mt-4">
-                                                            <button class="btn btn-danger remove-row" type="button"
-                                                                style="margin:10px;"><i class="fa fa-trash"></i></button>
-
-                                                        </div>
                                                     </div>
-                                                    <hr>
                                                 </div>
                                             </div>
                                         </div>
@@ -479,7 +512,18 @@
 
                 var newFormSet = `
                 <div class="form-set mb-3">
-
+                    <div class="card-header-inner">
+                        <h4 class="text-white">MSDS CheckList</h4>
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button class="btn btn-primary add-row me-3" type="button"
+                            id="add-row" style="width: 84px;">
+                            Add
+                        </button>
+                        <button type="button" class="btn btn-danger remove-row">
+                            <i class="fa-solid fa-trash"></i> Remove
+                        </button>
+                    </div>
                     <div class="row">
                         <div class="col-md-4 mb-3">
                             <div class="form-group form-input">
@@ -572,13 +616,7 @@
                                 <textarea name="remark[${form_set_count}]" class="form-control" placeholder="Remark" rows="3"></textarea>
                             </div>
                         </div>
-                         <div class="col-md-2 text-right  mt-4">
-                                                    <button class="btn btn-danger remove-row" type="button"
-                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
-
-                                                </div>
                     </div>
-                     <hr>
                 </div>`;
 
                 $('#form-wrapper').append(newFormSet);
