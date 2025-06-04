@@ -251,7 +251,7 @@
                     capa_remarks: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
                         noSpaces: true,
                     },
 
@@ -260,9 +260,9 @@
                     capa_remarks: {
                         required: "Remarks is Required",
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 600",
                     },
-                   
+
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {

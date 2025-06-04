@@ -131,6 +131,7 @@ class SafetyPermitController extends BaseController
                 $safetypermit = $this->safetypermit->selectOne($id);
                 $workmaninvolved = $this->safetypermit->workmaninvolved($id);
                 $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto);
+               
                 $confined_space_entry = json_decode($safetypermit->confined_space_entry);
 
                 $status_log = $this->statuslog->selectOne($id);
@@ -314,8 +315,10 @@ class SafetyPermitController extends BaseController
                 $success = [
                     'id' => $safetypermit->id,
                     'permit_id' => $safetypermit->permit_id,
-                    'date' => $safetypermit->date,
-                    'to_date' => $safetypermit->to_date,
+                    'date' => Displaydateformat($safetypermit->date),
+                    'to_date' => Displaydateformat($safetypermit->to_date),
+                    'company' => getCompanyname($safetypermit->company_id),
+                    'location' => getLocationname($safetypermit->location_id),
                     'time_from' => $safetypermit->time_from,
                     'time_to' => $safetypermit->time_to,
                     'unit_id' => getUnitname($safetypermit->unit_id),
@@ -347,6 +350,18 @@ class SafetyPermitController extends BaseController
                         'sub_permit' => $sub_permits,
 
                         'job_description' => $safetypermit->job_description,
+
+                        'list_of_workman_job' => [
+                            'workman' => $workmaninvolved->map(function ($workman) {
+                                return [
+                                    'employee_code'   => $workman->emp_id,
+                                    'name_of_workman' => $workman->workman_name,
+                                    'designation'     => $workman->workman_desig,
+                                    'department'      => $workman->department_name,
+                                    'nature_of_job'   => $workman->nature_of_job,
+                                ];
+                            })->toArray(),
+                        ],
 
                         'shut_down' => [
                             'images' => ('public/assets/images/safetypermit/power-off.png'),
@@ -389,7 +404,7 @@ class SafetyPermitController extends BaseController
                     'confined_space_entry' => [
                         'o2' => [
                             'name' => "O2%",
-                            "value" => $confined_space_entry->o2_percentage ?? 'N/A',
+                            "value" => $confined_space_entry->o2_percentage ?? '',
                         ],
                         'system_isolated' => [
                             'name' => "System Isolated",
@@ -405,7 +420,7 @@ class SafetyPermitController extends BaseController
                         ],
                         'attendant_name' => [
                             'name' => "Attendant Name",
-                            "value" => $confined_space_entry->attendant_name ?? 'N/A',
+                            "value" => $confined_space_entry->attendant_name ?? '',
                         ],
                         'register_entry_exits' => [
                             'name' => "Register for entry & exits ",
@@ -417,11 +432,11 @@ class SafetyPermitController extends BaseController
                         ],
                         'ppm_safe_to_enter' => [
                             'name' => "PPM and is therefore safe to enter from",
-                            "value" => isset($confined_space_entry->ppm_safe_to_enter) ? $confined_space_entry->ppm_safe_to_enter : 'N/A',
+                            "value" => isset($confined_space_entry->ppm_safe_to_enter) ? $confined_space_entry->ppm_safe_to_enter : '',
                         ],
                         'to' => [
                             'name' => "PPM and is therefore safe to enter To",
-                            "value" =>  isset($confined_space_entry->to) ? $confined_space_entry->to : 'N/A',
+                            "value" =>  isset($confined_space_entry->to) ? $confined_space_entry->to : '',
                         ],
                     ],
 
@@ -452,7 +467,7 @@ class SafetyPermitController extends BaseController
 
                         ],
                         'equipment_involved_job' => $equipment_involve,
-                        'others_if_any' => isset($safetypermit->equiment_involved_others) ? $safetypermit->equiment_involved_others : 'N/A'
+                        'others_if_any' => isset($safetypermit->equiment_involved_others) ? $safetypermit->equiment_involved_others : ''
                     ],
                     'precaution_taken' => [
                         'precaution_taken' => $precaution_taken,
@@ -472,19 +487,10 @@ class SafetyPermitController extends BaseController
                         'Equipment should be in good working condition.',
                         'Non standard equipment shall not be used.',
                     ],
-                    'list_of_workman_job' => [
-                        'workman' => $workmaninvolved->map(function ($workman) {
-                            return [
-                                'employee_code'   => $workman->emp_id,
-                                'name_of_workman' => $workman->workman_name,
-                                'designation'     => $workman->workman_desig,
-                                'department'      => $workman->department_name,
-                                'nature_of_job'   => $workman->nature_of_job,
-                            ];
-                        })->toArray(),
-                        ' assigned_job_physically_fit_for_duty' => $safetypermit->assigned_job  == 1 ? 'Yes' : 'No',
-                        'attendance_in_tool_box_talk' => $safetypermit->attendance_toolbox_talk
-                    ],
+
+                    ' assigned_job_physically_fit_for_duty' => $safetypermit->assigned_job  == 1 ? 'Yes' : 'No',
+                    'attendance_in_tool_box_talk' => $safetypermit->attendance_toolbox_talk,
+
                     'notes' => [
                         ' Work Permit is mandatory for non routine work, third party working agency & high risk Job.',
                         ' Work Permit is valid for 8 hours / Renewal may be extended as per unit head approval.',
@@ -495,7 +501,7 @@ class SafetyPermitController extends BaseController
                         ' Permit Safety compliance shall be discussed to all involved person in local language.',
                     ],
                     'ehs_verification' => [
-                        'approver_name' => $getEhSverification->approve_reject_by ?? '',
+                        'forwarded_by' => $getEhSverification->approve_reject_by ?? '',
                         'date' => isset($getEhSverification->date) ? Displaydateformat($getEhSverification->date) : '',
                         'additional_suggestion' => $getEhSverification->remarks ?? '',
                         'signature' => $file_paths

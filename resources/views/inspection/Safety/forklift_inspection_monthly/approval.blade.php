@@ -823,7 +823,7 @@
                         remarks: {
                             required: true,
                             minlength: 3,
-                            maxlength: 100,
+                            maxlength: 600,
                             noSpaces: true,
                         },
                     },
@@ -831,7 +831,7 @@
                         remarks: {
                             required: "Remarks is Required",
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 100",
+                            maxlength: "Maximum Characters should not exceed 600",
                         },
                     },
                     errorElement: 'div',
@@ -864,7 +864,7 @@
                         capa_remarks: {
                             required: true,
                             minlength: 3,
-                            maxlength: 100,
+                            maxlength: 600,
                             noSpaces: true,
                         },
 
@@ -873,7 +873,7 @@
                         capa_remarks: {
                             required: "Remarks is Required",
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 100",
+                            maxlength: "Maximum Characters should not exceed 600",
                         },
 
                     },
@@ -903,7 +903,7 @@
                         level_one_manager: {
                             required: true,
                             minlength: 3,
-                            maxlength: 100,
+                            maxlength: 600,
                             noSpaces: true,
                         },
 
@@ -912,7 +912,7 @@
                         level_one_manager: {
                             required: "Remarks is Required",
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 100",
+                            maxlength: "Maximum Characters should not exceed 600",
                         },
 
                     },
@@ -942,7 +942,7 @@
                         level_two_manager: {
                             required: true,
                             minlength: 3,
-                            maxlength: 100,
+                            maxlength: 600,
                             noSpaces: true,
                         },
                     },
@@ -950,7 +950,7 @@
                         level_two_manager: {
                             required: "Remarks is Required",
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 100",
+                            maxlength: "Maximum Characters should not exceed 600",
                         },
                     },
                     errorElement: 'div',

@@ -173,7 +173,7 @@ class SafetyWalkObservationController extends Controller
                 'recomended_action.*' => 'required',
                 'date_of_compliance.*' => 'required',
                 'observation_status.*' => 'required',
-                'remarks.*' => 'required',
+
                 'emp_id.*' => 'required',
 
 
@@ -195,7 +195,6 @@ class SafetyWalkObservationController extends Controller
                 'recomended_action.*.required' => 'Recommended action is required.',
                 'date_of_compliance.*.required' => 'Date of compliance is required.',
                 'observation_status.*.required' => 'Observation status is required.',
-                'remarks.*.required' => 'Remarks are required.',
                 'emp_id.*.required' => 'Employee ID is required.',
 
             ];

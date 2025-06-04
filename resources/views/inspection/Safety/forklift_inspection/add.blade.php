@@ -119,7 +119,8 @@
                                             <div class="card-header-inner d-flex justify-content-between">
                                                 <h4 class="text-white ms-2">
                                                     {{ __('inspection.forklift_inspection_report') }}</h4>
-                                                <button class="btn btn-primary add-row-current mb-2 " type="button" id="add-row-current"
+                                                <button class="btn btn-primary add-row-current mb-2 " type="button"
+                                                    id="add-row-current"
                                                     style="margin-left: 10px;  margin-right: 10px; width: 84px;">
                                                     Add
                                                 </button>
@@ -127,7 +128,16 @@
                                             <div class="row mt-4 form-set-current">
 
 
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label">{{ __('inspection.identification_no') }}</label>
+                                                        <input type="text" name="identification_no[1]"
+                                                            id = "identification_no" class="form-control identification_no"
+                                                            value="{{ forkliftInspection() }}" readonly>
 
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -164,17 +174,7 @@
                                                         @enderror
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label">{{ __('inspection.identification_no') }}</label>
-                                                        <input type="text" name="identification_no[1]"
-                                                            id = "identification_no"
-                                                            class="form-control identification_no"
-                                                            value="{{ forkliftInspection() }}" readonly>
 
-                                                    </div>
-                                                </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -247,7 +247,7 @@
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                            class="form-label">{{ __('inspection.remarks') }}</label>
                                                         <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;">{{ old('remarks.1') }}</textarea>
 
                                                     </div>
@@ -290,7 +290,7 @@
             $(document).ready(function() {
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();
-                    department.reload();
+                    location.reload();
                 });
 
                 flatpickr(".date_of_compliance", {
@@ -335,7 +335,7 @@
                             rev_date: {
                                 required: true,
                             },
-                           
+
                             "inspection_date": {
                                 required: true,
                             },
@@ -371,9 +371,9 @@
                                 required: true,
                             },
                             "remarks[1]": {
-                                required: true,
+                        
                                 minlength: 3,
-                                maxlength: 100,
+                                maxlength: 600,
                             },
                         },
                         messages: {
@@ -426,9 +426,9 @@
 
                             },
                             "remarks[1]": {
-                                required: "Remarks is required",
+
                                 minlength: "Minimum Characters should be 3",
-                                maxlength: "Maximum Characters should not exceed 300",
+                                maxlength: "Maximum Characters should not exceed 600",
 
                             },
                         },
@@ -514,7 +514,14 @@
                         <div class="row mt-4 form-set-current">
 
 
-
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label">{{ __('inspection.identification_no') }}</label>
+                                                        <input type="text" name="identification_no[${form_set_count}]"
+                                                            id = "identification_no[${form_set_count}]" class="form-control identification_no" value="${newSerialNumber}">
+                                                    </div>
+                                                </div>
 
                                                   <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -536,18 +543,11 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                 <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label">{{ __('inspection.identification_no') }}</label>
-                                                        <input type="text" name="identification_no[${form_set_count}]"
-                                                            id = "identification_no[${form_set_count}]" class="form-control identification_no" value="${newSerialNumber}">
-                                                    </div>
-                                                </div>
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label">{{ __('inspection.observation') }}</label>
+                                                            class="form-label require">{{ __('inspection.observation') }}</label>
                                                         <input type="text" name="observation[${form_set_count}]" id = "observation[${form_set_count}]"
                                                             class="form-control " placeholder="Observation">
                                                     </div>
@@ -594,7 +594,7 @@
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                            class="form-label ">{{ __('inspection.remarks') }}</label>
                                                         <textarea name="remarks[${form_set_count}]" id="remarks[${form_set_count}]" class="form-control remarks" style="resize: none;"></textarea>
                                                     </div>
                                                 </div>
@@ -652,7 +652,7 @@
                 });
 
 
-                $(".responsibility_id").rules('add', {
+               $("select[name='emp_id[" + form_set_current_count + "]']").rules('add', {
                     required: true,
                     messages: {
                         required: 'Please Select the Employee',
@@ -674,13 +674,13 @@
                 });
 
                 $(".remarks").rules('add', {
-                    required: true,
+
                     minlength: 3,
-                    maxlength: 300,
+                    maxlength: 600,
                     messages: {
-                        required: 'Please Enter the Remarks',
+
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 300",
+                        maxlength: "Maximum Characters should not exceed 600",
                     }
                 });
 
