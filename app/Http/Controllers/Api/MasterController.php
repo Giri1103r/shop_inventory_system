@@ -37,27 +37,48 @@ class MasterController extends BaseController
                     'masters_employee.emp_id',
                     'masters_employee.user_role',
                     'masters_employee.designation',
+                    'company_management.id as company_id',
+                    'company_management.company_name',
+                    'masters_location.id as location_id',
+                    'masters_location.location_name',
+                    'masters_unit.id as unit_id',
+                    'masters_unit.unit_name',
                     'masters_department.id as department_id',
-                    'masters_department.department_name'
+                    'masters_department.department_name',
                 )
                     ->join('template_user_role', 'masters_employee.user_role', '=', 'template_user_role.id')
+                    ->join('company_management', 'masters_employee.company', '=', 'company_management.id')
+                    ->join('masters_location', 'masters_employee.location', '=', 'masters_location.id')
+                    ->join('masters_unit', 'masters_employee.unit', '=', 'masters_unit.id')
                     ->join('masters_department', 'masters_employee.department', '=', 'masters_department.id')
                     ->where('masters_employee.status', 1)
                     ->get()
-                    ->map(function ($employee) {
+                    ->map(function ($employeeList) {
                         return [
-                            'id' => $employee->id,
-                            'emp_name' => $employee->emp_name,
-                            'emp_id' => $employee->emp_id,
-                            'login_id' => $employee->login_id,
-                            'designation' => $employee->designation,
+                            'id' => $employeeList->id,
+                            'emp_name' => $employeeList->emp_name,
+                            'emp_id' => $employeeList->emp_id,
+                            'login_id' => $employeeList->login_id,
+                            'designation' => $employeeList->designation,
                             'role' => [
-                                'id' => $employee->role_id,
-                                'role_name' => $employee->role_name
+                                'id' => $employeeList->role_id,
+                                'role_name' => $employeeList->role_name
+                            ],
+                            'company' => [
+                                'id' => $employeeList->company_id,
+                                'company_name' => $employeeList->company_name
+                            ],
+                            'location' => [
+                                'id' => $employeeList->location_id,
+                                'location_name' => $employeeList->location_name
+                            ],
+                            'unit' => [
+                                'id' => $employeeList->unit_id,
+                                'unit_name' => $employeeList->unit_name
                             ],
                             'department' => [
-                                'id' => $employee->department_id,
-                                'department_name' => $employee->department_name
+                                'id' => $employeeList->department_id,
+                                'department_name' => $employeeList->department_name
                             ]
                         ];
                     });
@@ -84,20 +105,41 @@ class MasterController extends BaseController
                     'masters_work.id',
                     'masters_work.emp_name',
                     'masters_work.emp_id',
+                    'company_management.id as company_id',
+                    'company_management.company_name',
+                    'masters_location.id as location_id',
+                    'masters_location.location_name',
+                    'masters_unit.id as unit_id',
+                    'masters_unit.unit_name',
                     'masters_department.id as department_id',
-                    'masters_department.department_name'
+                    'masters_department.department_name',
                 )
-                    ->join('masters_department', 'masters_work.department', '=', 'masters_department.id')
+                    ->join('company_management', 'masters_employee.company', '=', 'company_management.id')
+                    ->join('masters_location', 'masters_employee.location', '=', 'masters_location.id')
+                    ->join('masters_unit', 'masters_employee.unit', '=', 'masters_unit.id')
+                    ->join('masters_department', 'masters_employee.department', '=', 'masters_department.id')
                     ->where('masters_work.status', 1)
                     ->get()
-                    ->map(function ($worker) {
+                    ->map(function ($workList) {
                         return [
-                            'id' => $worker->id,
-                            'emp_name' => $worker->emp_name,
-                            'emp_id' => $worker->emp_id,
+                            'id' => $workList->id,
+                            'emp_name' => $workList->emp_name,
+                            'emp_id' => $workList->emp_id,
+                            'company' => [
+                                'id' => $workList->company_id,
+                                'company_name' => $workList->company_name
+                            ],
+                            'location' => [
+                                'id' => $workList->location_id,
+                                'location_name' => $workList->location_name
+                            ],
+                            'unit' => [
+                                'id' => $workList->unit_id,
+                                'unit_name' => $workList->unit_name
+                            ],
                             'department' => [
-                                'id' => $worker->department_id,
-                                'department_name' => $worker->department_name
+                                'id' => $workList->department_id,
+                                'department_name' => $workList->department_name
                             ]
                         ];
                     });

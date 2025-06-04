@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\BaseController;
 use App\Models\Master\Department;
+use App\Models\Master\Location;
+use App\Models\Master\Unit;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -50,11 +52,26 @@ class LoginController extends BaseController
                 $user = Auth::user();
                 $success['token'] =  $user->createToken('karam')->accessToken;
                 $success['name'] =  $user->name;
-                $department = Department::where('id', $user->department_id)->first();
 
+                $company = Department::where('id', $user->company_id)->first();
+                $location = Location::where('id', $user->location_id)->first();
+                $unit = Unit::where('id', $user->unit_id)->first();
+                $department = Department::where('id', $user->department_id)->first();
                 $success['user_details'] = [
                     'employee_id'   => $user->employee_id,
                     'role'          => $user->role,
+                    'company'    => [
+                        'id'   => $user->company_id,
+                        'company_name' => $company ? $company->company_name : null,
+                    ],
+                    'location'    => [
+                        'id'   => $user->location_id,
+                        'location_name' => $location ? $location->location_name : null,
+                    ],
+                    'unit'    => [
+                        'id'   => $user->unit_id,
+                        'unit_name' => $unit ? $unit->unit_name : null,
+                    ],
                     'department'    => [
                         'id'   => $user->department_id,
                         'department_name' => $department ? $department->department_name : null,
