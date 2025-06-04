@@ -56,24 +56,38 @@ class PperequestController extends BaseController
                     $search = $request->search;
                 }
             }
-            $ppe_request_array = $this->pperequest->select('ppe_pperequest.*', 'ppe_pperequest.created_at as ppe_created_at', 'masters_department.department_name',  'inventory2.*', 'ppe_pperequest.id As ppe_request_id')
+            $ppe_request_array = $this->pperequest->select('ppe_pperequest.*', 'ppe_pperequest.created_at as ppe_created_at', 'masters_department.department_name',  'inventory2.*', 'ppe_pperequest.id As ppe_request_id', 'company_management.company_name', 'masters_unit.unit_name', 'masters_location.location_name')
+                ->join('company_management', 'ppe_pperequest.company_id', '=', 'company_management.id')
+                ->join('masters_location', 'ppe_pperequest.location_id', '=', 'masters_location.id')
+                ->join('masters_unit', 'ppe_pperequest.unit_id', '=', 'masters_unit.id')
                 ->join('masters_department', 'ppe_pperequest.department', '=', 'masters_department.id')
-
                 ->join('ppe_stock_inventory as inventory2', 'ppe_pperequest.item_code', '=', 'inventory2.id')
-
-                ->where('inventory2.trash', 'NO')
-                ->where('masters_department.trash', 'NO')
                 ->where('ppe_pperequest.trash', 'NO');
 
-            if (in_array(ROLE_EHS_OFFICER, $userRole)) {
-                $ppe_request_array->orderBy('ppe_request_id', 'DESC');
+
+            if (in_array(ROLE_EHS_HEAD, $userRole)) {
+                $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
             } elseif (in_array(ROLE_HOD, $userRole)) {
-                $departmentId = $user->department_id;
-                $ppe_request_array->where('ppe_pperequest.department', $departmentId)
-                    ->orderBy('ppe_request_id', 'DESC');
+                $companyId = $user->company_id;
+
+                $reportingEmpIds = Employee::where('reporting_manager', $user->employee_id)
+                    ->where('status', 1)
+                    ->pluck('emp_id')
+                    ->toArray();
+                $ppe_request_array->where(function ($q) use ($reportingEmpIds) {
+
+                    if (!empty($reportingEmpIds)) {
+                        $q->orWhereIn('ppe_pperequest.emp_id', $reportingEmpIds);
+                    }
+                })->orderBy('ppe_pperequest.id', 'DESC');
             } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
-                $ppe_request_array->orderBy('ppe_request_id', 'DESC');
-            } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+                $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
+            } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
+                $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
+            } elseif (in_array(ROLE_ADMIN, $userRole)) {
+                $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
+            } elseif (in_array(ROLE_SUPERADMIN, $userRole)) {
+                $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
             } else {
                 $ppe_request_array->where('ppe_pperequest.created_by', Auth::id());
             }
@@ -86,6 +100,9 @@ class PperequestController extends BaseController
                         ->orWhereRaw("DATE_FORMAT(ppe_pperequest.created_at, '%Y-%m-%d') LIKE ?", ["%{$searchDate}%"])
                         ->orWhere('ppe_pperequest.ppe_name', 'LIKE', "%{$search}%")
                         ->orWhere('masters_department.department_name', 'LIKE', "%{$search}%")
+                        ->orWhere('masters_unit.unit_name', 'LIKE', "%{$search}%")
+                        ->orWhere('company_management.company_name', 'LIKE', "%{$search}%")
+                        ->orWhere('masters_location.location_name', 'LIKE', "%{$search}%")
                         ->orWhere('ppe_pperequest.emp_name', 'LIKE', "%{$search}%");
                 });
             }
@@ -128,6 +145,9 @@ class PperequestController extends BaseController
                 $data['emp_name'] = $listdata->emp_name;
                 $data['item_code'] = $listdata->item_code;
                 $data['ppe_name'] = $listdata->ppe_name;
+                $data['company_id'] = getCompanyname($listdata->company_id);
+                $data['location_id'] = getLocationname($listdata->location_id);
+                $data['unit_id'] = getUnitname($listdata->unit_id);
                 $data['department'] = $listdata->department_name;
                 $data['approve_status'] = $text;
                 $data['created_by'] = getUsername($listdata->created_by);
@@ -201,7 +221,7 @@ class PperequestController extends BaseController
                         }
 
                         $file_name = time() . Str::random(10) . '.' . $fileExt;
-                        $file_path = 'public/'.$upload_path . '/' . $file_name;
+                        $file_path = 'public/' . $upload_path . '/' . $file_name;
 
                         $image_data = base64_decode($sign);
                         file_put_contents(($file_path), $image_data);
@@ -210,10 +230,12 @@ class PperequestController extends BaseController
                 if ($request->request_for == 1) {
 
                     $employee = User::where('employee_id', $request->emp_id)
-                    ->select('unit_id', 'department_id', 'company_id')
-                    ->first();
+                        ->select('unit_id', 'department_id', 'company_id')
+                        ->first();
 
                     $unit = $employee->unit_id;
+                    $company_id = $employee->company_id;
+                    $location_id = $employee->location_id;
                     $department = $employee->department_id;
                 } elseif ($request->request_for == 2) {
                     $work = Work::where('emp_id', $request->emp_id)
@@ -221,9 +243,13 @@ class PperequestController extends BaseController
                         ->first();
 
                     $unit = $work->unit;
+                    $company_id = $work->company;
+                    $location_id = $work->location;
                     $department = $work->department;
                 } else {
                     $unit = Auth::user()->unit_id;
+                    $location_id = Auth::user()->location_id;
+                    $company_id = Auth::user()->company_id;
                     $department = Auth::user()->department_id;
                 }
                 $insert_array = array(
@@ -231,6 +257,7 @@ class PperequestController extends BaseController
                     'emp_name' => $request->emp_name,
                     'department' => $department,
                     'unit_id' => $unit,
+                    'company_id' => $company_id,
                     'request_for' => $request->request_for,
                     'item_code' => $request->item_code,
                     'ppe_type' => $request->ppe_type_id,
@@ -302,7 +329,7 @@ class PperequestController extends BaseController
                 return $this->sendResponse($success, 'PPE Request Created successfully');
             }
         } catch (Exception $ex) {
-        report($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
@@ -381,6 +408,9 @@ class PperequestController extends BaseController
                     'id' => $details->id,
                     'emp_id' => $details->emp_id,
                     'emp_name' => $details->emp_name,
+                    'company' => getCompanyname($details->company_id),
+                    'location_id' => getLocationname($details->location_id),
+                    'unit' => getUnitname($details->unit_id),
                     'department' => getDepartment($details->department),
                     'item_code' => getItemCode($details->item_code),
                     'ppe_name' => $details->ppe_name,
