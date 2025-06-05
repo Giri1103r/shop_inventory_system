@@ -38,7 +38,7 @@
                                 <div class="row">
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
-                                            <label class="form-label require">{{ __('inspection.doc_no') }}</label>
+                                            <label class="form-label ">{{ __('inspection.doc_no') }}</label>
                                             <div class="view_data">
                                                 {{ $observation->doc_no }}
                                             </div>
@@ -46,7 +46,7 @@
                                     </div>
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
-                                            <label class="form-label require">{{ __('inspection.issue_date') }}</label>
+                                            <label class="form-label ">{{ __('inspection.issue_date') }}</label>
                                             <div class="view_data">
                                                 {{ Displaydateformat($observation->issue_date) }}
                                             </div>
@@ -54,7 +54,7 @@
                                     </div>
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
-                                            <label class="form-label require">{{ __('inspection.rev_date') }}</label>
+                                            <label class="form-label ">{{ __('inspection.rev_date') }}</label>
                                             <div class="view_data">
                                                 {{ $observation->rev_dt }}
                                             </div>
@@ -62,7 +62,7 @@
                                     </div>
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
-                                            <label class="form-label require">{{ __('inspection.inspection_date') }}</label>
+                                            <label class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                             <div class="view_data">
                                                 {{ Displaydateformat($observation->date_of_inspection) }}
                                             </div>
@@ -78,7 +78,7 @@
                                         <!-- SR No -->
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.sr_no') }}</label>
+                                                <label class="form-label ">{{ __('inspection.sr_no') }}</label>
                                                 <div class="view_data">
                                                     {{ $observation->sr_no }}
                                                 </div>
@@ -89,7 +89,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">{{ __('inspection.resource_code') }}</label>
+                                                    class="form-label ">{{ __('inspection.resource_code') }}</label>
                                                 <div class="view_data">
                                                     {{ $observation->equipment_code }}
                                                 </div>
@@ -99,7 +99,7 @@
                                         <!-- Department -->
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('Unit') }}</label>
+                                                <label class="form-label ">{{ __('Unit') }}</label>
                                                 <div class="view_data">
                                                     {{ getUnitname($observation->unit_id) }}
                                                 </div>
@@ -109,7 +109,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.department') }}</label>
+                                                <label class="form-label ">{{ __('inspection.department') }}</label>
                                                 <div class="view_data">
                                                     {{ GetDeptName($observation->department_id) }}
                                                 </div>
@@ -118,7 +118,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('Name of Equipment') }}</label>
+                                                <label class="form-label ">{{ __('Name of Equipment') }}</label>
                                                 <div class="view_data">
                                                     {{ $observation->equipment_name }}
                                                 </div>
@@ -128,7 +128,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">{{ __('Resource Code of Equipment') }}</label>
+                                                    class="form-label ">{{ __('Resource Code of Equipment') }}</label>
                                                 <div class="view_data">
                                                     {{ $observation->equipment_code }}
                                                 </div>
@@ -136,7 +136,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('Observation') }}</label>
+                                                <label class="form-label ">{{ __('Observation') }}</label>
                                                 <div class="view_data">
                                                     {{ $observation->observation }}
                                                 </div>
@@ -145,7 +145,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">{{ __('Date of Observation / Inspection') }}</label>
+                                                    class="form-label ">{{ __('Date of Observation / Inspection') }}</label>
                                                 <div class="view_data">
                                                     {{ Displaydateformat($observation->date) }}
                                                 </div>
@@ -154,7 +154,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">{{ __('Observation of the Month') }}</label>
+                                                    class="form-label ">{{ __('Observation of the Month') }}</label>
                                                 <div class="view_data">
                                                     {{ $observation->month }}
                                                 </div>

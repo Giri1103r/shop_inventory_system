@@ -350,7 +350,7 @@
                                         {{-- <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">Observation</label>
+                                                    class="form-label ">Observation</label>
                                                 <div class="view_data">
                                                     {{ $gembaWalk->observation_needed == '1' ? 'YES' : 'NO' }}
                                                 </div>

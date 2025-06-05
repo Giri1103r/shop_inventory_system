@@ -29,7 +29,7 @@
                                     <div class="row">
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.doc_no') }}</label>
+                                                <label class="form-label ">{{ __('inspection.doc_no') }}</label>
                                                 <div class="view_data">
                                                     {{ $document_no->doc_no }}
                                                 </div>
@@ -37,7 +37,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.issue_date') }}</label>
+                                                <label class="form-label ">{{ __('inspection.issue_date') }}</label>
                                                 <div class="view_data">
                                                     {{ Displaydateformat($document_no->issue_date) }}
                                                 </div>
@@ -45,7 +45,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.rev_date') }}</label>
+                                                <label class="form-label ">{{ __('inspection.rev_date') }}</label>
                                                 <div class="view_data">
                                                     {{ $document_no->rev_dt }}
                                                 </div>
@@ -62,7 +62,7 @@
                                             {{-- <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.sr_no') }}</label>
+                                                            class="form-label ">{{ __('inspection.sr_no') }}</label>
                                                         <div class="view_data">
                                                             {{ $loop->iteration }}
                                                         </div>
@@ -71,7 +71,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
-                                                        class="form-label require">{{ __('inspection.equipment_name') }}</label>
+                                                        class="form-label ">{{ __('inspection.equipment_name') }}</label>
                                                     <div class="view_data">
                                                         {{ getEquipmentName($details->equipment_id) }}
                                                     </div>
@@ -80,7 +80,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
-                                                        class="form-label require">{{ __('inspection.item_code') }}</label>
+                                                        class="form-label ">{{ __('inspection.item_code') }}</label>
                                                     <div class="view_data">
                                                         {{ $details->item_code }}
                                                     </div>
@@ -89,7 +89,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
-                                                        class="form-label require">{{ __('inspection.standard_norms') }}</label>
+                                                        class="form-label ">{{ __('inspection.standard_norms') }}</label>
                                                     <div class="view_data">
                                                         @if ($details->standard_norms == STANDARD)
                                                             Standard
@@ -102,7 +102,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
-                                                        class="form-label require">{{ __('inspection.equipment_category') }}</label>
+                                                        class="form-label ">{{ __('inspection.equipment_category') }}</label>
                                                     <div class="view_data">
                                                         {{ $details->equipment_category }}
                                                     </div>
@@ -111,7 +111,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
-                                                        class="form-label require">{{ __('inspection.unit_of_measurement') }}</label>
+                                                        class="form-label ">{{ __('inspection.unit_of_measurement') }}</label>
                                                     <div class="view_data">
                                                         {{ $details->measurement_unit }}
                                                     </div>
@@ -120,7 +120,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
-                                                        class="form-label require">{{ __('inspection.minimum_order_value') }}</label>
+                                                        class="form-label ">{{ __('inspection.minimum_order_value') }}</label>
                                                     <div class="view_data">
                                                         {{ $details->minimum_order_level }}
                                                     </div>
@@ -129,7 +129,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
-                                                        class="form-label require">{{ __('inspection.economic_order_quantity') }}</label>
+                                                        class="form-label ">{{ __('inspection.economic_order_quantity') }}</label>
                                                     <div class="view_data">
                                                         {{ $details->economic_order_quantity }}
                                                     </div>
@@ -138,7 +138,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
-                                                        class="form-label require">{{ __('inspection.observation_status') }}</label>
+                                                        class="form-label ">{{ __('inspection.observation_status') }}</label>
                                                     <div class="view_data">
                                                         @if ($details->observation_status == 1)
                                                             Active
@@ -151,7 +151,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
-                                                        class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                        class="form-label ">{{ __('inspection.remarks') }}</label>
                                                     <div class="view_data">
                                                         {{ $details->remark }}
                                                     </div>

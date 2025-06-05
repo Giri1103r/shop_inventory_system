@@ -13,7 +13,6 @@ class DetectorInspectionDetails extends Model
     protected $primaryKey = 'id';
 
     protected $fillable = [
-        'id',
         'inspection_id',
         'department',
         'sr_no',

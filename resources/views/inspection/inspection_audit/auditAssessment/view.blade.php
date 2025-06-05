@@ -82,7 +82,7 @@
                                                     </th>
 
                                                     <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;"
-                                                        class="require">
+                                                        class="">
                                                         YES/NO/NA
                                                     </th>
 
