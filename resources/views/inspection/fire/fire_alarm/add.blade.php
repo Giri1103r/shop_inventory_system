@@ -264,7 +264,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="remarks[1]" id="remarks[1]" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>
@@ -462,7 +462,7 @@
                         "remarks[1]": {
                             required: true,
                             minlength: 3,
-                            maxlength: 300,
+                            maxlength: 2000,
                         },
 
                         device_image: {
@@ -546,7 +546,7 @@
                         "remarks[1]": {
                             required: "Please add remarks",
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 300",
+                            maxlength: "Maximum Characters should not exceed 2000",
                         },
                         device_image: {
                             required: "Please upload an image.",
@@ -700,7 +700,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks[${form_set_count}]" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>
@@ -796,11 +796,11 @@
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
                         minlength: 3,
-                        maxlength: 30,
+                        maxlength: 2000,
                         messages: {
                             required: 'Please enter remarks',
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 300",
+                            maxlength: "Maximum Characters should not exceed 2000",
                         }
                     });
 

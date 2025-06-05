@@ -167,13 +167,13 @@
                         <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;"
                             colspan="6">Date:- {{ Displaydateformat($inspection_details->issue_date) }}</th>
                         <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;"
-                            colspan="6">Shift :- {{ GetShiftName($inspection_details->shift) }}</th>
+                            colspan="6">Shift :- {{ getShiftName($inspection_details->shift) }}</th>
                     </tr>
                     <tr>
                         <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;"
-                            colspan="6">Frequency :- {{ GetFrequencyName($inspection_details->frequency) }} </th>
+                            colspan="6">Frequency :- {{ getFrequencyName($inspection_details->frequency) }} </th>
                         <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;"
-                            colspan="6">Unit :- {{ GetUnitName($inspection_details->unit) }} </th>
+                            colspan="6">Unit :- {{ getUnitName($inspection_details->unit) }} </th>
                     </tr>
                     <tr>
                         <th rowspan="2"

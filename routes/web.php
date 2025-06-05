@@ -1627,7 +1627,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::POST('level-two/verify/submit', [HoseBoxController::class, 'levelTwoManagerSubmit']);
                     Route::GET('exportViewPdf/{id}', [HoseBoxController::class, 'ExportViewPDF']);
                     Route::GET('export/excel', [HoseBoxController::class, 'ExportExcel']);
-                    Route::GET('export/excel/{id}', [HoseBoxController::class, 'GeneralExcel']);
+                    Route::GET('exportExcel/{id}', [HoseBoxController::class, 'GeneralExcel']);
                     Route::GET('export/pdf', [HoseBoxController::class, 'ExportPDF']);
                 });
 

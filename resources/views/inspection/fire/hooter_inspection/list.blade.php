@@ -95,7 +95,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">{{ __('inspection.frequency') }}</label>
-                                                <select name="frequency" id="frequency" class=" form-control single-select"
+                                                <select name="frequency" id="frequency" class="form-control single-select"
                                                     style="width: 100%">
                                                     <option value="">Select Frequency</option>
                                                     @foreach ($frequency as $frequency)
@@ -109,7 +109,7 @@
                                         <div class="col-md-4 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
+                                            <select name="inspection_status" id="inspection_status"  style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
                                                 <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
@@ -286,6 +286,7 @@
                             d.shift = $('#shift').val();
                             d.unit = $('#unit').val();
                             d.frequency = $('#frequency').val();
+                            d.inspection_status = $('#inspection_status').val();
                             d.from_date = $('#from_date').val();
                             d.to_date = $('#to_date').val();
                         },

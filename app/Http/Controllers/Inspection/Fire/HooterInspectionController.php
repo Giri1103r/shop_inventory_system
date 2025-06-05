@@ -267,13 +267,11 @@ class HooterInspectionController extends Controller
                 'quantity.*.required' => 'Quantity is required',
                 'remarks.*.required' => 'Remarks is required',
             ];
-
             $validator = Validator::make($request->all(), $rules, $messages);
-
+                 
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
             $inspection = $this->hooter->store();
             $inspection_type = HOOTER_INSPECTION;
             $id = $inspection->id;

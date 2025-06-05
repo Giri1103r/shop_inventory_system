@@ -218,10 +218,10 @@
                 NEXT DUE ON :- {{ Displaydateformat($forklift_details->next_due) }}
             </th>
             <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px;">
-                UNIT :- {{ GetUnitName($forklift_details->unit) }}
+                UNIT :- {{ getUnitName($forklift_details->unit) }}
             </th>
             <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px;">
-                FREQUENCY :- {{ GetFrequencyName($forklift_details->frequency) }}
+                FREQUENCY :- {{ getFrequencyName($forklift_details->frequency) }}
             </th>
         </tr>
     

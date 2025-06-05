@@ -215,7 +215,7 @@
                 {{ Displaydateformat($inspection_details->next_due) ?? '' }}</td>
             <td colspan="3" style="border: 1px solid black; padding: 6px; background-color: #ddd;">
                 <strong>UNIT:</strong>
-                {{ GetUnitName($inspection_details->unit) ?? '' }}</td>
+                {{ getUnitName($inspection_details->unit) ?? '' }}</td>
         </tr>
         <tr>
             <td colspan="6" style="border: 1px solid black; padding: 6px; background-color: #ddd;">
@@ -223,7 +223,7 @@
                 {{ GetShiftName($inspection_details->shift) ?? '' }}</td>
             <td colspan="6" style="border: 1px solid black; padding: 6px; background-color: #ddd;">
                 <strong>FREQUENCY:</strong>
-                {{ GetFrequencyName($inspection_details->frequency) ?? '' }}</td>
+                {{ getFrequencyName($inspection_details->frequency) ?? '' }}</td>
         </tr>
 
         <tr>

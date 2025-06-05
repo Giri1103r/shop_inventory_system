@@ -119,13 +119,13 @@ class ChecklistObservationFollowupController extends Controller
                                     $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>CLOSED</span>";
                                     break;
                                 case L2_MANAGER_REJECTED:
-                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 2 OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 2 OFFICER REJECTED - Waiting For EHS Verification</span>";
                                     break;
                                 case L1_MANAGER_REJECTED:
-                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 1 OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>LEVEL 1 OFFICER REJECTED - Waiting For EHS Verification</span>";
                                     break;
                                 case EHS_OFFICER_REJECTED:
-                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>EHS OFFICER REJECTED - WAITING FOR CAPA ACTION</span>";
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>EHS OFFICER REJECTED - Waiting For EHS Verification</span>";
                                     break;
                                 default:
                                     $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";
@@ -212,7 +212,7 @@ class ChecklistObservationFollowupController extends Controller
                             // $btn .= '<a href="' . admin_url('inspection/master/checklist-sub-type/edit/' . encryptId($row->id)) . '" class="edit-icon " title="' . __('common.edit') . '"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
 
-                            if (($row->observation_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_CAPA_ACTION && ((CheckUserRole(ROLE_FIRE_ASSOCIATES) && ($row->responsible_person_id == Auth::id())) || isAdmin())) || ($row->observation_status == WAITING_FOR_CAPA_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_L1_VERIFICATION && ((CheckUserRole(ROLE_L1_MANAGER)) || isAdmin()))  || ($row->observation_status == WAITING_FOR_L2_VERIFICATION && ((CheckUserRole(ROLE_L2_MANAGER)) || isAdmin()))  || ($row->observation_status == EHS_OFFICER_REJECTED && ($row->fire_created_by == Auth::id() || isAdmin())) || ($row->observation_status == L1_MANAGER_REJECTED && ($row->fire_created_by == Auth::id() || isAdmin())) || ($row->observation_status == L2_MANAGER_REJECTED && ($row->fire_created_by == Auth::id() || isAdmin()))) {
+                            if (($row->observation_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_CAPA_ACTION && ((CheckUserRole(ROLE_FIRE_ASSOCIATES) && ($row->responsible_person_id == Auth::id())) || isAdmin())) || ($row->observation_status == WAITING_FOR_CAPA_VERIFICATION && ((CheckUserRole(ROLE_EHS_OFFICER)) || isAdmin())) || ($row->observation_status == WAITING_FOR_L1_VERIFICATION && ((CheckUserRole(ROLE_L1_MANAGER)) || isAdmin()))  || ($row->observation_status == WAITING_FOR_L2_VERIFICATION && ((CheckUserRole(ROLE_L2_MANAGER)) || isAdmin()))  || ($row->observation_status == EHS_OFFICER_REJECTED && ($row->ehs_verify_by == Auth::id() || isAdmin())) || ($row->observation_status == L1_MANAGER_REJECTED && ($row->ehs_verify_by == Auth::id() || isAdmin())) || ($row->observation_status == L2_MANAGER_REJECTED && ($row->ehs_verify_by == Auth::id() || isAdmin()))) {
                                 $btn .= '<a href="' . admin_url('fire/checklist-observation/verification/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) . '" class="me-1" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('fire/checklist-observation/generalpdf/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) . '" style="margin-right: 5px;" title="PDF">
@@ -933,6 +933,7 @@ class ChecklistObservationFollowupController extends Controller
             $header = [
                 __("common.sno"),
                 'Observation Id',
+                'Inspection Type',
                 'Serial Number',
                 'Date of Inspection',
                 'Approve Status',
@@ -943,9 +944,79 @@ class ChecklistObservationFollowupController extends Controller
 
             $i = 1;
             foreach ($allData as $data) {
+
+                switch ($data->inspection_type) {
+                    case HOOTER_INSPECTION:
+                        $inspectionType = 'Hooter Inspection';
+                        break;
+                    case EMERGENCY_LIGHT_INSPECTION:
+                        $inspectionType = 'Emergency Light Inspection';
+                        break;
+                    case MONTHLY_FIRE_PUMP:
+                        $inspectionType = 'Monthly Fire Pump';
+                        break;
+                    case FIRE_MOCK_DRILL_INSPECION:
+                        $inspectionType = 'Fire Mock Drill Inspection';
+                        break;
+                    case FIRE_EXTINGUISHER_INSPECTION:
+                        $inspectionType = 'Fire Extinguisher Inspection';
+                        break;
+                    case ISOLATION_VALVE_INSPECTION:
+                        $inspectionType = 'Isolation Valve Inspection';
+                        break;
+                    case FIRE_ALARM_INSPECTION:
+                        $inspectionType = 'Fire Alarm Inspection';
+                        break;
+                    case SPRINKLAR_SYSTEM_INSPECTION:
+                        $inspectionType = 'Sprinkler System Inspection';
+                        break;
+                    case SAND_BUCKET_INSPECTION:
+                        $inspectionType = 'Sand Bucket Inspection';
+                        break;
+                    case DETECTOR_INSPECTION:
+                        $inspectionType = 'Detector Inspection';
+                        break;
+                    case FIRE_PA_SYSTEM_INSPECTION:
+                        $inspectionType = 'Fire PA System Inspection';
+                        break;
+                    case DAILY_FIRE_PUMP:
+                        $inspectionType = 'Daily Fire Pump';
+                        break;
+                    case CO_TYPE_FIRE_EXTINGUISHER_INSPECTION:
+                        $inspectionType = 'CO Type Fire Extinguisher Inspection';
+                        break;
+                    case HOSE_BOX_INSPECTION:
+                        $inspectionType = 'Hose Box Inspection';
+                        break;
+                    case CARTRIDGE_TYPE_FIRE_EXTINGUISHER_INSPECTION:
+                        $inspectionType = 'Cartridge Type Fire Extinguisher Inspection';
+                        break;
+                    case HOSE_REEL_INSPECTION:
+                        $inspectionType = 'Hose Reel Inspection';
+                        break;
+                    case FIRE_MODULAR_INSPECTION:
+                        $inspectionType = 'Fire Modular Inspection';
+                        break;
+                    case HYDRANT_RISER:
+                        $inspectionType = 'Hydrant Riser';
+                        break;
+                    case OBSERVATION_FOLLOWUP:
+                        $inspectionType = 'Observation Follow-up';
+                        break;
+                    case OBSERVATION_FOLLOWUP:
+                        $inspectionType = 'Observation Follow-up';
+                        break;
+                    case GEMBA_WALK:
+                        $inspectionType = 'Observation Follow-up';
+                        break;
+                    default:
+                        $inspectionType = 'Unknown';
+                }
+
                 $export = [];
                 $export[] =  $i;
                 $export[] =  $data->observation_id;
+                $export[] =  $inspectionType;
                 $export[] =  $data->sr_no;
                 $export[] = Displaydateformat($data->date_of_inspection);
                 $export[] =  getInspectionstatus($data->observation_status);
@@ -985,6 +1056,7 @@ class ChecklistObservationFollowupController extends Controller
             $header = [
                 __("common.sno"),
                 'Observation Id',
+                'Inspection Type',
                 'Serial Number',
                 'Date of Inspection',
                 'Approve Status',

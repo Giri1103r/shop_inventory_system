@@ -66,7 +66,7 @@ class HooterInspectionDetails extends Model
                 'condition_of_hooter' => $check_items[$index],
                 'quantity' => $quantity[$index],
                 'blinking_light' => isset($blinking_light[$index]) && $blinking_light[$index] === 'YES' ? 1 : 0,
-                'auditbility' => isset($auditbility[$index]) && $auditbility[$index] === 'YES' ? 1 : 0,
+                'audiobility' => isset($auditbility[$index]) && $auditbility[$index] === 'YES' ? 1 : 0,
                 'connection' => isset($connection[$index]) && $connection[$index] === 'YES' ? 1 : 0,
                 'created_by' => Auth::id(),
             );
@@ -99,7 +99,7 @@ class HooterInspectionDetails extends Model
                 'condition_of_hooter' => $check_items[$index],
                 'quantity' => $quantity[$index],
                 'blinking_light' => isset($blinking_light[$index]) && $blinking_light[$index] === 'YES' ? 1 : 0,
-                'auditbility' => isset($auditbility[$index]) && $auditbility[$index] === 'YES' ? 1 : 0,
+                'audiobility' => isset($auditbility[$index]) && $auditbility[$index] === 'YES' ? 1 : 0,
                 'connection' => isset($connection[$index]) && $connection[$index] === 'YES' ? 1 : 0,
                 'created_by' => Auth::id(),
             );

@@ -335,7 +335,7 @@
                                         <div class="form-observation">
                                             <div class="row mt-4 form-obs">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Hydrant And Riser Observation</h4>
+                                                    <h4 class="text-white">Isolation Valve Inspection Observation</h4>
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">

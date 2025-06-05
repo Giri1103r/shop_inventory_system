@@ -151,7 +151,7 @@ class HoseBoxController extends Controller
                             $btn .= '<a href="' . admin_url('fire/hose-box-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                     </a>';
-                            $btn .= '<a href="' . admin_url('fire/hose-box-inspection/export/excel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
+                            $btn .= '<a href="' . admin_url('fire/hose-box-inspection/exportExcel/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="Excel"> <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i></a>';
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status', 'inspection_status', 'date_of_inspection', 'next_due'])

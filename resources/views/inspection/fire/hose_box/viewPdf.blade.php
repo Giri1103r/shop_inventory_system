@@ -219,7 +219,7 @@
                 :- {{ getUnitname($forklift_details->unit) }}
             </td>
             <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;" title="FREQUENCY">
-                FREQUENCY :- {{ getUnitname($forklift_details->frequency) }}</td>
+                FREQUENCY :- {{ getFrequencyname($forklift_details->frequency) }}</td>
         </tr>
 
         <tr>

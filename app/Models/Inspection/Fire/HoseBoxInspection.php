@@ -105,7 +105,7 @@ class HoseBoxInspection extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_hose_box.inspection_status', decryptId($request->inspection_status));
         }
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_fire_hose_box.created_at', '>=', $startDate);
@@ -120,24 +120,7 @@ class HoseBoxInspection extends Model
             $query->whereBetween('inspection_fire_hose_box.created_at', [$startDate, $endDate]);
         }
 
-        if (isset($request->order) && count($request->order) > 0) {
-            $columnName = $request->order[0]['column'];
-            $columnorder = $request->order[0]['dir'];
-            switch ($columnName) {
-                case "inspection_status":
-                    $query = $query->orderBy('inspection_fire_hose_box.inspection_status', $columnorder);
-                    break;
-                case "created_by":
-                    $query = $query->orderBy('inspection_fire_hose_box.created_by', $columnorder);
-                    break;
-                case "created_date":
-                    $query = $query->orderBy('inspection_fire_hose_box.created_at', $columnorder);
-                    break;
-                default:
-                    $query = $query->orderBy('inspection_fire_hose_box.id', 'DESC');
-                    break;
-            }
-        }
+        $query = $query->orderBy('inspection_fire_hose_box.id', 'DESC');
 
         $data_count = $query;
         $total_records = $data_count->count();
@@ -257,7 +240,7 @@ class HoseBoxInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_hose_box.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_hose_box.id as fire_id','inspection_fire_hose_box.created_by as checked_by','inspection_static_docno.*','inspection_fire_hose_box_details.*')
+        $query = $this->select('inspection_fire_hose_box.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_hose_box.id as fire_id', 'inspection_fire_hose_box.created_by as checked_by', 'inspection_static_docno.*', 'inspection_fire_hose_box_details.*')
             ->leftJoin('masters_location', 'inspection_fire_hose_box.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_hose_box.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_hose_box.unit', '=', 'masters_unit.id')

@@ -203,7 +203,7 @@
             LOCATION: {{ getLocationName($first->location) }}
         </th>
         <th colspan="2" style="border: 1px solid black; text-align: left; padding: 6px;">
-            SHIFT: {{ GetShiftName($first->shift) }}
+            SHIFT: {{ getShiftName($first->shift) }}
         </th>
     </tr>
 
@@ -213,10 +213,10 @@
             NEXT DUE ON: {{ Displaydateformat($first->next_due) }}
         </th>
         <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
-            UNIT: {{ GetUnitName($first->unit) }}
+            UNIT: {{ getUnitName($first->unit) }}
         </th>
         <th colspan="2" style="border: 1px solid black; text-align: left; padding: 6px;">
-            FREQUENCY: {{ GetFrequencyName($first->frequency) }}
+            FREQUENCY: {{ getFrequencyName($first->frequency) }}
         </th>
     </tr>
 

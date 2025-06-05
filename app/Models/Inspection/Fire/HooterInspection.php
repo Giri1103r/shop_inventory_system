@@ -119,7 +119,7 @@ class HooterInspection extends Model
             $query = $query->where('inspection_fire_hooter.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
 
-
+                   
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_hooter.inspection_status', decryptId($request->inspection_status));
         }

@@ -281,7 +281,7 @@
                                                         <div class="mt-1">
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
-                                                                    name="blinking_light[1]" id="blinking_light"
+                                                                    name="blinking_light[1]" id="blinking_light[1]"
                                                                     value="YES"
                                                                     {{ old('blinking_light.1') == 'YES' ? 'checked' : '' }}>
                                                                 <label class="form-check-label"
@@ -292,7 +292,7 @@
                                                             @enderror
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
-                                                                    name="connection[1]" id="connection" value="YES"
+                                                                    name="connection[1]" id="connection[1]" value="YES"
                                                                     {{ old('connection.1') == 'YES' ? 'checked' : '' }}>
                                                                 <label class="form-check-label"
                                                                     for="connection">Connection</label>
@@ -302,7 +302,7 @@
                                                             @enderror
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
-                                                                    name="auditbility[1]" id="auditbility" value="YES"
+                                                                    name="auditbility[1]" id="auditbility[1]" value="YES"
                                                                     {{ old('auditbility.1') == 'YES' ? 'checked' : '' }}>
                                                                 <label class="form-check-label"
                                                                     for="auditbility">Audibility</label>

@@ -201,11 +201,11 @@
         <thead>
             <tr>
                 <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;" colspan="6">Date:- {{Displaydateformat($inspection_detail->issue_date)}}</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;" colspan="6">Shift  :- {{GetShiftName($inspection_detail->shift)}}</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;" colspan="6">Shift  :- {{getShiftName($inspection_detail->shift)}}</th>
             </tr>
             <tr>
-                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;" colspan="6">Frequency :- {{GetFrequencyName($inspection_detail->frequency)}} </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;" colspan="6">Unit :- {{GetUnitName($inspection_detail->unit)}} </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;" colspan="6">Frequency :- {{getFrequencyName($inspection_detail->frequency)}} </th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;" colspan="6">Unit :- {{getUnitName($inspection_detail->unit)}} </th>
             </tr>
             <tr>
                 <th rowspan="2"

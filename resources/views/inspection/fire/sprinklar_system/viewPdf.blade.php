@@ -216,9 +216,9 @@
             <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px; background-color: #bbb;">NEXT DUE ON :-
                 {{ Displaydateformat($forklift_details->next_due) }}</th>
             <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px; background-color: #bbb;">UNIT :-
-                {{ GetUnitName($forklift_details->unit) }} </th>
+                {{ getUnitName($forklift_details->unit) }} </th>
             <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px; background-color: #bbb;">FREQUENCY :-
-                {{ GetFrequencyName($forklift_details->frequency) }}</th>
+                {{ getFrequencyName($forklift_details->frequency) }}</th>
         </tr>
         <thead>
             <tr>
