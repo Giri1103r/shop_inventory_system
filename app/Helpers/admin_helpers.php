@@ -54,6 +54,7 @@ use App\Models\Inspection\Fire\FireMockDrillInspection;
 use App\Models\Inspection\Safety\SafetyWalkObservation;
 use App\Models\Inspection\Fire\DailyFireHouseInspection;
 use App\Models\Inspection\Ohc\HealthInstrumentCalibration;
+use App\Models\OhcManagement\Master\CertifiedFirstAider;
 
 /*
  * Menu bar start
@@ -660,8 +661,8 @@ if (!function_exists('getohctotalCount')) {
             case 'certifiedFirstAider':
 
 
-                $count = User::whereRaw('FIND_IN_SET(?, role)', [ROLE_CERTIFIED_FIRST_AIDER])
-                    ->where('status', 1);
+                $count = CertifiedFirstAider::
+                    where('status', 1);
 
                 break;
             default:

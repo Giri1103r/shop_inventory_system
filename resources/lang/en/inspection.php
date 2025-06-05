@@ -296,6 +296,8 @@ return [
     'monthly_fire_pump_house_inspection' => 'Monthly Fire Pump House Inspection',
     'co_type_fire_extinguisher_inspection' => 'Co2 Type Fire Extinguisher Inspection',
     'co_type_fire_extinguisher_inspection_obs' => 'Co2 Type Fire Extinguisher Inspection Observation',
+    'fire_pa_system_checklist' => 'Fire PA System Inspection Checklist',
+    'fire_pa_system_obs' => 'Fire PA System Observation',
 
 
 

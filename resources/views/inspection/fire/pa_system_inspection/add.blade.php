@@ -179,7 +179,8 @@
                                         <hr>
                                         <div class="form-wrapper">
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white ms-3">Fire PA System Checklist</h4>
+                                                <h4 class="text-white ms-3">
+                                                    {{ __('inspection.fire_pa_system_checklist') }}</h4>
                                                 <button class="btn btn-primary add-row mb-2 " type="button"
                                                     id="add-row"
                                                     style="margin-left: 10px;  margin-right: 10px; width: 84px;">
@@ -226,13 +227,7 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label require">Remarks</label>
-                                                        <textarea name="remark[1]" id="remarks" class="form-control" style="resize: none;" rows="4"
-                                                            placeholder="Remarks"></textarea>
-                                                    </div>
-                                                </div>
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Audio Quality</label>
@@ -302,6 +297,13 @@
                                                         </select>
                                                     </div>
                                                 </div>
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">Remarks</label>
+                                                        <textarea name="remark[1]" id="remarks" class="form-control" style="resize: none;" rows="4"
+                                                            placeholder="Remarks"></textarea>
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-2 text-right  mt-4">
                                                     <button class="btn btn-danger remove-row" type="button"
                                                         style="margin:10px;"><i class="fa fa-trash"></i></button>
@@ -313,7 +315,7 @@
                                         <div class="form-observation">
                                             <div class="row mt-4 form-obs">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Fire PA System Observation</h4>
+                                                    <h4 class="text-white">{{ __('inspection.fire_pa_system_obs') }}</h4>
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
@@ -466,7 +468,9 @@
                             required: true,
                         },
                         "remark[1]": {
-                            required: true,
+
+                            minlength: 3,
+                            maxlength: 600,
                         },
                         "mic_quantity[1]": {
                             required: true,
@@ -504,7 +508,7 @@
                     messages: {
                         signature_image: {
                             required: 'Please upload your signature',
-                             filesize: "File size should not exceed 15MB",
+                            filesize: "File size should not exceed 15MB",
                         },
                         rev_date: {
                             required: "Revision Date required",
@@ -641,14 +645,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-12 mb-2">
-                                <div class="form-group form-input">
-                                    <label
-                                        class="form-label require">Remarks</label>
-                                    <textarea name="remark[${form_set_count}]" id="remarks" class="form-control" style="resize: none;" rows="4"
-                                    placeholder="Remarks"></textarea>
-                                </div>
-                            </div>
+
                              <div class="col-md-4 mb-2">
                                 <div class="form-group form-input">
                                     <label
@@ -717,6 +714,14 @@
                                         <option value="{{ encryptId(1) }}">Functional</option>
                                         <option value="{{ encryptId(2) }}">Non-functional</option>
                                     </select>
+                                </div>
+                            </div>
+                              <div class="col-md-12 mb-2">
+                                <div class="form-group form-input">
+                                    <label
+                                        class="form-label ">Remarks</label>
+                                    <textarea name="remark[${form_set_count}]" id="remarks" class="form-control" style="resize: none;" rows="4"
+                                    placeholder="Remarks"></textarea>
                                 </div>
                             </div>
                                               <div class="col-md-2 text-right  mt-4">
@@ -845,9 +850,11 @@
                     });
 
                     $("textarea[name='remark[" + form_set_count + "]']").rules('add', {
-                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
                         messages: {
-                            required: 'Please add remarks',
+                            minlength: "Minimum 3 characters are required",
+                            maxlenghth: "Maximum character should not exceed the 600 characters",
                         }
                     });
 
