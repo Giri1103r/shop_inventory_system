@@ -131,7 +131,7 @@ class SafetyPermitController extends BaseController
                 $safetypermit = $this->safetypermit->selectOne($id);
                 $workmaninvolved = $this->safetypermit->workmaninvolved($id);
                 $stateIsolationLoto = json_decode($safetypermit->state_isolation_loto);
-               
+
                 $confined_space_entry = json_decode($safetypermit->confined_space_entry);
 
                 $status_log = $this->statuslog->selectOne($id);
@@ -531,7 +531,7 @@ class SafetyPermitController extends BaseController
                 return $this->sendResponse($success, 'Safety Permit Details');
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

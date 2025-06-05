@@ -138,10 +138,13 @@ class TrainingSheducleController extends BaseController
                     $search = $request->search;
                 }
             }
-            $traning_schedule_array = TrainingSchedule::select('training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'training_masters_topic.topic_name', 'training_masters_venue.name_of_the_conference_hall');
+            $traning_schedule_array = TrainingSchedule::select('training_schedule.*', 'masters_unit.unit_name', 'masters_employee.emp_name', 'masters_department.department_name', 'training_masters_topic.topic_name', 'training_masters_venue.name_of_the_conference_hall', 'masters_unit.unit_name', 'company_management.company_name');
             $traning_schedule_array = $traning_schedule_array->leftJoin('masters_unit', 'training_schedule.unit_id', '=', 'masters_unit.id');
             $traning_schedule_array = $traning_schedule_array->leftJoin('masters_employee', 'training_schedule.trainer_id', '=', 'masters_employee.id');
+            $traning_schedule_array = $traning_schedule_array->leftJoin('company_management', 'training_schedule.company_id', '=', 'company_management.id');
+
             $traning_schedule_array = $traning_schedule_array->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id');
+
             $traning_schedule_array = $traning_schedule_array->leftJoin('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id');
             $traning_schedule_array = $traning_schedule_array->leftJoin('training_masters_venue', 'training_schedule.venue_id', '=', 'training_masters_venue.id');
             $org_total =  $traning_schedule_array;
@@ -211,12 +214,12 @@ class TrainingSheducleController extends BaseController
                 $data['to_date'] = Displaydateformat($listdata['to_date'] ?? '');
                 $data['topic_name'] = $listdata['topic_name'] ?? '';
                 $data['trainer_id'] = getEmployeename($listdata['trainer_id'] ?? '');
+                $data['company_id'] = ($listdata['company_name'] ?? '');
+                $data['unit_id'] = ($listdata['unit_name'] ?? '');
+                $data['department_id'] = ($listdata['department_name'] ?? '');
                 $status = $listdata['training_status'] ?? null;
                 $data['training_status'] =
-                    in_array($status, [1, 2, 4, 5]) ? 'Training Pending' :
-                    ($status == 8 ? 'Training Completed' :
-                    (in_array($status, [6, 7]) ? 'Training in Progress' :
-                    ($status == 3 ? 'Training Rejected' : 'Unknown Status')));
+                    in_array($status, [1, 2, 4, 5]) ? 'Training Pending' : ($status == 8 ? 'Training Completed' : (in_array($status, [6, 7]) ? 'Training in Progress' : ($status == 3 ? 'Training Rejected' : 'Unknown Status')));
                 $data['status'] = $listdata['status'] == 1 ? 'Active' : 'In-Active';
                 $data['created_by'] = getUsername($listdata['created_by'] ?? '');
                 $data['created_at'] = Displaydateformat($listdata['created_at'] ?? '');
@@ -322,7 +325,7 @@ class TrainingSheducleController extends BaseController
                         'checked' => $assessment->attended_status == 1 ? 'Yes' : 'No',
                         'mark' => $assessment->mark,
                         'assessment' =>   $assessment->assessment == 1 ? 'Pass' : ($assessment->mark == 2 ? 'Fail' : 'Not Attended'),
-                        'feed_back' => !empty($assessment->feedback) ? strip_tags($assessment->feedback) : '-' ,
+                        'feed_back' => !empty($assessment->feedback) ? strip_tags($assessment->feedback) : '-',
                     ];
                 }
 
@@ -365,6 +368,7 @@ class TrainingSheducleController extends BaseController
                     'end_time' => $training_schedule->end_time,
                     'topic_id' => $training_schedule->topic_name,
                     'trainer_id' => ($training_schedule->emp_name),
+                    'company_id' => getCompanyname($training_schedule->company_id),
                     'unit_id' => ($training_schedule->unit_name),
                     'department_id' => ($training_schedule->department_name),
                     'target_trainees' => ($training_schedule->target_trainees),
@@ -449,8 +453,8 @@ class TrainingSheducleController extends BaseController
             $AssessmentStore = $this->training_assessment_feedback->store_api();
             $updateStatus = $this->training_schedule->updateStatus($trainingScheduleId, $training_status);
             $statuslog =  $this->training_statuslog->storestatus($trainingScheduleId, $training_status);
-            $success =[
-                'training_schedule'=>  $trainingScheduleId,
+            $success = [
+                'training_schedule' =>  $trainingScheduleId,
             ];
             return $this->sendResponse($success, 'Assessment update Successfully!');
         } catch (Exception $ex) {
