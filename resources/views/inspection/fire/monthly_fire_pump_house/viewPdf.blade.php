@@ -176,6 +176,35 @@
             </td>
         </tr>
         <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.resource_code') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($forklift_details->resource_code) ? $forklift_details->resource_code : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.date_of_inspection') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ Displaydateformat(isset($forklift_details->date_of_inspection) ? $forklift_details->date_of_inspection : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('inspection.shifts') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getShift(isset($forklift_details->shift) ? $forklift_details->shift : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>{{ __('common.unit') }}</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getUnitname(isset($forklift_details->unit) ? $forklift_details->unit : '') }}
+            </td>
+        </tr>
+
+        <tr>
             <td width="50%" style="padding:5px;"><b>Created By</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
@@ -214,9 +243,11 @@
                                 $responseText = $answer['response'] ?? '-';
                             @endphp
                             @if ($responseText == 'YES')
-                                <span style="color: green; font-size: 20px;">✓</span>
-                            @elseif ($responseText == 'NO' || $responseText == 'N/A')
-                                <span style="color: red; font-size: 20px;">X</span>
+                                <span style="color: green; font-size: 20px;">YES</span>
+                            @elseif ($responseText == 'NO')
+                                <span style="color: red; font-size: 20px;">NO</span>
+                            @elseif ($responseText == 'N/A')
+                                <span style="color: red; font-size: 20px;">N/A</span>
                             @else
                                 {{ $responseText }}
                             @endif

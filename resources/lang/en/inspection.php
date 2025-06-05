@@ -288,7 +288,12 @@ return [
     'evidence' => 'Evidence',
     'closing_evidence' => 'Closing Evidence',
     'capa' => 'Recommended CAPA',
-    'capa_is_passed' =>'Recommended CAPA Action'
+    'capa_is_passed' => 'Recommended CAPA Action',
+
+    // inspection fire headings
+
+    // monthly fire pump house inspection
+    'monthly_fire_pump_house_inspection' => 'Monthly Fire Pump House Inspection'
 
 
 

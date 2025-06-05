@@ -31,7 +31,8 @@
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">{{ __('inspection.safety_gallery_inspection') }}</h4>
+                                        <h4 class="text-white">{{ __('inspection.monthly_fire_pump_house_inspection') }}
+                                        </h4>
                                     </div>
                                 </div>
 
@@ -62,20 +63,21 @@
                                     </div>
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.resource_code') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($inspection_details->resource_code) ? $inspection_details->resource_code : '' }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
                                             <label class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                             <div class="view_data">
                                                 {{ displaydateformat(isset($inspection_details->date_of_inspection) ? $inspection_details->date_of_inspection : '') }}
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 mb-2">
-                                        <div class="form-group form-input">
-                                            <label class="form-label ">{{ __('inspection.location') }}</label>
-                                            <div class="view_data">
-                                                {{ getLocationname(isset($inspection_details->location) ? $inspection_details->location : '') }}
-                                            </div>
-                                        </div>
-                                    </div>
+
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
                                             <label class="form-label ">Shift</label>
@@ -84,14 +86,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 mb-2">
-                                        <div class="form-group form-input">
-                                            <label class="form-label ">{{ __('inspection.next_due') }}</label>
-                                            <div class="view_data">
-                                                {{ displaydateformat(isset($inspection_details->next_due) ? $inspection_details->next_due : '') }}
-                                            </div>
-                                        </div>
-                                    </div>
+
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
                                             <label class="form-label ">{{ __('inspection.unit') }}</label>
@@ -100,38 +95,8 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="col-md-4 mb-2">
-                                        <div class="form-group form-input">
-                                            <label class="form-label ">{{ __('inspection.frequency') }}</label>
-                                            <div class="view_data">
-                                                {{ GetFrequency(isset($inspection_details->frequency) ? $inspection_details->frequency : '') }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <div class="form-group form-input">
-                                            <label class="form-label ">{{ __('inspection.identification_no') }}</label>
-                                            <div class="view_data">
-                                                {{ isset($inspection_details->identification_no) ? $inspection_details->identification_no : '' }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <div class="form-group form-input">
-                                            <label class="form-label ">{{ __('inspection.forklift_type') }}</label>
-                                            <div class="view_data">
-                                                {{ GetForkLiftType(isset($inspection_details->forklift_type) ? $inspection_details->forklift_type : '') }}
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-md-4 mb-2">
-                                        <div class="form-group form-input">
-                                            <label class="form-label ">{{ __('inspection.capacity') }}</label>
-                                            <div class="view_data">
-                                                {{ isset($inspection_details->capacity) ? $inspection_details->capacity : '' }}
-                                            </div>
-                                        </div>
-                                    </div>
+
+
                                     @php
                                         $signature = GetFireSignature(
                                             $inspection_details->created_by,
@@ -192,9 +157,11 @@
                                                                 $responseText = $answer['response'] ?? '-';
                                                             @endphp
                                                             @if ($responseText == 'YES')
-                                                                <span style="color: green; font-size: 20px;">✓</span>
-                                                            @elseif ($responseText == 'NO' || $responseText == 'N/A')
-                                                                <span style="color: red; font-size: 20px;">X</span>
+                                                                <span style="color: green; font-size: 20px;">YES</span>
+                                                            @elseif ($responseText == 'NO')
+                                                                <span style="color: red; font-size: 20px;">NO</span>
+                                                            @elseif ($responseText == 'N/A')
+                                                                <span style="color: red; font-size: 20px;">N/A</span>
                                                             @else
                                                                 {{ $responseText }}
                                                             @endif
@@ -234,7 +201,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label"
                                                         style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -250,7 +217,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                             <div class="col-md-12 form-input">
                                                 <label class="form-label required">Whether the Inspection has been
                                                     passed Without the CAPA
@@ -792,7 +759,7 @@
                         },
                         signature_image: {
                             required: true,
-                             filesize: 10485760,
+                            filesize: 10485760,
                         }
                     },
                     messages: {
@@ -803,7 +770,7 @@
                         },
                         signature_image: {
                             required: "Signature is Required",
-                             filesize: "File size should not exceed 10MB",
+                            filesize: "File size should not exceed 10MB",
                         }
                     },
                     errorElement: 'div',
@@ -841,7 +808,7 @@
                         },
                         signature_image: {
                             required: true,
-                             filesize: 10485760,
+                            filesize: 10485760,
                         }
                     },
                     messages: {
@@ -886,7 +853,7 @@
                         },
                         signature_image: {
                             required: true,
-                             filesize: 10485760,
+                            filesize: 10485760,
                         }
                     },
                     messages: {
@@ -897,7 +864,7 @@
                         },
                         signature_image: {
                             required: "Signature is Required",
-                             filesize: "File size should not exceed 10MB",
+                            filesize: "File size should not exceed 10MB",
                         }
                     },
                     errorElement: 'div',
@@ -931,7 +898,7 @@
                         },
                         signature_image: {
                             required: true,
-                             filesize: 10485760,
+                            filesize: 10485760,
                         }
                     },
                     messages: {
@@ -942,7 +909,7 @@
                         },
                         signature_image: {
                             required: "Signature is Required",
-                             filesize: "File size should not exceed 10MB",
+                            filesize: "File size should not exceed 10MB",
                         }
                     },
                     errorElement: 'div',
