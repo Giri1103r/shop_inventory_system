@@ -293,7 +293,9 @@ return [
     // inspection fire headings
 
     // monthly fire pump house inspection
-    'monthly_fire_pump_house_inspection' => 'Monthly Fire Pump House Inspection'
+    'monthly_fire_pump_house_inspection' => 'Monthly Fire Pump House Inspection',
+    'co_type_fire_extinguisher_inspection' => 'Co2 Type Fire Extinguisher Inspection',
+    'co_type_fire_extinguisher_inspection_obs' => 'Co2 Type Fire Extinguisher Inspection Observation',
 
 
 

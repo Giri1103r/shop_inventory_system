@@ -438,7 +438,7 @@ if (!function_exists('gettotalCount')) {
                 break;
             case 'training_men_hours':
                 $count = TrainingSchedule::whereYear('created_at', date('Y'))
-                    ->sum(DB::raw('CAST(training_man_hours AS DECIMAL(10,2))')).' hrs';
+                    ->sum(DB::raw('CAST(training_man_hours AS DECIMAL(10,2))')) . ' hrs';
                 break;
             case 'major_accident':
                 $count = InjuryDetails::where('nature_of_injury', MAJOR_ACCIDENT)->count();
@@ -648,6 +648,9 @@ if (!function_exists('getohctotalCount')) {
             case 'prescribetopatient4':
                 $count = PrescribetoPatient::where('unit_id', 4);
                 break;
+            case 'pns':
+                $count = PrescribetoPatient::where('unit_id', '>=', 5);
+                break;
             case 'prescribetopatient':
                 $count = PrescribetoPatient::whereDate('created_at', Carbon::today())->where('unit_id', $unit_id);
                 break;
@@ -655,7 +658,11 @@ if (!function_exists('getohctotalCount')) {
                 $count = UserMedicineIssuance::whereDate('created_at', Carbon::today())->where('unit_id', $unit_id)->Where('status', 1);
                 break;
             case 'certifiedFirstAider':
-                $count = User::where('role', ROLE_CERTIFIED_FIRST_AIDER)->where('status', 1)->where('unit_id', $unit_id);
+
+
+                $count = User::whereRaw('FIND_IN_SET(?, role)', [ROLE_CERTIFIED_FIRST_AIDER])
+                    ->where('status', 1);
+
                 break;
             default:
                 return 0;
