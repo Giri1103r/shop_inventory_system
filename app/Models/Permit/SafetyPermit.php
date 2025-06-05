@@ -742,7 +742,7 @@ class SafetyPermit extends Model
     public function selectOne($id)
     {
 
-        // dd($id);
+
         $data = $this->select(
             'ptw_safety.*',
             // 'shut_down_takenby_employee.emp_name as shut_down_takenby',

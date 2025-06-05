@@ -114,21 +114,21 @@ class MonthlyFirePumpHouseController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/view/' . encryptId($row->inspection_id)) . '"   class="view-icon" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/view/' . encryptId($row->inspection_id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
                             if ($row->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->inspection_id)) . '/ehs" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->inspection_id)) . '/ehs" class="me-1" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->inspection_status == WAITING_FOR_CAPA_ACTION || $row->inspection_status == L2_MANAGER_REJECTED || $row->inspection_status == EHS_OFFICER_REJECTED || $row->inspection_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->inspection_id)) . '/capa" class="me-1" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="me-1" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L1_VERIFICATION && (CheckUserRole(ROLE_L1_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->inspection_id)) . '/level-one-manager" class="me-1" title="' . __('inspection.l1_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->inspection_status == WAITING_FOR_L2_VERIFICATION && (CheckUserRole(ROLE_L2_MANAGER) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/verification/' . encryptId($row->inspection_id)) . '/level-two-manager" class="me-1" title="' . __('inspection.l2_manager_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             $btn .= '<a href="' . admin_url('fire/monthly-fire-pump-house-inspection/exportViewPdf/' . encryptId($row->inspection_id)) . '" style="margin-right: 5px;" title="PDF">
                                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
@@ -177,7 +177,7 @@ class MonthlyFirePumpHouseController extends Controller
             if (count($checklistQuestions) <= 0) {
 
                 Session::flash('success', __('inspection.checklist_add'));
-               return redirect(admin_url('inspection/master/checklist-sub-type-data/add'));
+                return redirect(admin_url('inspection/master/checklist-sub-type-data/add'));
             }
             $data = array(
                 'checklist_details' => $checklistQuestions,
@@ -202,7 +202,7 @@ class MonthlyFirePumpHouseController extends Controller
             $id = $monthly_fire_inspection->id;
             $inspection_type = MONTHLY_FIRE_PUMP;
 
-            $signature_update = $this->signature->CheckedBySignature($id,$inspection_type);
+            $signature_update = $this->signature->CheckedBySignature($id, $inspection_type);
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
@@ -752,12 +752,18 @@ class MonthlyFirePumpHouseController extends Controller
                         $responseText = $response['response'] ?? '';
 
                         if ($responseText === 'YES') {
-                            $statusSymbol = '✓';
+                            $statusSymbol = 'YES';
                             $statusColor = '008000';
-                        } elseif (in_array($responseText, ['NO', 'N/A'])) {
-                            $statusSymbol = 'X';
+                        } elseif ($responseText === 'NO') {
+                            $statusSymbol = 'NO';
                             $statusColor = 'FF0000';
+                        } elseif ($responseText === 'N/A') {
+                            $statusSymbol = 'N/A';
+                            $statusColor = 'FF0000';
+                        } else {
+                            $statusSymbol = '-';
                         }
+
 
                         $sheet->mergeCells("L$currentRow:M$currentRow")->setCellValue("L$currentRow", $statusSymbol);
                         $sheet->mergeCells("N$currentRow:P$currentRow")->setCellValue("N$currentRow", $response['remark'] ?? '-');
@@ -804,10 +810,10 @@ class MonthlyFirePumpHouseController extends Controller
 
                 if ($inspection->updated_by == null) {
                     $sheet->setCellValue("F{$currentRow}", "VERIFIED BY:- \nInspection not yet started");
-                } 
+                }
 
                 if ($inspection->approved_by == null) {
-                    $sheet->setCellValue("L{$currentRow}", "APPROVED BY:- \nApproval pending");
+                    $sheet->setCellValue("L{$currentRow}", "APPROVED BY:- \nInspection not yet started");
                 }
 
                 $lastRow = $currentRow;
@@ -822,7 +828,6 @@ class MonthlyFirePumpHouseController extends Controller
                 ]);
 
                 $currentRow += 4;
-
             }
 
             $fileName = 'Monthly Fire Pump Inspection.xlsx';
@@ -832,10 +837,11 @@ class MonthlyFirePumpHouseController extends Controller
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-
         } catch (\Exception $e) {
             report($e);
-            return redirect()->back()->with('error', 'Something went wrong!');
+
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('fire/monthly-fire-pump-house-inspection/list'));
         }
     }
 
@@ -912,7 +918,7 @@ class MonthlyFirePumpHouseController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.fire.monthly_fire_pump_house.viewPdf',$data);
+            $html = view('inspection.fire.monthly_fire_pump_house.viewPdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
@@ -1018,15 +1024,20 @@ class MonthlyFirePumpHouseController extends Controller
                     $statusColor = null;
                     $responseText = $questions['response'] ?? '';
 
+
                     if ($responseText === 'YES') {
-                        $statusSymbol = '✓';
+                        $statusSymbol = 'YES';
                         $statusColor = '008000';
-                    } elseif (in_array($responseText, ['NO', 'N/A'])) {
-                        $statusSymbol = 'X';
+                    } elseif ($responseText === 'NO') {
+                        $statusSymbol = 'NO';
+                        $statusColor = 'FF0000';
+                    } elseif ($responseText === 'N/A') {
+                        $statusSymbol = 'N/A';
                         $statusColor = 'FF0000';
                     } else {
                         $statusSymbol = '-';
                     }
+
 
                     $sheet->mergeCells("J{$row}:K{$row}")->setCellValue("J{$row}", $statusSymbol);
                     $sheet->mergeCells("L{$row}:M{$row}")->setCellValue("L{$row}", $questions['remark'] ?? '-'); // remark not remarks
@@ -1044,7 +1055,6 @@ class MonthlyFirePumpHouseController extends Controller
 
                     $row++;
                     $srNo++;
-
                 }
             }
 
@@ -1072,7 +1082,7 @@ class MonthlyFirePumpHouseController extends Controller
             }
 
             if ($monthlyfirepump->approved_by == null) {
-                $sheet->setCellValue("E{$signatureRow}", "APPROVED BY:- Inspection not yet started");
+                $sheet->setCellValue("J{$signatureRow}", "APPROVED BY:- Inspection not yet started");
             }
 
             $writer = new Xlsx($spreadsheet);
@@ -1081,13 +1091,10 @@ class MonthlyFirePumpHouseController extends Controller
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-
         } catch (\Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/monthly-fire-pump-house-inspection/list'));
         }
     }
-
-
 }

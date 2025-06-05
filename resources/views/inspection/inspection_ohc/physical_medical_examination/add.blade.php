@@ -47,9 +47,16 @@
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Issue Date</label>
-                                                    <input type="text" name ="issue_date" id="issue_date"
-                                                        class="form-control" placeholder="Issue Date"
-                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name ="issue_date" id="issue_date"
+                                                            class="form-control" placeholder="Issue Date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -110,8 +117,15 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Date of Birth</label>
-                                                    <input type="text" name="dob" id="dob" class="form-control"
-                                                        placeholder="Enter the dob">
+
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="dob" id="dob"
+                                                            class="form-control" placeholder="Enter the dob">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -131,8 +145,14 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Date</label>
-                                                    <input type="text" name="date" id="date"
-                                                        class="form-control" placeholder="Enter the date " readonly>
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="date" id="date"
+                                                            class="form-control" placeholder="Enter the date " readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -151,14 +171,14 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Height</label>
+                                                    <label class="form-label require">Height(in Meters)</label>
                                                     <input type="text" name="height" id="height"
                                                         class="form-control" placeholder="Enter the Height">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Weight</label>
+                                                    <label class="form-label require">Weight (in Kg)</label>
                                                     <input type="text" name="weight" id="weight"
                                                         class="form-control" placeholder="Enter the weight">
                                                 </div>
@@ -167,7 +187,8 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">BMI</label>
                                                     <input type="text" name="bmi" id="bmi"
-                                                        class="form-control" placeholder="Enter the Body Mass Index">
+                                                        class="form-control" placeholder="Enter the Body Mass Index"
+                                                        readonly>
                                                 </div>
                                             </div>
 
@@ -203,7 +224,7 @@
                                                                     {{ $personalDetails->personal_details }}
                                                                     <input type="hidden"
                                                                         name="persnal_details[{{ $personalDetails->id }}]"
-                                                                        value="{{ ($personalDetails->id) }}">
+                                                                        value="{{ $personalDetails->id }}">
                                                                 </td>
 
                                                                 <td class="text-center">
@@ -374,12 +395,14 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                   <select name="distance_with_out_glasses_yes" id="distance_with_out_glasses_yes" class="form-control single-select " style="width:100%"
-                                                                   >
-                                                                   <option value="">Select the Option</option>
-                                                                   <option value="{{encryptId(1)}}">Yes</option>
-                                                                   <option value="{{encryptId(0)}}">NO</option>
-                                                                </select>
+                                                                    <select name="distance_with_out_glasses_yes"
+                                                                        id="distance_with_out_glasses_yes"
+                                                                        class="form-control single-select "
+                                                                        style="width:100%">
+                                                                        <option value="">Select the Option</option>
+                                                                        <option value="{{ encryptId(1) }}">Yes</option>
+                                                                        <option value="{{ encryptId(0) }}">NO</option>
+                                                                    </select>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -399,12 +422,14 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                   <select name="near_with_out_glasses_yes" id="near_with_out_glasses_yes" class="form-control single-select " style="width:100%"
-                                                                   >
-                                                                   <option value="">Select the Option</option>
-                                                                   <option value="{{encryptId(1)}}">Yes</option>
-                                                                   <option value="{{encryptId(0)}}">NO</option>
-                                                                </select>
+                                                                    <select name="near_with_out_glasses_yes"
+                                                                        id="near_with_out_glasses_yes"
+                                                                        class="form-control single-select "
+                                                                        style="width:100%">
+                                                                        <option value="">Select the Option</option>
+                                                                        <option value="{{ encryptId(1) }}">Yes</option>
+                                                                        <option value="{{ encryptId(0) }}">NO</option>
+                                                                    </select>
                                                                 </div>
                                                             </td>
                                                         </tr>
@@ -417,14 +442,14 @@
 
                                         </div>
                                         <div class="row">
-                                            <div class="col-md-8 mb-2">
+                                            <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Remarks of Factory Medical
                                                         Officer</label>
                                                     <textarea name="remarks" id="remarks" class="form-control" cols="10" rows="5"></textarea>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 form-group form-input mb-2">
+                                            {{-- <div class="col-md-4 form-group form-input mb-2">
                                                 @if (isset(Auth::user()->signature_upload))
                                                     <label class="form-label" style="display: block; ">Factory Medical
                                                         Officer Signature</label>
@@ -441,7 +466,7 @@
                                                         <div id="signature_upload" class="text-danger"></div>
                                                     </div>
                                                 @endif
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
@@ -484,7 +509,27 @@
                     ageInput.value = (isNaN(age) || age < 0) ? '' : age;
                 });
             });
+            // calculation of the BMI
+
+            function calculateBMI() {
+                let height = parseFloat($('#height').val());
+                let weight = parseFloat($('#weight').val());
+
+                if (!isNaN(height) && !isNaN(weight) && height > 0) {
+                    // Convert height from cm to meters
+                    let heightInMeters = height / 100;
+                    let bmi = weight / (heightInMeters * heightInMeters);
+                    $('#bmi').val(bmi.toFixed(2)); // round to 2 decimal places
+                } else {
+                    $('#bmi').val('');
+                }
+            }
+
+            $(document).on('input', '#height, #weight', function() {
+                calculateBMI();
+            });
         </script>
+
 
         <script>
             $(document).ready(function() {
@@ -500,7 +545,10 @@
                     }(),
 
                 });
-
+                $('#resetform').on('click', function(e) {
+                    e.preventDefault();
+                    location.reload();
+                });
                 var Datepicker = flatpickr("#date", {
                     dateFormat: "d-m-Y",
                     minDate: new Date()
@@ -547,31 +595,39 @@
                         success: function(response) {
                             if (response.employee) {
                                 $('#emp_name').val(response.employee.emp_name).prop('readonly', true);
-                                $('#unit_id').val(response.unit.unit_name).prop('readonly', true);
-                                $('#department_id').val(response.department.department_name).prop(
+                                $('#unit_id').val(response.unit ? response.unit.unit_name : '').prop(
                                     'readonly', true);
+                                $('#department_id').val(response.department ? response.department
+                                    .department_name : '').prop('readonly', true);
                                 $('#contact_number').val(response.employee.mobile_no).prop('readonly',
                                     true);
-                                $('#blood_group').val(response.blood_group.blood_group_name).prop(
-                                    'readonly', true);
                                 $('#gender').val(response.employee.gender).prop('readonly', true);
 
+                                if (response.blood_group) {
+                                    $('#blood_group').val(response.blood_group.blood_group_name).prop(
+                                        'readonly', true);
+                                } else {
+                                    $('#blood_group').val('').prop('readonly',
+                                        false); // Editable if no blood group
+                                }
                             } else {
-                                $('#emp_name').val('').prop('readonly', true);
-                                $('#unit_id').val('').prop('readonly', true);
-                                $('#department_id').val('').prop('readonly', true);
-                                $('#contact_number').val('').prop('readonly', true);
-                                $('#gender').val('').prop('readonly', true);
+                                // Reset all fields
+                                $('#emp_name, #unit_id, #department_id, #contact_number, #gender, #blood_group')
+                                    .val('').prop('readonly', true);
+                                $('#blood_group').prop('readonly', false); // Allow editing if no employee
                             }
                         },
-                        error: function(xhr) {
+                        error: function() {
                             alert('Error fetching employee name. Please try again.');
                         }
                     });
                 } else {
-                    $('#emp_name').val('').prop('readonly', true);
+                    $('#emp_name, #unit_id, #department_id, #contact_number, #gender, #blood_group').val('').prop(
+                        'readonly', true);
+                    $('#blood_group').prop('readonly', false); // Editable on empty
                 }
             });
+
 
 
             $(function() {

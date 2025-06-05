@@ -223,7 +223,7 @@
                 <div class="card-body">
                     <div class="row">
                         <h4>Unit Wise OPD Details</h4>
-                        <div class="col-xl-3 col-lg-6 col-sm-6">
+                        <div class="col-xl-3 col-lg-3 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
                                 style="cursor: pointer;background-image: linear-gradient(to right, #a3f0dc 0%, #83aeee 100%);">
                                 <div class="card-body p-4"
@@ -246,7 +246,7 @@
                             </div>
                         </div>
 
-                        <div class="col-xl-3 col-lg-6 col-sm-6">
+                        <div class="col-xl-3 col-lg-3 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
                                 style="cursor: pointer;background-image: linear-gradient(135deg, #d2f8bc 0%, #c3cfe2 100%);">
                                 <div class="card-body p-4"
@@ -269,7 +269,7 @@
 
 
 
-                        <div class="col-xl-3  col-lg-6 col-sm-6">
+                        <div class="col-xl-3 col-lg-3 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
                                 style="cursor: pointer;background-image: linear-gradient(to left, #d9ecee 0%, #7fdbf1 100%);">
                                 <div class="card-body p-4"
@@ -290,7 +290,7 @@
                             </div>
                         </div>
 
-                        <div class="col-xl-3 col-lg-6 col-sm-6">
+                        <div class="col-xl-3 col-lg-3 col-sm-6">
                             <div class="widget-stat card card-dashbaord"
                                 style="cursor: pointer;background-image: linear-gradient(to right, #e2757e 0%, #f1b1c4 100%);">
                                 <div class="card-body p-4"
@@ -302,6 +302,27 @@
                                                 {{ isset($masterLink[7]['name']) ? $masterLink[7]['name'] : '' }}</p>
                                             <h4 class="mb-0">
                                                 {{ isset($masterLink[7]['count']) ? $masterLink[7]['count'] : 0 }}</h4>
+                                        </div>
+
+                                        {{-- <div id="chart4" class="chart-container"></div> --}}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-xl-3 col-lg-3 col-sm-6">
+                            <div class="widget-stat card card-dashbaord"
+                              style="cursor: pointer;background-image: linear-gradient(135deg, #d69960, #a1f0f0);">
+                                <div class="card-body p-4"
+                                    style = "box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.06);">
+                                    <div class="media ai-icon" style="display: flex; align-items: center;">
+
+                                        <div class="media-body">
+                                            <p class="mb-1" style="color:black;">
+                                                {{ isset($masterLink[8]['name']) ? $masterLink[8]['name'] : '' }}</p>
+                                            <h4 class="mb-0">
+                                                {{ isset($masterLink[8]['count']) ? $masterLink[8]['count'] : 0 }}</h4>
                                         </div>
 
                                         {{-- <div id="chart4" class="chart-container"></div> --}}
@@ -342,10 +363,10 @@
                                         </span>
                                         <div class="media-body" style="display: block;">
                                             <p class="mb-1" style="color:black;">
-                                                {{ isset($masterLink[8]['name']) ? $masterLink[8]['name'] : '' }}
+                                                {{ isset($masterLink[9]['name']) ? $masterLink[9]['name'] : '' }}
                                             </p>
                                             <h4 class="mb-0 today-opd">
-                                                {{ isset($masterLink[8]['count']) ? $masterLink[8]['count'] : 0 }}
+                                                {{ isset($masterLink[9]['count']) ? $masterLink[9]['count'] : 0 }}
                                             </h4>
                                         </div>
                                     </div>
@@ -377,9 +398,9 @@
                                         </span>
                                         <div class="media-body">
                                             <p class="mb-1" style="color:black;">
-                                                {{ isset($masterLink[9]['name']) ? $masterLink[9]['name'] : '' }}</p>
+                                                {{ isset($masterLink[10]['name']) ? $masterLink[10]['name'] : '' }}</p>
                                             <h4 class="mb-0 today-issue">
-                                                {{ isset($masterLink[9]['count']) ? $masterLink[9]['count'] : 0 }}</h4>
+                                                {{ isset($masterLink[10]['count']) ? $masterLink[10]['count'] : 0 }}</h4>
                                         </div>
                                     </div>
                                 </div>
@@ -439,9 +460,9 @@
                                         </span>
                                         <div class="media-body">
                                             <p class="mb-1" style="color:black;">
-                                                {{ isset($masterLink[10]['name']) ? $masterLink[10]['name'] : '' }}</p>
+                                                {{ isset($masterLink[11]['name']) ? $masterLink[11]['name'] : '' }}</p>
                                             <h4 class="mb-0 certified-first-aider">
-                                                {{ isset($masterLink[10]['count']) ? $masterLink[10]['count'] : 0 }}</h4>
+                                                {{ isset($masterLink[11]['count']) ? $masterLink[11]['count'] : 0 }}</h4>
                                         </div>
                                     </div>
                                 </div>

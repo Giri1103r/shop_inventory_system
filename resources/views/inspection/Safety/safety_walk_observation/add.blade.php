@@ -77,8 +77,13 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                    <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control" value="{{ old('inspection_date') }}">
+                                                    <div class="input-group date form-input  custom-height">
+                                                        <input type="text" name="inspection_date" id = "inspection_date"
+                                                            class="form-control" value="{{ old('inspection_date') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                     @error('inspection_date')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
@@ -200,10 +205,17 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.date_of_observation') }}</label>
-                                                        <input type="text" name="date_of_observation[1]"
-                                                            id = "date_of_observation"
-                                                            class="form-control date_of_observation"
-                                                            value="{{ old('date_of_observation.1') }}">
+
+
+                                                        <div class="input-group date form-input  custom-height">
+                                                            <input type="text" name="date_of_observation[1]"
+                                                                id = "date_of_observation"
+                                                                class="form-control date_of_observation"
+                                                                value="{{ old('date_of_observation.1') }}">
+                                                            <div class="input-group-addon input-group-text">
+                                                                <span class="fa fa-calendar"></span>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                     @error('date_of_observation.1')
                                                         <div class="error">{{ $message }}</div>
@@ -294,7 +306,7 @@
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                            class="form-label">{{ __('inspection.remarks') }}</label>
                                                         <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;">{{ old('remarks.1') }}</textarea>
 
                                                     </div>
@@ -432,7 +444,7 @@
                             "observation[1]": {
                                 required: true,
                                 minlength: 3,
-                                maxlength: 30,
+                                maxlength: 100,
                             },
                             "date_of_observation[1]": {
                                 required: true,
@@ -441,7 +453,7 @@
                             "recomended_action[1]": {
                                 required: true,
                                 minlength: 3,
-                                maxlength: 30,
+                                maxlength: 100,
                             },
 
                             "date_of_compliance[1]": {
@@ -453,7 +465,7 @@
                             },
 
                             "remarks[1]": {
-                                required: true,
+
                                 minlength: 3,
                                 maxlength: 600,
                             },
@@ -502,7 +514,7 @@
                             "observation[1]": {
                                 required: "Observation is required",
                                 minlength: "Minimum 3 characters required",
-                                maxlength: "Maximum character should not exceed the 30",
+                                maxlength: "Maximum character should not exceed the 100",
 
                             },
                             "date_of_observation[1]": {
@@ -513,7 +525,7 @@
                             "recomended_action[1]": {
                                 required: "Recomended Action is required",
                                 minlength: "Minimum 3 characters required",
-                                maxlength: "Maximum character should not exceed the 30",
+                                maxlength: "Maximum character should not exceed the 100",
 
                             },
 
@@ -528,7 +540,7 @@
                             },
 
                             "remarks[1]": {
-                                required: "Remarks is required",
+
                                 minlength: "Minimum 3 characters required",
                                 maxlength: "Maximum character should not exceed the 600",
                             },
@@ -642,8 +654,14 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label">{{ __('inspection.date_of_observation') }}</label>
-                                                        <input type="text" name="date_of_observation[${form_set_count}]" id = "date_of_observation[${form_set_count}]"
+                                                             <div class="input-group date form-input  custom-height">
+                                                             <input type="text" name="date_of_observation[${form_set_count}]" id = "date_of_observation[${form_set_count}]"
                                                             class="form-control date_of_observation" >
+                                                            <div class="input-group-addon input-group-text">
+                                                                <span class="fa fa-calendar"></span>
+                                                            </div>
+                                                        </div>
+
                                                     </div>
                                                 </div>
                                                  <div class="col-md-4 mb-2">
@@ -705,7 +723,7 @@
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                            class="form-label">{{ __('inspection.remarks') }}</label>
                                                         <textarea name="remarks[${form_set_count}]" id="remarks[${form_set_count}]" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
@@ -734,6 +752,13 @@
                     }
                 });
 
+                $("select[name='emp_id[" + form_set_current_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please select the Responsible Person',
+                    }
+                });
+
                 $("input[name='checklist_file[" + form_set_current_count + "]']").rules('add', {
                     required: true,
                     filesize: 15728640,
@@ -747,11 +772,11 @@
                     required: true,
                     uniqueItemCode: true,
                     minlength: 3,
-                    maxlength: 30,
+                    maxlength: 100,
                     messages: {
                         required: 'Please Enter the Observation',
                         minlength: "Minimum 3 characters required",
-                        maxlength: "Maximum character should not exceed the 30",
+                        maxlength: "Maximum character should not exceed the 100",
                     }
                 });
                 $("input[name='date_of_observation[" + form_set_current_count + "]']").rules('add', {
@@ -764,11 +789,11 @@
                 $("input[name='recomended_action[" + form_set_current_count + "]']").rules('add', {
                     required: true,
                     minlength: 3,
-                    maxlength: 30,
+                    maxlength: 100,
                     messages: {
                         required: 'Please Enter the Recomended Action',
                         minlength: "Minimum 3 characters required",
-                        maxlength: "Maximum character should not exceed the 30",
+                        maxlength: "Maximum character should not exceed the 100",
                     }
                 });
 
@@ -780,7 +805,7 @@
                     }
                 });
 
-                $("input[name='observation_status[" + form_set_current_count + "]']").rules('add', {
+                $("select[name='observation_status[" + form_set_current_count + "]']").rules('add', {
                     required: true,
                     messages: {
                         required: 'Please Select the Observation Status',
@@ -788,11 +813,11 @@
                 });
 
                 $("textarea[name='remarks[" + form_set_current_count + "]']").rules('add', {
-                    required: true,
+
                     minlength: 3,
                     maxlength: 600,
                     messages: {
-                        required: 'Please Enter the Remarks',
+
                         minlength: "Minimum 3 characters required",
                         maxlength: "Maximum character should not exceed the 600",
                     }

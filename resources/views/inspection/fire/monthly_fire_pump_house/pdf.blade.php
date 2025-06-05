@@ -191,7 +191,7 @@
                 </td>
                 <td colspan="4"
                     style="border:1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    <strong>LOCATION:</strong> {{ $details->location_name ?? 'N/A' }}
+                    <strong>UNIT:</strong> {{ getUnitname($details->unit ?? 'N/A') }}
                 </td>
                 <td colspan="4"
                     style="border:1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
@@ -214,26 +214,39 @@
                 $srNo = 1;
             @endphp
 
+           
+
             @if (is_array($user_response))
-                @foreach ($user_response as $subcategory => $questions)
-                    <tr>
-                        <td colspan="3" style="border: 1px solid black; text-align: center;">{{ $srNo }}</td>
-                        <td colspan="3" style="border: 1px solid black; text-align: left;">
-                            {{ GetChecklistTypeDate($subcategory) }}</td>
-                        <td colspan="3" style="border: 1px solid black; text-align: center;">
-                            @php $responseText = $questions['response'] ?? '-'; @endphp
-                            @if ($responseText == 'YES')
-                                <span style="color: green; font-size: 20px;">✓</span>
-                            @elseif ($responseText == 'NO' || $responseText == 'N/A')
-                                <span style="color: red; font-size: 20px;">X</span>
-                            @else
-                                {{ $responseText }}
-                            @endif
-                        </td>
-                        <td colspan="3" style="border: 1px solid black; text-align: left;">
-                            {{ $questions['remark'] ?? '-' }}</td>
-                    </tr>
-                    @php $srNo++; @endphp
+                @foreach ($user_response as $subcategory => $questionGroup)
+                    @foreach ($questionGroup as $questions)
+                        <tr>
+                            <td colspan="3" style="border: 1px solid black; text-align: center;">{{ $srNo }}
+                            </td>
+
+                            <td colspan="3" style="border: 1px solid black; text-align: left;">
+                                {{ GetChecklistTypeDate($questions['question_id'] ?? '-') }}
+                            </td>
+
+                            <td colspan="3" style="border: 1px solid black; text-align: center;">
+                                @php $responseText = $questions['response'] ?? '-'; @endphp
+
+                                @if ($responseText == 'YES')
+                                    <span style="color: green; font-size: 20px;">YES</span>
+                                @elseif ($responseText == 'NO')
+                                    <span style="color: red; font-size: 20px;">NO</span>
+                                @elseif ($responseText == 'N/A')
+                                    <span style="color: red; font-size: 20px;">N/A</span>
+                                @else
+                                    {{ $responseText }}
+                                @endif
+                            </td>
+
+                            <td colspan="3" style="border: 1px solid black; text-align: left;">
+                                {{ $questions['remark'] ?? '-' }}
+                            </td>
+                        </tr>
+                        @php $srNo++; @endphp
+                    @endforeach
                 @endforeach
             @else
                 <tr>
@@ -242,6 +255,7 @@
                     </td>
                 </tr>
             @endif
+
 
             @php
                 $creator_signature = GetFireSignature($details->checked_by, $details->inspection_id, MONTHLY_FIRE_PUMP);
@@ -261,7 +275,7 @@
                 <td colspan="4" style="border: 1px solid black; text-align: center; padding: 10px;">
                     {{-- <img src="{{ admin_url($creator_signature) }}" alt="Checked By Signature"
                         style="height: 50px;"> --}}
-                        <br>
+                    <br>
                     <strong>Checked & Prepared By:</strong><br>{{ getUsername($details->checked_by) }}
                 </td>
                 <td colspan="4" style="border: 1px solid black; text-align: center; padding: 10px;">

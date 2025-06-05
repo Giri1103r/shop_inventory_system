@@ -1335,7 +1335,7 @@
 <script>
     $(document).ready(function () {
         const maxUploads = 5;
-        const maxFileSize = 5 * 1024 * 1024; // 5MB
+        const maxFileSize = 15 * 1024 * 1024; // 5MB
 
         $('#dynamic-add-more').on('click', function () {
             let currentFileUploads = $('.file-upload-block').length;
@@ -1377,8 +1377,8 @@
 
             for (let i = 0; i < files.length; i++) {
                 if (files[i].size > maxFileSize) {
-                    errorContainer.text('Each file must be less than or equal to 5MB.');
-                    $(this).val(''); // Clear the input
+                    errorContainer.text('Each file must be less than or equal to 15MB.');
+                    $(this).val(''); 
                     break;
                 }
             }
@@ -1413,7 +1413,6 @@
             }
         });
 
-        $('#ehs_verification').validate().resetForm();
 
 
 

@@ -55,17 +55,14 @@ class PpeExemptionController extends BaseController
                     $search = $request->search;
                 }
             }
-            $ppe_exemption_array = $this->ppeexemption->select('ppe_ppeexemption.*', 'masters_department.department_name', 'masters_unit.unit_name')
+            $ppe_exemption_array = $this->ppeexemption->select('ppe_ppeexemption.*', 'masters_department.department_name', 'masters_unit.unit_name', 'company_management.company_name', 'masters_location.location_name')
                 ->join('masters_department', 'ppe_ppeexemption.department', '=', 'masters_department.id')
                 ->join('masters_unit', 'ppe_ppeexemption.unit', '=', 'masters_unit.id')
-                ->where('masters_department.trash', 'NO')
-                ->where('masters_unit.trash', 'NO');
+                ->join('company_management', 'ppe_ppeexemption.company', '=', 'company_management.id')
+                ->join('masters_location', 'ppe_ppeexemption.location_id', '=', 'masters_location.id');
 
             if (in_array(ROLE_EHS_HEAD, $userRole)) {
                 $ppe_exemption_array->whereIn('ppe_ppeexemption.approve_status', [STATUS_EHS_APPROVAL_PENDING, STATUS_EHS_APPROVED, STATUS_EHS_REJECTED]);
-            } elseif (in_array(ROLE_HOD, $userRole)) {
-                $departmentId = $user->department_id;
-                $ppe_exemption_array->where('ppe_ppeexemption.department', $departmentId);
             } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
             } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
                 $ppe_exemption_array
@@ -81,7 +78,8 @@ class PpeExemptionController extends BaseController
                         ->orWhereDate('ppe_ppeexemption.created_at', 'LIKE', "%{$searchDate}%")
                         ->orWhere('masters_department.department_name', 'LIKE', "%{$search}%")
                         ->orWhere('masters_unit.unit_name', 'LIKE', "%{$search}%")
-
+                        ->orWhere('company_management.company_name', 'LIKE', "%{$search}%")
+                        ->orWhere('masters_location.location_name', 'LIKE', "%{$search}%")
                         ->orWhere('ppe_ppeexemption.emp_name', 'LIKE', "%{$search}%");
                 });
             }
@@ -107,6 +105,9 @@ class PpeExemptionController extends BaseController
                 $data['id'] = $listdata->id;
                 $data['emp_id'] = $listdata->emp_id;
                 $data['emp_name'] = $listdata->emp_name;
+                $data['company'] = $listdata->company_name;
+                $data['location'] = $listdata->location_name;
+                $data['unit'] = $listdata->unit_name;
                 $data['department'] = $listdata->department_name;
                 $data['unit_name'] = $listdata->unit_name;
                 $data['from_date'] = Displaydateformat($listdata->from_date);
@@ -174,26 +175,27 @@ class PpeExemptionController extends BaseController
                 if ($request->request_for == 1) {
 
                     $employee = User::where('employee_id', $request->emp_id)
-                        ->select('unit_id', 'department_id', 'company_id')
+                        ->select('*')
                         ->first();
 
                     $unit = $employee->unit_id;
+                    $company = $employee->company_id;
+                    $location = $employee->location_id;
                     $department = $employee->department_id;
-
-
-                    $company = $employee->company_id ?? null;
                 } elseif ($request->request_for == 2) {
                     $work = Work::where('emp_id', $request->emp_id)
-                        ->select('unit', 'department', 'company')
+                        ->select('*')
                         ->first();
 
                     $unit = $work->unit ?? null;
                     $department = $work->department;
                     $company = $work->company ?? null;
+                    $location = $work->location ?? null;
                 } else {
                     $unit = Auth::user()->unit_id;
                     $department = Auth::user()->department_id;
                     $company = Auth::user()->company_id;
+                    $location = Auth::user()->location_id;
                 }
                 $insert_array = [
                     'emp_id' => $request->emp_id,
@@ -201,6 +203,7 @@ class PpeExemptionController extends BaseController
                     'department' => $department,
                     'unit' => $unit,
                     'company' =>  $company,
+                    'location_id' =>  $location,
                     'request_for' => $request->request_for,
                     'from_date' => DBdateformat($request->from_date),
                     'to_date' => DBdateformat($request->to_date),
@@ -339,6 +342,9 @@ class PpeExemptionController extends BaseController
                     'id' => $details->id,
                     'emp_id ' => $details->emp_id,
                     'emp_name' => $details->emp_name,
+                    'company' => getCompanyname($details->company),
+                    'location' => getLocationname($details->location_id),
+                    'unit' => getUnitname($details->unit),
                     'department' => getDepartment($details->department),
                     'from_date' => Displaydateformat($details->from_date),
                     'to_date' => Displaydateformat($details->to_date),

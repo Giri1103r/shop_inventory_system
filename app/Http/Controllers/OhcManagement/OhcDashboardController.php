@@ -11,7 +11,8 @@ use App\Models\OhcManagement\Report\Inventory;
 class OhcDashboardController extends Controller
 {
     private $unit;
-    public function __construct() {
+    public function __construct()
+    {
         $this->unit = new Unit();
     }
 
@@ -34,108 +35,115 @@ class OhcDashboardController extends Controller
             }
 
 
-               
-                $masterLink = [
-                    [
-                        'link' => 'ohc/medicine-requisition/list',
-                        'name' => 'Pending Requests',
-                        'count' => getohctotalCount('requisition',$unit_id),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
 
-                        'name' => 'Current Stock',
-                        'count' => getohctotalCount('medicine'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
+            $masterLink = [
+                [
+                    'link' => 'ohc/medicine-requisition/list',
+                    'name' => 'Pending Requests',
+                    'count' => getohctotalCount('requisition', $unit_id),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
+                [
 
-                        'name' => 'Today’s Purchase',
-                        'count' => getohctotalCount('medicineReceiving'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
+                    'name' => 'Current Stock',
+                    'count' => getohctotalCount('medicine'),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
+                [
 
-                        'name' => 'Medicine Issuance',
-                        'count' => getohctotalCount('usermedicineissuance',$unit_id),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
+                    'name' => 'Today’s Purchase',
+                    'count' => getohctotalCount('medicineReceiving'),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
+                [
 
-                    [
+                    'name' => 'Medicine Issuance',
+                    'count' => getohctotalCount('usermedicineissuance', $unit_id),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
 
-                        'name' => "Unit 1",
-                        'count' => getohctotalCount('prescribetopatient1'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
+                [
 
-                        'name' => "Unit 2",
-                        'count' => getohctotalCount('prescribetopatient2'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
+                    'name' => "Unit 1",
+                    'count' => getohctotalCount('prescribetopatient1'),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
+                [
 
-                        'name' => "Unit 3",
-                        'count' => getohctotalCount('prescribetopatient3'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
+                    'name' => "Unit 2",
+                    'count' => getohctotalCount('prescribetopatient2'),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
+                [
 
-                        'name' => "Unit 4",
-                        'count' => getohctotalCount('prescribetopatient4'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
+                    'name' => "Unit 3",
+                    'count' => getohctotalCount('prescribetopatient3'),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
+                [
 
-                    [
+                    'name' => "Unit 4",
+                    'count' => getohctotalCount('prescribetopatient4'),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
 
-                        'name' => "Today's OPD",
-                        'count' => getohctotalCount('prescribetopatient',$unit_id),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
-                        'link' => 'ohc/medicine-issuance/list',
-                        'name' => "Today's Issue",
-                        'count' => getohctotalCount('medicineissuance',$unit_id),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
+                [
 
-                    [
+                    'name' => "PNS",
+                    'count' => getohctotalCount('pns'),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
 
-                        'name' => "Certified First Aiders",
-                        'count' => getohctotalCount('certifiedFirstAider',$unit_id),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
+                [
 
-                ];
+                    'name' => "Today's OPD",
+                    'count' => getohctotalCount('prescribetopatient', $unit_id),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
+                [
+                    'link' => 'ohc/medicine-issuance/list',
+                    'name' => "Today's Issue",
+                    'count' => getohctotalCount('medicineissuance', $unit_id),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
 
-                $medicines = Inventory::where('ohc_report_inventory.unit_id',$unit_id)
-                    ->join('ohc_master_medicine', 'ohc_report_inventory.medicine_id', '=', 'ohc_master_medicine.id')
-                    ->select('ohc_master_medicine.medicine', 'ohc_report_inventory.balance')
-                    ->where('ohc_report_inventory.trash', 'NO')
-                    ->get();
-                    $unit = $this->unit->getUnitList();
+                [
 
-                $data = [
-                    'masterLink' => $masterLink,
-                    'medicines' => $medicines,
-                    'unit' => $unit,
-                ];
+                    'name' => "Certified First Aiders",
+                    'count' => getohctotalCount('certifiedFirstAider', $unit_id),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
+
+            ];
+
+            $medicines = Inventory::where('ohc_report_inventory.unit_id', $unit_id)
+                ->join('ohc_master_medicine', 'ohc_report_inventory.medicine_id', '=', 'ohc_master_medicine.id')
+                ->select('ohc_master_medicine.medicine', 'ohc_report_inventory.balance')
+                ->where('ohc_report_inventory.trash', 'NO')
+                ->get();
+            $unit = $this->unit->getUnitList();
+
+            $data = [
+                'masterLink' => $masterLink,
+                'medicines' => $medicines,
+                'unit' => $unit,
+            ];
 
 
 
-                return view('ohcmanagement.dashboard.dashboard', $data);
-
+            return view('ohcmanagement.dashboard.dashboard', $data);
         }
     }
 
@@ -153,107 +161,106 @@ class OhcDashboardController extends Controller
 
 
 
-                $masterLink = [
-                    [
-                        'link' => 'ohc/medicine-requisition/list',
-                        'name' => 'Pending Requests',
-                        'count' => getohctotalCount('requisition',$unit_id),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
+            $masterLink = [
+                [
+                    'link' => 'ohc/medicine-requisition/list',
+                    'name' => 'Pending Requests',
+                    'count' => getohctotalCount('requisition', $unit_id),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
+                [
 
-                        'name' => 'Current Stock',
-                        'count' => getohctotalCount('medicine'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
+                    'name' => 'Current Stock',
+                    'count' => getohctotalCount('medicine'),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
+                [
 
-                        'name' => 'Today’s Purchase',
-                        'count' => getohctotalCount('medicineReceiving'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
+                    'name' => 'Today’s Purchase',
+                    'count' => getohctotalCount('medicineReceiving'),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
+                [
 
-                        'name' => 'Medicine Issuance',
-                        'count' => getohctotalCount('usermedicineissuance',$unit_id),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
+                    'name' => 'Medicine Issuance',
+                    'count' => getohctotalCount('usermedicineissuance', $unit_id),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
 
-                    [
+                [
 
-                        'name' => "Unit 1",
-                        'count' => getohctotalCount('prescribetopatient1'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
+                    'name' => "Unit 1",
+                    'count' => getohctotalCount('prescribetopatient1'),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
+                [
 
-                        'name' => "Unit 2",
-                        'count' => getohctotalCount('prescribetopatient2'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
+                    'name' => "Unit 2",
+                    'count' => getohctotalCount('prescribetopatient2'),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
+                [
 
-                        'name' => "Unit 3",
-                        'count' => getohctotalCount('prescribetopatient3'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
+                    'name' => "Unit 3",
+                    'count' => getohctotalCount('prescribetopatient3'),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
+                [
 
-                        'name' => "Unit 4",
-                        'count' => getohctotalCount('prescribetopatient4'),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
+                    'name' => "Unit 4",
+                    'count' => getohctotalCount('prescribetopatient4'),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
 
-                    [
+                [
 
-                        'name' => "Today's OPD",
-                        'count' => getohctotalCount('prescribetopatient',$unit_id),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
-                    [
-                        'link' => 'ohc/medicine-issuance/list',
-                        'name' => "Today's Issue",
-                        'count' => getohctotalCount('medicineissuance',$unit_id),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
+                    'name' => "Today's OPD",
+                    'count' => getohctotalCount('prescribetopatient', $unit_id),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
+                [
+                    'link' => 'ohc/medicine-issuance/list',
+                    'name' => "Today's Issue",
+                    'count' => getohctotalCount('medicineissuance', $unit_id),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
 
-                    [
+                [
 
-                        'name' => "Certified First Aiders",
-                        'count' => getohctotalCount('certifiedFirstAider',$unit_id),
-                        'icon' => 'bx bx-message-square-detail',
-                        'icon_color' => 'text-primary',
-                    ],
+                    'name' => "Certified First Aiders",
+                    'count' => getohctotalCount('certifiedFirstAider', $unit_id),
+                    'icon' => 'bx bx-message-square-detail',
+                    'icon_color' => 'text-primary',
+                ],
 
-                ];
+            ];
 
-                $medicines = Inventory::where('ohc_report_inventory.unit_id',$unit_id)
-                    ->join('ohc_master_medicine', 'ohc_report_inventory.medicine_id', '=', 'ohc_master_medicine.id')
-                    ->select('ohc_master_medicine.medicine', 'ohc_report_inventory.balance','ohc_report_inventory.unit_id')
-                    ->where('ohc_report_inventory.trash', 'NO')
-                    ->get();
-                    $unit = $this->unit->getUnitList();
+            $medicines = Inventory::where('ohc_report_inventory.unit_id', $unit_id)
+                ->join('ohc_master_medicine', 'ohc_report_inventory.medicine_id', '=', 'ohc_master_medicine.id')
+                ->select('ohc_master_medicine.medicine', 'ohc_report_inventory.balance', 'ohc_report_inventory.unit_id')
+                ->where('ohc_report_inventory.trash', 'NO')
+                ->get();
+            $unit = $this->unit->getUnitList();
 
-                $data = [
-                    'masterLink' => $masterLink,
-                    'medicines' => $medicines,
-                    'unit' => $unit,
-                ];
+            $data = [
+                'masterLink' => $masterLink,
+                'medicines' => $medicines,
+                'unit' => $unit,
+            ];
 
 
 
-                return response()->json($data);
-
+            return response()->json($data);
         }
     }
 

@@ -186,20 +186,14 @@
                                         <hr>
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Co2 Type Fire Extinguisher Inspection Checklist
-                                                    </h4>
-                                                </div>
 
-                                                <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                                    <button class="btn btn-primary add-row" type="button" id="add-row"
-                                                        style="min-width: 130px;">
+                                                <div class="card-header-inner d-flex justify-content-between">
+                                                    <h4 class="text-white ms-2">
+                                                        {{ __('inspection.co_type_fire_extinguisher_inspection') }}</h4>
+                                                    <button class="btn btn-primary add-row mb-2 " type="button"
+                                                        id="add-row"
+                                                        style="margin-left: 10px;  margin-right: 10px; width: 84px;">
                                                         Add
-                                                    </button>
-                                                    <button type="button"
-                                                        class="btn btn-danger remove-row d-flex align-items-center"
-                                                        style="min-width: 130px;">
-                                                        <i class="fa-solid fa-trash me-2"></i> Remove
                                                     </button>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -345,20 +339,23 @@
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                        <label class="form-label">{{ __('inspection.remarks') }}</label>
                                                         <textarea name="remarks[1]" id="remarks" class="form-control" placeholder="Remarks" style="resize: none;">{{ old('remarks.1') }}</textarea>
 
                                                     </div>
                                                 </div>
+                                                <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                </div>
+                                                <hr>
                                             </div>
                                         </div>
                                         <div class="form-observation">
                                             <div class="row mt-4 form-obs">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Co2 Type Fire Extinguisher Inspection
-                                                        Observation</h4>
+                                                    <h4 class="text-white"> {{ __('inspection.co_type_fire_extinguisher_inspection_obs') }}</h4>
                                                 </div>
 
                                                 <div class="col-md-12 mb-2">
@@ -536,13 +533,15 @@
                             noSpaces: true,
                         },
                         "remarks[1]": {
-                            required: true,
+
                             noSpaces: true,
+                            minlength: 3,
+                            maxlength: 600,
                         },
                         device_image: {
                             required: true,
                             // extension: "jpg",
-                             filesize: 15728640
+                            filesize: 15728640
                         },
                         observation: {
                             required: true,
@@ -550,13 +549,13 @@
                         },
                         signature_image: {
                             required: true,
-                             filesize: 15728640
+                            filesize: 15728640
                         },
                     },
                     messages: {
                         signature_image: {
                             required: 'Please upload your signature',
-                             filesize: "File size should not exceed 15MB",
+                            filesize: "File size should not exceed 15MB",
                         },
                         rev_date: {
                             required: "Revision Date required",
@@ -613,10 +612,12 @@
                         },
                         "remarks[1]": {
                             required: "Please Enter the Remarks",
+                            minlength: "Minimum 3 characters are required",
+                            maxlenghth: "Maximum character should not exceed the 600 characters",
                         },
                         device_image: {
                             required: "Please upload an image.",
-                           filesize: "File size should not exceed 15MB",
+                            filesize: "File size should not exceed 15MB",
                         },
                         observation: {
                             required: "Please Enter the Observation",
@@ -671,21 +672,6 @@
 
                     var newFormSet = `
                         <div class="row mt-4 form-set">
-                            <div class="card-header-inner p-2">
-                                <h4 class="text-white">Co2 Type Fire Extinguisher Inspection Checklist</h4>
-                            </div>
-
-                            <div class="d-flex justify-content-end align-items-center gap-2 m-2">
-                                <button class="btn btn-primary add-row" type="button" id="add-row"
-                                    style="min-width: 130px;">
-                                    Add
-                                </button>
-                                <button type="button"
-                                    class="btn btn-danger remove-row d-flex align-items-center"
-                                    style="min-width: 130px;">
-                                    <i class="fa-solid fa-trash me-2"></i> Remove
-                                </button>
-                            </div>
 
                             <div class="col-md-4 mb-2">
                                 <div class="form-group form-input">
@@ -832,12 +818,19 @@
                             <div class="col-md-12 mb-2">
                                 <div class="form-group form-input">
                                     <label
-                                        class="form-label require">{{ __('inspection.remarks') }}</label>
+                                        class="form-label ">{{ __('inspection.remarks') }}</label>
                                     <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control"
                                     placeholder="Remarks" style="resize: none;"></textarea>
 
                                 </div>
                             </div>
+
+                             <div class="col-md-2 text-right  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
+
+                                                </div>
+                                                <hr>
 
                         </div>
                     `;
@@ -950,9 +943,12 @@
                     });
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
-                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
                         messages: {
                             required: 'Please Enter the Remarks',
+                            minlength: "Minimum 3 characters are required",
+                            maxlenghth: "Maximum character should not exceed the 600 characters",
                         }
                     });
 

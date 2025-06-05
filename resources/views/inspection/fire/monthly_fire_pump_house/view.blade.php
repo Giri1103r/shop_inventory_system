@@ -31,14 +31,15 @@
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">{{ __('inspection.safety_gallery_inspection') }}</h4>
+                                        <h4 class="text-white">{{ __('inspection.monthly_fire_pump_house_inspection') }}
+                                        </h4>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
-                                            <label class="form-label require">{{ __('inspection.doc_no') }}</label>
+                                            <label class="form-label ">{{ __('inspection.doc_no') }}</label>
                                             <div class="view_data">
                                                 {{ $document_no->doc_no }}
                                             </div>
@@ -46,7 +47,7 @@
                                     </div>
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
-                                            <label class="form-label require">{{ __('inspection.issue_date') }}</label>
+                                            <label class="form-label ">{{ __('inspection.issue_date') }}</label>
                                             <div class="view_data">
                                                 {{ Displaydateformat($document_no->issue_date) }}
                                             </div>
@@ -54,7 +55,7 @@
                                     </div>
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
-                                            <label class="form-label require">{{ __('inspection.rev_date') }}</label>
+                                            <label class="form-label ">{{ __('inspection.rev_date') }}</label>
                                             <div class="view_data">
                                                 {{ $document_no->rev_dt }}
                                             </div>
@@ -78,9 +79,9 @@
                                     </div>
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
-                                            <label class="form-label ">{{ __('inspection.location') }}</label>
+                                            <label class="form-label ">{{ __('inspection.shifts') }}</label>
                                             <div class="view_data">
-                                                {{ getLocationname(isset($inspection_details->location) ? $inspection_details->location : '') }}
+                                                {{ getShift(isset($inspection_details->shift) ? $inspection_details->shift : '') }}
                                             </div>
                                         </div>
                                     </div>
@@ -155,9 +156,11 @@
                                                                 $responseText = $answer['response'] ?? '-';
                                                             @endphp
                                                             @if ($responseText == 'YES')
-                                                                <span style="color: green; font-size: 20px;">✓</span>
-                                                            @elseif ($responseText == 'NO' || $responseText == 'N/A')
-                                                                <span style="color: red; font-size: 20px;">X</span>
+                                                                <span style="color: green; font-size: 20px;">YES</span>
+                                                            @elseif ($responseText == 'NO')
+                                                                <span style="color: red; font-size: 20px;">NO</span>
+                                                            @elseif ($responseText == 'N/A')
+                                                                <span style="color: red; font-size: 20px;">N/A</span>
                                                             @else
                                                                 {{ $responseText }}
                                                             @endif

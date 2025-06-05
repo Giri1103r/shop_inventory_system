@@ -170,7 +170,7 @@ class FirePumpHouseController extends Controller
     {
 
         try {
-            try {
+
 
                 $inspection_type = DAILY_FIRE_PUMP;
                 $inspection = $this->dailyFire->store();
@@ -178,10 +178,7 @@ class FirePumpHouseController extends Controller
                 $inspection_file = $this->signature->dailyFirePump($inspection_type, $id);
 
                 Session::flash('success', __('Your data has been created successfully'));
-            } catch (Exception $ex) {
-                report($ex);
-                Session::flash('error', __('common.message_error'));
-            }
+
             return redirect(admin_url('fire/daily-fire-pump-house-inspection/list'));
         } catch (Exception $ex) {
 
