@@ -175,6 +175,11 @@
                                     </div>
                                 </div>
 
+                                @php
+                                    $clinicalDetails = json_decode($physicalHealth->personal_details, true);
+                                    $statusArray = $clinicalDetails['status'] ?? [];
+                                @endphp
+
                                 <div class="row">
                                     <div class="card-header-inner">
                                         <h4 class="text-white">Clinical Details</h4>
@@ -188,34 +193,24 @@
                                                 <th style="text-align: center">Sr. No.</th>
                                                 <th style="text-align: center">Details Of Personal Habits</th>
                                                 <th style="text-align: center">Status</th>
-
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($personalDetails as $personalDetails)
+                                            @foreach ($statusArray as $key => $value)
                                                 <tr>
-                                                    <td class="text-center">{{ $loop->iteration }}</td>
-
-                                                    <td class="text-center">
-                                                        {{ $personalDetails->personal_details }}
-                                                        <input type="hidden"
-                                                            name="persnal_details[{{ $personalDetails->id }}]"
-                                                            value="{{ $personalDetails->id }}">
-                                                    </td>
-
-                                                    <td class="text-center">
-                                                        <input type="hidden" name="status[{{ $personalDetails->id }}]"
-                                                            value="0">
-                                                        <input type="checkbox" name="status[{{ $personalDetails->id }}]"
-                                                            value="1">
+                                                    <td style="text-align: center">{{ $loop->iteration }}</td>
+                                                    <td style="text-align: center">{{ getClinicalDetails($key) }}</td>
+                                                    <td style="text-align: center">
+                                                        @if ($value == '1')
+                                                            <span style="color: green; font-size: 20px;">✓</span>
+                                                        @else
+                                                            <span style="color: red; font-size: 20px;">✗</span>
+                                                        @endif
                                                     </td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
-
                                     </table>
-
-
                                 </div>
 
                             </div>

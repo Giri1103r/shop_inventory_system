@@ -295,7 +295,7 @@
                                 </div>
 
                                 @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
-                                        (checkUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin()) )
+                                        (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()) )
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>

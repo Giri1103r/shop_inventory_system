@@ -191,7 +191,7 @@ class PhysicalHealthExamination extends Model
             'emp_name' => $request->emp_name,
             'date' => DBdateformat($request->date),
             'mobile_no' => $mobile_no,
-            'blood_group' => $blood_group,
+            'blood_group' => $request->blood_group ,
             'age' => $request->age,
             'form_number' => $request->form_number,
             'gender' => $gender,

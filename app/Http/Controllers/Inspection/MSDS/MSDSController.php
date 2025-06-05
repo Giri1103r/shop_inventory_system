@@ -142,18 +142,15 @@ class MSDSController extends Controller
     {
 
         try {
-            try {
-                $msds = $this->msds->store();
-                $msdsdetails = $this->msdsDetails->store($msds->id);
-                Session::flash('success', __('Your data has been created successfully'));
-            } catch (Exception $ex) {
 
-                Session::flash('error',  __('common.message_error'));
-                return redirect(admin_url('msds/list'));
-            }
+                // dd($request->all());
+                $msds = $this->msds->store();
+                $msdsdetails = $this->msdsDetails->store( $msds->id);
+                Session::flash('success', __('Your data has been created successfully'));
+
             return redirect(admin_url('msds/list'));
         } catch (Exception $ex) {
-
+            dd($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('msds/list'));
         }
@@ -636,7 +633,7 @@ class MSDSController extends Controller
             ], 500);
         }
     }
-    
+
     public function getDepartment(Request $request)
     {
         $location = decryptId($request->location);

@@ -1411,6 +1411,20 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+    if (!function_exists('getClinicalDetails')) {
+
+        function getClinicalDetails($userid)
+        {
+
+            $personal_details = DB::table('inspection_ohc_physical_examination_clinical')->select('personal_details')->where('id', $userid)->where('status', 1)->where('trash', 'NO')->first();
+
+            if ($personal_details == null) {
+                return '';
+            } else {
+                return $personal_details->personal_details;
+            }
+        }
+    }
     if (!function_exists('getTopic')) {
 
         function getTopic($userid)
@@ -2717,7 +2731,7 @@ if (!function_exists('getMonth')) {
         }
     }
 
-      if (!function_exists('getRootCause')) {
+    if (!function_exists('getRootCause')) {
         function getRootCause($type_id)
         {
             if ($type_id == 1) {

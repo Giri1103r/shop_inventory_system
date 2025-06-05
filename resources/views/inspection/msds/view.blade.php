@@ -118,7 +118,7 @@
                                             <label
                                                 class="form-label view_label">{{ __('inspection.name_of_chemical') }}</label>
                                             <div class="view_data">
-                                                {{ isset($msdsDetails->name_of_chemical) ? ($msdsDetails->name_of_chemical) : '' }}
+                                                {{ isset($msdsDetails->name_of_chemical) ? $msdsDetails->name_of_chemical : '' }}
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
@@ -127,18 +127,17 @@
                                                 {{ isset($msdsDetails->storage_capacity) ? $msdsDetails->storage_capacity : '' }}
                                             </div>
                                         </div>
-                                        <div class="mb-3 col-md-4 form-input">
+                                        {{-- <div class="mb-3 col-md-4 form-input">
                                             <label class="form-label view_label">{{ __('NPFA Rating Type') }}</label>
                                             <div class="view_data">
                                                 {{ isset($msdsDetails->nfa_rating) ? getNFARating($msdsDetails->nfa_rating) : '' }}
                                             </div>
-                                        </div>
-                                        <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('NPFA Rating Value') }}</label>
-                                            <div class="view_data">
-                                                {{ isset($msdsDetails->nfa_rating_value) ? $msdsDetails->nfa_rating_value : '' }}
-                                            </div>
-                                        </div>
+                                        </div> --}}
+                                        @php
+                                            $nfaRatings = json_decode($msdsDetails->nfa_rating, true);
+                                        @endphp
+
+
                                         <div class="mb-3 col-md-4 form-input">
                                             <label
                                                 class="form-label view_label">{{ __('inspection.msds_avl_sts') }}</label>
@@ -156,7 +155,25 @@
                                                 {{ isset($msdsDetails->remark) ? $msdsDetails->remark : '' }}
                                             </div>
                                         </div>
-
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <table class="table table-bordered">
+                                                <thead>
+                                                    <tr>
+                                                        <th>NFPA Rating</th>
+                                                        <th>Value</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach ($nfaRatings as $rating)
+                                                        <tr>
+                                                            <td>{{ getNFARating($rating['id']) }}</td>
+                                                            <td>{{ $rating['value'] !== null && $rating['value'] !== '' ? $rating['value'] : '-' }}
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                </tbody>
+                                            </table>
+                                        </div>
                                     </div>
                                 </div>
                             @endforeach
