@@ -228,73 +228,81 @@
     <table style="width: 100%; border-collapse: collapse; text-align: center;">
         <thead>
             <tr>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
-                    SERIAL NUMBER
+                <th colspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">SERIAL NUMBER
                 </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
-                    ITEM CODE
-                </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
-                    NAME OF CHEMICAL
-                </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
-                    STORAGE CAPACITY
-                </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
-                    NPFA RATING TYPE
-                </th>
-                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
-                    NPFA RATING
-                </th>
-            </tr>
-            <tr>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
-                    MSDS AVAILABILITY STATUS
-                </th>
-                <th style="border: 2px solid black; padding: 8px; background-color: #eee; font-weight: bold;">
-                    REMARK
-                </th>
+                <th colspan="4" style="border: 2px solid black; padding: 8px; background-color: #ddd;">ITEM CODE</th>
+                <th colspan="4" style="border: 2px solid black; padding: 8px; background-color: #ddd;">NAME OF
+                    CHEMICAL</th>
+                <th colspan="4" style="border: 2px solid black; padding: 8px; background-color: #ddd;">STORAGE
+                    CAPACITY</th>
+                <th colspan="8" style="border: 2px solid black; padding: 8px; background-color: #ddd;">NPFA RATING
+                         AND VALUE</th>
+                <th colspan="4" style="border: 2px solid black; padding: 8px; background-color: #ddd;">MSDS
+                    AVAILABILITY STATUS</th>
+                <th colspan="5" style="border: 2px solid black; padding: 8px; background-color: #ddd;">REMARK</th>
             </tr>
         </thead>
         <tbody>
-            @foreach ($inspection_details as $msdsDetails)
+            @foreach ($inspection_details as $msdsDetail)
                 <tr>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        {{ isset($msdsDetails->serial_number) ? $msdsDetails->serial_number : '' }}
+                    <td colspan="2" style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                        {{ $loop->iteration }}
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        {{ isset($msdsDetails->item_code) ? $msdsDetails->item_code : '' }}
+                    <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                        {{ $msdsDetail->item_code ?? '' }}
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        {{ isset($msdsDetails->name_of_chemical) ? ($msdsDetails->name_of_chemical) : '' }}
+                    <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                        {{ $msdsDetail->name_of_chemical ?? '' }}
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        {{ isset($msdsDetails->storage_capacity) ? ($msdsDetails->storage_capacity) : '' }}
+                    <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                        {{ $msdsDetail->storage_capacity ?? '' }}
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        {{ isset($msdsDetails->nfa_rating) ? getNFARating($msdsDetails->nfa_rating) : '' }}
+
+                    {{-- NPFA nested table --}}
+                    <td colspan="8" style="border: 1px solid black; padding: 0;">
+                        @php
+                            $nfaRatings = json_decode($msdsDetail->nfa_rating, true) ?? [];
+                        @endphp
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                            <thead>
+                                <tr>
+                                    <th style="border: 1px solid black; padding: 4px;">NFPA Rating</th>
+                                    <th style="border: 1px solid black; padding: 4px;">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($nfaRatings as $rating)
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px;">
+                                            {{ getNFARating($rating['id'] ?? '') ?? '-' }}
+                                        </td>
+                                        <td style="border: 1px solid black; padding: 4px;">
+                                            {{ isset($rating['value']) && $rating['value'] !== '' ? $rating['value'] : '-' }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        {{ isset($msdsDetails->nfa_rating_value) ? ($msdsDetails->nfa_rating_value) : '' }}
-                    </td>
-                    <td style="border: 2px solid black; padding: 8px; text-align: center;">
-                        @if ($msdsDetails->msds_availability_status == YES)
+
+                    <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                        @if ($msdsDetail->msds_availability_status == YES)
                             <span style="color: green; font-size: 20px;">✓</span>
-                        @elseif ($msdsDetails->msds_availability_status == NO)
+                        @elseif ($msdsDetail->msds_availability_status == NO)
                             <span style="color: red; font-size: 20px;">X</span>
-                        @elseif ($msdsDetails->msds_availability_status == 'N/A')
-                            <span style="color: gray; font-size: 20px;">N/A</span>
                         @else
                             <span style="color: gray; font-size: 20px;">-</span>
                         @endif
                     </td>
-                    <td style="border: 2px solid black; padding: 8px;">
-                        {{ isset($msdsDetails->remark) ? $msdsDetails->remark : '' }}
+
+                    <td colspan="5" style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                        {{ $msdsDetail->remark ?? '' }}
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
     <br>
 
 </body>

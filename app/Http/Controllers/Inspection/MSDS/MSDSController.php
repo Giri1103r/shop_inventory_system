@@ -143,14 +143,14 @@ class MSDSController extends Controller
 
         try {
 
-                // dd($request->all());
-                $msds = $this->msds->store();
-                $msdsdetails = $this->msdsDetails->store( $msds->id);
-                Session::flash('success', __('Your data has been created successfully'));
+            // dd($request->all());
+            $msds = $this->msds->store();
+            $msdsdetails = $this->msdsDetails->store($msds->id);
+            Session::flash('success', __('Your data has been created successfully'));
 
             return redirect(admin_url('msds/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('msds/list'));
         }
@@ -340,20 +340,34 @@ class MSDSController extends Controller
                 $sheet->setCellValue("C{$row}", 'Item Code');
                 $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", 'Name Of Chemical');
                 $sheet->setCellValue("G{$row}", 'Storage Capacity');
-                $sheet->setCellValue("H{$row}", 'NPFA Rating Type');
-                $sheet->setCellValue("I{$row}", 'NPFA Rating');
+                $sheet->setCellValue("H{$row}:I{$row}", 'NPFA Rating and Value');
+
                 $sheet->mergeCells("J{$row}:L{$row}")->setCellValue("J{$row}", 'MSDS Availability Status');
                 $sheet->mergeCells("M{$row}:O{$row}")->setCellValue("M{$row}", 'Remarks');
                 $row++;
 
                 // Data Rows
                 foreach ($msds as $index => $msdsDetails) {
+                   $ratings = json_decode($msdsDetails->nfa_rating, true) ?? [];
+
+                // Build a combined string like "Flammability: 3, Health: 4"
+                $combinedNFPA = '';
+                foreach ($ratings as $rating) {
+                    $name = getNFARating($rating['id'] ?? '') ?? '-';
+                    $value = isset($rating['value']) ? $rating['value'] : '-';
+                    $combinedNFPA .= "{$name}: {$value}, ";
+                }
+
+                // Trim trailing comma
+                $combinedNFPA = rtrim($combinedNFPA, ', ');
+
+                // Set cell value in the sheet (e.g., H column)
+                $sheet->setCellValue("H{$row}:I{$row}", $combinedNFPA);
                     $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", $index + 1);
                     $sheet->setCellValue("C{$row}", $msdsDetails->item_code ?? '');
                     $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", $msdsDetails->name_of_chemical ?? '');
                     $sheet->setCellValue("G{$row}", $msdsDetails->storage_capacity ?? '');
-                    $sheet->setCellValue("H{$row}", getNFARating($msdsDetails->nfa_rating) ?? '');
-                    $sheet->setCellValue("I{$row}", $msdsDetails->nfa_rating_value ?? '');
+
 
                     $status = strtoupper($msdsDetails->msds_availability_status ?? '');
                     switch ($status) {
@@ -539,19 +553,33 @@ class MSDSController extends Controller
             $sheet->setCellValue('C5', 'Item Code');
             $sheet->mergeCells('D5:F5')->setCellValue('D5', 'Name Of Chemical');
             $sheet->setCellValue('G5', 'Storage Capacity');
-            $sheet->setCellValue('H5', 'NPFA Rating Type');
-            $sheet->setCellValue('I5', 'NPFA Rating');
+            $sheet->setCellValue('H5:I5', 'NPFA Rating and Value');
+
             $sheet->mergeCells('J5:L5')->setCellValue('J5', 'MSDS Availability Status');
             $sheet->mergeCells('M5:O5')->setCellValue('M5', 'Remarks');
 
             $row = 6;
             foreach ($inspection_details as $index => $msdsDetails) {
+                $ratings = json_decode($msdsDetails->nfa_rating, true) ?? [];
+
+                // Build a combined string like "Flammability: 3, Health: 4"
+                $combinedNFPA = '';
+                foreach ($ratings as $rating) {
+                    $name = getNFARating($rating['id'] ?? '') ?? '-';
+                    $value = isset($rating['value']) ? $rating['value'] : '-';
+                    $combinedNFPA .= "{$name}: {$value}, ";
+                }
+
+                // Trim trailing comma
+                $combinedNFPA = rtrim($combinedNFPA, ', ');
+
+                // Set cell value in the sheet (e.g., H column)
+                $sheet->setCellValue("H{$row}:I{$row}", $combinedNFPA);
                 $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", $index + 1);
                 $sheet->setCellValue("C{$row}", $msdsDetails->item_code ?? '');
                 $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", ($msdsDetails->name_of_chemical) ?? '');
                 $sheet->setCellValue("G{$row}", $msdsDetails->storage_capacity ?? '');
-                $sheet->setCellValue("H{$row}", getNFARating($msdsDetails->nfa_rating) ?? '');
-                $sheet->setCellValue("I{$row}", $msdsDetails->nfa_rating_value ?? '');
+
 
                 $status = strtoupper($msdsDetails->msds_availability_status ?? '');
                 switch ($status) {

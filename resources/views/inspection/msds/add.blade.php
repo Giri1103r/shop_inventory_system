@@ -53,9 +53,16 @@
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Issue Date</label>
-                                                    <input type="text" name ="issue_date" id="issue_date"
-                                                        class="form-control" placeholder="Issue Date"
-                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name ="issue_date" id="issue_date"
+                                                            class="form-control" placeholder="Issue Date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -118,18 +125,16 @@
 
                                             <div id="form-wrapper">
                                                 <div class="form-set mb-3">
-                                                    <div class="card-header-inner">
-                                                        <h4 class="text-white">MSDS CheckList</h4>
-                                                    </div>
-                                                    <div class="d-flex justify-content-end">
-                                                        <button class="btn btn-primary add-row me-3" type="button"
-                                                            id="add-row" style="width: 84px;">
+
+                                                    <div class="card-header-inner d-flex justify-content-between">
+                                                        <h4 class="text-white ms-2">MSDS CheckList</h4>
+                                                        <button class="btn btn-primary add-row mb-2 " type="button"
+                                                            id="add-row"
+                                                            style="margin-left: 10px;  margin-right: 10px; width: 84px;">
                                                             Add
                                                         </button>
-                                                        <button type="button" class="btn btn-danger remove-row">
-                                                            <i class="fa-solid fa-trash"></i> Remove
-                                                        </button>
                                                     </div>
+
                                                     <div class="row">
                                                         <div class="col-md-4 mb-3">
                                                             <div class="form-group form-input">
@@ -187,8 +192,9 @@
                                                         </div>
                                                         <div class="row">
                                                             @foreach ($nfaratings as $ratingIndex => $rating)
-                                                                <div class="col-md-4">
-                                                                    <div class="border p-2 rounded mb-3">
+                                                                <div class="col-md-4 ">
+                                                                    <div
+                                                                        class="border p-2 rounded mb-3 form-group form-input">
                                                                         <label class="form-label">NFPA Rating:
                                                                             {{ $rating->nfa_rating }}</label>
                                                                         <input type="hidden"
@@ -199,7 +205,7 @@
                                                                             name="value_nfa_rating[0][{{ $ratingIndex }}]"
                                                                             class="form-control mt-1"
                                                                             placeholder="Enter value (0-4)" min="0"
-                                                                            max="4" required>
+                                                                            max="4">
                                                                     </div>
                                                                 </div>
                                                             @endforeach
@@ -209,16 +215,22 @@
 
                                                         <div class="col-md-12 mt-2">
                                                             <div class="form-group form-input">
-                                                                <label class="form-label require">Remark</label>
+                                                                <label class="form-label">Remark</label>
                                                                 <textarea name="remark[1]" class="form-control" placeholder="Remark" rows="3"></textarea>
                                                             </div>
                                                         </div>
+                                                        <div class="col-md-2 text-right  mt-4">
+                                                            <button class="btn btn-danger remove-row" type="button"
+                                                                style="margin:10px;"><i class="fa fa-trash"></i></button>
+
+                                                        </div>
                                                     </div>
+                                                    <hr>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <hr>
+
                                         <div class="submit-button" style="text-align: right;">
 
                                             <x-button-submit class="submit"></x-button-submit>
@@ -374,11 +386,11 @@
                     'storage_capacity[1]': {
                         required: true,
                     },
-                   
+
                     'remark[1]': {
-                        required: true,
+
                         minlength: 3,
-                        maxlength: 300,
+                        maxlength: 600,
                         noSpaces: true,
                     },
                 },
@@ -422,9 +434,9 @@
                     },
 
                     'remark[1]': {
-                        required: "Remark is Required",
+
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 300",
+                        maxlength: "Maximum Characters should not exceed 600",
                     },
                 },
                 errorElement: 'span',
@@ -466,6 +478,7 @@
             let form_set_count = 2;
             let serial_number = parseInt("{{ getMSDSCount() }}", 10) + 1;
             const maxFormSets = 200;
+            const minFormSets = 1;
 
             $(document).on('click', ".add-row", function() {
                 if ($('#form-wrapper .form-set').length >= maxFormSets) {
@@ -484,13 +497,13 @@
                 let nfpaRatingInputs = '<div class="row">';
                 nfaRatings.forEach((rating, ratingIndex) => {
                     nfpaRatingInputs += `
-                    <div class="col-md-4">
-                        <div class="border p-2 rounded mb-3">
+                    <div class="col-md-4 " >
+                        <div class="border p-2 rounded mb-3 form-group form-input">
                             <label class="form-label">NFPA Rating: ${rating.nfa_rating}</label>
                             <input type="hidden" name="nfa_rating_id[${form_set_count}][${ratingIndex}]" value="${rating.id}">
                             <input type="number" name="value_nfa_rating[${form_set_count}][${ratingIndex}]"
                                 class="form-control mt-1"
-                                placeholder="Enter value (0-4)" min="0" max="4" required>
+                                placeholder="Enter value (0-4)" min="0" max="4" >
                         </div>
                     </div>`;
                 });
@@ -498,37 +511,29 @@
 
                 let newFormSet = `
                         <div class="form-set mb-3">
-                            <div class="card-header-inner">
-                                <h4 class="text-white">MSDS CheckList</h4>
-                            </div>
-                            <div class="d-flex justify-content-end">
-                                <button class="btn btn-primary add-row me-3" type="button" style="width: 84px;">Add</button>
-                                <button type="button" class="btn btn-danger remove-row">
-                                    <i class="fa-solid fa-trash"></i> Remove
-                                </button>
-                            </div>
+
                             <div class="row">
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-4 mb-3 form-group form-input">
                                     <label class="form-label require">Serial Number</label>
                                     <input type="text" name="serial_number[${form_set_count}]" class="form-control" value="${newSerialNumber}" readonly>
                                 </div>
 
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-4 mb-3 form-group form-input">
                                     <label class="form-label require">Item Code</label>
                                     <input type="text" name="item_code[${form_set_count}]" class="form-control" placeholder="Item Code">
                                 </div>
 
                                 <div class="col-md-4 mb-3">
-                                    <label class="form-label require">Name of Chemical</label>
+                                    <label class="form-label require form-group form-input">Name of Chemical</label>
                                     <input type="text" name="name_of_chemical[${form_set_count}]" class="form-control" placeholder="Enter the Chemicals">
                                 </div>
 
-                                <div class="col-md-4 mb-3">
+                                <div class="col-md-4 mb-3 form-group form-input">
                                     <label class="form-label require">Storage Capacity</label>
                                     <input type="text" name="storage_capacity[${form_set_count}]" class="form-control" placeholder="Storage Capacity">
                                 </div>
 
-                                <div class="col-md-4 mt-2 form-input">
+                                <div class="col-md-4 mt-2 form-group form-input">
                                     <label class="form-label require">MSDS Availability Status</label>
                                     <select name="msds_availability_status[${form_set_count}]" class="form-control single-select">
                                         <option value="">Select MSDS Availability Status</option>
@@ -539,17 +544,95 @@
                                 <div class="row">
                                     ${nfpaRatingInputs}
                                     </div>
-                                <div class="col-md-12 mt-2">
-                                    <label class="form-label require">Remark</label>
+                                <div class="col-md-12 mt-2 form-group form-input">
+                                    <label class="form-label">Remark</label>
                                     <textarea name="remark[${form_set_count}]" class="form-control" rows="3" placeholder="Remark"></textarea>
                                 </div>
-                            </div>
+                                 <div class="col-md-2 text-right  mt-4">
+                                                            <button class="btn btn-danger remove-row" type="button"
+                                                                style="margin:10px;"><i class="fa fa-trash"></i></button>
 
+                                                        </div>
+                            </div>
+<hr>
                         </div>`;
 
                 $('#form-wrapper').append(newFormSet);
                 serial_number++;
                 $('.single-select').select2();
+
+                var $input = $("input[name='item_code[" + form_set_count + "]']");
+
+                $input.rules('add', {
+                    required: true,
+                    uniqueItemCode: true,
+                    noSpaces: true,
+                    minlength: 3,
+                    maxlength: 30,
+
+                    messages: {
+                        required: 'Item Code is required',
+
+                        remote: 'Item Code must be unique',
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 30",
+                        noSpaces: 'Item Code cannot be empty or only spaces'
+                    }
+                });
+
+
+
+                var $input = $("input[name='name_of_chemical[" + form_set_count + "]']");
+
+                $input.rules('add', {
+                    required: true,
+                    minlength: 3,
+                    maxlength: 30,
+                    messages: {
+                        required: 'Name of Chemical is required',
+                        minlength: 'Chemical Name atlest contains 3 letters',
+                        maxlength: 'Chemical Name should not Exceed the 30 Characters'
+                    }
+                });
+                // Optionally add validation logic here
+
+                $("select[name='msds_availability_status[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'MSDS Availability Status is required',
+                    }
+                });
+
+
+                var $input = $("input[name='storage_capacity[" + form_set_count + "]']");
+
+                $input.rules('add', {
+                    required: true,
+                    noSpaces: true,
+                    minlength: 2,
+                    maxlength: 30,
+
+                    messages: {
+                        required: 'Storage Capacity is required',
+                        minlength: "Minimum Characters should be 2",
+                        maxlength: "Maximum Characters should not exceed 30",
+                        noSpaces: 'Storage Capacity cannot be empty or only spaces'
+                    }
+                });
+
+
+                $("textarea[name='remark[" + form_set_count + "]']").rules('add', {
+
+                    minlength: 3,
+                    maxlength: 600,
+                    noSpaces: true,
+                    messages: {
+                        required: 'Remark is required',
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 600",
+                        noSpaces: 'Remark cannot be empty or only spaces'
+                    }
+                });
 
                 // Optionally add validation logic here
 

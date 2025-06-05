@@ -220,7 +220,7 @@
                     Capacity
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NPFS Rating
-                    Type
+                    AND VALUE
                 </th>
                 <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">NPFA Rating
                 </th>
@@ -236,42 +236,63 @@
                 <tr>
                     <td colspan="2"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ $loop->iteration }}</td>
-                    <td colspan="4"
-                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ isset($msdsDetail->item_code) ? $msdsDetail->item_code : '' }}
+                        {{ $loop->iteration }}
                     </td>
                     <td colspan="4"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ isset($msdsDetail->name_of_chemical) ? ($msdsDetail->name_of_chemical) : '' }}
+                        {{ $msdsDetail->item_code ?? '' }}
                     </td>
                     <td colspan="4"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ isset($msdsDetail->storage_capacity) ? $msdsDetail->storage_capacity : '' }}
+                        {{ $msdsDetail->name_of_chemical ?? '' }}
                     </td>
                     <td colspan="4"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ isset($msdsDetail->nfa_rating) ? getNFARating($msdsDetail->nfa_rating) : '' }}
+                        {{ $msdsDetail->storage_capacity ?? '' }}
                     </td>
+
+                    {{-- Combine NPFA Type and Value into one cell with nested table --}}
+                    <td colspan="8" style="border: 1px solid black; padding: 0;">
+                        @php
+                            $nfaRatings = json_decode($msdsDetail->nfa_rating, true) ?? [];
+                        @endphp
+
+                        <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
+                            <thead>
+                                <tr>
+                                    <th style="border: 1px solid black; padding: 4px;">NFPA Rating</th>
+                                    <th style="border: 1px solid black; padding: 4px;">Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach ($nfaRatings as $rating)
+                                    <tr>
+                                        <td style="border: 1px solid black; padding: 4px;">
+                                            {{ getNFARating($rating['id'] ?? '') ?? '-' }}
+                                        </td>
+                                        <td style="border: 1px solid black; padding: 4px;">
+                                            {{ isset($rating['value']) && $rating['value'] !== '' ? $rating['value'] : '-' }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </td>
+
                     <td colspan="4"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ isset($msdsDetail->nfa_rating_value) ? $msdsDetail->nfa_rating_value : '' }}
-                    </td>
-                    <td colspan="4"
-                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        @if ($msdsDetail->msds_availability_status == YES)
+                        @if ($msdsDetail->msds_availability_status== YES)
                             <span style="color: green; font-size: 20px;">✓</span>
                         @elseif ($msdsDetail->msds_availability_status == NO)
                             <span style="color: red; font-size: 20px;">X</span>
-                        @elseif ($msdsDetail->msds_availability_status == 'N/A')
-                            <span style="color: gray; font-size: 20px;">N/A</span>
+
                         @else
                             <span style="color: gray; font-size: 20px;">-</span>
                         @endif
                     </td>
                     <td colspan="5"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ isset($msdsDetail->remark) ? $msdsDetail->remark : '' }}
+                        {{ $msdsDetail->remark ?? '' }}
                     </td>
                 </tr>
             @endforeach
