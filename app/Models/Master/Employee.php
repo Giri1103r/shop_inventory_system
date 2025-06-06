@@ -183,7 +183,6 @@ class Employee extends Model
                 'gender' => $item->gender ?? null,
                 'email' => $item->email ?? null,
                 'joining_date' => $item->joining_date ? DBdatetimeformat($item->joining_date) : null,
-                'user_role' => 9,
                 'nationality' => $item->nationality ?? null,
                 'id_type' => $item->id_type ?? null,
                 'id_number' => $item->id_number ?? null,
@@ -207,6 +206,7 @@ class Employee extends Model
                 $data['updated_at'] = now();
             } else {
                 $data['mobile_no'] = $item->mobile_no ?? null;
+                $data['user_role'] = 9;
                 $data['created_at'] = now();
             }
             $insertArray[] = $data;
