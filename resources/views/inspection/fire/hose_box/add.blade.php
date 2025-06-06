@@ -121,7 +121,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Shift</label>
+                                                    <label class="form-label require">{{ __('inspection.shifts')}}</label>
                                                     <select name="shift_id" id="shift_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Shift</option>
@@ -393,7 +393,7 @@
                     e.preventDefault();
                     location.reload();
                 });
-              
+
                 var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates) {

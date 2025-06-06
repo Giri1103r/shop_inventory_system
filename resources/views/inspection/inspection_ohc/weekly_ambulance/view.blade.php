@@ -49,7 +49,7 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Weeky Ambulance Details</h4>
+                                        <h4 class="text-white">{{ __('inspection.weekly_ambulance_inspection') }}</h4>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -150,7 +150,8 @@
 
                                 <div class="row mt-2">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Weeky Ambulance Inspection Checklist</h4>
+                                        <h4 class="text-white">{{ __('inspection.weekly_ambulance_inspection_checklist') }}
+                                        </h4>
                                     </div>
                                 </div>
 
@@ -186,11 +187,11 @@
 
                                                             <td colspan="3">
                                                                 @if ($status === 'ok')
-                                                                    <span >Ok</span>
+                                                                    <span>Ok</span>
                                                                 @elseif ($status === 'not ok')
-                                                                    <span >Not Ok</span>
+                                                                    <span>Not Ok</span>
                                                                 @else
-                                                                    <span >N/A</span>
+                                                                    <span>N/A</span>
                                                                 @endif
                                                             </td>
 
@@ -208,40 +209,41 @@
                                         </table>
                                     </div>
                                 </div>
-
-                                <div class="row mt-3">
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
-                                    </div>
-                                    <div class="row mb-2">
-                                        @if (isset($weekAmbualance->verified_by))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.verified_by') }}</label>
-                                                    <div class="view_data">
-                                                        {{ getUserName($weekAmbualance->verified_by) }}
+                                @if ($weekAmbualance->verified_by)
+                                    <div class="row mt-3">
+                                        <div class="card-header-inner">
+                                            <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
+                                        </div>
+                                        <div class="row mb-2">
+                                            @if (isset($weekAmbualance->verified_by))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.verified_by') }}</label>
+                                                        <div class="view_data">
+                                                            {{ getUserName($weekAmbualance->verified_by) }}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            {{-- @php
+                                                {{-- @php
                                                 $signature = GetOHCSignature(
                                                     $weekAmbualance->verified_by,
                                                     $weekAmbualance->id,
                                                     OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
                                                 );
                                             @endphp --}}
-                                        @endif
-                                        @if (isset($weekAmbualance->created_at))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                    <div class="view_data">
-                                                        {{ Displaydateformat($weekAmbualance->created_at) }}
+                                            @endif
+                                            @if (isset($weekAmbualance->created_at))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                        <div class="view_data">
+                                                            {{ Displaydateformat($weekAmbualance->created_at) }}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        @endif
-                                        {{-- @if (isset(Auth::user()->signature_upload))
+                                            @endif
+                                            {{-- @if (isset(Auth::user()->signature_upload))
                                             <label class="form-label"
                                                 style="display: block;">{{ __('inspection.signature') }}</label>
                                             <img src="{{ asset(Auth::user()->signature_upload) }}" alt="Signature Upload"
@@ -256,61 +258,62 @@
                                                 </div>
                                             </div>
                                         @endif --}}
-                                        @if ($weekAmbualance->approved_by)
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.approved_by') }}</label>
-                                                    <div class="view_data">
-                                                        {{ getUsername($weekAmbualance->approved_by) }}
+                                            @if ($weekAmbualance->approved_by)
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.approved_by') }}</label>
+                                                        <div class="view_data">
+                                                            {{ getUsername($weekAmbualance->approved_by) }}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        @endif
-                                        @if (isset($weekAmbualance->capa_recomendation))
-                                            <div class="col-md-12 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label">{{ __('inspection.capa_recomendation') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $weekAmbualance->capa_recomendation }}
+                                            @endif
+                                            @if (isset($weekAmbualance->capa_recomendation))
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label">{{ __('inspection.capa_recomendation') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $weekAmbualance->capa_recomendation }}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        @else
-                                            <div class="col-md-12 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">{{ __('inspection.remarks') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $weekAmbualance->remarks }}
+                                            @else
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label">{{ __('inspection.remarks') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $weekAmbualance->remarks }}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        @endif
-                                    </div>
-                                    @if (isset($weekAmbualance->capa_remarks))
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">{{ __('inspection.fire_associate_action') }}</h4>
+                                            @endif
                                         </div>
+                                        @if (isset($weekAmbualance->capa_remarks))
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">{{ __('inspection.fire_associate_action') }}</h4>
+                                            </div>
 
-                                        <div class="row">
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.name') }}</label>
-                                                    <div class="view_data">
-                                                        {{ getUserName($weekAmbualance->created_by) }}
+                                            <div class="row">
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                        <div class="view_data">
+                                                            {{ getUserName($weekAmbualance->created_by) }}
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                        <div class="view_data">
+                                                            {{ Displaydateformat($weekAmbualance->created_at) }}
+                                                        </div>
                                                     </div>
                                                 </div>
-
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                    <div class="view_data">
-                                                        {{ Displaydateformat($weekAmbualance->created_at) }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {{-- @php
+                                                {{-- @php
                                                 $signature = GetOHCSignature(
                                                     $weekAmbualance->created_by,
                                                     $weekAmbualance->id,
@@ -327,41 +330,42 @@
                                                     </div>
                                                 </div>
                                             @endif --}}
-                                            <div class="col-md-12 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label ">{{ __('inspection.capa_action_remarks') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $weekAmbualance->capa_remarks }}
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.capa_action_remarks') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $weekAmbualance->capa_remarks }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    @endif
-                                    @if ($weekAmbualance->capa_ehs_remarks)
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">{{ __('inspection.ehs_officer_reverification') }}
-                                            </h4>
-                                        </div>
+                                        @endif
+                                        @if ($weekAmbualance->capa_ehs_remarks)
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">{{ __('inspection.ehs_officer_reverification') }}
+                                                </h4>
+                                            </div>
 
-                                        <div class="row">
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.verified_by') }}</label>
-                                                    <div class="view_data">
-                                                        {{ getUserName($weekAmbualance->verified_by) }}
+                                            <div class="row">
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.verified_by') }}</label>
+                                                        <div class="view_data">
+                                                            {{ getUserName($weekAmbualance->verified_by) }}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                    <div class="view_data">
-                                                        {{ Displaydateformat($weekAmbualance->created_at) }}
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                        <div class="view_data">
+                                                            {{ Displaydateformat($weekAmbualance->created_at) }}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            {{-- @php
+                                                {{-- @php
                                                 $signature = GetOHCSignature(
                                                     $weekAmbualance->verified_by,
                                                     $weekAmbualance->id,
@@ -378,18 +382,20 @@
                                                     </div>
                                                 </div>
                                             @endif --}}
-                                            <div class="col-md-12 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label ">{{ __('inspection.capa_reverifcation_remarks') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $weekAmbualance->capa_ehs_remarks }}
+                                                <div class="col-md-12 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.capa_reverifcation_remarks') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $weekAmbualance->capa_ehs_remarks }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    @endif
-                                </div>
+                                        @endif
+                                    </div>
+                                @endif
+
 
                                 @if (isset($weekAmbualance->level_one_manager_remarks))
                                     <div class="row">
@@ -465,7 +471,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                            {{-- @php
+                                        {{-- @php
                                                 $signature = GetOHCSignature(
                                                     $weekAmbualance->l2_manager_verified_by,
                                                     $weekAmbualance->id,

@@ -25,7 +25,7 @@
                                     <div class="row">
                                         <div class="col-md-4 mb-3 form-input">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">Shift</label>
+                                                <label class="form-label">{{ __('inspection.shifts') }}</label>
                                                 <select name="shift" id="shift" style="width: 100%"
                                                     class="form-control single-select">
                                                     <option value="">Select the option</option>
@@ -36,22 +36,9 @@
                                                 </select>
                                             </div>
                                         </div>
+
                                         <div class="col-md-4 mb-3 form-input">
-                                            <div class="form-group form-input">
-                                                <label class="form-label require">Unit</label>
-                                                <select name="unit_id" id="unit_id" style="width: 100%"
-                                                    class="form-control single-select">
-                                                    <option value="">Select the option</option>
-                                                    @foreach ($unit as $list)
-                                                        <option value="{{ encryptId($list->id) }}">
-                                                            {{ $list->unit_name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-3 form-input">
-                                            <label class="form-label require">Location</label>
+                                            <label class="form-label">{{ __('common.location') }}</label>
                                             <select name="location_id" id="location_id" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select the option</option>
@@ -61,6 +48,16 @@
                                                     </option>
                                                 @endforeach
                                             </select>
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">{{ __('common.unit') }}</label>
+                                                <select name="unit_id" id="unit_id" style="width: 100%"
+                                                    class="form-control single-select">
+                                                    <option value="">Select the option</option>
+
+                                                </select>
+                                            </div>
                                         </div>
                                         <div class="col-md-4 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
@@ -120,9 +117,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Shift</th>
-                                        <th>Unit</th>
-                                        <th>Location</th>
+                                        <th>{{ __('inspection.shifts') }}</th>
+                                        <th>{{ __('common.unit') }}</th>
+                                        <th>{{ __('common.location') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -149,6 +146,31 @@
             });
             flatpickr("#unit_id", {
                 dateFormat: "d-m-Y",
+            });
+            $(document).on('change', '#location_id', function() {
+                var locationId = $(this).val();
+                if (locationId) {
+                    $.ajax({
+                        url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#unit_id').empty().append(
+                                '<option value="">Select Unit</option>');
+                            $.each(data, function(key, value) {
+                                $('#unit_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#unit_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching Unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#unit_id').empty().append('<option value="">Select Unit</option>');
+                    $('#unit_id').trigger('change.');
+                }
             });
             $(document).ready(function() {
                 var fromDatepicker = flatpickr("#from_date", {
@@ -242,7 +264,7 @@
                             data: 'inspection_created_by',
                             name: 'inspection_created_by'
                         },
-                         {
+                        {
                             data: 'inspection_created_at',
                             name: 'inspection_created_at'
                         },
