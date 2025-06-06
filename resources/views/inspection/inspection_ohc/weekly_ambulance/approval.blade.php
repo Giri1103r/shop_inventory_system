@@ -49,7 +49,7 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Weeky Ambulance Details</h4>
+                                        <h4 class="text-white">{{__('inspection.weekly_ambulance_inspection')}}</h4>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -150,7 +150,7 @@
 
                                 <div class="row mt-2">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Weeky Ambulance Inspection Checklist</h4>
+                                        <h4 class="text-white">{{__('inspection.weekly_ambulance_inspection_checklist')}}</h4>
                                     </div>
                                 </div>
 
@@ -222,12 +222,12 @@
                                         <input type="hidden" value="{{ encryptId($weekAmbualance->id) }}" name="id">
                                         <div class="row">
                                             <div class="col-md-4 form-group form-input mb-2">
-                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <label class="form-label require">{{ __('inspection.name') }}</label>
                                                 <input type="text" name="name" id = "name" class="form-control"
                                                     value="{{ getUserName(Auth::id()) }}" readonly>
                                             </div>
                                             <div class="col-md-4 form-group form-input mb-2">
-                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <label class="form-label require">{{ __('inspection.date') }}</label>
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
@@ -250,7 +250,7 @@
                                             </div> --}}
 
                                             <div class="col-md-12 form-input">
-                                                <label class="form-label required">Whether the Inspection has been
+                                                <label class="form-label require">Whether the Inspection has been
                                                     passed Without the CAPA
                                                     ?</label>
                                                 <div class="mb-3 form-input">
@@ -264,7 +264,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-12 mb-2 form-input" id="remarks">
-                                                <label for="remarks" class="form-label">Remarks</label>
+                                                <label for="remarks " class="form-label require">Remarks</label>
                                                 <textarea id="remarks" class="form-control" rows="3" placeholder="Please Enter Remarks" name="remarks"></textarea>
                                             </div>
                                             <div class="submit-button" style="text-align: right;">
@@ -284,7 +284,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label ">{{ __('inspection.verified_by') }}</label>
+                                                            class="form-label require">{{ __('inspection.verified_by') }}</label>
                                                         <div class="view_data">
                                                             {{ getUserName($weekAmbualance->verified_by) }}
                                                         </div>
@@ -302,7 +302,7 @@
                                             @if (isset($weekAmbualance->created_at))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                        <label class="form-label require">{{ __('inspection.date') }}</label>
                                                         <div class="view_data">
                                                             {{ Displaydateformat($weekAmbualance->created_at) }}
                                                         </div>
@@ -590,12 +590,12 @@
                                             name="id">
                                         <div class="row">
                                             <div class="col-md-4 form-group form-input mb-2">
-                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <label class="form-label require">{{ __('inspection.name') }}</label>
                                                 <input type="text" name="name" id = "name" class="form-control"
                                                     value="{{ getUserName(Auth::id()) }}" readonly>
                                             </div>
                                             <div class="col-md-4 form-group form-input mb-2">
-                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <label class="form-label require">{{ __('inspection.date') }}</label>
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
@@ -617,7 +617,7 @@
                                                 @endif
                                             </div> --}}
                                             <div class="col-md-12 mb-2 form-input" id="capa_remarks">
-                                                <label for="capa_remarks" class="form-label">Remarks</label>
+                                                <label for="capa_remarks " class="form-label require">Remarks</label>
                                                 <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
                                                     name="capa_remarks"></textarea>
                                             </div>
@@ -645,12 +645,12 @@
                                             </div>
 
                                             <div class="col-md-4 form-group form-input mb-2">
-                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <label class="form-label require">{{ __('inspection.name') }}</label>
                                                 <input type="text" name="name" id = "name" class="form-control"
                                                     value="{{ getUserName(Auth::id()) }}" readonly>
                                             </div>
                                             <div class="col-md-4 form-group form-input mb-2">
-                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <label class="form-label require">{{ __('inspection.date') }}</label>
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
@@ -672,7 +672,7 @@
                                                 @endif
                                             </div> --}}
                                             <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
-                                                <label for="remarks" class="form-label">Remarks</label>
+                                                <label for="remarks" class="form-label require">Remarks</label>
                                                 <textarea id="" class="form-control" rows="3" placeholder="Please Provide Remarks" name="remarks"></textarea>
                                             </div>
                                         </div>
@@ -698,12 +698,12 @@
                                                     {{ __('inspection.level_one_manager_verifcation_action') }}</h4>
                                             </div>
                                             <div class="col-md-4 form-group form-input mb-2">
-                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <label class="form-label require">{{ __('inspection.name') }}</label>
                                                 <input type="text" name="name" id = "name" class="form-control"
                                                     value="{{ getUserName(Auth::id()) }}" readonly>
                                             </div>
                                             <div class="col-md-4 form-group form-input mb-2">
-                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <label class="form-label require">{{ __('inspection.date') }}</label>
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
@@ -726,7 +726,7 @@
                                             </div> --}}
                                         </div>
                                         <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
-                                            <label for="remarks" class="form-label">Remarks</label>
+                                            <label for="remarks" class="form-label require">Remarks</label>
                                             <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
                                                 name="level_one_manager"></textarea>
                                         </div>
@@ -752,12 +752,12 @@
                                                     {{ __('inspection.level_two_manager_verifcation_action') }}</h4>
                                             </div>
                                             <div class="col-md-4 form-group form-input mb-2">
-                                                <label class="form-label ">{{ __('inspection.name') }}</label>
+                                                <label class="form-label require">{{ __('inspection.name') }}</label>
                                                 <input type="text" name="name" id = "name" class="form-control"
                                                     value="{{ getUserName(Auth::id()) }}" readonly>
                                             </div>
                                             <div class="col-md-4 form-group form-input mb-2">
-                                                <label class="form-label ">{{ __('inspection.date') }}</label>
+                                                <label class="form-label require">{{ __('inspection.date') }}</label>
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
@@ -780,8 +780,8 @@
                                             </div> --}}
                                         </div>
                                         <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
-                                            <label for="remarks" class="form-label">Remarks</label>
-                                            <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
+                                            <label for="remarks" class="form-label require">Remarks</label>
+                                            <textarea id="remarks " class="form-control" rows="3" placeholder="Please Provide Remarks"
                                                 name="level_two_manager"></textarea>
                                         </div>
                                         <div class="submit-button" style="text-align: right;">
@@ -807,7 +807,7 @@
                     remarks: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
                         noSpaces: true,
                     },
                     signature_image: {
@@ -819,7 +819,7 @@
                     remarks: {
                         required: "Remarks is Required",
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 600",
                     },
                     signature_image: {
                         required: "Signature is Required",
@@ -856,7 +856,7 @@
                     capa_remarks: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
                         noSpaces: true,
                     },
                     signature_image: {
@@ -868,7 +868,7 @@
                     capa_remarks: {
                         required: "Remarks is Required",
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 600",
                     },
                     signature_image: {
                         required: "Signature is Required",
@@ -901,7 +901,7 @@
                     level_one_manager: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
                         noSpaces: true,
                     },
                     signature_image: {
@@ -913,7 +913,7 @@
                     level_one_manager: {
                         required: "Remarks is Required",
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 600",
                     },
                     signature_image: {
                         required: "Signature is Required",
@@ -946,7 +946,7 @@
                     level_two_manager: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
                         noSpaces: true,
                     },
                     signature_image: {
@@ -958,7 +958,7 @@
                     level_two_manager: {
                         required: "Remarks is Required",
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 600",
                     },
                     signature_image: {
                         required: "Signature is Required",

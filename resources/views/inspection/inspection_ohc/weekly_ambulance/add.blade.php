@@ -85,7 +85,7 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Shift</label>
+                                                    <label class="form-label require">{{ __('inspection.shifts') }}</label>
                                                     <select name="shift" id="shift" style="width: 100%"
                                                         class="form-control single-select">
                                                         <option value="">Select the option</option>
@@ -98,21 +98,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
-                                                    <select name="unit_id" id="unit_id" style="width: 100%"
-                                                        class="form-control single-select">
-                                                        <option value="">Select the option</option>
-                                                        @foreach ($unit as $list)
-                                                            <option value="{{ encryptId($list->id) }}">
-                                                                {{ $list->unit_name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Location</label>
+                                                    <label class="form-label require">{{ __('common.location') }}</label>
                                                     <select name="location_id" id="location_id" style="width: 100%"
                                                         class="form-control single-select">
                                                         <option value="">Select the option</option>
@@ -124,6 +110,17 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Unit</label>
+                                                    <select name="unit_id" id="unit_id" style="width: 100%"
+                                                        class="form-control single-select">
+                                                        <option value="">Select the option</option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">Next Due On</label>
@@ -155,7 +152,8 @@
 
                                         <div class="row mt-2">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">Weekly Ambulance Inspection Checklist</h4>
+                                                <h4 class="text-white">
+                                                    {{ __('inspection.weekly_ambulance_inspection_checklist') }}</h4>
                                             </div>
                                         </div>
 
@@ -306,6 +304,32 @@
             dateFormat: "d-m-Y",
             minDate: new Date()
 
+        });
+
+        $(document).on('change', '#location_id', function() {
+            var locationId = $(this).val();
+            if (locationId) {
+                $.ajax({
+                    url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#unit_id').empty().append(
+                            '<option value="">Select unit</option>');
+                        $.each(data, function(key, value) {
+                            $('#unit_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#unit_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching unit. Please try again.');
+                    }
+                });
+            } else {
+                $('#unit_id').empty().append('<option value="">Select unit</option>');
+                $('#unit_id').trigger('change.');
+            }
         });
         $(function() {
             $('#weeklyambulance').validate({

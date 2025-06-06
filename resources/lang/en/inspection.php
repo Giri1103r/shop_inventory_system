@@ -298,6 +298,8 @@ return [
     'co_type_fire_extinguisher_inspection_obs' => 'Co2 Type Fire Extinguisher Inspection Observation',
     'fire_pa_system_checklist' => 'Fire PA System Inspection Checklist',
     'fire_pa_system_obs' => 'Fire PA System Observation',
+    'weekly_ambulance_inspection' => 'Weekly Ambulance Inspection',
+    'weekly_ambulance_inspection_checklist' => 'Weekly Ambulance Inspection Checklist',
 
 
 
