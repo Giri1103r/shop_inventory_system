@@ -126,6 +126,7 @@
                                         @endif
                                     </div>
                                     <hr>
+
                                     <div class="form-observation">
                                         <div class="row mt-4 form-obs">
                                             <div class="card-header-inner p-2">
@@ -133,7 +134,7 @@
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.obs') }}</label>
+                                                    <label class="form-label ">{{ __('inspection.obs') }}</label>
                                                     <div class="view_data">
                                                         {{ $inspection->observation == '1' ? 'YES' : 'NO' }}
                                                     </div>

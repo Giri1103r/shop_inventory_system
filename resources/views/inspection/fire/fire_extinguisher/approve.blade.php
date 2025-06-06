@@ -149,7 +149,23 @@
                                         </div>
                                     </div>
                                     <hr> --}}
+                                    <div class="form-observation">
+                                        <div class="row mt-4 form-obs">
+                                            <div class="card-header-inner p-2">
+                                                <h4 class="text-white">Fire Extinguisher Inspection Observation</h4>
+                                            </div>
+                                            <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.obs') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection->observation == '1' ? 'YES' : 'NO' }}
+                                                    </div>
 
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
                                     @foreach ($inspection_details as $details)
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
@@ -966,7 +982,7 @@
                     },
                     signature_image: {
                         required: true,
-                       filesize: 15728640,
+                        filesize: 15728640,
                     }
                 },
                 messages: {

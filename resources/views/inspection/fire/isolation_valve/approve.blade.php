@@ -56,8 +56,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label">{{ __('inspection.inspection_date') }}</label>
+                                                <label class="form-label">{{ __('inspection.inspection_date') }}</label>
                                                 <div class="view_data">
                                                     {{ Displaydateformat($inspection->date_of_inspection) }}
                                                 </div>
@@ -105,8 +104,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.upload_image') }}</label>
+                                                <label class="form-label ">{{ __('inspection.upload_image') }}</label>
                                                 <div class="view_data">
                                                     <img src="{{ admin_url($inspection_image) }}"
                                                         style="width:50px; height:50px;" alt="" srcset="">
@@ -149,7 +147,22 @@
                                         </div>
                                     </div>
                                     <hr> --}}
-
+                                    <div class="form-observation">
+                                        <div class="row mt-4 form-obs">
+                                            <div class="card-header-inner p-2">
+                                                <h4 class="text-white">Isolation Valve Inspection Observation</h4>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">Observation</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection->observation == '1' ? 'YES' : 'NO' }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr>
                                     @foreach ($inspection_details as $details)
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
@@ -158,8 +171,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label">{{ __('inspection.sr_no') }}</label>
+                                                        <label class="form-label">{{ __('inspection.sr_no') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->sr_no }}
                                                         </div>
@@ -186,8 +198,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label">{{ __('inspection.size_isv') }}</label>
+                                                        <label class="form-label">{{ __('inspection.size_isv') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->size_isv }}
                                                         </div>
@@ -221,8 +232,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.leakage') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.leakage') }}</label>
 
                                                         <div class="view_data">
                                                             @if ($details->wheel_operation == YES)
@@ -250,8 +260,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.open') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.open') }}</label>
                                                         <div class="view_data">
                                                             @if ($details->open == OPEN)
                                                                 Opened
@@ -264,24 +273,22 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.close') }}</label>
-                                                            <div class="view_data">
-                                                                @if ($details->close == OPEN)
-                                                                    Opened
-                                                                @elseif($details->close == CLOSE)
-                                                                    Closed
-                                                                @endif
-                                                            </div>
+                                                        <label class="form-label ">{{ __('inspection.close') }}</label>
+                                                        <div class="view_data">
+                                                            @if ($details->close == OPEN)
+                                                                Opened
+                                                            @elseif($details->close == CLOSE)
+                                                                Closed
+                                                            @endif
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-8 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.remarks') }}</label>
-                                                            <div class="view_data">
-                                                                {{ $details->remarks }}
-                                                            </div>
+                                                        <label class="form-label ">{{ __('inspection.remarks') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $details->remarks }}
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
@@ -290,7 +297,9 @@
                                     <hr>
                                 </div>
 
-                                 @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
+                                @if (
+                                    $inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
+                                        (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -696,7 +705,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION &&  (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
+                                @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('fire/isolating-valve-inspection/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -746,7 +755,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && (checkUserRole(ROLE_L1_MANAGER) || isAdmin()) )
+                                @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && (checkUserRole(ROLE_L1_MANAGER) || isAdmin()))
                                     <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('fire/isolating-valve-inspection/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -798,7 +807,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION && (checkUserRole(ROLE_L2_MANAGER) || isAdmin()) )
+                                @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION && (checkUserRole(ROLE_L2_MANAGER) || isAdmin()))
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('fire/isolating-valve-inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -869,7 +878,7 @@
                     },
                     signature_image: {
                         required: true,
-                         filesize: 15728640,
+                        filesize: 15728640,
                     }
                 },
                 messages: {
@@ -918,7 +927,7 @@
                     },
                     signature_image: {
                         required: true,
-                         filesize: 15728640,
+                        filesize: 15728640,
                     }
                 },
                 messages: {

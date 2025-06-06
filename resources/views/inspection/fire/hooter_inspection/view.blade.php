@@ -94,16 +94,15 @@
                                         <div class="card-header-inner p-2">
                                             <h4 class="text-white">Hooter Inspection Observation</h4>
                                         </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label">Observation</label>
-                                                <div class="view_data">
-                                                    <span class="{{ $inspection->observation_needed == '1' ? 'text-success' : 'text-danger' }}">
-                                                        {{ $inspection->observation_needed == '1' ? 'YES' : 'NO' }}
-                                                    </span>
+                                       <div class="col-md-12 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.obs') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection->observation == '1' ? 'YES' : 'NO' }}
+                                                    </div>
+
                                                 </div>
                                             </div>
-                                        </div>
                                     </div>
                                 </div>
 
