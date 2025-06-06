@@ -54,49 +54,49 @@
                                 </div>
                                 <div class="row">
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Document Number</label>
+                                        <label class="form-label view_label">{{ __('inspection.doc_no') }}</label>
                                         <div class="view_data">
                                             {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Review date</label>
+                                        <label class="form-label view_label">{{ __('inspection.rev_date') }}</label>
                                         <div class="view_data">
                                             {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Issued Date</label>
+                                        <label class="form-label view_label">{{ __('inspection.issue_date') }}</label>
                                         <div class="view_data">
                                             {{ DisplaydateFormat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Next Due On</label>
+                                        <label class="form-label view_label">{{__('inspection.next_due')}}</label>
                                         <div class="view_data">
                                             {{ DisplaydateFormat(isset($weekAmbualance->next_due) ? $weekAmbualance->next_due : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Date Of Inspection</label>
+                                        <label class="form-label view_label">{{__('inspection.date_of_inspection')}}</label>
                                         <div class="view_data">
                                             {{ DisplaydateFormat(isset($weekAmbualance->date_of_inspection) ? $weekAmbualance->date_of_inspection : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Shift</label>
+                                        <label class="form-label view_label">{{ __('inspection.shifts') }}</label>
                                         <div class="view_data">
                                             {{ getShift(isset($weekAmbualance->shift) ? $weekAmbualance->shift : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Location</label>
+                                        <label class="form-label view_label">{{ __('common.location') }}</label>
                                         <div class="view_data">
                                             {{ getLocationname(isset($weekAmbualance->location) ? $weekAmbualance->location : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Unit</label>
+                                        <label class="form-label view_label">{{ __('common.unit') }}</label>
                                         <div class="view_data">
                                             {{ getUnitname(isset($weekAmbualance->unit) ? $weekAmbualance->unit : '') }}
                                         </div>

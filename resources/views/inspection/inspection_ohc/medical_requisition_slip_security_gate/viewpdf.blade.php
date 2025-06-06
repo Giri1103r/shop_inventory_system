@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Medicine Requisition Slip Fdo & Security gate
+                  {{__('ohc_management.medicine_requisition_slip_security_gate_fdo')}}
                 </td>
             </tr>
         </table>
@@ -214,13 +214,12 @@
 
 
             <tr>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">NAME OF
-                    MEDICINE
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">{{ __('common.sno') }}</th>
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">{{__('ohc_management.medicine_name')}}
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">QUANTITY
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">{{__('ohc_management.quantity')}}
                 </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARKS
+                <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">{{__('ohc_management.remarks')}}
                 </th>
 
             </tr>
@@ -241,7 +240,7 @@
                         {{ $medicineRequisitionDetails->quantity }}</td>
                     <td colspan="4"
                         style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ $medicineRequisitionDetails->remarks }}</td>
+                        {{ $medicineRequisitionDetails->remarks ?? '-'}}</td>
 
                 </tr>
             @endforeach

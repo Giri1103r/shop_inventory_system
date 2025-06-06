@@ -14,9 +14,9 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
-                        {{-- @if (CheckUserPermission('add')) --}}
-                        <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('ohc/medical-requisition-slip/fdo-security-gate/add') }}">Add</x-button-add>
+                        {{-- @if (CheckUserPermission('Add')) --}}
+                            <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                href="{{ admin_url('ohc/medical-requisition-slip/fdo-security-gate/add') }}">Add</x-button-add>
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">
@@ -25,7 +25,7 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-4 mb-3 form-input">
-                                            <label class="form-label require">Unit</label>
+                                            <label class="form-label ">{{ __('common.unit') }}</label>
                                             <select name="unit_id" id="unit_id" class="form-control single-select"
                                                 style="width: 100%">
                                                 <option value="">Select the unit</option>
@@ -36,7 +36,7 @@
                                             </select>
                                         </div>
                                         <div class="col-md-4 mb-3 form-input">
-                                            <label class="form-label require">Department</label>
+                                            <label class="form-label ">{{ __('common.department') }}</label>
                                             <select name="department_id" id="department_id"
                                                 class=" form-control single-select" style="width: 100%">
                                                 <option value="">Select Department </option>
@@ -95,8 +95,8 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Unit</th>
-                                        <th>Department</th>
+                                        <th>{{ __('common.unit') }}</th>
+                                        <th>{{ __('common.department') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
@@ -237,7 +237,7 @@
                             data: 'inspection_created_at',
                             name: 'inspection_created_at'
                         },
-                           {
+                        {
                             data: 'inspection_created_by',
                             name: 'inspection_created_by'
                         },

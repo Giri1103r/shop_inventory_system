@@ -180,7 +180,9 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             );
             return view('inspection.inspection_ohc.medical_requisition_slip_security_gate.add', $data);
         } catch (Exception $ex) {
-            report($ex);
+             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
     }
 
@@ -203,81 +205,80 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            try {
-                // Store user medicine requisition
-                $medicine_requisition_fdo_details = $this->medicine_requisition_fdo_details->store();
-                $id = ($medicine_requisition_fdo_details->id);
-                // $signature = $this->signature->requestorsignatureUpload(OHC_TYPE_MEDICINE_REQUISTION_FDO, $id);
-                $medicine_requisition_fdo_checklist = $this->medicine_requisition_fdo_checklist->store($medicine_requisition_fdo_details);
-                $data = [
-                    'type' => OHC_TYPE_MEDICINE_REQUISTION_FDO,
-                    'from_status' => OHC_CREATION,
-                    'to_status' => SAFETY_OFFICER_APPROVAL_PENDING,
-                    'reference_id' => $medicine_requisition_fdo_details->id,
-                    'remarks' => "",
-                    'approved_by' => null,
-                    'created_by' => Auth::id(),
 
-                ];
-                $id = $medicine_requisition_fdo_details->id;
-                $this->inspection_ohc_status_log->store($data);
+            // Store user medicine requisition
+            $medicine_requisition_fdo_details = $this->medicine_requisition_fdo_details->store();
+            $id = ($medicine_requisition_fdo_details->id);
+            // $signature = $this->signature->requestorsignatureUpload(OHC_TYPE_MEDICINE_REQUISTION_FDO, $id);
+            $medicine_requisition_fdo_checklist = $this->medicine_requisition_fdo_checklist->store($medicine_requisition_fdo_details);
+            $data = [
+                'type' => OHC_TYPE_MEDICINE_REQUISTION_FDO,
+                'from_status' => OHC_CREATION,
+                'to_status' => SAFETY_OFFICER_APPROVAL_PENDING,
+                'reference_id' => $medicine_requisition_fdo_details->id,
+                'remarks' => "",
+                'approved_by' => null,
+                'created_by' => Auth::id(),
 
-                // Safety Officer
+            ];
+            $id = $medicine_requisition_fdo_details->id;
+            $this->inspection_ohc_status_log->store($data);
 
-                $getsafetyofficer = getSafetyOfficer();
+            // Safety Officer
+
+            $getsafetyofficer = getSafetyOfficer();
+
+
+            // medical officer
+
+            $getmedicalassistant = getMedicalAssistant();
+
+            // Select One
+            $medicine_requisition_fdo_details = $this->medicine_requisition_fdo_details->Selectone($id);
+            $medicine_requisition_fdo_checklist_details = $this->medicine_requisition_fdo_checklist->Selectone($id);
+            // notification and email
+          if (!empty($getsafetyofficer) || !empty($getmedicalassistant)) {
                 $getsafetyofficers = $getsafetyofficer->pluck('id')->toArray();
                 $getsafetyofficerEmail = $getsafetyofficer->pluck('email')->toArray();
-
-                // medical officer
-
-                $getmedicalassistant = getMedicalAssistant();
                 $getmedicalassistantEmail = $getmedicalassistant->pluck('email')->toArray();
                 $getmedicalassistants = $getmedicalassistant->pluck('id')->toArray();
-                // Select One
-                $medicine_requisition_fdo_details = $this->medicine_requisition_fdo_details->Selectone($id);
-                $medicine_requisition_fdo_checklist_details = $this->medicine_requisition_fdo_checklist->Selectone($id);
-                // notification and email
-                if (!empty($getsafetyofficer) || !empty($getmedicalassistant)) {
-                    $title = "Medical Requisition Slip- Fdo & Security Gate";
-                    $mailsubject = "Medical Requisition Slip- Fdo & Security Gate";
-                    $details = array(
-                        'ohc_type' => 'Medical Requisition Slip- Fdo & Security Gate',
-                        'mail_subject' => $mailsubject,
-                        'title' => $title,
-                        'data' => $medicine_requisition_fdo_details,
-                        'checklist' =>   $medicine_requisition_fdo_checklist_details
-                    );
+                $title = "Medical Requisition Slip- Fdo & Security Gate";
+                $mailsubject = "Medical Requisition Slip- Fdo & Security Gate";
+                $details = array(
+                    'ohc_type' => 'Medical Requisition Slip- Fdo & Security Gate',
+                    'mail_subject' => $mailsubject,
+                    'title' => $title,
+                    'data' => $medicine_requisition_fdo_details,
+                    'checklist' =>   $medicine_requisition_fdo_checklist_details
+                );
 
-                    $recipients = array_merge($getsafetyofficerEmail, $getmedicalassistantEmail);
-                    if (!empty($recipients)) {
-                        Mail::to($recipients)->queue(new MedicineRequistionFdoEmail($details));
-                    }
-
-                    $notificationData = array(
-                        'notification_type' => OHC_INSPECTION,
-                        'module_type' => 2,
-                        'notification_message' => $mailsubject,
-                        'mobile_notification' => json_encode(array(
-                            'title' => $mailsubject,
-                            'message' => "Requestor Created the medicine requisition slip Fdo & Security Gate",
-                            'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                            'id' => $id,
-                            'module' => 1,
-                        )),
-                        'web_link' => admin_url('ohc/medical-requisition-slip/fdo-security-gate/approval/view/' . encryptId($id)), // Fixed concatenation
-                        'assigned_user' => array_to_string(array_merge($getmedicalassistants, $getsafetyofficers)), // Fixed missing parenthesis
-                        'created_by' => Auth::id(),
-                    );
-
-                    notificationSave($notificationData);
+                $recipients = array_merge($getsafetyofficerEmail, $getmedicalassistantEmail);
+                if (!empty($recipients)) {
+                    Mail::to($recipients)->queue(new MedicineRequistionFdoEmail($details));
                 }
 
+                $notificationData = array(
+                    'notification_type' => OHC_INSPECTION,
+                    'module_type' => 2,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => "Requestor Created the medicine requisition slip Fdo & Security Gate",
+                        'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $id,
+                        'module' => 1,
+                    )),
+                    'web_link' => admin_url('ohc/medical-requisition-slip/fdo-security-gate/approval/view/' . encryptId($id)), // Fixed concatenation
+                    'assigned_user' => array_to_string(array_merge($getmedicalassistants, $getsafetyofficers)), // Fixed missing parenthesis
+                    'created_by' => Auth::id(),
+                );
 
-                Session::flash('success', 'Your data has been created successfully!');
-            } catch (Exception $ex) {
-                report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                notificationSave($notificationData);
             }
+
+
+            Session::flash('success', 'Your data has been created successfully!');
+
 
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         } catch (Exception $ex) {
