@@ -186,9 +186,11 @@ class SafetyPermit extends Model
                 $query = $query->where('permit_status', STATUS_CLOSED)->orWhere('permit_status', STATUS_PERMIT_EXPIRED);
             }
         }
-        if ($request->has('dashboard_permitType') && $request->dashboard_permitType) {
+        if ($request->has('dashboard_permitType') && !empty($request->dashboard_permitType)) {
+
             $query = $query->whereRaw('FIND_IN_SET(?, ptw_safety.sub_permit)', [$request->dashboard_permitType]);
         }
+
 
         if ($request->has('dashboard_month') && $request->dashboard_month) {
             $query = $query->whereMonth('ptw_safety.created_at', $request->dashboard_month);

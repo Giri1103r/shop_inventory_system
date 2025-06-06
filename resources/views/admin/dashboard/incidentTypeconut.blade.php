@@ -6,7 +6,7 @@
 @endphp
 
 <script>
-    
+
     var incidentTypeIdMap = {!! json_encode($typeIdMap) !!};
     var data = {!! json_encode($data) !!};
 
@@ -24,7 +24,7 @@
                     var incidentTypeName = chartContext.w.config.labels[dataPointIndex];
                     var iirType = incidentTypeIdMap[incidentTypeName];
                     if (iirType) {
-                        redirectToIms(iirType, '', '', '', '', '', '');
+                        redirectToIms(iirType);
                     }
                 }
             }

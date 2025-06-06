@@ -10,7 +10,7 @@
         var options = {
             series: [{
                 name: 'Work Count',
-                data: type_wise.map(item => item.count) 
+                data: type_wise.map(item => item.count)
             }],
             chart: {
                 height: 350,
@@ -21,8 +21,9 @@
                 events: {
                     dataPointSelection: function(event, chartContext, config) {
                         var selectedItem = type_wise[config.dataPointIndex];
+
                         var typeOfWork = selectedItem.id;
-                       redirectToPPE('', '', '', '', typeOfWork, '');
+                        redirectToPTW('', '', '', '', typeOfWork);
                     }
                 }
             },
@@ -34,7 +35,7 @@
                 }
             },
             xaxis: {
-                categories: type_wise.map(item => item.name), 
+                categories: type_wise.map(item => item.name),
                 position: 'bottom',
                 axisBorder: {
                     show: false
@@ -66,7 +67,7 @@
                     show: false,
                 },
                 labels: {
-                    show: true, 
+                    show: true,
                     formatter: function(val) {
                         return val;
                     }

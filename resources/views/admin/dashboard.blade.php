@@ -1022,7 +1022,7 @@
             // Create a form element
             var form = document.createElement('form');
             form.setAttribute('method', 'post');
-            form.setAttribute('action', "{{ admin_url('incident/initial-incident/list') }}");
+            form.setAttribute('action', "{{ admin_url('incident/initial-incident/list/all/type') }}");
 
             // Add CSRF token field
             var csrfToken = document.createElement('input');
