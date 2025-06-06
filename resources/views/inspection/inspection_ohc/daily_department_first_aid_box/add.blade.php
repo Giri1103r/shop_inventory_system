@@ -80,7 +80,7 @@
                                                 value="{{ encryptId($document_no->id) }}">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
+                                                    <label class="form-label require">{{ __('common.unit') }}</label>
                                                     <select name="unit_id" id="unit_id" class="form-control single-select"
                                                         style="width: 100%">
                                                         <option value="">Select the unit</option>
@@ -93,7 +93,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Department</label>
+                                                    <label class="form-label require">{{ __('common.department') }}</label>
                                                     <select name="department_id" id="department_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Department </option>
@@ -103,7 +103,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Shift</label>
+                                                    <label class="form-label require">{{ __('inspection.shifts') }}</label>
                                                     <select name="shift" id="shift" style="width: 100%"
                                                         class="form-control single-select">
                                                         <option value="">Select the option</option>
@@ -116,15 +116,15 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">First Aid Box Number</label>
-                                                    <input type="text"  name="first_aid_box_no"
-                                                        id = "first_aid_box_no" class="form-control">
+                                                    <label class="form-label require">{{__('ohc_management.first_aid_box_no')}}</label>
+                                                    <input type="text" name="first_aid_box_no" id = "first_aid_box_no"
+                                                        class="form-control">
                                                 </div>
                                             </div>
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">First Aider Name</label>
+                                                    <label class="form-label require">{{__('ohc_management.first_aider_name')}}</label>
                                                     <select name="first_aider" id="first_aider"
                                                         class="form-control single-select" style="width: 100%">
                                                         <option value="">Select the option</option>
@@ -139,7 +139,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="rate" class="form-label require ">
-                                                        Date</label>
+                                                        {{__('common.date')}}</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="date" id="date"
                                                             class="form-control"autocomplete="off">
@@ -153,7 +153,7 @@
 
                                         <div class="row mt-2">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">Medicine details</h4>
+                                                <h4 class="text-white">{{ __('ohc_management.medicine_details') }}</h4>
 
                                             </div>
                                         </div>
@@ -162,12 +162,17 @@
                                             <table class="table table-bordered table-striped">
                                                 <thead class="table-secondary">
                                                     <tr>
-                                                        <th style="text-align: center">Sr. No.</th>
-                                                        <th style="text-align: center">Medicine Name</th>
-                                                        <th style="text-align: center">Freeze Quantity</th>
-                                                        <th style="text-align: center">Available Quantity</th>
-                                                        <th style="text-align: center">Expiry Date</th>
-                                                        <th style="text-align: center">Remark</th>
+                                                        <th style="text-align: center">{{ __('common.sno') }}</th>
+                                                        <th style="text-align: center">
+                                                            {{ __('ohc_management.medicine_name') }}</th>
+                                                        <th style="text-align: center">
+                                                            {{ __('ohc_management.freeze_quantity') }}</th>
+                                                        <th style="text-align: center">
+                                                            {{ __('ohc_management.available_quantity') }}</th>
+                                                        <th style="text-align: center">
+                                                            {{ __('ohc_management.expiry_date') }}</th>
+                                                        <th style="text-align: center">{{ __('ohc_management.remarks') }}
+                                                        </th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
@@ -376,7 +381,7 @@
                     },
                     first_aid_box_no: {
                         required: 'First Aid Box Number is required',
-                    
+
                     },
                     review_date: {
                         required: "Please select the request date.",
@@ -445,13 +450,13 @@
 
                 $('textarea[name^="remarks"]').each(function() {
                     $(this).rules('add', {
-                        required: true,
+
                         minlength: 3,
-                        maxlength: 300,
+                        maxlength: 600,
                         messages: {
-                            required: "Remarks is required",
+
                             minlength: "Minimum 3 characters required",
-                            maxlength: "Maximum character does not exceed 300"
+                            maxlength: "Maximum character does not exceed 600"
                         }
                     });
                 });

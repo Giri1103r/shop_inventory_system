@@ -273,20 +273,33 @@
                 </th>
 
             </tr>
-            @php
-                $medicineRequisitionDetails = GetOHCMedicineFloor($medicinerequisition->id);
-            @endphp
-            @foreach ($medicineRequisitionDetails as $details)
-                <tr>
-                    <td style="border: 1px solid black; padding: 8px;" colspan="2">{{ $loop->iteration }}</td>
-                    <td style="border: 1px solid black; padding: 8px;" colspan="4">
-                        {{ getMedicinename($details->medicine_id) }}
-                    </td>
-                    <td style="border: 1px solid black; padding: 8px;" colspan="4">{{ $details->freeze_quantity }}
-                    </td>
-                    <td style="border: 1px solid black; padding: 8px;"colspan="4">{{ $details->quantity }}</td>
-                    <td style="border: 1px solid black; padding: 8px;"colspan="6">{{ $details->remarks }}</td>
+           
 
+            @php
+                $inspection_data = json_decode($medicinerequisition->checklist, true);
+            @endphp
+
+
+            @foreach ($inspection_data as $medicines)
+                <tr>
+                    <td colspan="2"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ $loop->iteration }}
+                    </td>
+                    <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ getMedicinename($medicines['medicine_id']) }}
+                    </td>
+                    <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $medicines['freeze_quantity'] }}
+                    </td>
+
+                    <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $medicines['quantity'] }}
+                    </td>
+
+                    <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $medicines['remarks'] }}
+                    </td>
                 </tr>
             @endforeach
 

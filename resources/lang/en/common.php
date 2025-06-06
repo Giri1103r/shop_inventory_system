@@ -45,6 +45,7 @@ return [
     'status' => 'Status',
     'update_status'=> 'Update Status',
     'action' => 'Action',
+    'date'=>'Date',
 
     'dashboard' => 'Dashboard',
 

@@ -172,16 +172,27 @@ class MedicineRequistionSlipfloordetails extends Model
 
         $request = request();
 
+        $id = $request->medicine_id;
+        foreach ($id as $index => $value) {
+            $id = decryptId($value);
+            $updated_medicine_checklist[$id] = [
+                'medicine_id' => $id,
+                'freeze_quantity' => $request->freeze_quantity[$index],
+                'quantity' => $request->quantity[$index],
+                'remarks' => $request->remarks[$index],
+
+            ];
+        }
+        $updated_medicine_checklist = json_encode($updated_medicine_checklist);
+
         $insert_array = [
 
-
+            'checklist' => $updated_medicine_checklist,
             'department' => decryptId($request->department_id),
             'unit' => decryptId($request->unit_id),
             'date' => !empty($request->date) ? DBdateformat($request->date) : null,
             'next_due' => !empty($request->next_due_on) ? DBdateformat($request->next_due_on) : null,
             'document_reference_id' => decryptId($request->document_reference_id),
-            'first_aid_box_no' => $request->first_aid_box_no,
-            'first_aider' => $request->first_aider,
             'date_of_inspection' => !empty($request->date_of_inspection) ? DBdateformat($request->date_of_inspection) : null,
             'created_by' => Auth::id(),
             'approve_status' => FLOOR_MANAGER_APPROVAL_PENDING,
