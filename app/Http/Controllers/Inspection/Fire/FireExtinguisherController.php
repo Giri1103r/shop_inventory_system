@@ -311,7 +311,7 @@ class FireExtinguisherController extends Controller
                     'id' => $id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($id)),
+                'web_link' =>  admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($id). '/ehs'),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
@@ -420,7 +420,7 @@ class FireExtinguisherController extends Controller
             $inspection_details = $this->fire_extinguisher->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'Fire Extinguisher Inspection Approved Successfully';
-                $web_link =   admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($inspection_details->id));
+                $web_link =   admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($inspection_details->id). '/capa');
                 $to_status = INSPECTION_APPROVED;
             } else {
                 $message = 'Inspection Recommended for the CAPA Action';
@@ -511,7 +511,7 @@ class FireExtinguisherController extends Controller
 
             $user = $inspection_details->verified_by;
             $email_id = getUseremail($user);
-            $url = admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($id) . '/ehs');
+            $url = admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($id) . '/ehsVerify');
             $details = array(
                 'fire_type' => 'Fire Extinguisher Inspection',
                 'email' => $email_id,
