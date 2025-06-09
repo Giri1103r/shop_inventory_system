@@ -453,10 +453,12 @@ class AdminController extends Controller
             $incidentTypeIds = [];
             $unitIds = [];
             $lookup = [];
-
+            
             foreach ($chartData as $row) {
+                // dd($row);
                 $unitName = $row->unit_name;
                 $incidentTypeName = $row->incident_type_name;
+
 
                 $formattedData[$incidentTypeName][$unitName] = $row->incident_count;
 
@@ -468,6 +470,7 @@ class AdminController extends Controller
                     'unit_id' => $row->unit_id,
                 ];
             }
+
             return view('admin.dashboard.totalIncidentsCount', [
                 'formattedData' => $formattedData,
                 'incidentTypeIds' => $incidentTypeIds,
