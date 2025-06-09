@@ -125,6 +125,7 @@ class Rcpa extends Model
         }
 
         if ($request->has('dash_iirtype_id') && $request->dash_iirtype_id) {
+
             $query = $query->where('ims_initial_incident.iir_type', ($request->dash_iirtype_id));
         }
 

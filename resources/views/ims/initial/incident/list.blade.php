@@ -174,14 +174,11 @@
 
 
             var dash_iirtype_id =
-                '{{ isset($dashboard_search['iir_type']) && $dashboard_search['iir_type'] != ''
-                    ? $dashboard_search['iir_type']
-                    : '' }}';
-
+                '{{ isset($dashboard_search['iir_type']) && $dashboard_search['iir_type'] != '' ? $dashboard_search['iir_type'] : '' }}';
             var dash_injuryType =
-                '{{ isset($dashboard_search['injury_type']) && $dashboard_search['injury_type'] != ''
-                    ? $dashboard_search['injury_type']
-                    : '' }}';
+                '{{ isset($dashboard_search['injury_type']) && $dashboard_search['injury_type'] != '' ? $dashboard_search['injury_type'] : '' }}';
+            var dash_initial_id =
+                '{{ isset($dashboard_search['incidentTypeId']) && $dashboard_search['incidentTypeId'] != '' ? $dashboard_search['incidentTypeId'] : '' }}';
 
 
             var dash_month =
@@ -222,6 +219,7 @@
                         d.sr_no = $('#sr_no').val();
                         d.dash_iirtype_id = dash_iirtype_id;
                         d.dash_month = dash_month;
+                        d.dash_initial_id = dash_initial_id;
                         d.unit_id = $('#unit_id').val();
                         d.dash_injuryType = dash_injuryType;
                         d.from_date = $('#from_date').val();
@@ -302,6 +300,7 @@
                                     var sr_no = $('#sr_no').val();
                                     var dash_iirtype_id = dash_iirtype_id;
                                     var dash_month = dash_month;
+                                    var dash_initial_id = dash_initial_id;
                                     var unit_id = $('#unit_id').val();
                                     var dash_injuryType = dash_injuryType;
                                     var from_date = $('#from_date').val();
@@ -317,6 +316,7 @@
                                         '&sr_no=' + sr_no +
                                         '&dash_iirtype_id=' + dash_iirtype_id +
                                         '&dash_month=' + dash_month +
+                                        '&dash_initial_id=' + dash_initial_id +
                                         '&unit_id=' + unit_id +
                                         '&dash_injuryType=' + dash_injuryType +
                                         '&from_date=' + from_date +
@@ -334,6 +334,7 @@
                                     var sr_no = $('#sr_no').val();
                                     var dash_iirtype_id = dash_iirtype_id;
                                     var dash_month = dash_month;
+                                    var dash_initial_id = dash_initial_id;
                                     var unit_id = $('#unit_id').val();
                                     var dash_injuryType = dash_injuryType;
                                     var from_date = $('#from_date').val();
@@ -347,6 +348,7 @@
                                         '?search=' + searchValue +
                                         '&dash_iirtype_id=' + dash_iirtype_id +
                                         '&dash_month=' + dash_month +
+                                        '&dash_initial_id=' + dash_initial_id +
                                         '&sr_no=' + sr_no +
                                         '&dash_iirtype_id=' + dash_iirtype_id +
                                         '&unit_id=' + unit_id +

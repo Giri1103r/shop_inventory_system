@@ -24,10 +24,9 @@
                 dataPointSelection: function(event, chartContext, config) {
                     var dataPointIndex = config.dataPointIndex;
                     var incidentTypeName = chartContext.w.config.xaxis.categories[dataPointIndex];
-                    var incidentTypeId = incidentTypeIdMap[incidentTypeName];
-
-                    if (incidentTypeId) {
-                        redirectToIms(incidentTypeId);
+                    var iirType = incidentTypeIdMap[incidentTypeName];
+                    if (iirType) {
+                        redirectToIms(iirType,'','','','','','');
                     }
                 }
             }
