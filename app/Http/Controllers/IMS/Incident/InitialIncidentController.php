@@ -444,6 +444,7 @@ class InitialIncidentController extends Controller
         $data = array(
             'unitList' => $unitList,
             'status' => $status,
+             'dashboard_search' => $request,
         );
 
         return view('ims.initial.incident.calist', $data);

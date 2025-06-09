@@ -23,7 +23,7 @@
                         var selectedItem = type_wise[config.dataPointIndex];
 
                         var typeOfWork = selectedItem.id;
-                        redirectToPTW('', '', '', '', typeOfWork);
+                        redirectToPTW('', '', '', '', typeOfWork,'');
                     }
                 }
             },

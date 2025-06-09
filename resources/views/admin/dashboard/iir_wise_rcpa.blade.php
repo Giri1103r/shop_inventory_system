@@ -25,6 +25,7 @@
             events: {
                 dataPointSelection: function(event, chartContext, config) {
                     var seriesIndex = config.seriesIndex;
+
                     var dataPointIndex = config.dataPointIndex;
 
                     var incidentTypeName = chartContext.w.config.xaxis.categories[dataPointIndex];
@@ -35,6 +36,7 @@
                     if (seriesIndex === 0) {
                         redirectToIms(iirType, '', '', '', '', '', );
                     } else if (seriesIndex === 1) {
+                          
                         redirectToImsRCPA(iirType, '', '', '', '', '', );
                     }
                 }
@@ -46,7 +48,7 @@
             bar: {
                 horizontal: false,
               columnWidth: '25%',
-             
+
                 borderRadiusApplication: 'end'
             }
         },

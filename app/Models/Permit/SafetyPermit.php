@@ -135,19 +135,19 @@ class SafetyPermit extends Model
         if ($request->has('permit_id') && $request->permit_id) {
             $query = $query->where('ptw_safety.permit_id', 'LIKE', '%' . $request->permit_id . '%');
         }
-        if ($request->has('unit_id') && $request->unit_id) {
+        if ($request->has('unit_id') && !empty($request->unit_id)) {
 
             $unit_id = decryptId($request->unit_id);
             $query = $query->where('ptw_safety.unit_id',  $unit_id);
         }
 
-        if ($request->has('company_id') && $request->company_id) {
+        if ($request->has('company_id') && !empty($request->company_id)) {
 
             $company_id = decryptId($request->company_id);
 
             $query = $query->where('ptw_safety.company_id',  $company_id);
         }
-        if ($request->has('location_id') && $request->location_id) {
+        if ($request->has('location_id') && !empty($request->location_id)) {
 
             $location_id = decryptId($request->location_id);
             $query = $query->where('ptw_safety.location_id',  $location_id);
@@ -163,7 +163,7 @@ class SafetyPermit extends Model
             $query->where('ptw_safety.date', '<=', $toDate);
         }
 
-        if ($request->has('status') && $request->status) {
+        if ($request->has('status') && ($request->status)) {
             $status = decryptId($request->status);
             $query = $query->where('ptw_safety.permit_status',  $status);
         }
@@ -188,7 +188,7 @@ class SafetyPermit extends Model
         }
         if ($request->has('dashboard_permitType') && !empty($request->dashboard_permitType)) {
 
-            $query = $query->whereRaw('FIND_IN_SET(?, ptw_safety.sub_permit)', [$request->dashboard_permitType]);
+            $query = $query->whereRaw('FIND_IN_SET(?, ptw_safety.sub_permit)', [$request->dashboard_permitType]) ->where('permit_status', '>=', STATUS_EHS_VERIFICATION_PENDING);
         }
 
 

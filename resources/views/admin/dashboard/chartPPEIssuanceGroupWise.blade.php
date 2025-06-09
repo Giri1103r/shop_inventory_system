@@ -26,6 +26,7 @@
                 toolbar: {
                     show: false
                 },
+                
                 stacked: false,
                 zoom: {
                     enabled: false

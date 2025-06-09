@@ -907,7 +907,7 @@
         <div class="col-xl-12 col-xxl-12">
             <div class="card dashboard_card">
                 <div class="card-header">
-                    <h4 class="text-white">PPE Issuance Group Wise</h4>
+                    <h4 class="text-white">PPE Consumption Group Wise</h4>
                     <a class="fas fa-arrow-alt-circle-down chartdownload" id="LoadPPEIssuanceGroupWise_download"></a>
                 </div>
                 <div id="LoadPPEIssuanceGroupWiseCountDiv"></div>

@@ -229,10 +229,10 @@
 
                                                                 <td class="text-center">
                                                                     <input type="hidden"
-                                                                        name="status[{{ $personalDetails->id }}]"
+                                                                        name="persnal_details[{{ $personalDetails->id }}]"
                                                                         value="0">
                                                                     <input type="checkbox"
-                                                                        name="status[{{ $personalDetails->id }}]"
+                                                                        name="persnal_details[{{ $personalDetails->id }}]"
                                                                         value="1">
                                                                 </td>
                                                             </tr>

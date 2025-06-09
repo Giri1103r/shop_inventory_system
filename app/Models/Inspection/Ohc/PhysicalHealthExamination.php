@@ -181,9 +181,15 @@ class PhysicalHealthExamination extends Model
 
         $responses = [
 
-            'status' => ($request->status),
+            'status' => ($request->persnal_details),
 
         ];
+
+         $family_details = [
+                    'status' => ($request->status),
+
+                    'remarks' => ($request->family_remarks),
+                ];
 
         $insert_array = [
             'document_reference_id' => $document_no->id,
@@ -206,18 +212,18 @@ class PhysicalHealthExamination extends Model
             'present_complaint' => $request->present_complaints,
             'personal_details' => json_encode($responses),
             'family_history' => json_encode($request->family_remarks),
-            'vital_checkpoints' => json_encode($request->reading_value),
+            'vital_checkpoints' => json_encode($family_details),
             'near_with_glass' => $request->near_with_glasses,
-            'near_without_glass' => $request->near_without_glasses,
-            'near_without_glass_yes' => $request->near_without_glasses_yes,
+            'near_without_glass' => $request->near_with_out_glasses,
+            'near_without_glass_yes' => decryptId($request->near_with_out_glasses_yes),
             'distance_with_glass' => $request->distance_with_glasses,
-            'distance_without_glass' => decryptId($request->distance_with_out_glasses),
+            'distance_without_glass' => ($request->distance_with_out_glasses),
             'distance_without_glass_yes' => decryptId($request->distance_with_out_glasses_yes),
             'remarks' => $request->remarks,
 
             'created_by' => Auth::id(),
         ];
-
+dd($request->all());
         return self::create($insert_array);
     }
 
