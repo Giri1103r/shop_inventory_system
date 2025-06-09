@@ -683,43 +683,44 @@ class AdminController extends Controller
         }
     }
 
-    public function TrainingHoursSafetyDepartmentWise(Request $request)
-    {
-        try {
-            $dates = [
-                'from_date' => $request->input('FromDate'),
-                'to_date' =>  $request->input('ToDate')
-            ];
+ public function TrainingHoursSafetyDepartmentWise(Request $request)
+{
+    try {
+        $dates = [
+            'from_date' => $request->input('FromDate'),
+            'to_date' => $request->input('ToDate')
+        ];
 
-            $training_data = $this->training_schedule->GetTrainingHoursDepartmentData($request);
+        $training_data = $this->training_schedule->GetTrainingHoursDepartmentData($request);
 
-            if ($training_data->isEmpty()) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
-
-            $chartData = [
-                'labels' => [],
-                'series' => [],
-                'departments' => []
-            ];
-
-            foreach ($training_data as $item) {
-                $chartData['labels'][] = $item->topic_name;
-                $chartData['series'][] = (float) $item->total_hours;
-                $chartData['departments'][] = $item->department_name;
-            }
-            if ($training_data->isEmpty()) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
-            return view('admin.dashboard.training_hour_department_wise', [
-                'training_data' => $training_data,
-                'chartData' => $chartData,
-                'getdashdata' => (object) $dates
-            ]);
-        } catch (\Exception $ex) {
-            report($ex);
+        if ($training_data->isEmpty()) {
+            return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
         }
+
+        $chartData = [
+            'labels' => [],
+            'series' => [],
+            'departments' => [],
+            'department_ids' => [] // ➕ include department IDs
+        ];
+
+        foreach ($training_data as $item) {
+            $chartData['labels'][] = $item->topic_name;
+            $chartData['series'][] = (float) $item->total_hours;
+            $chartData['departments'][] = $item->department_name;
+            $chartData['department_ids'][] = $item->department_id;
+        }
+
+        return view('admin.dashboard.training_hour_department_wise', [
+            'training_data' => $training_data,
+            'chartData' => $chartData,
+            'getdashdata' => (object) $dates
+        ]);
+    } catch (\Exception $ex) {
+        report($ex);
     }
+}
+
 
     public function ptwholdviolation(Request $request)
     {

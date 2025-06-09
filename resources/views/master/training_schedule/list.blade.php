@@ -2,7 +2,12 @@
 @section('title', 'Training Schedule')
 @section('pageurl', admin_url('training_schedule/list'))
 
+@php
 
+    $dash_department_id =
+        isset($dashboard_search['department']) && $dashboard_search['department'] != '' ? $dashboard_search['department'] : '';
+
+@endphp
 @section('content')
     <div class="container-fluid">
         <div class="row">
@@ -93,17 +98,35 @@
                                             </div>
 
                                         </div>
-                                        <div class="col-md-3 mb-3">
-                                            <div class="form-group form-input">
-                                                <label for="department_id" class="form-label require">Department
-                                                </label>
+
+
+                                        @if ($dash_department_id != '')
+                                            <div class="col-md-3 mb-3 form-input">
+                                                <label for="inspectiontype" class="form-label ">Unit</label>
                                                 <select name="department_id" id="department_id"
                                                     class=" form-control single-select" style="width: 100%">
-                                                    <option value="">Select Department </option>
+                                                    <option value="">Select Department</option>
+                                                    @foreach ($department as $departmentList)
+                                                        <option @if ($dash_department_id == $departmentList->id) selected @endif
+                                                            value="{{ encryptId($departmentList->id) }}">
+                                                            {{ $departmentList->department_name }}</option>
+                                                    @endforeach
 
                                                 </select>
                                             </div>
-                                        </div>
+                                        @else
+                                            <div class="col-md-3 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label for="department_id" class="form-label require">Department
+                                                    </label>
+                                                    <select name="department_id" id="department_id"
+                                                        class=" form-control single-select" style="width: 100%">
+                                                        <option value="">Select Department </option>
+
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        @endif
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>

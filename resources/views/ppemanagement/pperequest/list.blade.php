@@ -10,6 +10,15 @@
             }
         </style>
     @endpush
+    @php
+
+        $dash_unit_id =
+            isset($dashboard_search['unit']) && $dashboard_search['unit'] != ''
+                ? $dashboard_search['unit']
+                : '';
+
+
+    @endphp
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
@@ -97,14 +106,31 @@
                                             </select>
                                         </div>
 
-                                        <div class="col-md-3 mb-3 form-input">
-                                            <label for="unit_id" class="form-label">Unit</label>
-                                            <select name="unit_id" id="unit_id"
-                                                class="form-control single-select form-control-sm" style="width: 100%">
-                                                <option value="">Select the Unit</option>
+                                        @if ($dash_unit_id != '')
+                                            <div class="col-md-3 mb-3 form-input">
+                                                <label for="inspectiontype" class="form-label ">Unit</label>
+                                                <select name="unit_id" id="unit_id" class=" form-control single-select"
+                                                    style="width: 100%">
+                                                    <option value="">Select Unit</option>
+                                                    @foreach ($unit as $units)
+                                                        <option @if ($dash_unit_id == $units->id) selected @endif
+                                                            value="{{ encryptId($units->id) }}">
+                                                            {{ $units->unit_name }}</option>
+                                                    @endforeach
 
-                                            </select>
-                                        </div>
+                                                </select>
+                                            </div>
+                                        @else
+                                            <div class="col-md-3 mb-3 form-input">
+                                                <label for="unit_id" class="form-label">Unit</label>
+                                                <select name="unit_id" id="unit_id"
+                                                    class="form-control single-select form-control-sm" style="width: 100%">
+                                                    <option value="">Select the Unit</option>
+
+                                                </select>
+                                            </div>
+                                        @endif
+
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Department</label>
@@ -353,7 +379,8 @@
                 dateFormat: "d-m-Y",
                 minDate: "today"
             });
-
+            var dashboard_unit =
+                '{{ isset($dashboard_search['unit']) && $dashboard_search['unit'] != '' ? $dashboard_search['unit'] : '' }}';
             // Initialize DataTable
             var table = $('.datatable-list').DataTable({
 
@@ -396,6 +423,7 @@
                         d.department_id = $('#department_id').val();
                         d.to_date = $('#to_date').val();
                         d.approve_status = $('#approve_status').val();
+
                     },
                     error: function(xhr, error, code) {
                         if (xhr.status === 419) {
@@ -504,6 +532,7 @@
                                         '&location_id=' + location_id +
                                         '&department_id=' + department_id +
                                         '&from_date=' + from_date +
+
                                         '&to_date=' + to_date +
                                         '&approve_status=' + approve_status;
                                 }
@@ -521,6 +550,7 @@
                                     var department_id = $('#department_id').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
+
                                     var approve_status = $('#approve_status').val();
 
                                     $(".dt-button").removeClass('processing');
@@ -529,6 +559,7 @@
                                         "{{ admin_url('ppe_request/export/excel') }}" +
                                         '?search=' + searchValue +
                                         '&emp_id=' + emp_id +
+
                                         '&emp_name=' + emp_name +
                                         '&unit_id=' + unit_id +
                                         '&company_id=' + company_id +

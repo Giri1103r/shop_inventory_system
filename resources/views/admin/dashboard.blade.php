@@ -1322,6 +1322,51 @@
             form.submit();
         }
 
+         function redirectToIssuance(unit) {
+
+            Fromdate = $("#fromDate").val();
+            Todate = $("#toDate").val();
+            // Create a form element
+            var form = document.createElement('form');
+            form.setAttribute('method', 'post');
+            form.setAttribute('action', "{{ admin_url('ppe_request/list') }}");
+
+            // Add CSRF token field
+            var csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = '_token';
+            csrfToken.value = '{{ csrf_token() }}';
+            form.appendChild(csrfToken);
+
+
+
+            var inputunit = document.createElement('input');
+            inputunit.setAttribute('type', 'hidden');
+            inputunit.setAttribute('name', 'unit');
+            inputunit.setAttribute('value', unit);
+            form.appendChild(inputunit);
+
+
+
+
+
+            var inputFromdate = document.createElement('input');
+            inputFromdate.setAttribute('type', 'hidden');
+            inputFromdate.setAttribute('name', 'Fromdate');
+            inputFromdate.setAttribute('value', Fromdate);
+            form.appendChild(inputFromdate);
+
+            var inputTodate = document.createElement('input');
+            inputTodate.setAttribute('type', 'hidden');
+            inputTodate.setAttribute('name', 'Todate');
+            inputTodate.setAttribute('value', Todate);
+            form.appendChild(inputTodate);
+
+
+            document.body.appendChild(form);
+            form.submit();
+        }
+
         function redirectToTraining(openclose) {
 
             Fromdate = $("#fromDate").val();
@@ -1338,25 +1383,7 @@
             csrfToken.value = '{{ csrf_token() }}';
             form.appendChild(csrfToken);
 
-            // var inputPermitId = document.createElement('input');
-            // inputPermitId.setAttribute('type', 'hidden');
-            // inputPermitId.setAttribute('name', 'ppe_id');
-            // inputPermitId.setAttribute('value', PTWID);
-            // form.appendChild(inputPermitId);
 
-
-            // var inputsub = document.createElement('input');
-            // inputsub.setAttribute('type', 'hidden');
-            // inputsub.setAttribute('name', 'sub');
-            // inputsub.setAttribute('value', sub);
-            // form.appendChild(inputsub);
-
-
-            // var inputmonth = document.createElement('input');
-            // inputmonth.setAttribute('type', 'hidden');
-            // inputmonth.setAttribute('name', 'month');
-            // inputmonth.setAttribute('value', month);
-            // form.appendChild(inputmonth);
 
             var inputopenclose = document.createElement('input');
             inputopenclose.setAttribute('type', 'hidden');
@@ -1364,17 +1391,48 @@
             inputopenclose.setAttribute('value', openclose);
             form.appendChild(inputopenclose);
 
-            // var inputtypeOfWork = document.createElement('input');
-            // inputtypeOfWork.setAttribute('type', 'hidden');
-            // inputtypeOfWork.setAttribute('name', 'typeOfWork');
-            // inputtypeOfWork.setAttribute('value', typeOfWork);
-            // form.appendChild(inputtypeOfWork);
 
-            // var inputpermitStatus = document.createElement('input');
-            // inputpermitStatus.setAttribute('type', 'hidden');
-            // inputpermitStatus.setAttribute('name', 'permitStatus');
-            // inputpermitStatus.setAttribute('value', permitStatus);
-            // form.appendChild(inputpermitStatus);
+            var inputFromdate = document.createElement('input');
+            inputFromdate.setAttribute('type', 'hidden');
+            inputFromdate.setAttribute('name', 'Fromdate');
+            inputFromdate.setAttribute('value', Fromdate);
+            form.appendChild(inputFromdate);
+
+            var inputTodate = document.createElement('input');
+            inputTodate.setAttribute('type', 'hidden');
+            inputTodate.setAttribute('name', 'Todate');
+            inputTodate.setAttribute('value', Todate);
+            form.appendChild(inputTodate);
+
+            // Append the form to the body and submit it
+            document.body.appendChild(form);
+            form.submit();
+        }
+
+          function redirectTotrainigschedule(department) {
+
+            Fromdate = $("#fromDate").val();
+            Todate = $("#toDate").val();
+            // Create a form element
+            var form = document.createElement('form');
+            form.setAttribute('method', 'post');
+            form.setAttribute('action', "{{ admin_url('training_schedule/list') }}");
+
+            // Add CSRF token field
+            var csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = '_token';
+            csrfToken.value = '{{ csrf_token() }}';
+            form.appendChild(csrfToken);
+
+
+
+            var inputdepartment = document.createElement('input');
+            inputdepartment.setAttribute('type', 'hidden');
+            inputdepartment.setAttribute('name', 'department');
+            inputdepartment.setAttribute('value', department);
+            form.appendChild(inputdepartment);
+
 
             var inputFromdate = document.createElement('input');
             inputFromdate.setAttribute('type', 'hidden');

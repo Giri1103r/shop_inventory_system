@@ -95,6 +95,10 @@ class PpeRequest extends Model
         if ($request->has('unit_id') && $request->unit_id) {
             $query->where('ppe_pperequest.unit_id',  decryptId($request->unit_id));
         }
+           if ($request->has('dashboard_unit') && $request->dashboard_unit) {
+         
+            $query->where('ppe_pperequest.dashboard_unit',  ($request->dashboard_unit));
+        }
         if ($request->has('company_id') && $request->company_id) {
 
             $query->where('ppe_pperequest.company_id', decryptId($request->company_id));

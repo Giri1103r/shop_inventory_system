@@ -3291,17 +3291,21 @@ function getPPERequestChartData($form_date, $to_date, $company_id)
 
     $labels = [];
     $series = [];
+    $ids = [];
 
     foreach ($rawData as $row) {
-        $labels[] = getUnitname($row->unit_id);
-        $series[] = $row->total;
+        $labels[] = getUnitname($row->unit_id);  // For x-axis labels (names)
+        $series[] = $row->total;                  // Data points
+        $ids[] = $row->unit_id;                   // Unit IDs for selection
     }
 
     return [
         'labels' => $labels,
         'series' => $series,
+        'ids' => $ids,  // Added ids array here
     ];
 }
+
 
 function getPTWAvgTimeChartData($form_date, $to_date, $company_id)
 {
