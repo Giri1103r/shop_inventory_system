@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Hospital Details  Show')
+@section('title', 'Hospital Details')
 @section('pageurl', admin_url('ohc/hospital-details/list'))
 
 
@@ -32,26 +32,32 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Hospital Details</h4>
+                                        <h4 class="text-white">{{ __('ohc_management.hospital_details') }}</h4>
                                     </div>
                                 </div>
                                 <div class="row">
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Hospital Name') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.hospital_name') }}</label>
                                         <div class="view_data">
                                             {{ isset($hospitalDetails->hospital_name) ? $hospitalDetails->hospital_name : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Mobile Number') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.mobile_no') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($hospitalDetails->mobile_no) ? $hospitalDetails->mobile_no : '') }}
+                                            {{ isset($hospitalDetails->mobile_no) ? $hospitalDetails->mobile_no : '' }}
                                         </div>
                                     </div>
-
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Address') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.tel_no') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($hospitalDetails->tel_no) ? $hospitalDetails->tel_no : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('ohc_management.address') }}</label>
                                         <div class="view_data">
                                             {{ isset($hospitalDetails->address) ? $hospitalDetails->address : '' }}
                                         </div>

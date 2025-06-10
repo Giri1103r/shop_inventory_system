@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Edit')
+@section('title', 'Medicine')
 @section('pageurl', admin_url('ohc/medicine/list'))
 
 
@@ -39,7 +39,8 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Medicine Name</label>
+                                                    <label
+                                                        class="form-label require">{{ __('ohc_management.medicine_name') }}</label>
                                                     <input type="text" name ="medicine" id="medicine"
                                                         class="form-control" placeholder=" Enter the medicine Name"
                                                         value="{{ $medicine->medicine }}">
@@ -50,7 +51,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Pack</label>
+                                                    <label
+                                                        class="form-label require">{{ __('ohc_management.pack') }}</label>
                                                     <input type="text" name="pack" id="pack" class="form-control"
                                                         value="{{ $medicine->pack }}" placeholder="Enter the Pack name">
                                                     @error('pack')
@@ -61,7 +63,8 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Threshold Limit</label>
+                                                    <label
+                                                        class="form-label require">{{ __('ohc_management.threshold_limit') }}</label>
                                                     <input type="text" name="threshold_limit" id="threshold_limit"
                                                         value="{{ $medicine->threshold_limit }}" class="form-control"
                                                         placeholder="Enter the threshold limit">
@@ -74,7 +77,7 @@
 
                                             <div class="col-md-12">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label ">Remarks</label>
+                                                    <label class="form-label ">{{ __('ohc_management.remarks') }}</label>
                                                     <textarea name="remarks" id="remarks" class="form-control" placeholder="Enter the Remarks">{{ $medicine->remarks }}</textarea>
                                                     @error('remarks')
                                                         <div class="text-danger">{{ $message }}</div>

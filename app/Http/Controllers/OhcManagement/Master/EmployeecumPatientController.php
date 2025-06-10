@@ -157,17 +157,17 @@ class EmployeecumPatientController extends Controller
                 $this->employeecumpatient->store();
 
 
-                Session::flash('success', 'Your data has been created successfully!');
+                Session::flash('success', __('common.created_msg'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error',  __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         }
     }
@@ -241,11 +241,11 @@ class EmployeecumPatientController extends Controller
             // $company = $this->company->find($id);
             // $this->user->companyUpdate($company->login_id);
 
-            Session::flash('success', 'Your data has been updated successfully!');
+            Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         }
     }
@@ -378,7 +378,7 @@ class EmployeecumPatientController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         }
     }
@@ -435,7 +435,7 @@ class EmployeecumPatientController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/employee-cum-patient/list'));
         }
     }

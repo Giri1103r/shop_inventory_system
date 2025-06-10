@@ -294,26 +294,24 @@ class Medicine extends Model
         $search = '';
         $query = $this->select('ohc_master_medicine.*');
 
-        if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '') {
-            $search = $request->search['value'];
+        // if (!empty($request->search) && isset($request->search['value']) && $request->search['value'] !== '') {
+        //     $search = $request->search['value'];
 
-            $query->where(function ($query) use ($search) {
-                $query
-                    ->orWhere('medicine', 'LIKE', '%' . $search . '%')
-                    ->orWhere('expiry_date', 'LIKE', '%' . $search . '%')
-                    ->orWhere('hsn', 'LIKE', '%' . $search . '%')
-                    ->orWhere('threshold_limit', 'LIKE', '%' . $search . '%')
-                    ->orWhere('pack', 'LIKE', '%' . $search . '%');
-            });
-        }
+        //     $query->where(function ($query) use ($search) {
+        //         $query
+        //             ->orWhere('medicine', 'LIKE', '%' . $search . '%')
+        //             ->orWhere('expiry_date', 'LIKE', '%' . $search . '%')
+        //             ->orWhere('hsn', 'LIKE', '%' . $search . '%')
+        //             ->orWhere('threshold_limit', 'LIKE', '%' . $search . '%')
+        //             ->orWhere('pack', 'LIKE', '%' . $search . '%');
+        //     });
+        // }
 
         if ($request->has('medicine') && $request->medicine) {
             $query->where('medicine', 'LIKE', '%' . $request->medicine . '%');
         }
 
-        if ($request->has('expire_date') && $request->expire_date) {
-            $query->where('ohc_master_medicine.expiry_date', 'LIKE', '%' . DBdateformat($request->expire_date) . '%');
-        }
+
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');

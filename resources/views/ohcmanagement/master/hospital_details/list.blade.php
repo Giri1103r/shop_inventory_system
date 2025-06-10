@@ -30,14 +30,14 @@
                                     <div class="row">
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="hospital_name" class="form-label ">Hospital Name</label>
+                                            <label for="hospital_name" class="form-label ">{{__('ohc_management.hospital_name')}}</label>
                                             <input name="hospital_name" id="hospital_name" class="form-control form-control-sm"
                                               >
                                         </div>
 
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="from_date" class="form-label ">From Date</label>
+                                            <label for="from_date" class="form-label ">{{__('common.from_date')}}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -48,7 +48,7 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="to_date" class="form-label ">To Date</label>
+                                            <label for="to_date" class="form-label ">{{__('common.to_date')}}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -89,10 +89,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Hospital Name</th>
-                                        <th>Mobile Number</th>
-                                        <th>Telephone Number</th>
-                                        <th>Address</th>
+                                        <th>{{__('ohc_management.hospital_name')}}</th>
+                                        <th>{{__('ohc_management.mobile_no')}}</th>
+                                        <th>{{__('ohc_management.tel_no')}}</th>
+                                        <th>{{__('ohc_management.address')}}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Vendor Add')
+@section('title', 'Vendor')
 @section('pageurl', admin_url('ohc/vendor/list'))
 
 
@@ -36,7 +36,7 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Vendor Name</label>
+                                                    <label class="form-label require">{{ __('ohc_management.vendor_name') }}</label>
                                                     <input type="text" name ="vendor_name" id="vendor_name"
                                                         class="form-control" placeholder="Enter the Vendor name">
                                                         @error('vendor_name')
@@ -46,7 +46,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">License Number</label>
+                                                    <label class="form-label require">{{ __('ohc_management.license_number') }}</label>
                                                     <input type="text" name="license_no" id="license_no"
                                                         class="form-control" placeholder="Enter the license number">
                                                         @error('license_no')
@@ -58,7 +58,7 @@
 
                                             <div class="col-md-12">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Address</label>
+                                                    <label class="form-label require">{{ __('ohc_management.address') }}</label>
                                                     <textarea name="address" id="address" class="form-control" placeholder="Enter the Address"></textarea>
                                                     @error('address')
                                                     <div class="text-danger">{{ $message }}</div>
@@ -81,7 +81,7 @@
                 </div>
             </div>
         </div>
-        </form>
+      
     </div>
 
 @stop

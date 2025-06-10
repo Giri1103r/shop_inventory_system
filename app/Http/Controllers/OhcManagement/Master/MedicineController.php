@@ -226,17 +226,17 @@ class MedicineController extends Controller
                 }
 
 
-                Session::flash('success', 'Your data has been created successfully!');
+                Session::flash('success',  __('common.created_msg'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error',  __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/medicine/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/medicine/list'));
         }
     }
@@ -426,11 +426,11 @@ class MedicineController extends Controller
             $this->medicine->updates($id);
 
 
-            Session::flash('success', 'Your data has been updated successfully!');
+            Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/medicine/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/medicine/list'));
         }
     }
@@ -530,12 +530,12 @@ class MedicineController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Medicine Name',
-                'Pack',
-                'Threshold Limt',
-                'Reamrks',
-                'From Status',
-                'To Status',
+                __("ohc_management.medicine_name"),
+                __("ohc_management.pack"),
+                __("ohc_management.threshold_limit"),
+                __("ohc_management.remarks"),
+                __("common.from_status"),
+                __("common.to_status"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -581,7 +581,7 @@ class MedicineController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/medicine/list'));
         }
     }
@@ -599,12 +599,12 @@ class MedicineController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Medicine Name',
-                'Pack',
-                'Threshold Limt',
-                'Reamrks',
-                'From Status',
-                'To Status',
+                __("ohc_management.medicine_name"),
+                __("ohc_management.pack"),
+                __("ohc_management.threshold_limit"),
+                __("ohc_management.remarks"),
+                __("common.from_status"),
+                __("common.to_status"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -639,8 +639,8 @@ class MedicineController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            dd($ex);
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/medicine/list'));
         }
     }

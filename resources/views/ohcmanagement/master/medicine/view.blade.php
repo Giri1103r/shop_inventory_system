@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Show')
+@section('title', 'Medicine')
 @section('pageurl', admin_url('ohc/medicine/list'))
 
 @section('content')
@@ -29,51 +29,36 @@
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Medicine</h4>
+                                        <h4 class="text-white">{{ __('ohc_management.medicine_details') }}</h4>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Medicine Name') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.medicine_name') }}</label>
                                         <div class="view_data">
                                             {{ isset($medicine->medicine) ? $medicine->medicine : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Pack') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($medicine->pack) ? $medicine->pack : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('HSN Number') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($medicine->hsn) ? $medicine->hsn : '' }}
-                                        </div>
-                                    </div>
-                                    {{-- <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Unit') }}</label>
-                                        <div class="view_data">
-                                            {{ getUnitname(isset($medicine->unit_id) ? $medicine->unit_id : '') }}
-                                        </div>
-                                    </div> --}}
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Threshold Limit') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.threshold_limit') }}</label>
                                         <div class="view_data">
                                             {{ isset($medicine->threshold_limit) ? $medicine->threshold_limit : '' }}
                                         </div>
                                     </div>
+
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Expire Date') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.pack') }}</label>
                                         <div class="view_data">
-                                            {{ displayDateformat(isset($medicine->expiry_date) ? $medicine->expiry_date : '') }}
+                                            {{ isset($medicine->pack) ? $medicine->pack : '' }}
                                         </div>
                                     </div>
 
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Created By') }}</label>
+                                        <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
                                             {{ getUsername(isset($medicine->created_by) ? $medicine->created_by : '') }}
                                         </div>
@@ -128,27 +113,33 @@
 
                                             <tbody>
                                                 @foreach ($logdata as $log)
-                                                <tr>
-                                                    <td>
-                                                        @if($log['from_status'] == STATUS_OHC_MEDICINE_REQUEST)
-                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Medicine Request</span>
+                                                    <tr>
+                                                        <td>
+                                                            @if ($log['from_status'] == STATUS_OHC_MEDICINE_REQUEST)
+                                                                <span class='badge bg-info'
+                                                                    style='font-size: 1.0em;'>Medicine Request</span>
                                                             @elseif($log['from_status'] == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
-                                                            <span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Apporval Pending</span>
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>EHS
+                                                                    Head Apporval Pending</span>
                                                             @endif
-                                                    </td>
+                                                        </td>
 
-                                                    <td>
-                                                        @if($log['to_status'] == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
-                                                            <span class='badge bg-info' style='font-size: 1.0em;'>EHS Head Apporval Pending</span>
-                                                        @elseif($log['to_status'] == STATUS_OHC_EHS_HEAD_APPROVED)
-                                                            <span class='badge bg-success' style='font-size: 1.0em;'>EHS Head Approved</span>
-                                                        @endif
-                                                    </td>
+                                                        <td>
+                                                            @if ($log['to_status'] == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING)
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>EHS
+                                                                    Head Apporval Pending</span>
+                                                            @elseif($log['to_status'] == STATUS_OHC_EHS_HEAD_APPROVED)
+                                                                <span class='badge bg-success' style='font-size: 1.0em;'>EHS
+                                                                    Head Approved</span>
+                                                            @endif
+                                                        </td>
 
-                                                    <td>{{ isset($log['remarks']) ? $log['remarks'] : '-' }}</td>
-                                                    <td>{{ isset($log['created_by']) ? getUsername($log['created_by']) : '-' }}</td>
-                                                    <td>{{ isset($log['created_at']) ? Displaydateformat($log['created_at']) : '-' }}</td>
-                                                </tr>
+                                                        <td>{{ isset($log['remarks']) ? $log['remarks'] : '-' }}</td>
+                                                        <td>{{ isset($log['created_by']) ? getUsername($log['created_by']) : '-' }}
+                                                        </td>
+                                                        <td>{{ isset($log['created_at']) ? Displaydateformat($log['created_at']) : '-' }}
+                                                        </td>
+                                                    </tr>
                                                 @endforeach
                                             </tbody>
                                         </table>
