@@ -49,60 +49,60 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Daily Departmental First Aid Box</h4>
+                                        <h4 class="text-white">{{__('ohc_management.daily_departmental_first_aid_box')}}</h4>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Document Number</label>
+                                        <label class="form-label view_label">{{ __('inspection.doc_no') }}</label>
                                         <div class="view_data">
                                             {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Issue Date</label>
+                                        <label class="form-label view_label">{{ __('inspection.issue_date') }}</label>
                                         <div class="view_data">
                                             {{ displayDateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Review Date</label>
+                                        <label class="form-label view_label">{{ __('inspection.rev_date') }}</label>
                                         <div class="view_data">
                                             {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label"> Date</label>
+                                        <label class="form-label view_label">{{__('common.date')}}</label>
                                         <div class="view_data">
                                             {{ displayDateformat(isset($medicinerequisition->date) ? $medicinerequisition->date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Unit</label>
+                                        <label class="form-label view_label">{{__('common.unit')}}</label>
                                         <div class="view_data">
                                             {{ getUnitname(isset($medicinerequisition->unit) ? $medicinerequisition->unit : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Department</label>
+                                        <label class="form-label view_label">{{__('common.department')}}</label>
                                         <div class="view_data">
                                             {{ getDepartment(isset($medicinerequisition->department) ? $medicinerequisition->department : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Shift</label>
+                                        <label class="form-label view_label">{{__('inspection.shifts')}}</label>
                                         <div class="view_data">
                                             {{ getShift(isset($medicinerequisition->shift) ? $medicinerequisition->shift : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">First Aid Box No</label>
+                                        <label class="form-label view_label">{{__('ohc_management.first_aid_box_no')}}</label>
                                         <div class="view_data">
                                             {{ isset($medicinerequisition->first_aid_box_no) ? $medicinerequisition->first_aid_box_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">First Aider</label>
+                                        <label class="form-label view_label">{{__('ohc_management.first_aider_name')}}</label>
                                         <div class="view_data">
                                             {{ getFirstAider(isset($medicinerequisition->first_aider) ? $medicinerequisition->first_aider : '') }}
                                         </div>
@@ -155,11 +155,11 @@
                                     <div class="col-md-12">
                                         <table class="table table-bordered table-striped">
                                             <thead class="table-secondary">
-                                                <th style="text-align: center">Sr. No.</th>
-                                                <th style="text-align: center">Medicine Name</th>
-                                                <th style="text-align: center">Available Quantity</th>
-                                                <th style="text-align: center">Expiry Date</th>
-                                                <th style="text-align: center">Remark</th>
+                                                <th style="text-align: center">{{__('common.sno')}}</th>
+                                                <th style="text-align: center">{{__('ohc_management.medicine_name')}}</th>
+                                                <th style="text-align: center">{{__('ohc_management.availble_quantity')}}</th>
+                                                <th style="text-align: center">{{__('ohc_management.expiry_date')}}</th>
+                                                <th style="text-align: center">{{__('ohc_management.remarks')}}</th>
                                             </thead>
                                             <tbody>
                                                 @foreach ($inspection_data as $medicines)
@@ -182,7 +182,7 @@
                                         $medicinerequisition->approve_status == MEDICAL_ASSISTANT_REJECTED)
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">Floor Manager /Medical Assistant Approval </h4>
+                                            <h4 class="text-white">{{__('ohc_management.floor_manager_or_medical_assistant_approval')}}</h4>
                                         </div>
                                     </div>
                                     <div class="row">

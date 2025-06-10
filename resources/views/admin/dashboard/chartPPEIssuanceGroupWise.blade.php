@@ -7,6 +7,8 @@
 
     <script>
         var seriesData = {!! json_encode($chartData['series']) !!};
+        var unitIds = {!! json_encode($chartData['ids']) !!}; // Pass IDs here
+
         var dynamicColors = [
             '#3B5998', '#26A69A', '#FFC300', '#6C3483', '#E74C3C', '#3498DB',
             '#1ABC9C', '#9B59B6', '#F39C12', '#2ECC71', '#E67E22', '#34495E'
@@ -15,16 +17,24 @@
         // Ensure colors match the number of bars
         var barCount = seriesData.length;
         var colors = dynamicColors.slice(0, barCount);
+
         var options = {
             series: [{
                 name: 'PPE Issuance (in Count)',
-                data: {!! json_encode($chartData['series']) !!}
+                data: seriesData
             }],
             chart: {
                 type: 'bar',
                 height: 350,
                 toolbar: {
                     show: false
+                },
+                events: {
+                    dataPointSelection: function(event, chartContext, config) {
+                    
+                        var unitId = unitIds[config.dataPointIndex];
+                        redirectToIssuance(unitId);
+                    }
                 },
                 stacked: false,
                 zoom: {
@@ -78,6 +88,7 @@
                 opacity: 1
             }
         };
+
 
 
         var chartPPEIssuanceGroupWise = new ApexCharts(document.querySelector("#chartPPEIssuanceGroupWise"), options);

@@ -184,6 +184,8 @@ class MedicalRequisitionSlipController extends Controller
             return view('inspection.inspection_ohc.medical_requisition_slip.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }
     }
 
@@ -217,7 +219,7 @@ class MedicalRequisitionSlipController extends Controller
             try {
                 // Store user medicine requisition
                 $medicine_requisition_floor_details = $this->medicine_requisition_floor_details->store();
-                $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->store($medicine_requisition_floor_details);
+
                 // signature
                 $id = ($medicine_requisition_floor_details->id);
                 // $signature = $this->signature->requestorsignatureUpload(OHC_TYPE_MEDICINE_REQUISTION_FLOOR, $id);
@@ -294,9 +296,11 @@ class MedicalRequisitionSlipController extends Controller
             if (Auth::check()) {
 
                 $medicinerequisition = $this->medicine_requisition_floor_details->Selectone($id);
-                $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->Selectone($id);
+
                 $type = OHC_TYPE_MEDICINE_REQUISTION_FLOOR;
                 $statuslog = $this->inspection_ohc_status_log->getStatuslog($id, $type);
+
+                $inspection_data = json_decode($medicinerequisition->checklist, true);
 
                 $floortype = FLOOR_MANAGER_APPROVAL_PENDING;
                 $safetytype = SAFETY_OFFICER_APPROVAL_PENDING;
@@ -331,7 +335,7 @@ class MedicalRequisitionSlipController extends Controller
                 $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFloor');
                 $data = array(
                     'medicinerequisition' => $medicinerequisition,
-                    'medicine_requisition_floor_checklist' => $medicine_requisition_floor_checklist,
+
                     'statuslog' => $statuslog,
                     'safetyofficer' => $safetyofficer,
                     'floormanger' => $floormanger,
@@ -341,6 +345,7 @@ class MedicalRequisitionSlipController extends Controller
                     'safetyofficersignature' => $safetyofficersignature,
                     'floormanagersignature' => $floormanagersignature,
                     'document_no' => $document_no,
+                    'inspection_data' => $inspection_data,
 
                 );
             }
@@ -358,9 +363,11 @@ class MedicalRequisitionSlipController extends Controller
             $id = decryptId($request->id);
             if (Auth::check()) {
                 $medicinerequisition = $this->medicine_requisition_floor_details->Selectone($id);
-                $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->Selectone($id);
+
                 $type = OHC_TYPE_MEDICINE_REQUISTION_FLOOR;
                 $statuslog = $this->inspection_ohc_status_log->getStatuslog($id, $type);
+
+                $inspection_data = json_decode($medicinerequisition->checklist, true);
 
                 $floortype = FLOOR_MANAGER_APPROVAL_PENDING;
                 $safetytype = SAFETY_OFFICER_APPROVAL_PENDING;
@@ -395,7 +402,7 @@ class MedicalRequisitionSlipController extends Controller
                 $document_no = $this->document_reference->selectUsingName('MedicalRequisitionSlipFloor');
                 $data = array(
                     'medicinerequisition' => $medicinerequisition,
-                    'medicine_requisition_floor_checklist' => $medicine_requisition_floor_checklist,
+
                     'statuslog' => $statuslog,
                     'safetyofficer' => $safetyofficer,
                     'floormanger' => $floormanger,
@@ -405,6 +412,7 @@ class MedicalRequisitionSlipController extends Controller
                     'safetyofficersignature' => $safetyofficersignature,
                     'floormanagersignature' => $floormanagersignature,
                     'document_no' => $document_no,
+                    'inspection_data' => $inspection_data,
 
 
                 );
@@ -767,6 +775,8 @@ class MedicalRequisitionSlipController extends Controller
                 $medicine_requisition_floor_checklist = $this->medicine_requisition_floor_checklist->Selectone($details->id);
                 $document_no = $this->document_reference->selectOne($details->document_reference_id);
 
+                $inspection_data = json_decode($medicinerequisition->checklist, true);
+
                 $CreatorSignature = GetOHCSignature($medicinerequisition->created_by, $details->id, OHC_TYPE_MEDICINE_REQUISTION_FLOOR);
                 $safetyofficerSignature = GetOHCSignature($medicinerequisition->approved_by, $details->id, OHC_TYPE_MEDICINE_REQUISTION_FLOOR);
                 $floorManagerSignature = GetOHCSignature($medicinerequisition->verified_by, $details->id, OHC_TYPE_MEDICINE_REQUISTION_FLOOR);
@@ -854,14 +864,14 @@ class MedicalRequisitionSlipController extends Controller
                 ]);
 
                 $inspectionRow = $headerRow + 1;
-                foreach ($medicine_requisition_floor_checklist as $index => $detail) {
+                foreach ($inspection_data as $index => $detail) {
                     $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $index + 1);
-                    $medicineName = getMedicinename($detail->medicine_id) ?? '';
-                    $material_expiry = Displaydateformat($detail->material_expiry) ?? '';
+                    $medicineName = getMedicinename($detail['medicine_id'] ?? '') ?? '';
+
                     $sheet->mergeCells("D$inspectionRow:H$inspectionRow")->setCellValue("D$inspectionRow", $medicineName);
-                    $sheet->mergeCells("I$inspectionRow:K$inspectionRow")->setCellValue("I$inspectionRow", $detail->freeze_quantity ?? '');
-                    $sheet->mergeCells("L$inspectionRow:N$inspectionRow")->setCellValue("L$inspectionRow", $detail->quantity ?? '');
-                    $sheet->mergeCells("O$inspectionRow:S$inspectionRow")->setCellValue("O$inspectionRow", $detail->remarks ?? '');
+                    $sheet->mergeCells("I$inspectionRow:K$inspectionRow")->setCellValue("I$inspectionRow", $detail['freeze_quantity'] ?? '');
+                    $sheet->mergeCells("L$inspectionRow:N$inspectionRow")->setCellValue("L$inspectionRow", $detail['quantity'] ?? '');
+                    $sheet->mergeCells("O$inspectionRow:S$inspectionRow")->setCellValue("O$inspectionRow", $detail['remarks'] ?? '');
 
                     $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -1007,7 +1017,7 @@ class MedicalRequisitionSlipController extends Controller
             $CreatorSignature = GetOHCSignature($medicinerequisition->created_by, $id, OHC_TYPE_MEDICINE_REQUISTION_FLOOR);
             $safetyofficerSignature = GetOHCSignature($medicinerequisition->approved_by, $id, OHC_TYPE_MEDICINE_REQUISTION_FLOOR);
             $floorManagerSignature = GetOHCSignature($medicinerequisition->verified_by, $id, OHC_TYPE_MEDICINE_REQUISTION_FLOOR);
-
+            $inspection_data = json_decode($medicinerequisition->checklist, true);
 
             $currentRow = $row;
 
@@ -1097,14 +1107,14 @@ class MedicalRequisitionSlipController extends Controller
             ]);
 
             $inspectionRow = $headerRow + 1;
-            foreach ($medicine_requisition_floor_checklist as $index => $detail) {
+            foreach ($inspection_data as $index => $detail) {
                 $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $index + 1);
-                $medicineName = getMedicinename($detail->medicine_id) ?? '';
-                $material_expiry = Displaydateformat($detail->material_expiry) ?? '';
+                $medicineName = getMedicinename($detail['medicine_id'] ?? '') ?? '';
+
                 $sheet->mergeCells("D$inspectionRow:H$inspectionRow")->setCellValue("D$inspectionRow", $medicineName);
-                $sheet->mergeCells("I$inspectionRow:K$inspectionRow")->setCellValue("I$inspectionRow", $detail->freeze_quantity ?? '');
-                $sheet->mergeCells("L$inspectionRow:N$inspectionRow")->setCellValue("L$inspectionRow", $detail->quantity ?? '');
-                $sheet->mergeCells("O$inspectionRow:S$inspectionRow")->setCellValue("O$inspectionRow", $detail->remarks ?? '');
+                $sheet->mergeCells("I$inspectionRow:K$inspectionRow")->setCellValue("I$inspectionRow", $detail['freeze_quantity'] ?? '');
+                $sheet->mergeCells("L$inspectionRow:N$inspectionRow")->setCellValue("L$inspectionRow", $detail['quantity'] ?? '');
+                $sheet->mergeCells("O$inspectionRow:S$inspectionRow")->setCellValue("O$inspectionRow", $detail['remarks'] ?? '');
 
                 $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -1173,8 +1183,8 @@ class MedicalRequisitionSlipController extends Controller
             ]);
         } catch (\Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong!');
-            return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/medical-requisition-slip/list'));
         }
     }
 }

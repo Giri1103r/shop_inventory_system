@@ -32,10 +32,9 @@
             },
             events: {
                 dataPointSelection: function(event, chartContext, config) {
-                    var departmentIndex = config.seriesIndex;
-                    var department_id = departmentsID[departmentIndex];
-                    redirectToTraininglist('', '', department_id)
-                },
+                    var departmentsID = departmentIds[config.dataPointIndex];
+                    redirectTotrainigschedule(departmentsID);
+                }
             },
         },
         responsive: [{

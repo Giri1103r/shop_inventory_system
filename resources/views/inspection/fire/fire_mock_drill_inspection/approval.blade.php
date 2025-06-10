@@ -87,6 +87,7 @@
                                             </div>
                                         @endif --}}
                                         <hr>
+                                        
                                         @foreach ($inspection_details as $details)
                                             <div class="form-wrapper">
                                                 <div class="row mt-4 form-set">

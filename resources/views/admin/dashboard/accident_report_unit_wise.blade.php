@@ -32,7 +32,7 @@
                     if (selected) {
                         var unitId = selected.unit_id;
                         var injuryType = selected.injury_type;
-                        redirectToIms('',unitId, '',injuryType);
+                        redirectToIms('',unitId, '',injuryType,'','','');
                     }
                 }
             }

@@ -64,40 +64,40 @@ class LeadingLaggingDashboardController extends Controller
         $training_schedule          = gettotalCount('training_schedule');
         $training_men_hours = gettotalCount('training_men_hours');
 
-        $leading_array = [
-            [
-                'name'  => 'Gemba Walk Count',
-                'value' => $gemba_walk_count,
-            ],
-            [
-                'name'  => 'Internal Audit Count',
-                'value' => $internal_audit_count,
-            ],
-            [
-                'name'  => 'Daily 6S Audit',
-                'value' => $daily_6s_audit,
-            ],
-            [
-                'name'  => 'Safety Work Permit',
-                'value' => $safety_work_permit,
-            ],
-            [
-                'name'  => 'Fire Mock Drill',
-                'value' => $fire_mock_drill,
-            ],
-            [
-                'name'  => 'Safety Walk',
-                'value' => $safety_walk,
-            ],
-            [
-                'name'  => 'Training Schedule',
-                'value' => $training_schedule,
-            ],
-            [
-                'name'  => 'Training Men Hours',
-                'value' => $training_men_hours,
-            ],
-        ];
+        // $leading_array = [
+        //     [
+        //         'name'  => 'Gemba Walk Count',
+        //         'value' => $gemba_walk_count,
+        //     ],
+        //     [
+        //         'name'  => 'Internal Audit Count',
+        //         'value' => $internal_audit_count,
+        //     ],
+        //     [
+        //         'name'  => 'Daily 6S Audit',
+        //         'value' => $daily_6s_audit,
+        //     ],
+        //     [
+        //         'name'  => 'Safety Work Permit',
+        //         'value' => $safety_work_permit,
+        //     ],
+        //     [
+        //         'name'  => 'Fire Mock Drill',
+        //         'value' => $fire_mock_drill,
+        //     ],
+        //     [
+        //         'name'  => 'Safety Walk',
+        //         'value' => $safety_walk,
+        //     ],
+        //     [
+        //         'name'  => 'Training Schedule',
+        //         'value' => $training_schedule,
+        //     ],
+        //     [
+        //         'name'  => 'Training Men Hours',
+        //         'value' => $training_men_hours,
+        //     ],
+        // ];
 
         if ($leadings) {
             foreach ($leadings as $leading) {
@@ -116,28 +116,28 @@ class LeadingLaggingDashboardController extends Controller
             }
         }
 
-        $lagging_array = [
-            [
-                'name'  => 'First Aid',
-                'value' => getFirstAidCount($company, $location_id, $unit_id, $department_id, $year, $month),
-            ],
-            [
-                'name'  => 'Road Side First Aid',
-                'value' => GetRoadSideFirstAid($company, $location_id, $unit_id, $department_id, $year, $month),
-            ],
-            [
-                'name'  => 'Prescribe to Patient',
-                'value' => GetPrescribeToPatient($company, $location_id, $unit_id, $department_id, $year, $month),
-            ],
-            [
-                'name'  => 'No of Fire Incidence',
-                'value' => GetImsInitialIncidentReport(FIRE_INCIDENT_REPORT, $company, $location_id, $unit_id, $department_id, $year, $month),
-            ],
-            [
-                'name'  => 'Nos Of Near Miss Incidence',
-                'value' => GetImsInitialIncidentReport(NEAR_MISS_INCIDENT_REPORT, $company, $location_id, $unit_id, $department_id, $year, $month),
-            ],
-        ];
+        // $lagging_array = [
+        //     [
+        //         'name'  => 'First Aid',
+        //         'value' => getFirstAidCount($company, $location_id, $unit_id, $department_id, $year, $month),
+        //     ],
+        //     [
+        //         'name'  => 'Road Side First Aid',
+        //         'value' => GetRoadSideFirstAid($company, $location_id, $unit_id, $department_id, $year, $month),
+        //     ],
+        //     [
+        //         'name'  => 'Prescribe to Patient',
+        //         'value' => GetPrescribeToPatient($company, $location_id, $unit_id, $department_id, $year, $month),
+        //     ],
+        //     [
+        //         'name'  => 'No of Fire Incidence',
+        //         'value' => GetImsInitialIncidentReport(FIRE_INCIDENT_REPORT, $company, $location_id, $unit_id, $department_id, $year, $month),
+        //     ],
+        //     [
+        //         'name'  => 'Nos Of Near Miss Incidence',
+        //         'value' => GetImsInitialIncidentReport(NEAR_MISS_INCIDENT_REPORT, $company, $location_id, $unit_id, $department_id, $year, $month),
+        //     ],
+        // ];
 
         if (!empty($laggings)) {
             foreach ($laggings as $lagging) {

@@ -176,16 +176,16 @@
                     <table class="table table-bordered scrolldown">
                         <thead>
                             <tr>
-                                <td style="border: 1px solid black;width:70;">Doc.No</td>
+                                <td style="border: 1px solid black;width:70;">{{ __('inspection.doc_no') }}</td>
                                 <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
                             </tr>
                             <tr>
-                                <td style="border: 1px solid black;width:70;">Issue Dt.</td>
+                                <td style="border: 1px solid black;width:70;">{{ __('inspection.issue_date') }}</td>
                                 <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}
                                 </td>
                             </tr>
                             <tr>
-                                <td style="border: 1px solid black;width:70;">Rev.& Dt.</td>
+                                <td style="border: 1px solid black;width:70;">{{ __('inspection.rev_date') }}</td>
                                 <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
                             </tr>
                         </thead>
@@ -224,28 +224,30 @@
 
             </tr>
             @php
-                $medicineRequisitionDetails = GetOHCMedicineFloor($details->id);
+                $inspection_data = json_decode($details->checklist, true);
             @endphp
 
-            @foreach ($medicineRequisitionDetails as $medicineRequisitionDetails)
+
+            @foreach ($inspection_data as $medicines)
                 <tr>
+                    <td colspan="2"
+                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                        {{ $loop->iteration }}
+                    </td>
+                    <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ getMedicinename($medicines['medicine_id']) }}
+                    </td>
+                    <td colspan="2" style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $medicines['freeze_quantity'] }}
+                    </td>
 
-                    <td colspan="2"
-                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ $loop->iteration }}</td>
-                    <td colspan="6"
-                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ getMedicinename($medicineRequisitionDetails->medicine_id) }}</td>
-                    <td colspan="2"
-                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ $medicineRequisitionDetails->freeze_quantity }}</td>
-                    <td colspan="2"
-                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ $medicineRequisitionDetails->quantity }}</td>
-                    <td colspan="6"
-                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ $medicineRequisitionDetails->remarks }}</td>
+                    <td colspan="2" style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $medicines['quantity'] }}
+                    </td>
 
+                    <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $medicines['remarks'] }}
+                    </td>
                 </tr>
             @endforeach
 

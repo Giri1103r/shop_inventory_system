@@ -83,6 +83,7 @@ class GembaWalkController extends Controller
             if (Auth::check()) {
                 if ($request->ajax()) {
                     try {
+
                         $data =  $this->gembaWalk->list();
                         $datatables = Datatables::of($data['data'])
                             ->addIndexColumn()
@@ -147,11 +148,13 @@ class GembaWalkController extends Controller
                 }
             }
             $shift = $this->shift->getShiftname();
+            $unit = $this->unit->getunit();
             $data = array(
                 'shift' => $shift,
+                'unit'=>$unit,
+                'dashboard_search' => $request->unit_name,
 
             );
-
             return view('inspection.gembaWalk.list', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -245,10 +248,10 @@ class GembaWalkController extends Controller
             $ResponsibleId = $this->gembaWalkCheckList->selectone($gembaWalk_id);
 
             $capa_needed = decryptId($request->is_passed);
-           $status_closed = $request->gemba_walk[0]['current_status'];
+            $status_closed = $request->gemba_walk[0]['current_status'];
 
 
-            if ($capa_needed == 2  ||  $status_closed == 2  ) {
+            if ($capa_needed == 2  ||  $status_closed == 2) {
                 $gembaWalk_status = GEMBA_WALK_INSPECTION_CLOSED;
                 $gembaWalk_status_details = $this->gembaWalk->updateStatus($gembaWalk_id, $gembaWalk_status);
                 $to_status = GEMBA_WALK_INSPECTION_CLOSED;
@@ -563,7 +566,7 @@ class GembaWalkController extends Controller
                 $gembaWalk_approved_singnature = GetSignature($getUserId->created_by, $id, $type);
                 $ehsId = $this->gembaWalkInspectionEhsAprroval->select('id')->where('type', 3)->where('gemba_walk_id', $gembaWalk_id)->where('status', 1)->first();
                 $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
-                   $closingEvidence = $this->gembaWalkChecklistFile->getClosingEvidence($gembaWalk_id);
+                $closingEvidence = $this->gembaWalkChecklistFile->getClosingEvidence($gembaWalk_id);
 
                 $data = array(
                     'gembaWalk_details' => $gembaWalk_details,
@@ -783,7 +786,7 @@ class GembaWalkController extends Controller
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
                 $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->getEHSOfficerReview($id);
                 $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
-                 $closingEvidence = $this->gembaWalkChecklistFile->getClosingEvidence($id);
+                $closingEvidence = $this->gembaWalkChecklistFile->getClosingEvidence($id);
 
 
                 $data = [
@@ -1169,8 +1172,6 @@ class GembaWalkController extends Controller
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
-
-
 
 
             $data = array(

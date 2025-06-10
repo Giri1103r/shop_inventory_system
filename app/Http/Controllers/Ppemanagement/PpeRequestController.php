@@ -211,10 +211,12 @@ class PpeRequestController extends Controller
             'ppetype' => $ppetype,
             'unit' => $unit,
             'company' => $company,
+              'dashboard_search' => $request,
             'ppename' => $ppename,
             'loggedInCompanyId' => $loggedInCompanyId,
             'approvestatus' => $approvestatus,
         ];
+        // dd(  $data);
 
         return view('ppemanagement.pperequest.list', $data);
     }

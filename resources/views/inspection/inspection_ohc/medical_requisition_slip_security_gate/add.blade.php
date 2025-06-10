@@ -80,7 +80,7 @@
                                                 value="{{ encryptId($document_no->id) }}">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
+                                                    <label class="form-label require">{{__('common.unit')}}</label>
                                                     <select name="unit_id" id="unit_id" class="form-control single-select"
                                                         style="width: 100%">
                                                         <option value="">Select the unit</option>
@@ -93,7 +93,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Department</label>
+                                                    <label class="form-label require">{{__('common.department')}}</label>
                                                     <select name="department_id" id="department_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Department </option>
@@ -106,7 +106,7 @@
 
                                         <div class="row mt-2">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">Medicine details</h4>
+                                                <h4 class="text-white">{{__('ohc_management.medicine_details')}}</h4>
 
                                             </div>
                                             <div
@@ -127,11 +127,11 @@
 
                                                     <thead class="bg-secondary" style="color: #ffff">
                                                         <tr>
-                                                            <th>Medicine</th>
+                                                            <th>{{__('ohc_management.medicine_name')}}</th>
                                                             {{-- <th>Available Quantity</th> --}}
-                                                            <th>Quantity</th>
-                                                            <th>Remarks</th>
-                                                            <th>Action</th>
+                                                            <th>{{__('ohc_management.quantity')}}</th>
+                                                            <th>{{__('ohc_management.remarks')}}</th>
+                                                            <th>{{__('common.action')}}</th>
                                                         </tr>
                                                     </thead>
 
@@ -139,8 +139,7 @@
                                                         <tr>
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                    <label for="medicine_id" class="require">Medicine
-                                                                        Name</label>
+                                                                    <label for="medicine_id" class="require">{{__('ohc_management.medicine_name')}}</label>
                                                                     <select name="medicine_id[0]" id="medicine_id"
                                                                         class="form-control single-select"
                                                                         style="width: 100%">
@@ -169,8 +168,8 @@
 
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                    <label for="quantity" class="require">Quantity</label>
-                                                                    <input type="text" name="quantity[0]"
+                                                                    <label for="quantity" class="require">{{__('ohc_management.quantity')}}</label>
+                                                                    <input type="number" name="quantity[0]" min="1"
                                                                         id="quantity" placeholder="Enter the quantity"
                                                                         class="form-control">
                                                                     <span id="quantity-error" style=" display:none;"
@@ -180,7 +179,7 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                    <label for="remarks"class="">Remarks</label>
+                                                                    <label for="remarks"class="">{{__('ohc_management.remarks')}}</label>
                                                                     <textarea name="remarks[0]" id="remarks" cols="10" rows="2" class="form-control"></textarea>
                                                                 </div>
                                                             </td>
@@ -323,7 +322,7 @@
                                 <td>
                                     <div class="form-group form-input">
                                         <label for="quantity" class="require">Quantity</label>
-                                        <input type="text" name="quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
+                                        <input type="number" min="1" name="quantity[${medicine_requisition_row_count}]"   placeholder="Enter the quantity" class="form-control">
                                         <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 
 
@@ -368,11 +367,11 @@
                     });
 
                     $('textarea[name="remarks[' + medicine_requisition_row_count + ']"]').rules('add', {
-                        required: true,
+
                         minlength: 3,
                         maxlength: 600,
                         messages: {
-                            required: 'Remarks are required',
+
                             minlength: 'Minimum 3 characters are required',
                             maxlength: 'Remarks should not exceed 600 characters',
                         }
@@ -529,7 +528,7 @@
                             digits: true,
                         },
                         'remarks[0]': {
-                            required: true,
+
                             minlength: 3,
                             maxlength: 600,
                         },
@@ -565,7 +564,7 @@
                             digits: 'Quantity should be numeric',
                         },
                         'remarks[0]': {
-                            required: 'Remarks is required',
+
                             minlength: 'Minimum 3 character is required',
                             maxlength: 'Remarks should not exceed more than the 600 characters',
 

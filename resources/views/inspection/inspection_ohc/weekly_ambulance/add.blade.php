@@ -112,7 +112,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
+                                                    <label class="form-label require">{{__('common.unit')}}</label>
                                                     <select name="unit_id" id="unit_id" style="width: 100%"
                                                         class="form-control single-select">
                                                         <option value="">Select the option</option>
@@ -123,7 +123,7 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Next Due On</label>
+                                                    <label for="rate" class="form-label require ">{{__('inspection.next_due')}}</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="next_due_on" id="next_due_on"
                                                             class="form-control"autocomplete="off">
@@ -135,8 +135,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Date of
-                                                        inspection</label>
+                                                    <label for="rate" class="form-label require ">{{__('inspection.date_of_inspection')}}</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="date_of_inspection"
                                                             id="date_of_inspection"

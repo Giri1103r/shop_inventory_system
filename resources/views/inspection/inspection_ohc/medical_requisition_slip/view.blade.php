@@ -49,42 +49,43 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Medical Requisition Slip- Floor </h4>
+                                        <h4 class="text-white">{{ __('ohc_management.medicine_requisition_slip_floor') }}
+                                        </h4>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Document Number</label>
+                                        <label class="form-label view_label">{{ __('inspection.doc_no') }}</label>
                                         <div class="view_data">
                                             {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Issue Date</label>
+                                        <label class="form-label view_label">{{ __('inspection.issue_date') }}</label>
                                         <div class="view_data">
                                             {{ displayDateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Review Date</label>
+                                        <label class="form-label view_label">{{ __('inspection.rev_date') }}</label>
                                         <div class="view_data">
                                             {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label"> Date</label>
+                                        <label class="form-label view_label">{{ __('common.date') }}</label>
                                         <div class="view_data">
                                             {{ displayDateformat(isset($medicinerequisition->date) ? $medicinerequisition->date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Unit</label>
+                                        <label class="form-label view_label">{{ __('common.unit') }}</label>
                                         <div class="view_data">
                                             {{ getUnitname(isset($medicinerequisition->unit) ? $medicinerequisition->unit : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Department</label>
+                                        <label class="form-label view_label">{{ __('common.department') }}</label>
                                         <div class="view_data">
                                             {{ getDepartment(isset($medicinerequisition->department) ? $medicinerequisition->department : '') }}
                                         </div>
@@ -133,72 +134,66 @@
 
                                 <div class="table-responsive">
                                     <div class="col-md-12">
-                                        <table class="table table-bordered ">
-
-                                            <thead class="bg-secondary" style="color: #ffff">
-                                                <tr>
-                                                    <th>S.No</th>
-                                                    <th>Medicine Name</th>
-                                                    <th>Freeze Quantity</th>
-                                                    <th>Quantity</th>
-                                                    <th>Remarks</th>
-
-                                                </tr>
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="table-secondary">
+                                                <th style="text-align: center">{{ __('common.sno') }}</th>
+                                                <th style="text-align: center">{{ __('ohc_management.medicine_name') }}
+                                                </th>
+                                                <th style="text-align: center">{{ __('ohc_management.freeze_quantity') }}
+                                                </th>
+                                                <th style="text-align: center">{{ __('ohc_management.quantity') }}</th>
+                                                <th style="text-align: center">{{ __('ohc_management.remarks') }}</th>
                                             </thead>
                                             <tbody>
-                                                @if ($medicine_requisition_floor_checklist->isEmpty())
+                                                @foreach ($inspection_data as $medicines)
                                                     <tr>
-                                                        <td colspan="4" class="text-center">No data is available</td>
-                                                    </tr>
-                                                @else
-                                                    @foreach ($medicine_requisition_floor_checklist as $data)
-                                                        <tr>
-                                                            <td>{{ $loop->iteration }}</td>
-                                                            <td>{{ getMedicinename($data->medicine_id) }}</td>
-                                                            <td>{{ $data->freeze_quantity }}</td>
-                                                            <td>{{ $data->quantity }}</td>
-                                                            <td>{{ $data->remarks }}</td>
+                                                        <td class="text-center">{{ $loop->iteration }}</td>
+                                                        <td class="text-center">
+                                                            {{ getMedicinename($medicines['medicine_id']) }}
+                                                        <td class="text-center">
+                                                            {{ $medicines['freeze_quantity'] }}
+                                                        <td class="text-center">{{ $medicines['quantity'] }}
 
-                                                        </tr>
-                                                    @endforeach
-                                                @endif
+                                                        <td class="text-center">{{ $medicines['remarks'] }}
+                                                    </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
 
-                                @if (
-                                    $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING ||
-                                        $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED ||
-                                        $medicinerequisition->approve_status == SAFETY_OFFICER_REJECTED)
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Floor Manager Approval </h4>
-                                        </div>
+                            @if (
+                                $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING ||
+                                    $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED ||
+                                    $medicinerequisition->approve_status == SAFETY_OFFICER_REJECTED)
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">{{ __('ohc_management.floor_manager_approval') }}</h4>
                                     </div>
+                                </div>
+                                <div class="row">
                                     <div class="row">
-                                        <div class="row">
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
-                                                <div class="view_data">
-                                                    {{ getUsername(isset($floormanger->created_by) ? $floormanger->created_by : '') }}
-                                                </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                            <div class="view_data">
+                                                {{ getUsername(isset($floormanger->created_by) ? $floormanger->created_by : '') }}
                                             </div>
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Date') }}</label>
-                                                <div class="view_data">
-                                                    {{ displaydateformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
-                                                </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                            <div class="view_data">
+                                                {{ displaydateformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
                                             </div>
+                                        </div>
 
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Time') }}</label>
-                                                <div class="view_data">
-                                                    {{ displaytimeformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
-                                                </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                            <div class="view_data">
+                                                {{ displaytimeformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
                                             </div>
+                                        </div>
 
-                                            {{-- @if (isset($floormanagersignature))
+                                        {{-- @if (isset($floormanagersignature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -220,47 +215,47 @@
                                                     </div>
                                                 </div>
                                             @endif --}}
-                                            <div class="mb-3 col-md-12 form-input">
-                                                <label class="form-label view_label">{{ __('Remarks') }}</label>
-                                                <div class="view_data">
-                                                    {{ isset($floormanger->remarks) ? $floormanger->remarks : '' }}
-                                                </div>
+                                        <div class="mb-3 col-md-12 form-input">
+                                            <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($floormanger->remarks) ? $floormanger->remarks : '' }}
                                             </div>
-
                                         </div>
-                                    </div>
-                                @endif
 
-                                @if (
-                                    $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED ||
-                                        $medicinerequisition->approve_status == SAFETY_OFFICER_REJECTED)
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if (
+                                $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED ||
+                                    $medicinerequisition->approve_status == SAFETY_OFFICER_REJECTED)
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Safety Officer Approval</h4>
+                                    </div>
+                                </div>
+                                <div class="row">
                                     <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Safety Officer Approval</h4>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                            <div class="view_data">
+                                                {{ getUsername(isset($safetyofficer->created_by) ? $safetyofficer->created_by : '') }}
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="row">
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
-                                                <div class="view_data">
-                                                    {{ getUsername(isset($safetyofficer->created_by) ? $safetyofficer->created_by : '') }}
-                                                </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                            <div class="view_data">
+                                                {{ displaydateformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
                                             </div>
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Date') }}</label>
-                                                <div class="view_data">
-                                                    {{ displaydateformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
-                                                </div>
-                                            </div>
+                                        </div>
 
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Time') }}</label>
-                                                <div class="view_data">
-                                                    {{ displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
-                                                </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                            <div class="view_data">
+                                                {{ displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
                                             </div>
-                                            {{-- @if (isset($safetyofficersignature))
+                                        </div>
+                                        {{-- @if (isset($safetyofficersignature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -282,67 +277,64 @@
                                                     </div>
                                                 </div>
                                             @endif --}}
-                                            <div class="mb-3 col-md-12 form-input">
-                                                <label class="form-label view_label">{{ __('Remarks') }}</label>
-                                                <div class="view_data">
-                                                    {{ isset($safetyofficer->remarks) ? $safetyofficer->remarks : '' }}
-                                                </div>
+                                        <div class="mb-3 col-md-12 form-input">
+                                            <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($safetyofficer->remarks) ? $safetyofficer->remarks : '' }}
                                             </div>
-
                                         </div>
-                                    </div>
-                                @endif
-
-                                <div class="row">
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">{{ __('inspection.status_log') }}</h4>
 
                                     </div>
+                                </div>
+                            @endif
 
-                                    <div class="table-responsive">
-                                        <div class="col-md-12">
-                                            <table class="table table-bordered">
-                                                <thead class="bg-secondary" style="color: #ffff">
-                                                    <tr>
-                                                        <th>S.NO</th>
-                                                        <th>From Status</th>
-                                                        <th>To Status</th>
-                                                        <th>Remarks</th>
-                                                        <th>Approved By</th>
-                                                        <th>Created By</th>
-                                                        <th>Created At</th>
-                                                    </tr>
-                                                </thead>
-
-                                                <tbody>
-                                                    @foreach ($statuslog as $log)
-                                                        <tr>
-                                                            <td>{{ $loop->iteration }}</td>
-                                                            <td>{{ getohcrequisitionfloorstatus($log->from_status) }}</td>
-                                                            <td>{{ getohcrequisitionfloorstatus($log->to_status) }}</td>
-                                                            <td>{{ $log->remarks ?? 'N/A' }}</td>
-                                                            <td>{{ getUserName($log->approved_by) ? getUserName($log->approved_by) : '-' }}
-                                                            <td>{{ getUserName($log->created_by) ? getUserName($log->created_by) : '-' }}
-                                                            </td>
-                                                            <td>{{ displaydateformat($log->created_at) }}</td>
-                                                        </tr>
-                                                    @endforeach
-
-
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-
+                            <div class="row">
+                                <div class="card-header-inner">
+                                    <h4 class="text-white">{{ __('inspection.status_log') }}</h4>
 
                                 </div>
+
+                                <div class="table-responsive">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered">
+                                            <thead class="bg-secondary" style="color: #ffff">
+                                                <tr>
+                                                    <th>S.NO</th>
+                                                    <th>From Status</th>
+                                                    <th>To Status</th>
+                                                    <th>Remarks</th>
+                                                    <th>Approved By</th>
+                                                    <th>Created By</th>
+                                                    <th>Created At</th>
+                                                </tr>
+                                            </thead>
+
+                                            <tbody>
+                                                @foreach ($statuslog as $log)
+                                                    <tr>
+                                                        <td>{{ $loop->iteration }}</td>
+                                                        <td>{{ getohcrequisitionfloorstatus($log->from_status) }}</td>
+                                                        <td>{{ getohcrequisitionfloorstatus($log->to_status) }}</td>
+                                                        <td>{{ $log->remarks ?? 'N/A' }}</td>
+                                                        <td>{{ getUserName($log->approved_by) ? getUserName($log->approved_by) : '-' }}
+                                                        <td>{{ getUserName($log->created_by) ? getUserName($log->created_by) : '-' }}
+                                                        </td>
+                                                        <td>{{ displaydateformat($log->created_at) }}</td>
+                                                    </tr>
+                                                @endforeach
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        </form>
     </div>
-
 @stop

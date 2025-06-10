@@ -48,43 +48,44 @@
                             <div class="card-body ">
 
                                 <div class="row">
-                                    <div class="card-header-inner">
-                                        <h4 class="text-white">Medical Requisition Slip- Floor </h4>
+                                     <div class="card-header-inner">
+                                        <h4 class="text-white">{{ __('ohc_management.medicine_requisition_slip_floor') }}
+                                        </h4>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Document Number</label>
+                                        <label class="form-label view_label">{{ __('inspection.doc_no') }}</label>
                                         <div class="view_data">
                                             {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Issue Date</label>
+                                        <label class="form-label view_label">{{ __('inspection.issue_date') }}</label>
                                         <div class="view_data">
                                             {{ displayDateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Review Date</label>
+                                        <label class="form-label view_label">{{ __('inspection.rev_date') }}</label>
                                         <div class="view_data">
                                             {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label"> Date</label>
+                                        <label class="form-label view_label">{{ __('common.date') }}</label>
                                         <div class="view_data">
                                             {{ displayDateformat(isset($medicinerequisition->date) ? $medicinerequisition->date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Unit</label>
+                                        <label class="form-label view_label">{{ __('common.unit') }}</label>
                                         <div class="view_data">
                                             {{ getUnitname(isset($medicinerequisition->unit) ? $medicinerequisition->unit : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Department</label>
+                                        <label class="form-label view_label">{{ __('common.department') }}</label>
                                         <div class="view_data">
                                             {{ getDepartment(isset($medicinerequisition->department) ? $medicinerequisition->department : '') }}
                                         </div>
@@ -130,73 +131,69 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 <div class="table-responsive">
                                     <div class="col-md-12">
-                                        <table class="table table-bordered ">
-
-                                            <thead class="bg-secondary" style="color: #ffff">
-                                                <tr>
-                                                    <th>S.No</th>
-                                                    <th>Medicine Name</th>
-                                                    <th>Freeze Quantity</th>
-                                                    <th>Quantity</th>
-                                                    <th>Remarks</th>
-
-                                                </tr>
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="table-secondary">
+                                                <th style="text-align: center">{{ __('common.sno') }}</th>
+                                                <th style="text-align: center">{{ __('ohc_management.medicine_name') }}
+                                                </th>
+                                                <th style="text-align: center">{{ __('ohc_management.freeze_quantity') }}
+                                                </th>
+                                                <th style="text-align: center">{{ __('ohc_management.quantity') }}</th>
+                                                <th style="text-align: center">{{ __('ohc_management.remarks') }}</th>
                                             </thead>
                                             <tbody>
-                                                @if ($medicine_requisition_floor_checklist->isEmpty())
+                                                @foreach ($inspection_data as $medicines)
                                                     <tr>
-                                                        <td colspan="4" class="text-center">No data is available</td>
-                                                    </tr>
-                                                @else
-                                                    @foreach ($medicine_requisition_floor_checklist as $data)
-                                                        <tr>
-                                                            <td>{{ $loop->iteration }}</td>
-                                                            <td>{{ getMedicinename($data->medicine_id) }}</td>
-                                                            <td>{{ $data->quantity }}</td>
-                                                            <td>{{ $data->freeze_quantity }}</td>
-                                                            <td>{{ $data->remarks }}</td>
+                                                        <td class="text-center">{{ $loop->iteration }}</td>
+                                                        <td class="text-center">
+                                                            {{ getMedicinename($medicines['medicine_id']) }}
+                                                        <td class="text-center">
+                                                            {{ $medicines['freeze_quantity'] }}
+                                                        <td class="text-center">{{ $medicines['quantity'] }}
 
-                                                        </tr>
-                                                    @endforeach
-                                                @endif
+                                                        <td class="text-center">{{ $medicines['remarks'] }}
+                                                    </tr>
+                                                @endforeach
                                             </tbody>
                                         </table>
                                     </div>
                                 </div>
-                                @if (
-                                    (checkUserRole(ROLE_FLOOR_MANAGER) && $medicinerequisition->approve_status == FLOOR_MANAGER_APPROVAL_PENDING) ||
-                                        (checkUserRole(ROLE_SUPERADMIN) && $medicinerequisition->approve_status == FLOOR_MANAGER_APPROVAL_PENDING))
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Floor Manager Approval Pending</h4>
-                                        </div>
+
+
+
+                            @if (
+                                (checkUserRole(ROLE_FLOOR_MANAGER) && $medicinerequisition->approve_status == FLOOR_MANAGER_APPROVAL_PENDING) ||
+                                    (checkUserRole(ROLE_SUPERADMIN) && $medicinerequisition->approve_status == FLOOR_MANAGER_APPROVAL_PENDING))
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">{{__('ohc_management.floor_manager_approval_pending')}}</h4>
                                     </div>
-                                    <div class="row">
-                                        <div class="basic-form">
-                                            <form method="POST" id="FloorApprovalForm" enctype="multipart/form-data"
-                                                action="{{ admin_url('ohc/medical-requisition-slip/floormanagerapproval/submit') }}">
-                                                @csrf
-                                                <input type="hidden" name="id"
-                                                    value="{{ encryptId($medicinerequisition->id) }}">
-                                                <div class="">
-                                                    <div class="mb-3 row">
-                                                        <div class="col-md-4 mb-3">
-                                                            <label for="approver_name" class="form-label require">Approver
-                                                                Name</label>
-                                                            <input type="text" class="form-control form-control-sm"
-                                                                id="floor_approver_name" readonly
-                                                                value="{{ Auth::user()->name }}">
-                                                        </div>
-                                                        <div class="col-md-4 mb-3">
-                                                            <label for="date" class="form-label require">Date</label>
-                                                            <input type="text" class="form-control form-control-sm"
-                                                                id="floor_date" name="floor_date" readonly
-                                                                value="{{ date('d-m-Y H:i:s') }}">
-                                                        </div>
-                                                        {{-- <div class="col-md-4 form-group form-input mb-2">
+                                </div>
+                                <div class="row">
+                                    <div class="basic-form">
+                                        <form method="POST" id="FloorApprovalForm" enctype="multipart/form-data"
+                                            action="{{ admin_url('ohc/medical-requisition-slip/floormanagerapproval/submit') }}">
+                                            @csrf
+                                            <input type="hidden" name="id"
+                                                value="{{ encryptId($medicinerequisition->id) }}">
+                                            <div class="">
+                                                <div class="mb-3 row">
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="approver_name" class="form-label require">Approver
+                                                            Name</label>
+                                                        <input type="text" class="form-control form-control-sm"
+                                                            id="floor_approver_name" readonly
+                                                            value="{{ Auth::user()->name }}">
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="date" class="form-label require">Date</label>
+                                                        <input type="text" class="form-control form-control-sm"
+                                                            id="floor_date" name="floor_date" readonly
+                                                            value="{{ date('d-m-Y H:i:s') }}">
+                                                    </div>
+                                                    {{-- <div class="col-md-4 form-group form-input mb-2">
                                                             @if (isset(Auth::user()->signature_upload))
                                                                 <label class="form-label"
                                                                     style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -215,64 +212,64 @@
                                                                 </div>
                                                             @endif
                                                         </div> --}}
-                                                        <div class="col-md-12 mb-3">
-                                                            <div class="mb-1">
-                                                                <label for="remarks"
-                                                                    class="form-label require">Remarks</label>
-                                                                <textarea class="form-control @error('remarks') is-invalid @enderror" id="floor_remarks" name="floor_remarks"
-                                                                    rows="3"></textarea>
-                                                                <div class="text-danger" id="remarks_error"></div>
-                                                                @error('remarks')
-                                                                    <span id="remark_error"
-                                                                        class="text-danger">{{ $message }}</span>
-                                                                @enderror
-                                                            </div>
+                                                    <div class="col-md-12 mb-3">
+                                                        <div class="mb-1">
+                                                            <label for="remarks"
+                                                                class="form-label require">Remarks</label>
+                                                            <textarea class="form-control @error('remarks') is-invalid @enderror" id="floor_remarks" name="floor_remarks"
+                                                                rows="3"></textarea>
+                                                            <div class="text-danger" id="remarks_error"></div>
+                                                            @error('remarks')
+                                                                <span id="remark_error"
+                                                                    class="text-danger">{{ $message }}</span>
+                                                            @enderror
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <hr>
-                                                <div class="d-flex float-end gap-2 mx-auto">
-                                                    <button type="submit" name="action" value="approve"
-                                                        class="btn btn-success w-100">Approve</button>
-                                                    <button type="submit" name="action" value="reject"
-                                                        class="btn btn-danger w-100">Reject</button>
-                                                </div>
-                                            </form>
-                                        </div>
+                                            </div>
+                                            <hr>
+                                            <div class="d-flex float-end gap-2 mx-auto">
+                                                <button type="submit" name="action" value="approve"
+                                                    class="btn btn-success w-100">Approve</button>
+                                                <button type="submit" name="action" value="reject"
+                                                    class="btn btn-danger w-100">Reject</button>
+                                            </div>
+                                        </form>
                                     </div>
-                                @endif
-                                @if (
-                                    $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING ||
-                                        $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED ||
-                                        $medicinerequisition->approve_status == SAFETY_OFFICER_REJECTED)
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Floor Manager Approval </h4>
-                                        </div>
+                                </div>
+                            @endif
+                            @if (
+                                $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING ||
+                                    $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED ||
+                                    $medicinerequisition->approve_status == SAFETY_OFFICER_REJECTED)
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">{{__('ohc_management.floor_manager_approval')}}</h4>
                                     </div>
+                                </div>
+                                <div class="row">
                                     <div class="row">
-                                        <div class="row">
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
-                                                <div class="view_data">
-                                                    {{ getUsername(isset($floormanger->created_by) ? $floormanger->created_by : '') }}
-                                                </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                            <div class="view_data">
+                                                {{ getUsername(isset($floormanger->created_by) ? $floormanger->created_by : '') }}
                                             </div>
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Date') }}</label>
-                                                <div class="view_data">
-                                                    {{ displaydateformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
-                                                </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                            <div class="view_data">
+                                                {{ displaydateformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
                                             </div>
+                                        </div>
 
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Time') }}</label>
-                                                <div class="view_data">
-                                                    {{ displaytimeformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
-                                                </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                            <div class="view_data">
+                                                {{ displaytimeformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
                                             </div>
+                                        </div>
 
-                                            {{-- @if (isset($floormanagersignature))
+                                        {{-- @if (isset($floormanagersignature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -294,52 +291,50 @@
                                                     </div>
                                                 </div>
                                             @endif --}}
-                                            <div class="mb-3 col-md-12 form-input">
-                                                <label class="form-label view_label">{{ __('Remarks') }}</label>
-                                                <div class="view_data">
-                                                    {{ isset($floormanger->remarks) ? $floormanger->remarks : '' }}
-                                                </div>
+                                        <div class="mb-3 col-md-12 form-input">
+                                            <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($floormanger->remarks) ? $floormanger->remarks : '' }}
                                             </div>
-
                                         </div>
+
                                     </div>
-                                @endif
+                                </div>
+                            @endif
 
 
-                                @if (
-                                    (checkUserRole(ROLE_SAFETY_OFFICER) && $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) ||
-                                        (checkUserRole(ROLE_SUPERADMIN) && $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) ||
-                                        (checkUserRole(ROLE_MEDICAL_ASSISTANT) &&
-                                            $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING))
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Safety Officer Approval Pending</h4>
-                                        </div>
+                            @if (
+                                (checkUserRole(ROLE_SAFETY_OFFICER) && $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) ||
+                                    (checkUserRole(ROLE_SUPERADMIN) && $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING) ||
+                                    (checkUserRole(ROLE_MEDICAL_ASSISTANT) &&
+                                        $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVAL_PENDING))
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">{{__('ohc_management.safety_officer_approval_pending')}}</h4>
                                     </div>
-                                    <div class="row">
-                                        <div class="basic-form">
-                                            <form method="POST" id="safetyofficerApprovalForm"
-                                                enctype="multipart/form-data"
-                                                action="{{ admin_url('ohc/medical-requisition-slip/safetyofficerapproval/submit') }}">
-                                                @csrf
-                                                <input type="hidden" name="id"
-                                                    value="{{ encryptId($medicinerequisition->id) }}">
-                                                <div class="">
-                                                    <div class="mb-3 row">
-                                                        <div class="col-md-4 mb-3">
-                                                            <label for="approver_name" class="form-label require">Approver
-                                                                Name</label>
-                                                            <input type="text" class="form-control form-control-sm"
-                                                                id="approver_name" readonly
-                                                                value="{{ Auth::user()->name }}">
-                                                        </div>
-                                                        <div class="col-md-4 mb-3">
-                                                            <label for="date" class="form-label require">Date</label>
-                                                            <input type="text" class="form-control form-control-sm"
-                                                                id="date" name="date" readonly
-                                                                value="{{ date('d-m-Y H:i:s') }}">
-                                                        </div>
-                                                        {{-- <div class="col-md-4 form-group form-input mb-2">
+                                </div>
+                                <div class="row">
+                                    <div class="basic-form">
+                                        <form method="POST" id="safetyofficerApprovalForm" enctype="multipart/form-data"
+                                            action="{{ admin_url('ohc/medical-requisition-slip/safetyofficerapproval/submit') }}">
+                                            @csrf
+                                            <input type="hidden" name="id"
+                                                value="{{ encryptId($medicinerequisition->id) }}">
+                                            <div class="">
+                                                <div class="mb-3 row">
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="approver_name" class="form-label require">Approver
+                                                            Name</label>
+                                                        <input type="text" class="form-control form-control-sm"
+                                                            id="approver_name" readonly value="{{ Auth::user()->name }}">
+                                                    </div>
+                                                    <div class="col-md-4 mb-3">
+                                                        <label for="date" class="form-label require">Date</label>
+                                                        <input type="text" class="form-control form-control-sm"
+                                                            id="date" name="date" readonly
+                                                            value="{{ date('d-m-Y H:i:s') }}">
+                                                    </div>
+                                                    {{-- <div class="col-md-4 form-group form-input mb-2">
                                                             @if (isset(Auth::user()->signature_upload))
                                                                 <label class="form-label"
                                                                     style="display: block; ">{{ __('inspection.signature') }}</label>
@@ -358,63 +353,63 @@
                                                                 </div>
                                                             @endif
                                                         </div> --}}
-                                                        <div class="col-md-12 mb-3">
-                                                            <div class="mb-1">
-                                                                <label for="remarks"
-                                                                    class="form-label require">Remarks</label>
-                                                                <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" rows="3"></textarea>
-                                                                <div class="text-danger" id="remarks_error"></div>
-                                                                @error('remarks')
-                                                                    <span id="remark_error"
-                                                                        class="text-danger">{{ $message }}</span>
-                                                                @enderror
-                                                            </div>
+                                                    <div class="col-md-12 mb-3">
+                                                        <div class="mb-1">
+                                                            <label for="remarks"
+                                                                class="form-label require">Remarks</label>
+                                                            <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" rows="3"></textarea>
+                                                            <div class="text-danger" id="remarks_error"></div>
+                                                            @error('remarks')
+                                                                <span id="remark_error"
+                                                                    class="text-danger">{{ $message }}</span>
+                                                            @enderror
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <hr>
-                                                <div class="d-flex float-end gap-2 mx-auto">
-                                                    <button type="submit" name="action" value="approve"
-                                                        class="btn btn-success w-100">Approve</button>
-                                                    <button type="submit" name="action" value="reject"
-                                                        class="btn btn-danger w-100">Reject</button>
+                                            </div>
+                                            <hr>
+                                            <div class="d-flex float-end gap-2 mx-auto">
+                                                <button type="submit" name="action" value="approve"
+                                                    class="btn btn-success w-100">Approve</button>
+                                                <button type="submit" name="action" value="reject"
+                                                    class="btn btn-danger w-100">Reject</button>
 
-                                                </div>
-                                            </form>
-                                        </div>
+                                            </div>
+                                        </form>
                                     </div>
-                                @endif
+                                </div>
+                            @endif
 
-                                @if (
-                                    $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED ||
-                                        $medicinerequisition->approve_status == SAFETY_OFFICER_REJECTED)
-                                    <div class="row">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">Safety Officer Approval</h4>
-                                        </div>
+                            @if (
+                                $medicinerequisition->approve_status == SAFETY_OFFICER_APPROVED ||
+                                    $medicinerequisition->approve_status == SAFETY_OFFICER_REJECTED)
+                                <div class="row">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">{{__('ohc_management.safety_officer_approval')}}</h4>
                                     </div>
+                                </div>
+                                <div class="row">
                                     <div class="row">
-                                        <div class="row">
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
-                                                <div class="view_data">
-                                                    {{ getUsername(isset($safetyofficer->created_by) ? $safetyofficer->created_by : '') }}
-                                                </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                            <div class="view_data">
+                                                {{ getUsername(isset($safetyofficer->created_by) ? $safetyofficer->created_by : '') }}
                                             </div>
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Date') }}</label>
-                                                <div class="view_data">
-                                                    {{ displaydateformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
-                                                </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                            <div class="view_data">
+                                                {{ displaydateformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
                                             </div>
+                                        </div>
 
-                                            <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Time') }}</label>
-                                                <div class="view_data">
-                                                    {{ displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
-                                                </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                            <div class="view_data">
+                                                {{ displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
                                             </div>
-                                            {{-- @if (isset($safetyofficersignature))
+                                        </div>
+                                        {{-- @if (isset($safetyofficersignature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -436,22 +431,22 @@
                                                     </div>
                                                 </div>
                                             @endif --}}
-                                            <div class="mb-3 col-md-12 form-input">
-                                                <label class="form-label view_label">{{ __('Remarks') }}</label>
-                                                <div class="view_data">
-                                                    {{ isset($safetyofficer->remarks) ? $safetyofficer->remarks : '' }}
-                                                </div>
+                                        <div class="mb-3 col-md-12 form-input">
+                                            <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                            <div class="view_data">
+                                                {{ isset($safetyofficer->remarks) ? $safetyofficer->remarks : '' }}
                                             </div>
-
                                         </div>
+
                                     </div>
-                                @endif
-                            </div>
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
     </div>
 

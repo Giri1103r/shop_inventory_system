@@ -24,7 +24,7 @@
 
 <script>
     var units = @json($units);
-    var lookup = @json($lookup);
+    var lookup_array = @json($lookup);
 
     var options = {
         series: {!! json_encode($series) !!},
@@ -39,22 +39,37 @@
                     var seriesIndex = config.seriesIndex;
                     var dataPointIndex = config.dataPointIndex;
 
-                    var incidentType = chartContext.w.config.series[seriesIndex].name;
-                    var unit = chartContext.w.config.xaxis.categories[dataPointIndex];
+                    if (seriesIndex === undefined || dataPointIndex === undefined) {
+                        console.error('Invalid seriesIndex or dataPointIndex');
+                        return;
+                    }
 
-                    var incidentTypeObj = lookup[
-                    incidentType];
+                    var incidentType = chartContext.w.config.series[seriesIndex]?.name?.trim();
+                    console.log(incidentType);
+                    var unit = chartContext.w.config.xaxis.categories[dataPointIndex]?.trim();
+
+                    console.log(lookup_array);
+
+                    console.log('Selected Incident Type:', incidentType);
+                    console.log('Selected Unit:', unit);
+                    console.log('Available lookup keys:', Object.keys(lookup));
+
+                    var incidentTypeObj = lookup_array[incidentType];
 
                     if (incidentTypeObj) {
                         var unitObj = incidentTypeObj[unit];
-
                         if (unitObj) {
                             var iirType = unitObj.incident_type_id;
                             var unitId = unitObj.unit_id;
-                            redirectToIms(iirType, unitId);
+                            redirectToIms(iirType, unitId,'','','','','');
+                        } else {
+                            console.warn('Unit not found in incident type object:', unit);
                         }
+                    } else {
+                        console.warn('Incident type not found in lookup:', incidentType);
                     }
                 }
+
             }
 
         },
@@ -62,7 +77,7 @@
             bar: {
                 horizontal: false,
                 columnWidth: '50%',
-             
+
                 borderRadiusApplication: 'end'
             },
         },

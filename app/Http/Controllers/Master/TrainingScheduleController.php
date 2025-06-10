@@ -233,7 +233,7 @@ class TrainingScheduleController extends Controller
         $employeeList  = $this->employee->select('id', 'emp_name')->whereRaw('FIND_IN_SET(' . ROLE_TRAINER . ', user_role)')->where('status', '1')->get();
         $companyList = $this->company->getCompany();
         $data = array(
-            'departmentList' => $departmentList,
+            'department' => $departmentList,
             'unitList' => $unitList,
             'topicList' => $topicList,
             'employeeList' => $employeeList,

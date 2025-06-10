@@ -415,7 +415,7 @@
                     e.preventDefault();
                     location.reload();
                 });
-              
+
                 var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates) {
@@ -990,7 +990,7 @@
                     Swal.fire({
                         icon: 'warning',
                         title: 'Minimum One CheckList Required',
-                        text: 'At least One Fire Extinguisher Inspection Checklist is required.',
+                        text: 'At least One Isolation Valve Inspection is required.',
                         confirmButtonColor: '#3085d6'
                     });
                     return;

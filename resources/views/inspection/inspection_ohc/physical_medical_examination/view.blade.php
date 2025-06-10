@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Physical Health Examination Check-up View')
+@section('title', 'Physical Health Examination Check-up')
 @section('pageurl', admin_url('ohc/physical-medical-examination/yearly/list'))
 
 @section('content')
@@ -174,7 +174,7 @@
                                         </div>
                                     </div>
                                 </div>
-
+                                {{-- clinical details --}}
                                 @php
                                     $clinicalDetails = json_decode($physicalHealth->personal_details, true);
                                     $statusArray = $clinicalDetails['status'] ?? [];
@@ -211,6 +211,197 @@
                                             @endforeach
                                         </tbody>
                                     </table>
+                                </div>
+
+                                {{-- Family History --}}
+                                <div class="row mt-2">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Famiy History</h4>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="table-secondary">
+                                                <tr>
+                                                    <th style="text-align: center">Sr. No.</th>
+                                                    <th style="text-align: center">Details Of Personal Habits</th>
+                                                    <th style="text-align: center">Status</th>
+                                                    <th style="text-align: center">Remarks</th>
+                                                </tr>
+                                            </thead>
+                                            @php
+                                                $FamilyHistory = json_decode($physicalHealth->family_history, true);
+                                                $statusArray = $FamilyHistory['status'] ?? [];
+                                                $remarksArray = $FamilyHistory['remarks'] ?? [];
+                                            @endphp
+
+                                            <tbody>
+                                                @foreach ($familyHistory as $item)
+                                                    <tr>
+                                                        <td class="text-center">{{ $loop->iteration }}</td>
+
+                                                        <td class="text-center">
+                                                            {{ $item->family_history }}
+                                                            <input type="hidden" name="id[{{ $item->id }}]"
+                                                                value="{{ encryptId($item->id) }}">
+                                                        </td>
+
+                                                        <td class="text-center">
+                                                            @php
+                                                                $status = $statusArray[$item->id] ?? null;
+                                                            @endphp
+
+                                                            @if ($status === '1')
+                                                                <span style="color: green; font-size: 20px;">✓</span>
+                                                            @elseif ($status === '0')
+                                                                <span style="color: red; font-size: 20px;">✗</span>
+                                                            @else
+                                                                <span style="color: gray; font-size: 16px;">N/A</span>
+                                                            @endif
+                                                        </td>
+
+                                                        <td class="text-center">
+                                                            {{ $remarksArray[$item->id] ?? 'No remarks' }}
+                                                        </td>
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+
+
+
+                                </div>
+                                {{-- Vital check points --}}
+
+
+                                <div class="row mt-2">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">Vital Check Points</h4>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="table-secondary">
+                                                <tr>
+                                                    <th style="text-align: center">Sr. No.</th>
+                                                    <th style="text-align: center">Check Points</th>
+                                                    <th style="text-align: center">Reading Value</th>
+                                                </tr>
+                                            </thead>
+                                            @php
+                                                $vital_checkpoints = json_decode(
+                                                    $physicalHealth->vital_checkpoints,
+                                                    true,
+                                                );
+                                                $reading_value = $vital_checkpoints['reading_value'] ?? [];
+                                                $serial = 1;
+                                            @endphp
+
+                                            <tbody>
+                                                @foreach ($check_points as $label => $items)
+                                                    @foreach ($items as $point)
+                                                        <tr>
+                                                            <td class="text-center">{{ $loop->iteration }}</td>
+
+                                                            <td class="text-center">
+                                                                {{ $point->name }}
+                                                                <input type="hidden" name="id[{{ $point->id }}]"
+                                                                    value="{{ encryptId($point->id) }}">
+                                                            </td>
+
+                                                            <td class="text-center">
+                                                                {{ $reading_value[$point->id] ?? 'No Value' }}
+                                                            </td>
+                                                        </tr>
+                                                    @endforeach
+                                                @endforeach
+
+
+                                            </tbody>
+
+                                        </table>
+                                    </div>
+                                </div>
+
+                                {{-- Eye check points --}}
+
+                                <div class="row mt-2">
+                                    <div class="card-header-inner">
+                                        <h4 class="text-white">EYE Check Up</h4>
+                                    </div>
+
+                                    <div class="mb-2">
+                                        <table class="table table-bordered table-striped">
+                                            <thead class="table-secondary">
+                                                <tr>
+                                                    <th style="text-align: center">Vision</th>
+                                                    <th style="text-align: center">Without Glasses(Right)</th>
+                                                    <th style="text-align: center">With Glasses(Left)</th>
+                                                    <th style="text-align: center">Color Blindness</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>Distance</td>
+                                                    <td>
+                                                        <div class="view_data">
+                                                            {{ isset($physicalHealth->distance_without_glass) ? $physicalHealth->distance_without_glass : '' }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="view_data">
+                                                            {{ isset($physicalHealth->distance_with_glass) ? $physicalHealth->distance_with_glass : '' }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="view_data">
+                                                            @if ($physicalHealth->distance_without_glass_yes === '1')
+                                                                <span style="color: green; font-size: 20px;">✓</span>
+                                                            @elseif ($physicalHealth->distance_without_glass_yes === '0')
+                                                                <span style="color: red; font-size: 20px;">✗</span>
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Near</td>
+                                                    <td>
+                                                        <div class="view_data">
+                                                            {{ isset($physicalHealth->near_without_glass) ? $physicalHealth->near_without_glass : '' }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="view_data">
+                                                            {{ isset($physicalHealth->near_with_glass) ? $physicalHealth->near_with_glass : '' }}
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div class="view_data">
+                                                            @if ($physicalHealth->near_without_glass_yes === '1')
+                                                                <span style="color: green; font-size: 20px;">✓</span>
+                                                            @elseif ($physicalHealth->near_without_glass_yes === '0')
+                                                                <span style="color: red; font-size: 20px;">✗</span>
+                                                            @endif
+                                                        </div>
+                                                    </td>
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+
+
+                                </div>
+
+
+                                <div class="mb-3 col-md-8 form-input">
+                                    <label class="form-label view_label">{{ __('Remarks by Medical Officer') }}</label>
+                                    <div class="view_data">
+                                        {{ isset($physicalHealth->remarks) ? $physicalHealth->remarks : '' }}
+                                    </div>
                                 </div>
 
                             </div>
