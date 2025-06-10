@@ -119,7 +119,7 @@
 
                                         <div class="row mt-2">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">{{__('ohc_management.medicine_details')}}</h4>
+                                                <h4 class="text-white">{{ __('ohc_management.medicine_details') }}</h4>
 
                                             </div>
 
@@ -127,84 +127,7 @@
 
                                         </div>
 
-                                        {{-- <div class="table-responsive">
-                                            <div class="col-md-12">
-                                                <table class="table table-bordered ">
 
-                                                    <thead class="bg-secondary" style="color: #ffff">
-                                                        <tr>
-                                                            <th>Medicine</th>
-                                                            <th>Freeze Quantity</th>
-                                                            <th>Quantity</th>
-                                                            <th>Remarks</th>
-                                                            <th>Action</th>
-                                                        </tr>
-                                                    </thead>
-
-                                                    <tbody id="medicine-tbody">
-                                                        <tr>
-                                                            <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="medicine_id" class="require">Medicine
-                                                                        Name</label>
-                                                                    <select name="medicine_id[0]" id="medicine_id"
-                                                                        class="form-control medicine_id single-select"
-                                                                        style="width: 100%">
-                                                                        <option value="">Select the Medicine Name
-                                                                        </option>
-                                                                        @foreach ($medicine as $list)
-                                                                            <option
-                                                                                value="{{ encryptId($list->medicine_id) }}">
-                                                                                {{ getMedicinename($list->medicine_id) }}
-                                                                            </option>
-                                                                        @endforeach
-                                                                    </select>
-                                                                </div>
-                                                            </td>
-
-                                                            <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="quantity" class="require">Freeze
-                                                                        Quantity</label>
-                                                                    <input type="text" name="freeze_quantity[0]"
-                                                                        id="freeze_quantity"
-                                                                        placeholder="Enter the Freeze quantity"
-                                                                        class="form-control freeze_quantity" readonly>
-
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="quantity" class="require">Quantity</label>
-                                                                    <input type="number" min="1"
-                                                                        name="quantity[0]" id="quantity"
-                                                                        placeholder="Enter the quantity"
-                                                                        class="form-control">
-                                                                    <span id="quantity-error" style=" display:none;"
-                                                                        class="text-danger">Quantity must be less
-                                                                        than available quantity.</span>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-                                                                <div class="form-group form-input">
-                                                                    <label for="remarks"class="">Remarks</label>
-                                                                    <textarea name="remarks[0]" id="remarks" cols="10" rows="2" class="form-control"></textarea>
-                                                                </div>
-                                                            </td>
-                                                            <td>
-
-                                                                <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
-                                                                    style="width: 30px; height: 30px;">
-                                                                    <i class="fa-solid fa-trash"></i>
-                                                                </div>
-
-
-                                                            </td>
-                                                        </tr>
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div> --}}
 
                                         <div class="mb-3 mt-3">
                                             <table class="table table-bordered table-striped">
@@ -257,38 +180,7 @@
 
                                         </div>
 
-                                        {{-- @if ($signature_upload->signature_upload != '')
-                                            <label class="form-label view_label">Requestor Signature</label>
 
-                                            <p>
-                                                <a href="{{ asset($signature_upload->signature_upload) }}"
-                                                    target="_blank">
-                                                    <img src="{{ asset($signature_upload->signature_upload) }}"
-                                                        style="width: 100px" alt="image">
-                                                </a>
-                                            </p>
-                                        @else
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label for="signature_image"
-                                                        class="form-label fw-bold require">Requestor
-                                                        Signature</label>
-                                                    <input type="file"
-                                                        class="form-control validate-file-accept validate-file-required"
-                                                        accept="image/png, image/jpeg, image/jpg" name="signature_image"
-                                                        id="signature_image">
-                                                    <div class="text-danger"></div>
-                                                    <small>Allowed file types: png, jpeg, jpg</small>
-
-                                                    <!-- Preview Container -->
-                                                    <div id="imagePreviewContainer" class="mt-2"
-                                                        style="display: none;">
-                                                        <img id="imagePreview" src="#" alt="Signature Preview"
-                                                            class="img-thumbnail" width="200">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif --}}
                                 </div>
                                 <hr>
                                 <div class="submit-button" style="text-align: right;">
@@ -455,7 +347,7 @@
                         required: 'Remarks is required',
                         minlength: 'Minimum 3 character is required',
                         maxlength: 'Remarks should not exceed more than the 600 characters',
-
+                    }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
@@ -476,7 +368,7 @@
                     console.log("Form has " + errors + " invalid fields.");
                 },
             });
- $('#medicineRequisitionFloor').on('change input',
+            $('#medicineRequisitionFloor').on('change input',
                 'input[name^="available_quantity"], input[name^="expired_date"], select[name^="emp_id"], textarea[name^="remarks"]',
                 function() {
                     $(this).valid();
@@ -522,6 +414,5 @@
             });
 
         });
-
     </script>
 @endpush
