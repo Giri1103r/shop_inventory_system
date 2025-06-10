@@ -821,20 +821,8 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             }
 
 
-            $header = [
-                __("common.sno"),
-                'Document Number',
-                'Review date',
-                'Issued Date',
-                'Unit',
-                'Department',
-                'Approve Status',
-                __("common.created_by"),
-                __("common.created_date"),
-            ];
-
             $data = array(
-                'header' => $header,
+
                 'content' => $allData,
                 'document_no' => $document_no,
                 'pagetitle' => "Medical Requisition Slip- Fdo & Security Gate",

@@ -155,151 +155,321 @@
         </table>
     </div>
 
-    <table width="100%" style="width:100%;">
+    <table
+        style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
+        <!-- First Row -->
+        <tr>
+            <th colspan="6" style="border:1px solid black;height:50px;width:40px;">
+                <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:50px;height:50px;">
+            </th>
+            <th colspan="6" style="border:1px solid black;">
+                <h3>
+                    <span><b>Physical Health Examination Check-up</b></span>
+                </h3>
+            </th>
+            <th colspan="6" style="border:1px solid black; padding: 0;">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <tr>
+                        <td style="border: 1px solid black; width: 70px;">Doc.No</td>
+                        <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;">Issue Dt.</td>
+                        <td style="border: 1px solid black;">{{ Displaydateformat($document_no->issue_date) }}</td>
+                    </tr>
+                    <tr>
+                        <td style="border: 1px solid black;">Rev.& Dt.</td>
+                        <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
+                    </tr>
+                </table>
+            </th>
+        </tr>
+
+        <!-- Second Row: Full width for Form Name or Number -->
+        <tr>
+            <th colspan="18" style="border:1px solid black; text-align: left; padding: 10px;">
+                <b>Form Number : </b> {{ $physicalHealth->form_number }}
+            </th>
+        </tr>
 
         <tr>
-            <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($inspection_details->issue_date) ? $inspection_details->issue_date : '') }}
-            </td>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="6">
+                <b>EMPLOYEE CODE:</b> {{ $physicalHealth->emp_id ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="6">
+                <b>EMPLOYEE NAME:</b> {{ $physicalHealth->emp_name ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="6">
+                <b>CONTACT NUMBER:</b> {{ $physicalHealth->mobile_no ?? 'N/A' }}
+            </th>
+        </tr>
+
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="6">
+                <b>GENDER:</b> {{ $physicalHealth->gender ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="6">
+                <b>DATE OF BIRTH:</b> {{ Displaydateformat($physicalHealth->dob) ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="6">
+                <b>AGE:</b> {{ $physicalHealth->age ?? 'N/A' }}
+            </th>
+        </tr>
+
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="6">
+                <b>BLOOD GROUP:</b> {{ $physicalHealth->blood_group ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="6">
+                <b>DATE:</b> {{ Displaydateformat($physicalHealth->date) ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="6">
+                <b>UNIT:</b> {{ getUnitname($physicalHealth->unit_id ?? 'N/A') }}
+            </th>
+        </tr>
+
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="6">
+                <b>DEPARTMENT:</b> {{ getDepartment($physicalHealth->department_id) ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="6">
+                <b>HEIGHT:</b> {{ $physicalHealth->height ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="6">
+                <b>WEIGHT:</b> {{ $physicalHealth->weight ?? 'N/A' }}
+            </th>
+        </tr>
+
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="6">
+                <b>BMI:</b> {{ $physicalHealth->bmi ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="12">
+                <b>ADDRESS:</b> {{ $physicalHealth->address ?? 'N/A' }}
+            </th>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Shift</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getShiftname($inspection_details->shift_id) ? getShiftname($inspection_details->shift_id) : '' }}
-            </td>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: center;"
+                colspan="18">
+                <b>Clinical details</b>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Created By</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($inspection_details->created_by) ? $inspection_details->created_by : '') }}</td>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">
+                {{ __('common.sno') }}</th>
+
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">
+                Details Of Personal Habits</th>
+
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">
+                Status</th>
         </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($inspection_details->created_at) }}</td>
-        </tr>
-    </table>
-
-    <br>
-
-    <div style="width:100%;">
-        <table style="width:100%;">
+        @php
+            $clinicalDetails = json_decode($physicalHealth->personal_details, true);
+            $statusArray = $clinicalDetails['status'] ?? [];
+        @endphp
+        @foreach ($statusArray as $key => $value)
             <tr>
-                <td
-                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Physical Health Examination Check-up Checklist
-                </td>
-            </tr>
-        </table>
-    </div>
-
-
-    <table style="width: 100%; border-collapse: collapse; text-align: center;">
-        <thead>
-            <tr>
-                <th rowspan="2"
-                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                    Date
-                </th>
-                <th rowspan="2"
-                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                    Shift
-                </th>
-                <th rowspan="2"
-                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                    Description/Equipment
-                </th>
-                <th colspan="2"
-                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                    Cleaning and Sanitization
-                </th>
-
-                <th rowspan="2"
-                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                    Signature Of Cleaner
-                </th>
-                <th rowspan="2"
-                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                    Signature of Nursing Officer
-                </th>
-                <th rowspan="2"
-                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                    Remarks
-                </th>
-                @isset($nursing_signature)
-                    <th rowspan="2"
-                        style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                        Nursing Officer Remarks
-                    </th>
-                @endisset
-            </tr>
-            <tr>
-                <td style="border: 1px solid black; text-align: center; padding: 12px; background-color: #ccc;">
-                    YES
-                </td>
-                <td style="border: 1px solid black; text-align: center; padding: 12px; background-color: #ccc;">
-                    NO
-                </td>
-            </tr>
-        </thead>
-
-        <tbody>
-            <tr>
-                <td style="border: 1px solid black; text-align: center; padding: 12px;">
-                    {{ Displaydateformat($inspection_details->issue_date) }}
-                </td>
-                <td style="border: 1px solid black; padding: 12px;">
-                    {{ getShiftname($inspection_details->shift_id) }}
-                </td>
-                <td style="border: 1px solid black; padding: 12px;">
-                    {{ $inspection_details->inspection_question }}
-                </td>
-                @if ($inspection_details->inspection_value == 1)
-                    <td style="border: 1px solid black; text-align: center; padding: 12px;">
-                        <span style="color: green;">✓</span>
-                    </td>
-                    <td style="border: 1px solid black; text-align: center; padding: 12px;">
-                    </td>
-                @else
-                    <td style="border: 1px solid black; text-align: center; padding: 12px;">
-                    </td>
-                    <td style="border: 1px solid black; text-align: center; padding: 12px;">
-                        <span style="color: red;">X</span>
-                    </td>
-                @endif
-                <td colspan="1"
-                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    <img src="{{ admin_url($cleaner_signature) }}" alt="Checked By Signature"
-                        style="height: 50px; margin-top:2px;">
-
-                </td>
-
-                <td colspan="1"
-                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    @if ($inspection_details->updated_by != null)
-                        <img src="{{ admin_url($nursing_signature) }}" alt="Verified By Signature"
-                            style="height: 50px;">
+                <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;"
+                    colspan="6">{{ $loop->iteration }}</td>
+                <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;"colspan="6">
+                    {{ getClinicalDetails($key) }}</td>
+                <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;"colspan="6">
+                    @if ($value == '1')
+                        <span style="color: green; font-size: 20px;">✓</span>
                     @else
-                        <p>Inspection has not been Verified Yet</p>
+                        <span style="color: red; font-size: 20px;">✗</span>
+                    @endif
+                </td>
+            </tr>
+        @endforeach
+
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="18">
+                <b>Present Complaints : </b> {{ $physicalHealth->present_complaint ?? 'N/A' }}
+        </tr>
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="18">
+                <b>Past History : </b> {{ $physicalHealth->past_history ?? 'N/A' }}
+        </tr>
+
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: center;"
+                colspan="18">
+                <b>Family History</b>
+        </tr>
+
+        @php
+            $FamilyHistory = json_decode($physicalHealth->family_history, true);
+            $statusArray = $FamilyHistory['status'] ?? [];
+            $remarksArray = $FamilyHistory['remarks'] ?? [];
+        @endphp
+
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">
+                {{ __('common.sno') }}</th>
+
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">
+                Details Of Personal Habits</th>
+
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">
+                Status</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">
+                Remarks</th>
+        </tr>
+        @foreach ($familyHistory as $item)
+            <tr>
+                <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;"
+                    colspan="2">{{ $loop->iteration }}</td>
+
+                <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;"
+                    colspan="6">
+                    {{ $item->family_history }}
+
+                </td>
+
+                <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;"
+                    colspan="4">
+                    @php
+                        $status = $statusArray[$item->id] ?? null;
+                    @endphp
+
+                    @if ($status === '1')
+                        <span style="color: green; font-size: 20px;">✓</span>
+                    @elseif ($status === '0')
+                        <span style="color: red; font-size: 20px;">✗</span>
+                    @else
+                        <span style="color: gray; font-size: 16px;">N/A</span>
                     @endif
                 </td>
 
-                <td style="border: 1px solid black; text-align: center; padding: 12px;">
-                    {{ $inspection_details->cleaner_remarks }}
+                <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;"
+                    colspan="6">
+                    {{ $remarksArray[$item->id] ?? 'No remarks' }}
                 </td>
-                @if ($inspection_details->updated_by)
-                    <td style="border: 1px solid black; text-align: center; padding: 12px;">
-                        {{ isset($inspection_details->nursing_officer_remarks) ? $inspection_details->nursing_officer_remarks : '-' }}
-                    </td>
-                @endif
             </tr>
+        @endforeach
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: center;"
+                colspan="18">
+                <b>Vital Check Points</b>
+        </tr>
 
-        </tbody>
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">
+                {{ __('common.sno') }}</th>
+
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">
+                Check Points</th>
+
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">
+                Reading Value</th>
+        </tr>
+
+        @php
+            $vital_checkpoints = json_decode($physicalHealth->vital_checkpoints, true);
+            $reading_value = $vital_checkpoints['reading_value'] ?? [];
+            $serial = 1;
+        @endphp
+
+        @foreach ($check_points as $label => $items)
+            @foreach ($items as $point)
+                <tr>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;"
+                        colspan="6">{{ $loop->iteration }}</td>
+
+                    <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;"
+                        colspan="6">
+                        {{ $point->name }}
+                        <input type="hidden" name="id[{{ $point->id }}]" value="{{ encryptId($point->id) }}">
+                    </td>
+
+                    <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;"
+                        colspan="6">
+                        {{ $reading_value[$point->id] ?? 'No Value' }}
+                    </td>
+                </tr>
+            @endforeach
+        @endforeach
+
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: center;"
+                colspan="18">
+                <b>EYE Check Up</b>
+        </tr>
+
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">
+                Vision</th>
+
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">
+                Without Glasses(Right)</th>
+
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="6">With
+                Glasses(Left)</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">Color
+                Blindness</th>
+        </tr>
+        <tr>
+            <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;" colspan="4">
+                Distance</td>
+            <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;" colspan="6">
+                {{ isset($physicalHealth->distance_without_glass) ? $physicalHealth->distance_without_glass : '' }}
+            </td>
+            <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;" colspan="6">
+                {{ isset($physicalHealth->distance_with_glass) ? $physicalHealth->distance_with_glass : '' }}</td>
+            <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;" colspan="2">
+
+                @if ($physicalHealth->distance_without_glass_yes === '1')
+                    <span style="color: green; font-size: 20px;">✓</span>
+                @elseif ($physicalHealth->distance_without_glass_yes === '0')
+                    <span style="color: red; font-size: 20px;">✗</span>
+                @else
+                    <span style="color: gray; font-size: 16px;">N/A</span>
+                @endif
+            </td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;" colspan="4">
+                Near</td>
+            <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;" colspan="6">
+                {{ isset($physicalHealth->near_without_glass_yes) ? $physicalHealth->near_without_glass_yes : '' }}
+            </td>
+            <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;" colspan="6">
+                {{ isset($physicalHealth->near_with_glass) ? $physicalHealth->near_with_glass : '' }}</td>
+            <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;" colspan="2">
+
+                @if ($physicalHealth->near_without_glass_yes === '1')
+                    <span style="color: green; font-size: 20px;">✓</span>
+                @elseif ($physicalHealth->near_without_glass_yes === '0')
+                    <span style="color: red; font-size: 20px;">✗</span>
+                @else
+                    <span style="color: gray; font-size: 16px;">N/A</span>
+                @endif
+            </td>
+        </tr>
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="18">
+                <b>Remarks By Medical Officer : </b> {{ isset($physicalHealth->remarks) ? $physicalHealth->remarks : '' }}
+        </tr>
     </table>
+
 
 
 

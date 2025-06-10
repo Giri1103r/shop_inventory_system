@@ -185,11 +185,14 @@ class PhysicalHealthExamination extends Model
 
         ];
 
-         $family_details = [
-                    'status' => ($request->status),
+        $family_details = [
+            'status' => ($request->status),
 
-                    'remarks' => ($request->family_remarks),
-                ];
+            'remarks' => ($request->family_remarks),
+        ];
+        $reading_value = [
+            'reading_value' => ($request->reading_value),
+        ];
 
         $insert_array = [
             'document_reference_id' => $document_no->id,
@@ -197,7 +200,7 @@ class PhysicalHealthExamination extends Model
             'emp_name' => $request->emp_name,
             'date' => DBdateformat($request->date),
             'mobile_no' => $mobile_no,
-            'blood_group' => $request->blood_group ,
+            'blood_group' => $request->blood_group,
             'age' => $request->age,
             'form_number' => $request->form_number,
             'gender' => $gender,
@@ -211,8 +214,8 @@ class PhysicalHealthExamination extends Model
             'past_history' => $request->past_history,
             'present_complaint' => $request->present_complaints,
             'personal_details' => json_encode($responses),
-            'family_history' => json_encode($request->family_remarks),
-            'vital_checkpoints' => json_encode($family_details),
+            'family_history' => json_encode($family_details),
+            'vital_checkpoints' => json_encode($reading_value),
             'near_with_glass' => $request->near_with_glasses,
             'near_without_glass' => $request->near_with_out_glasses,
             'near_without_glass_yes' => decryptId($request->near_with_out_glasses_yes),
@@ -223,110 +226,18 @@ class PhysicalHealthExamination extends Model
 
             'created_by' => Auth::id(),
         ];
-dd($request->all());
+
         return self::create($insert_array);
     }
 
 
-    public function EHSOfficerUpdate($id)
-    {
+   
 
-        $request = request();
-        if ($request->is_passed == 1) {
-            $update_array = [
-                'verified_by' => Auth::id(),
-                'approved_by' => Auth::id(),
-                'approve_status' => INSPECTION_APPROVED,
-                'updated_by' => Auth::id(),
-                'remarks' => $request->remarks,
-            ];
-            $this->where('id', $id)->update($update_array);
-        } else {
-            $update_array = [
-                'verified_by' => Auth::id(),
-                'approve_status' => WAITING_FOR_CAPA_ACTION,
-                'updated_by' => Auth::id(),
-                'capa_recomendation' => $request->remarks,
-            ];
-            $this->where('id', $id)->update($update_array);
-        }
-    }
 
-    public function capaSubmit($id)
-    {
-        $request = request();
-        $update_array = [
-            'capa_remarks' => $request->capa_remarks,
-            'updated_by' => Auth::id(),
-            'approve_status' => WAITING_FOR_CAPA_VERIFICATION,
-        ];
-        $this->where('id', $id)->update($update_array);
-    }
 
-    public function capaVerifySubmit($id, $status, $remarks)
-    {
-        $request = request();
-        if ($status == 1) {
-            $update_array = [
-                'verified_by' => Auth::id(),
-                'updated_by' => Auth::id(),
-                'approve_status' => WAITING_FOR_L1_VERIFICATION,
-                'capa_ehs_remarks' => $remarks,
-            ];
-            $this->where('id', $id)->update($update_array);
-        } else {
-            $update_array = [
-                'verified_by' => Auth::id(),
-                'updated_by' => Auth::id(),
-                'approve_status' => EHS_OFFICER_REJECTED,
-                'capa_ehs_remarks' => $remarks,
-            ];
-            $this->where('id', $id)->update($update_array);
-        }
-    }
 
-    public function levelOneManagerSubmit($id, $status, $remarks)
-    {
-        if ($status == 1) {
-            $update_array = [
-                'l1_manager_verified_by' => Auth::id(),
-                'updated_by' => Auth::id(),
-                'approve_status' => WAITING_FOR_L2_VERIFICATION,
-                'level_one_manager_remarks' => $remarks,
-            ];
-            $this->where('id', $id)->update($update_array);
-        } else {
-            $update_array = [
-                'l1_manager_verified_by' => Auth::id(),
-                'updated_by' => Auth::id(),
-                'approve_status' => L1_MANAGER_REJECTED,
-                'level_one_manager_remarks' => $remarks,
-            ];
-            $this->where('id', $id)->update($update_array);
-        }
-    }
 
-    public function levelTwoManagerSubmit($id, $status, $remarks)
-    {
-        if ($status == 1) {
-            $update_array = [
-                'l2_manager_verified_by' => Auth::id(),
-                'approved_by' => Auth::id(),
-                'updated_by' => Auth::id(),
-                'approve_status' => INSPECTION_APPROVED,
-                'level_two_manager_remarks' => $remarks,
-            ];
-            $this->where('id', $id)->update($update_array);
-        } else {
-            $update_array = [
-                'l2_manager_verified_by' => Auth::id(),
-                'updated_by' => Auth::id(),
-                'approve_status' => L2_MANAGER_REJECTED,
-                'level_two_manager_remarks' => $remarks,
-            ];
-            $this->where('id', $id)->update($update_array);
-        }
-    }
+
 
     public function exportdata()
     {
@@ -348,7 +259,7 @@ dd($request->all());
         if (isset($request->location_id) && $request->location_id) {
             $query = $query->where('inspection_ohc_physical_health_examination.location', decryptId($request->location_id));
         }
- if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_ohc_hygiene_checklist.created_at', '>=', $startDate);
