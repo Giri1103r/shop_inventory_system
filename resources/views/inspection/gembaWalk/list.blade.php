@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Gemba Walk Inspection (Safety  Observation)')
+@section('title', 'Gemba Walk Inspection (Safety Observation)')
 @section('pageurl', admin_url('inspection/gemba-walk/list'))
 
 @section('content')
@@ -37,7 +37,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">Shift</label>
+                                                <label class="form-label">Shift</label>
                                                 <select name="shift" id="shift" style="width: 100%"
                                                     class="form-control single-select">
                                                     <option value="">Select the option</option>
@@ -91,6 +91,32 @@
                                                 </div>
                                             </div>
                                         </div>
+
+                                        @if (!empty($dashboard_search))
+
+                                            <div class="col-md-4 mb-3 form-input">
+                                                <label for="date" class="form-label ">Unit</label>
+                                                <input type="text" name="unit_name" id="unit_name"
+                                                    value="{{ $dashboard_search }}" readonly class="form-control">
+                                            </div>
+                                        @else
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Unit</label>
+                                                    <select name="unit_id" id="unit_id" style="width: 100%"
+                                                        class="form-control single-select">
+                                                        <option value="">Select the option</option>
+                                                        @foreach ($unit as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->unit_name }}
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                        @endif
+
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -114,6 +140,7 @@
                                         <th>Gemba Walk ID</th>
                                         <th>Date</th>
                                         <th>Shift</th>
+                                        <th>{{ __('common.unit') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -218,9 +245,8 @@
                             d.shift = $('#shift').val();
                             d.from_date = $('#from_date').val();
                             d.to_date = $('#to_date').val();
-
-
-
+                            d.unit_name = $("#unit_name").val();
+                            d.unit_id = $("#unit_id").val();
 
                         },
                         error: function(xhr, error, code) {
@@ -247,7 +273,10 @@
                             data: 'shift',
                             name: 'shift'
                         },
-
+                        {
+                            data: 'unit_name',
+                            name: 'unit_name'
+                        },
                         {
                             data: 'gemba_walk_status',
                             name: 'gemba_walk_status'
@@ -295,6 +324,8 @@
                                         var shift = $('#shift').val();
                                         var from_date = $('#from_date').val();
                                         var to_date = $('#to_date').val();
+                                        var unit_name = $('#unit_name').val();
+                                        var unit_id = $('#unit_id').val();
 
 
                                         $(".dt-button").removeClass('processing');
@@ -307,7 +338,9 @@
                                             '&inspection_status=' + inspection_status +
                                             '&from_date=' + from_date +
                                             '&to_date=' + to_date +
-                                            '&shift=' + shift
+                                            '&shift=' + shift +
+                                            '&unit_name=' + unit_name +
+                                            '&unit_id=' + unit_id
 
 
                                     }
@@ -324,6 +357,8 @@
                                         var shift = $('#shift').val();
                                         var from_date = $('#from_date').val();
                                         var to_date = $('#to_date').val();
+                                        var unit_name = $('#unit_name').val();
+                                        var unit_id = $('#unit_id').val();
 
 
                                         $(".dt-button").removeClass('processing');
@@ -336,7 +371,9 @@
                                             '&inspection_status=' + inspection_status +
                                             '&from_date=' + from_date +
                                             '&to_date=' + to_date +
-                                            '&shift=' + shift
+                                            '&shift=' + shift +
+                                            '&unit_name=' + unit_name +
+                                            '&unit_id=' + unit_id
 
                                     }
                                 },

@@ -232,7 +232,7 @@
                     <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ getLocationname($gembaWalk->location_id ?? 'N/A') }}</td>
-                        <td>{{ getUnitname($gembaWalk->unit_id ?? 'N/A') }}</td>
+                        <td>{{ $gembaWalk->unit_name ?? 'N/A' }}</td>
                         <td>{{ getDepartment($gembaWalk->department_id ?? 'N/A') }}</td>
                         <td>{{ $gembaWalk->exact_location ?? 'N/A' }}</td>
                         <td>{{ displaydateformat($gembaWalk->date_of_observation ?? 'N/A') }}</td>
@@ -259,7 +259,7 @@
                         </td>
                         <td>{{ $gembaWalk->capa ?? 'N/A' }}</td>
                         <td>{{ getGembaWalkStatus($gembaWalk->gemba_walk_checklist_status ?? 'N/A') }}</td>
-                      
+
                         <td>{{ $gembaWalk->remark ?? 'N/A' }}</td>
                         <td>
                             @php

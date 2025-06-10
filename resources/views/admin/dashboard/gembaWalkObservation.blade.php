@@ -10,12 +10,34 @@
             height: 350,
             toolbar: {
                 show: false
+            },
+            events: {
+                dataPointSelection: function(event, chartContext, config) {
+                    var dataPointIndex = config.dataPointIndex;
+
+                    if (dataPointIndex === undefined) {
+                        console.error('Invalid dataPointIndex');
+                        return;
+                    }
+
+                    var unitName = chartContext.w.config.xaxis.categories[dataPointIndex]?.trim();
+
+
+                    var unitId = unitName;
+
+                    if (unitId) {
+                        redirectToGembaWalk(unitId);
+                    } else {
+                        console.warn('Unit ID not found for:', unitName);
+                    }
+                }
             }
+
         },
         plotOptions: {
             bar: {
                 horizontal: false,
-              columnWidth: '25%',
+                columnWidth: '25%',
                 borderRadiusApplication: 'end'
             }
         },
@@ -41,7 +63,7 @@
         tooltip: {
             y: {
                 formatter: function(val) {
-                    return val ;
+                    return val;
                 }
             }
         }
