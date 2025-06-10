@@ -1451,6 +1451,36 @@
             form.submit();
         }
 
+        // gembaWalk
+         function redirectToGembaWalk(unitId) {
+
+            // CompanyId = $("#company_id").val();
+            // Fromdate = $("#fromDate").val();
+            // Todate = $("#toDate").val();
+            // Create a form element
+            var form = document.createElement('form');
+            form.setAttribute('method', 'post');
+            form.setAttribute('action', "{{ admin_url('inspection/gemba-walk/list') }}");
+
+            // Add CSRF token field
+            var csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = '_token';
+            csrfToken.value = '{{ csrf_token() }}';
+            form.appendChild(csrfToken);
+
+            // Create hidden input fields for each POST data
+            var inputUnitId = document.createElement('input');
+            inputUnitId.setAttribute('type', 'hidden');
+            inputUnitId.setAttribute('name', 'unit_name');
+            inputUnitId.setAttribute('value', unitId);
+            form.appendChild(inputUnitId);
+
+            // Append the form to the body and submit it
+            document.body.appendChild(form);
+            form.submit();
+        }
+
         function redirectopermanage(link) {
             var url = "{{ admin_url('') }}" + link;
             window.location.href = url;
