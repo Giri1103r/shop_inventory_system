@@ -61,7 +61,7 @@
                         if (unitObj) {
                             var iirType = unitObj.incident_type_id;
                             var unitId = unitObj.unit_id;
-                            redirectToIms(iirType, unitId);
+                            redirectToIms(iirType, unitId,'','','','','');
                         } else {
                             console.warn('Unit not found in incident type object:', unit);
                         }

@@ -35,11 +35,28 @@
                 height: 350,
                 toolbar: {
                     show: false
+                },
+                events: {
+                    dataPointSelection: function(event, chartContext, config) {
+                        var dataPointIndex = config.dataPointIndex;
+
+                        var redirectUrls = [
+                            '{{admin_url('audit/assessment/list')}}',
+                            '{{admin_url('audit/6s-analysis/list')}}',
+                            '{{admin_url('audit/inter-unit-audit/checklist/list')}}',
+                            '{{admin_url('audit/monthly-audit/audit-plan/list')}}'
+                        ];
+
+                        if (redirectUrls[dataPointIndex]) {
+                            window.location.href = redirectUrls[dataPointIndex];
+                        }
+                    }
                 }
+
             },
             plotOptions: {
                 bar: {
-                   columnWidth: '25%',
+                    columnWidth: '25%',
                     horizontal: false,
                     distributed: true
                 }
