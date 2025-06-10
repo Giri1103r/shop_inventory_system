@@ -347,10 +347,10 @@
 
 
                     },
-                    signature_image: {
-                        required: true,
-                        filesize: 15728640,
-                    }
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
                 messages: {
 
@@ -359,10 +359,10 @@
                         minlength: "Remarks  must contain between 3 and 600 characters.",
                         maxlength: "Remarks must contain between 3 and 600 characters.",
                     },
-                    signature_image: {
-                        required: "Signature is Required",
-                        filesize: "File size must be less than 15MB."
-                    }
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size must be less than 15MB."
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {

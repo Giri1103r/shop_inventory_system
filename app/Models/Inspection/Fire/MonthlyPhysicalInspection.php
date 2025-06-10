@@ -71,7 +71,7 @@ class MonthlyPhysicalInspection extends Model
             $query = $query->where('inspection_fire_monthly_physical_inspection.inspection_status', decryptId($request->inspection_status));
         }
 
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_fire_monthly_physical_inspection.created_at', '>=', $startDate);
@@ -123,23 +123,25 @@ class MonthlyPhysicalInspection extends Model
     }
 
 
-
     public function store()
     {
-        $request = Request();
+        $request = request();
+
         $ids = $request->id;
 
-        foreach ($ids as $index =>  $id) {
-            $id = decryptId($id);
+        $inspected_data = [];
+            
+        foreach ($ids as $index => $encryptedId) {
+            $id = decryptId($encryptedId);
             $inspected_data[$id] = [
                 'id' => $id,
                 'remarks' => $request->remarks[$index],
                 'status' => $request->status[$index],
-                'frequency' =>  decryptId($request->frequency[$index]),
+                'frequency' => decryptId($request->frequency[$index]),
             ];
         }
-
         $inspected_data = json_encode($inspected_data);
+
         $insert_array = [
             'document_reference_id' => decryptId($request->document_reference_id),
             'date_of_inspection' => DBdateformat($request->inspection_date),
@@ -148,8 +150,11 @@ class MonthlyPhysicalInspection extends Model
             'inspected_data' => $inspected_data,
             'created_by' => Auth::id(),
         ];
+        //   dd( $insert_array,$inspected_data);
+
         return $this->create($insert_array);
     }
+
 
     public function  selectOne($id)
     {
@@ -190,7 +195,7 @@ class MonthlyPhysicalInspection extends Model
             $query = $query->where('inspection_fire_monthly_physical_inspection.inspection_status', decryptId($request->inspection_status));
         }
 
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_fire_monthly_physical_inspection.created_at', '>=', $startDate);

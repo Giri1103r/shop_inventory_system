@@ -97,9 +97,8 @@
                                             @foreach ($image as $img)
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label"
-                                                            style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($img->file_path) }}" alt="Signature Upload"
+                                                       
+                                                        <img src="{{ admin_url($img->file_path) }}" alt=" Upload"
                                                             style="width: 100px; margin-top: -10px;" />
                                                     </div>
                                                 </div>

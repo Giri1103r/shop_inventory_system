@@ -182,9 +182,9 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4 form-group form-input mb-2 mt-2"
+                                                        {{-- <div class="col-md-4 form-group form-input mb-2 mt-2"
                                                             id="signature_givenby" style="display:none;">
-                                                        </div>
+                                                        </div> --}}
 
                                                         <div class="col-md-4 mt-2">
                                                             <div class="form-group form-input">
@@ -199,9 +199,9 @@
                                                                 </select>
                                                             </div>
                                                         </div>
-                                                        <div class="col-md-4 form-group form-input mb-2 mt-2"
+                                                        {{-- <div class="col-md-4 form-group form-input mb-2 mt-2"
                                                             id="signature_receivedby" style="display:none;">
-                                                        </div>
+                                                        </div> --}}
 
                                                         <div class="col-md-12 mt-2">
                                                             <div class="form-group form-input">
@@ -496,69 +496,69 @@
                 selectionCssClass: 'form-control'
             });
 
-            function updateGivenBySignatureField(loginId) {
-                $.ajax({
-                    url: '{{ admin_url('ohc/safety-petty-logbook/get-signature') }}',
-                    method: 'GET',
-                    data: {
-                        login_id: loginId
-                    },
-                    success: function(response) {
-                        $("#signature_givenby").empty();
+            // function updateGivenBySignatureField(loginId) {
+            //     $.ajax({
+            //         url: '{{ admin_url('ohc/safety-petty-logbook/get-signature') }}',
+            //         method: 'GET',
+            //         data: {
+            //             login_id: loginId
+            //         },
+            //         success: function(response) {
+            //             $("#signature_givenby").empty();
 
-                        if (response.signature_upload) {
-                            $("#signature_givenby").html(
-                                '<label class="form-label" style="display: block;">Signature</label>' +
-                                '<img src="{{ admin_url('public/') }}' + response
-                                .signature_upload +
-                                '" alt="Signature Upload" style="width: 150px; margin-top:-10px">'
-                            );
-                        } else {
-                            $("#signature_givenby").html(
-                                '<label class="form-label require">Signature</label>' +
-                                '<input type="file" name="signature_givenby_image[1]" id="signature_givenby" ' +
-                                'class="form-control form-control-sm" accept="image/*">' +
-                                '<small>Allowed file types: jpg, jpeg, png</small>' +
-                                '<div id="signature_givenby_error" class="text-danger"></div>'
-                            );
-                        }
+            //             if (response.signature_upload) {
+            //                 $("#signature_givenby").html(
+            //                     '<label class="form-label" style="display: block;">Signature</label>' +
+            //                     '<img src="{{ admin_url('public/') }}' + response
+            //                     .signature_upload +
+            //                     '" alt="Signature Upload" style="width: 150px; margin-top:-10px">'
+            //                 );
+            //             } else {
+            //                 $("#signature_givenby").html(
+            //                     '<label class="form-label require">Signature</label>' +
+            //                     '<input type="file" name="signature_givenby_image[1]" id="signature_givenby" ' +
+            //                     'class="form-control form-control-sm" accept="image/*">' +
+            //                     '<small>Allowed file types: jpg, jpeg, png</small>' +
+            //                     '<div id="signature_givenby_error" class="text-danger"></div>'
+            //                 );
+            //             }
 
-                        $("#signature_givenby").show();
-                    }
-                });
-            }
+            //             $("#signature_givenby").show();
+            //         }
+            //     });
+            // }
 
-            function updateReceivedBySignatureField(loginId) {
-                $.ajax({
-                    url: '{{ admin_url('ohc/safety-petty-logbook/get-signature') }}',
-                    method: 'GET',
-                    data: {
-                        login_id: loginId
-                    },
-                    success: function(response) {
-                        $("#signature_receivedby").empty();
+            // function updateReceivedBySignatureField(loginId) {
+            //     $.ajax({
+            //         url: '{{ admin_url('ohc/safety-petty-logbook/get-signature') }}',
+            //         method: 'GET',
+            //         data: {
+            //             login_id: loginId
+            //         },
+            //         success: function(response) {
+            //             $("#signature_receivedby").empty();
 
-                        if (response.signature_upload) {
-                            $("#signature_receivedby").html(
-                                '<label class="form-label" style="display: block;">Signature</label>' +
-                                '<img src="{{ admin_url('public/') }}' + response
-                                .signature_upload +
-                                '" alt="Signature Upload" style="width: 150px; margin-top:-10px">'
-                            );
-                        } else {
-                            $("#signature_receivedby").html(
-                                '<label class="form-label require">Signature</label>' +
-                                '<input type="file" name="signature_receivedby_image[1]" id="signature_receivedby" ' +
-                                'class="form-control form-control-sm" accept="image/*">' +
-                                '<small>Allowed file types: jpg, jpeg, png</small>' +
-                                '<div id="signature_receivedby_error" class="text-danger"></div>'
-                            );
-                        }
+            //             if (response.signature_upload) {
+            //                 $("#signature_receivedby").html(
+            //                     '<label class="form-label" style="display: block;">Signature</label>' +
+            //                     '<img src="{{ admin_url('public/') }}' + response
+            //                     .signature_upload +
+            //                     '" alt="Signature Upload" style="width: 150px; margin-top:-10px">'
+            //                 );
+            //             } else {
+            //                 $("#signature_receivedby").html(
+            //                     '<label class="form-label require">Signature</label>' +
+            //                     '<input type="file" name="signature_receivedby_image[1]" id="signature_receivedby" ' +
+            //                     'class="form-control form-control-sm" accept="image/*">' +
+            //                     '<small>Allowed file types: jpg, jpeg, png</small>' +
+            //                     '<div id="signature_receivedby_error" class="text-danger"></div>'
+            //                 );
+            //             }
 
-                        $("#signature_receivedby").show();
-                    }
-                });
-            }
+            //             $("#signature_receivedby").show();
+            //         }
+            //     });
+            // }
 
             // $('#amnt_givenby_id').on('select2:select', function(e) {
             //     var loginId = $(this).val();
@@ -630,14 +630,14 @@
                         required: true,
                         noSpaces: true,
                     },
-                    'signature_givenby_image[1]': {
-                        required: true,
-                        filesize: 15728640,
-                    },
-                    'signature_receivedby_image[1]': {
-                        required: true,
-                        filesize: 15728640,
-                    }
+                    // 'signature_givenby_image[1]': {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // },
+                    // 'signature_receivedby_image[1]': {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
                 messages: {
                     'emp_name[1]': {
@@ -672,14 +672,14 @@
                     'remark[1]': {
                         required: "Remark is Required",
                     },
-                    'signature_givenby_image[1]': {
-                        required: "Signature Given by Image is Required",
-                        filesize: "File must be less than 15MB."
-                    },
-                    'signature_receivedby_image[1]': {
-                        required: "Signature Received by Image is Required",
-                        filesize: "File must be less than 15MB."
-                    }
+                    // 'signature_givenby_image[1]': {
+                    //     required: "Signature Given by Image is Required",
+                    //     filesize: "File must be less than 15MB."
+                    // },
+                    // 'signature_receivedby_image[1]': {
+                    //     required: "Signature Received by Image is Required",
+                    //     filesize: "File must be less than 15MB."
+                    // }
                 },
                 errorElement: 'span',
                 errorPlacement: function(error, element) {
@@ -824,10 +824,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-4 form-group form-input mb-2 mt-2"
-                                id="signature_givenby-${form_set_count}" style="display:none;">
-                            </div>
-
+                           
                             <div class="col-md-4 mt-2">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Amount Received
@@ -840,10 +837,7 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-md-4 form-group form-input mb-2 mt-2"
-                                id="signature_receivedby-${form_set_count}" style="display:none;">
-                            </div>
-
+                           
                             <div class="col-md-12 mt-2">
                                 <div class="form-group form-input">
                                     <label class="form-label require">Description</label>
@@ -1051,100 +1045,100 @@
                     selectionCssClass: 'form-control'
                 });
 
-                $('#amnt_givenby_id-' + form_set_count).on('select2:select', function() {
-                    var loginId = $(this).val();
-                    if (loginId) {
-                        updateGivenByDynamicSignatureField(loginId, form_set_count);
-                    } else {
-                        $('#signature_givenby-' + form_set_count).hide();
-                    }
-                });
+                // $('#amnt_givenby_id-' + form_set_count).on('select2:select', function() {
+                //     var loginId = $(this).val();
+                //     if (loginId) {
+                //         updateGivenByDynamicSignatureField(loginId, form_set_count);
+                //     } else {
+                //         $('#signature_givenby-' + form_set_count).hide();
+                //     }
+                // });
 
-                $('#amnt_receivedby_id-' + form_set_count).on('select2:select', function() {
-                    var loginId = $(this).val();
-                    if (loginId) {
-                        updateReceivedByDynamicSignatureField(loginId, form_set_count);
-                    } else {
-                        $('#signature_receivedby-' + form_set_count).hide();
-                    }
-                });
+                // $('#amnt_receivedby_id-' + form_set_count).on('select2:select', function() {
+                //     var loginId = $(this).val();
+                //     if (loginId) {
+                //         updateReceivedByDynamicSignatureField(loginId, form_set_count);
+                //     } else {
+                //         $('#signature_receivedby-' + form_set_count).hide();
+                //     }
+                // });
             }
 
 
-            function updateGivenByDynamicSignatureField(loginId, form_set_count) {
+            // function updateGivenByDynamicSignatureField(loginId, form_set_count) {
 
-                $.ajax({
-                    url: '{{ admin_url('ohc/safety-petty-logbook/get-signature') }}',
-                    method: 'GET',
-                    data: {
-                        login_id: loginId
-                    },
-                    success: function(response) {
-                        var signatureDiv = $("#signature_givenby-" + form_set_count);
-                        signatureDiv.empty();
+            //     $.ajax({
+            //         url: '{{ admin_url('ohc/safety-petty-logbook/get-signature') }}',
+            //         method: 'GET',
+            //         data: {
+            //             login_id: loginId
+            //         },
+            //         success: function(response) {
+            //             var signatureDiv = $("#signature_givenby-" + form_set_count);
+            //             signatureDiv.empty();
 
-                        if (response.signature_upload) {
-                            signatureDiv.html(
-                                '<label class="form-label" style="display: block;">Signature</label>' +
-                                '<img src="{{ admin_url('public/') }}' + response
-                                .signature_upload +
-                                '" alt="Signature Upload" style="width: 150px; margin-top:-10px">'
-                            );
-                        } else {
-                            signatureDiv.html(
-                                '<label class="form-label require">Signature</label>' +
-                                '<input type="file" name="signature_givenby_image[' +
-                                form_set_count + ']" id="signature_givenby-' + form_set_count +
-                                '" ' +
-                                'class="form-control form-control-sm" accept="image/*">' +
-                                '<small>Allowed file types: jpg, jpeg, png</small>' +
-                                '<div id="signature_givenby_error-' + form_set_count +
-                                '" class="text-danger"></div>'
-                            );
-                        }
+            //             if (response.signature_upload) {
+            //                 signatureDiv.html(
+            //                     '<label class="form-label" style="display: block;">Signature</label>' +
+            //                     '<img src="{{ admin_url('public/') }}' + response
+            //                     .signature_upload +
+            //                     '" alt="Signature Upload" style="width: 150px; margin-top:-10px">'
+            //                 );
+            //             } else {
+            //                 signatureDiv.html(
+            //                     '<label class="form-label require">Signature</label>' +
+            //                     '<input type="file" name="signature_givenby_image[' +
+            //                     form_set_count + ']" id="signature_givenby-' + form_set_count +
+            //                     '" ' +
+            //                     'class="form-control form-control-sm" accept="image/*">' +
+            //                     '<small>Allowed file types: jpg, jpeg, png</small>' +
+            //                     '<div id="signature_givenby_error-' + form_set_count +
+            //                     '" class="text-danger"></div>'
+            //                 );
+            //             }
 
-                        updatePageIndices();
-                        signatureDiv.show();
-                    }
-                });
-            }
+            //             updatePageIndices();
+            //             signatureDiv.show();
+            //         }
+            //     });
+            // }
 
-            function updateReceivedByDynamicSignatureField(loginId, form_set_count) {
-                $.ajax({
-                    url: '{{ admin_url('ohc/safety-petty-logbook/get-signature') }}',
-                    method: 'GET',
-                    data: {
-                        login_id: loginId
-                    },
-                    success: function(response) {
-                        var signatureDiv = $("#signature_receivedby-" + form_set_count);
-                        signatureDiv.empty();
+            // function updateReceivedByDynamicSignatureField(loginId, form_set_count) {
+            //     $.ajax({
+            //         url: '{{ admin_url('ohc/safety-petty-logbook/get-signature') }}',
+            //         method: 'GET',
+            //         data: {
+            //             login_id: loginId
+            //         },
+            //         success: function(response) {
+            //             var signatureDiv = $("#signature_receivedby-" + form_set_count);
+            //             signatureDiv.empty();
 
-                        if (response.signature_upload) {
-                            signatureDiv.html(
-                                '<label class="form-label" style="display: block;">Signature</label>' +
-                                '<img src="{{ admin_url('public/') }}' + response
-                                .signature_upload +
-                                '" alt="Signature Upload" style="width: 150px; margin-top:-10px">'
-                            );
-                        } else {
-                            signatureDiv.html(
-                                '<label class="form-label require">Signature</label>' +
-                                '<input type="file" name="signature_receivedby_image[' +
-                                form_set_count + ']" id="signature_receivedby-' + form_set_count +
-                                '" ' +
-                                'class="form-control form-control-sm" accept="image/*">' +
-                                '<small>Allowed file types: jpg, jpeg, png</small>' +
-                                '<div id="signature_receivedby_error-' + form_set_count +
-                                '" class="text-danger"></div>'
-                            );
-                        }
+            //             if (response.signature_upload) {
+            //                 signatureDiv.html(
+            //                     '<label class="form-label" style="display: block;">Signature</label>' +
+            //                     '<img src="{{ admin_url('public/') }}' + response
+            //                     .signature_upload +
+            //                     '" alt="Signature Upload" style="width: 150px; margin-top:-10px">'
+            //                 );
+            //             } else {
+            //                 signatureDiv.html(
+            //                     '<label class="form-label require">Signature</label>' +
+            //                     '<input type="file" name="signature_receivedby_image[' +
+            //                     form_set_count + ']" id="signature_receivedby-' + form_set_count +
+            //                     '" ' +
+            //                     'class="form-control form-control-sm" accept="image/*">' +
+            //                     '<small>Allowed file types: jpg, jpeg, png</small>' +
+            //                     '<div id="signature_receivedby_error-' + form_set_count +
+            //                     '" class="text-danger"></div>'
+            //                 );
+            //             }
 
-                        updatePageIndices();
-                        signatureDiv.show();
-                    }
-                });
-            }
+            //             updatePageIndices();
+            //             signatureDiv.show();
+            //         }
+            //     });
+            // }
 
             $(document).on('click', '.remove-row', function() {
                 let currentFormSets = $('#form-wrapper .form-set').length;
@@ -1180,29 +1174,12 @@
                     $(this).find('input[name^="amount"]').attr('name', 'amount[' + (index + 1) + ']');
                     $(this).find('select[name^="amnt_givenby_id"]').attr('name', 'amnt_givenby_id[' + (
                         index + 1) + ']');
-                    $(this).find('input[name^="signature_givenby_image"]').attr('name',
-                        'signature_givenby_image[' + (index + 1) + ']');
-                    $(this).find('input[name^="signature_receivedby_image"]').attr('name',
-                        'signature_receivedby_image[' + (index + 1) + ']');
                     $(this).find('select[name^="amnt_receivedby_id"]').attr('name', 'amnt_receivedby_id[' +
                         (index + 1) + ']');
                     $(this).find('textarea[name^="description"]').attr('name', 'description[' + (index +
                         1) + ']');
                     $(this).find('textarea[name^="remark"]').attr('name', 'remark[' + (index + 1) + ']');
 
-
-                    $(this).find("input[name^='signature_givenby_image']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Signature Given by Image is required',
-                        }
-                    });
-                    $(this).find("input[name^='signature_receivedby_image']").rules('add', {
-                        required: true,
-                        messages: {
-                            required: 'Signature Received by Image is required',
-                        }
-                    });
                 });
             }
 

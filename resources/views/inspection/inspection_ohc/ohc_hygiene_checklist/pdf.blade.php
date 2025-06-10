@@ -189,14 +189,14 @@
                         Cleaning and Sanitization
                     </th>
 
-                    <th rowspan="2"
+                    {{-- <th rowspan="2"
                         style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
                         Signature Of Cleaner
                     </th>
                     <th rowspan="2"
                         style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
                         Signature of Nursing Officer
-                    </th>
+                    </th> --}}
                     <th rowspan="2"
                         style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
                         Remarks

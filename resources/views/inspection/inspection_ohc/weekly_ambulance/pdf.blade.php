@@ -268,7 +268,7 @@
 
 
             <tr>
-                @php
+                {{-- @php
                     $createdSignature = GetOHCSignature(
                         $details->inspection_created_by,
                         $details->inspection_id,
@@ -284,7 +284,7 @@
                         $details->inspection_id,
                         OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
                     );
-                @endphp
+                @endphp --}}
 
                 {{-- <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="5">
                     <img src="{{ admin_url($createdSignature) }}" alt="Signature Upload"

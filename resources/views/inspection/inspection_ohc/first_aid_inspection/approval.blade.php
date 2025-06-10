@@ -71,12 +71,12 @@
                                         </tbody>
                                     </table>
 
-                                    <div class="row m-2">
+                                    {{-- <div class="row m-2">
                                         <div class="col-md-4 form-group form-input mb-2">
                                             <label class="form-label" style="display: block;">{{ __('inspection.signature') }}</label>
                                             <img src="{{ admin_url($inspection_file) }}" alt="Signature Upload" style="width: 100px; margin-top: -10px;">
                                         </div>
-                                    </div>
+                                    </div> --}}
                                 </div>
 
                                 <div class="row ">

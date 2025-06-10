@@ -133,7 +133,7 @@
                                                         </thead>
                                                         <tbody>
                                                             @foreach ($equipment_list as $medicines)
-                                                                <tr>
+                                                                <tr>z
                                                                     <td class="text-center">{{ $loop->iteration }}</td>
                                                                     <td class="text-center">
                                                                         {{ $medicines->equipment_name }}

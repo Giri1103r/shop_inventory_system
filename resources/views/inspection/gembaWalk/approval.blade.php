@@ -950,13 +950,13 @@
                         filesize: 2097152, // 2MB
                         fileExtension: "jpg|jpeg|png|gif"
                     },
-                    gemba_walk_verified_by: {
-                        required: function() {
-                            return $('input[name="is_passed"]:checked').val() === '1';
-                        },
-                        filesize: 2097152, // 2MB
-                        fileExtension: "jpg|jpeg|png|gif"
-                    }
+                    // gemba_walk_verified_by: {
+                    //     required: function() {
+                    //         return $('input[name="is_passed"]:checked').val() === '1';
+                    //     },
+                    //     filesize: 2097152, // 2MB
+                    //     fileExtension: "jpg|jpeg|png|gif"
+                    // }
                 },
                 messages: {
                     capa_date: {
@@ -976,11 +976,11 @@
                         filesize: "File size should not exceed 2MB.",
                         fileExtension: "Only JPG, JPEG, PNG, and GIF files are allowed."
                     },
-                    gemba_walk_verified_by: {
-                        required: "Signature is required when passed is YES",
-                        filesize: "File size should not exceed 2MB.",
-                        fileExtension: "Only JPG, JPEG, PNG, and GIF files are allowed."
-                    }
+                    // gemba_walk_verified_by: {
+                    //     required: "Signature is required when passed is YES",
+                    //     filesize: "File size should not exceed 2MB.",
+                    //     fileExtension: "Only JPG, JPEG, PNG, and GIF files are allowed."
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {
@@ -1071,10 +1071,10 @@
                         maxlength: 600,
 
                     },
-                    gemba_walk_verified_by: {
-                        required: true,
-                        filesize: 15728640,
-                    }
+                    // gemba_walk_verified_by: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
                 messages: {
                     capa_date: {
@@ -1086,11 +1086,11 @@
                         maxlength: "Maximum 600 characters",
 
                     },
-                    gemba_walk_verified_by: {
-                        required: "Signature is required",
-                        filesize: "File size should not exceed 15MB.",
+                    // gemba_walk_verified_by: {
+                    //     required: "Signature is required",
+                    //     filesize: "File size should not exceed 15MB.",
 
-                    }
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {

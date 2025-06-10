@@ -20,7 +20,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('fire/hydrant-riser-inspection/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('fire/hydrant-riser-inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -56,8 +57,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.inspection_date') }}</label>
+                                                <label class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                                 <div class="view_data">
                                                     {{ Displaydateformat($inspection->date_of_inspection) }}
                                                 </div>
@@ -105,8 +105,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.upload_image') }}</label>
+                                                <label class="form-label ">{{ __('inspection.upload_image') }}</label>
                                                 <div class="view_data">
                                                     <img src="{{ admin_url($inspection_image) }}"
                                                         style="width:50px; height:50px;" alt="" srcset="">
@@ -120,7 +119,7 @@
                                                 HYDRANT_RISER,
                                             );
                                         @endphp
-                                        @if (isset($signature))
+                                        {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
@@ -129,7 +128,7 @@
                                                         style="width: 100px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                     </div>
                                     <hr>
                                     <div class="form-observation">
@@ -139,8 +138,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label ">Observation</label>
+                                                    <label class="form-label ">Observation</label>
                                                     <div class="view_data">
                                                         {{ $inspection->observation_needed == '1' ? 'YES' : 'NO' }}
                                                     </div>
@@ -161,8 +159,7 @@
                                                 <!-- SR No -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.sr_no') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.sr_no') }}</label>
                                                         <div class="view_data">
                                                             {{ $loop->iteration }}
                                                         </div>
@@ -172,8 +169,7 @@
                                                 <!-- Resource Code -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.location') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.location') }}</label>
                                                         <div class="view_data">
                                                             {{ getLocationname($details->location_check_id) }}
                                                         </div>
@@ -185,19 +181,17 @@
                                                 <!-- Hydrant No  -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Hydrant No</label>
+                                                        <label class="form-label ">Hydrant No</label>
                                                         <div class="view_data">
                                                             {{ $details->hydrant_no }}
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                 <!-- Lugs -->
-                                                 <div class="col-md-4 mb-2">
+                                                <!-- Lugs -->
+                                                <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Lugs</label>
+                                                        <label class="form-label ">Lugs</label>
                                                         <div class="view_data">
                                                             {{ $details->lugs_id == '1' ? 'Present' : 'Missing' }}
                                                         </div>
@@ -206,8 +200,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Rubber Washer</label>
+                                                        <label class="form-label ">Rubber Washer</label>
                                                         <div class="view_data">
                                                             {{ $details->rubber_washer == '1' ? 'Intact' : 'Damaged' }}
                                                         </div>
@@ -216,8 +209,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Check Nut</label>
+                                                        <label class="form-label ">Check Nut</label>
                                                         <div class="view_data">
                                                             {{ $details->check_nut == '1' ? 'Present' : 'Missing' }}
                                                         </div>
@@ -226,8 +218,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Spindle Wheel</label>
+                                                        <label class="form-label ">Spindle Wheel</label>
                                                         <div class="view_data">
                                                             {{ $details->spindle_wheel == '1' ? 'Functional' : 'Non-Functional' }}
                                                         </div>
@@ -236,8 +227,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Blank Cap</label>
+                                                        <label class="form-label ">Blank Cap</label>
                                                         <div class="view_data">
                                                             {{ $details->blank_cap == '1' ? 'Present' : 'Missing' }}
                                                         </div>
@@ -246,8 +236,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Female Coupling</label>
+                                                        <label class="form-label ">Female Coupling</label>
                                                         <div class="view_data">
                                                             {{ $details->female_coupling == '1' ? 'Functional' : 'Non-Functional' }}
 
@@ -257,8 +246,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Lever</label>
+                                                        <label class="form-label ">Lever</label>
                                                         <div class="view_data">
                                                             {{ $details->lever == '1' ? 'Functional' : 'Non-Functional' }}
 
@@ -269,8 +257,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Flow Test</label>
+                                                        <label class="form-label ">Flow Test</label>
                                                         <div class="view_data">
                                                             {{ $details->flow_test }}
                                                         </div>
@@ -296,8 +283,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Condition of ISV</label>
+                                                        <label class="form-label ">Condition of ISV</label>
                                                         <div class="view_data">
                                                             {{ $details->condition_of_ivs == '1' ? 'Functional' : 'Non-Functional' }}
 
@@ -308,8 +294,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Approach</label>
+                                                        <label class="form-label ">Approach</label>
                                                         <div class="view_data">
                                                             {{ $details->approach }}
                                                         </div>
@@ -320,8 +305,7 @@
                                                 <!-- Remarks -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.remarks') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.remarks') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->remarks }}
                                                         </div>
@@ -379,7 +363,7 @@
                                                 </div>
                                             @endif
 
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -388,7 +372,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             @if (isset($inspection->approved_by))
                                                 @if ($inspection->verified_by == $inspection->approved_by)
                                                     <div class="col-md-4 mb-2">
@@ -407,16 +391,17 @@
                                                             HYDRANT_RISER,
                                                         );
                                                     @endphp
-                                                    @if (isset($signature))
-                                                    <div class="col-md-4 mb-2">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label"
-                                                                style="display: block;">{{ __('inspection.signature') }}</label>
-                                                            <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                                style="width: 150px; margin-top: -10px;" />
+                                                    {{-- @if (isset($signature))
+                                                        <div class="col-md-4 mb-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label"
+                                                                    style="display: block;">{{ __('inspection.signature') }}</label>
+                                                                <img src="{{ admin_url($signature) }}"
+                                                                    alt="Signature Upload"
+                                                                    style="width: 150px; margin-top: -10px;" />
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                @endif
+                                                    @endif --}}
                                                 @endif
                                             @endif
 
@@ -470,7 +455,7 @@
                                                     WAITING_FOR_CAPA_ACTION,
                                                 );
                                             @endphp
-                                             <div class="col-md-4 mb-2">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.date') }}</label>
                                                     <div class="view_data">
@@ -478,7 +463,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -487,7 +472,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
@@ -525,11 +510,11 @@
                                             );
 
                                             $updated_time = GetFireUpdatedTime(
-                                                    $inspection->verified_by,
-                                                    $inspection->id,
-                                                    HYDRANT_RISER,
-                                                    WAITING_FOR_CAPA_VERIFICATION,
-                                                );
+                                                $inspection->verified_by,
+                                                $inspection->id,
+                                                HYDRANT_RISER,
+                                                WAITING_FOR_CAPA_VERIFICATION,
+                                            );
                                         @endphp
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
@@ -539,7 +524,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @if (isset($signature))
+                                        {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
@@ -548,7 +533,7 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label
@@ -590,7 +575,7 @@
                                                 WAITING_FOR_L1_VERIFICATION,
                                             );
                                         @endphp
-                                         <div class="col-md-4 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.date') }}</label>
                                                 <div class="view_data">
@@ -598,7 +583,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @if (isset($signature))
+                                        {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
@@ -607,7 +592,7 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label
@@ -648,7 +633,7 @@
                                                 WAITING_FOR_L2_VERIFICATION,
                                             );
                                         @endphp
-                                         <div class="col-md-4 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.date') }}</label>
                                                 <div class="view_data">
@@ -656,7 +641,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        @if (isset($signature))
+                                        {{-- @if (isset($signature))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label"
@@ -665,9 +650,8 @@
                                                         style="width: 150px; margin-top: -10px;" />
                                                 </div>
                                             </div>
-                                        @endif
-{{--
-                                        @if ($inspection->approved_by)
+                                        @endif --}}
+                                        {{--    @if ($inspection->approved_by)
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.approved_by') }}</label>

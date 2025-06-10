@@ -812,11 +812,11 @@
                     unit: {
                         required: true
                     },
-                    signature_image: {
-                        required: true,
-                        extension: "png|jpeg|jpg",
-                       filesize: 15728640,
-                    },
+                    // signature_image: {
+                    //     required: true,
+                    //     extension: "png|jpeg|jpg",
+                    //    filesize: 15728640,
+                    // },
                     frequency: {
                         required: true
                     },
@@ -834,12 +834,12 @@
                     date: {
                         required: true
                     },
-                    signature_image: {
-                        required: true,
-                        extension: "png|jpeg|jpg",
-                        filesize: 15728640,
+                    // signature_image: {
+                    //     required: true,
+                    //     extension: "png|jpeg|jpg",
+                    //     filesize: 15728640,
 
-                    },
+                    // },
 
                     "unit_id[]": {
                         required: true
@@ -883,11 +883,11 @@
                     unit: {
                         required: "Please select the Unit name."
                     },
-                    signature_image: {
-                        required: "Please upload your signature image.",
-                        extension: "Allowed file types: PNG, JPEG, JPG.",
-                        filesize: "File must be less than 15MB."
-                    },
+                    // signature_image: {
+                    //     required: "Please upload your signature image.",
+                    //     extension: "Allowed file types: PNG, JPEG, JPG.",
+                    //     filesize: "File must be less than 15MB."
+                    // },
                     frequency: {
                         required: "Please select the Frequency Name."
                     },
@@ -905,11 +905,11 @@
                     review_date: {
                         required: "Please select the review date."
                     },
-                    signature_image: {
-                        required: "Please upload a signature.",
-                        extension: "Only PNG, JPEG, and JPG formats are allowed.",
-                        filesize: "File size must be less than 15MB."
-                    },
+                    // signature_image: {
+                    //     required: "Please upload a signature.",
+                    //     extension: "Only PNG, JPEG, and JPG formats are allowed.",
+                    //     filesize: "File size must be less than 15MB."
+                    // },
                     "unit_id[]": {
                         required: "Please select the Unit Name."
                     },

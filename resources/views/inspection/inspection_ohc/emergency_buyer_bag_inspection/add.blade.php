@@ -290,10 +290,10 @@
                     frequency_id: {
                         required: true,
                     },
-                    signature_image: {
-                        required: true,
-                        filesize: 15728640,
-                    },
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // },
                     remark_by: {
                         required: true,
                         minlength: 3,
@@ -322,10 +322,10 @@
                         required: "Frequency  selection is required",
 
                     },
-                    signature_image: {
-                        required: "Signature is required",
-                        filesize: "File size must be less than 15MB."
-                    },
+                    // signature_image: {
+                    //     required: "Signature is required",
+                    //     filesize: "File size must be less than 15MB."
+                    // },
                     remark_by: {
                         required: "Please add remarks",
                         minlength: "Minimum 3 characters required",

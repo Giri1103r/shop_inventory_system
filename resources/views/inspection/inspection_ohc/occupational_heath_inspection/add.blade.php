@@ -326,20 +326,20 @@
         });
 
 
-        $(document).ready(function() {
-            $('#signature_image').on('change', function() {
+        // $(document).ready(function() {
+        //     $('#signature_image').on('change', function() {
 
 
 
-                var reader = new FileReader();
-                reader.onload = function(e) {
-                    $('#imagePreview').attr('src', e.target.result);
-                    $('#imagePreviewContainer').show();
-                };
-                reader.readAsDataURL(file);
-            });
+        //         var reader = new FileReader();
+        //         reader.onload = function(e) {
+        //             $('#imagePreview').attr('src', e.target.result);
+        //             $('#imagePreviewContainer').show();
+        //         };
+        //         reader.readAsDataURL(file);
+        //     });
 
-        });
+        // });
 
         $(function() {
             // Initialize validator
@@ -354,11 +354,11 @@
                     unit_id: {
                         required: true
                     },
-                    signature_image: {
-                        required: true,
-                        extension: "png|jpeg|jpg",
-                        filesize: 15728640,
-                    },
+                    // signature_image: {
+                    //     required: true,
+                    //     extension: "png|jpeg|jpg",
+                    //     filesize: 15728640,
+                    // },
                     date_of_inspection: {
                         required: true
                     },
@@ -379,11 +379,11 @@
                     frequency_id: {
                         required: "Frequency Name is required"
                     },
-                    signature_image: {
-                        required: "Please upload your signature image.",
-                        extension: "Allowed file types: PNG, JPEG, JPG.",
-                        filesize: "File must be less than 15MB."
-                    },
+                    // signature_image: {
+                    //     required: "Please upload your signature image.",
+                    //     extension: "Allowed file types: PNG, JPEG, JPG.",
+                    //     filesize: "File must be less than 15MB."
+                    // },
 
                     date_of_inspection: {
                         required: "Date Of Inspection is required"

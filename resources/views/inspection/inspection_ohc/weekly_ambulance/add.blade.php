@@ -342,11 +342,11 @@
                     issue_date: {
                         required: true,
                     },
-                    signature_image: {
-                        required: true,
-                        extension: "png|jpeg|jpg",
-                        filesize: 15728640,
-                    },
+                    // signature_image: {
+                    //     required: true,
+                    //     extension: "png|jpeg|jpg",
+                    //     filesize: 15728640,
+                    // },
                     shift: {
                         required: true,
                     },
@@ -372,11 +372,11 @@
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 100",
                     },
-                    signature_image: {
-                        required: "Please upload your signature image.",
-                        extension: "Allowed file types: PNG, JPEG, JPG.",
-                        filesize: "File must be less than 15 MB."
-                    },
+                    // signature_image: {
+                    //     required: "Please upload your signature image.",
+                    //     extension: "Allowed file types: PNG, JPEG, JPG.",
+                    //     filesize: "File must be less than 15 MB."
+                    // },
 
                     issue_date: {
                         required: "Issue date is required",

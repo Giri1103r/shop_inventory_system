@@ -681,16 +681,11 @@
                         'gemba_walk[0][time]': {
                             required: true
                         },
-                        gemba_walk_prepared_by: {
-                            required: true,
-                            //  extension: "jpg|jpeg|png",
-                            filesize: 15728640,
-                        },
-                        gemba_walk_verified_by: {
-                            required: true,
-                            filesize: 15728640,
-                        },
-
+                        // gemba_walk_prepared_by: {
+                        //     required: true,
+                        //     filesize: 15728640,
+                        // },
+                       
                         capa_remark: {
                             required: true,
                         },
@@ -777,18 +772,18 @@
                         shift: {
                             required: "Please select a shift."
                         },
-                        gemba_walk_prepared_by: {
-                            required: "Please upload a signature.",
-                            // extension: "Only JPG, JPEG, and PNG files are allowed.",
-                            filesize: "File size must be less than 15MB."
-                        },
+                        // gemba_walk_prepared_by: {
+                        //     required: "Please upload a signature.",
+                        //      extension: "Only JPG, JPEG, and PNG files are allowed.",
+                        //     filesize: "File size must be less than 15MB."
+                        // },
                         // executive_person_id: {
                         //     required: "Please select a Executive person."
                         // },
-                        gemba_walk_verified_by: {
-                            required: "Please upload a signature.",
-                            filesize: "File size must be less than 15MB."
-                        },
+                        // gemba_walk_verified_by: {
+                        //     required: "Please upload a signature.",
+                        //     filesize: "File size must be less than 15MB."
+                        // },
                         capa_remark: {
                             required: "Please enter a remark.",
                         },

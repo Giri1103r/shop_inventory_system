@@ -365,10 +365,10 @@
                             minlength: 3,
                             maxlength: 300,
                         },
-                        signature_image:{
-                            required: true,
-                            filesize: 15728640,
-                        }
+                        // signature_image:{
+                        //     required: true,
+                        //     filesize: 15728640,
+                        // }
 
                     },
                     messages: {
@@ -388,10 +388,10 @@
                         frequency_id: {
                             required: "Frequency is required",
                         },
-                        signature_image:{
-                            required: "Signature Image is required",
-                            filesize: "File size should not exceed 15 MB",
-                        }
+                        // signature_image:{
+                        //     required: "Signature Image is required",
+                        //     filesize: "File size should not exceed 15 MB",
+                        // }
                         resource_code: {
                             required: 'Recource Code is requried',
                             minlength: "Minimum Characters should be 3",

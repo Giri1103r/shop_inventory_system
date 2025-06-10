@@ -290,13 +290,13 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetOHCSignature(
                                                         $weekAmbualance->verified_by,
                                                         $weekAmbualance->id,
                                                         OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
                                                     );
-                                                @endphp
+                                                @endphp --}}
                                             @endif
 
                                             @if (isset($weekAmbualance->created_at))
@@ -810,10 +810,10 @@
                         maxlength: 600,
                         noSpaces: true,
                     },
-                    signature_image: {
-                        required: true,
-                        filesize: 15728640,
-                    }
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
                 messages: {
                     remarks: {
@@ -821,10 +821,10 @@
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 600",
                     },
-                    signature_image: {
-                        required: "Signature is Required",
-                        filesize: "File size must be less than 15MB."
-                    }
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size must be less than 15MB."
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {
@@ -859,10 +859,10 @@
                         maxlength: 600,
                         noSpaces: true,
                     },
-                    signature_image: {
-                        required: true,
-                        filesize: 15728640,
-                    }
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
                 messages: {
                     capa_remarks: {
@@ -870,10 +870,10 @@
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 600",
                     },
-                    signature_image: {
-                        required: "Signature is Required",
-                        filesize: "File size must be less than 15MB."
-                    }
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size must be less than 15MB."
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {
@@ -904,10 +904,10 @@
                         maxlength: 600,
                         noSpaces: true,
                     },
-                    signature_image: {
-                        required: true,
-                        filesize: 15728640,
-                    }
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
                 messages: {
                     level_one_manager: {
@@ -915,10 +915,10 @@
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 600",
                     },
-                    signature_image: {
-                        required: "Signature is Required",
-                        filesize: "File must be less than 15MB."
-                    }
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File must be less than 15MB."
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {
@@ -949,10 +949,10 @@
                         maxlength: 600,
                         noSpaces: true,
                     },
-                    signature_image: {
-                        required: true,
-                        filesize: 15728640,
-                    }
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
                 messages: {
                     level_two_manager: {
@@ -960,10 +960,10 @@
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 600",
                     },
-                    signature_image: {
-                        required: "Signature is Required",
-                        filesize: "File size must be less than 15MB."
-                    }
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size must be less than 15MB."
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {

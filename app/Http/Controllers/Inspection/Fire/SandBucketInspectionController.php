@@ -755,7 +755,7 @@ class SandBucketInspectionController extends Controller
     {
         try {
             $allData = $this->detector->exportdata();
-
+             
             if ($allData->isEmpty()) {
                 return redirect()->back()->with('error', 'No data found');
             }
@@ -771,7 +771,6 @@ class SandBucketInspectionController extends Controller
 
             foreach ($allData as $detector) {
                 $detector = $detector->first();
-
                 $inspection_data = $this->sandbucket_details->GetDetails($detector->fire_id);
 
                 $document_no = $this->document_reference->selectOne($detector->document_reference_id);
@@ -824,14 +823,14 @@ class SandBucketInspectionController extends Controller
                 $row += 3;
 
                 $sheet->mergeCells("A{$row}:D{$row}")->setCellValue("A{$row}", "DATE OF INSPECTION:- " . Displaydateformat($detector->date_of_inspection));
-                $sheet->mergeCells("E{$row}:G{$row}")->setCellValue("E{$row}", "LOCATION :- " . getLocationname($detector->location));
+                $sheet->mergeCells("E{$row}:G{$row}")->setCellValue("E{$row}", "LOCATION :- " . $detector->location_name);
                 $sheet->mergeCells("H{$row}:K{$row}")->setCellValue("H{$row}", "SHIFT:- " . $detector->shift);
 
                 $row++;
 
                 $sheet->mergeCells("A{$row}:D{$row}")->setCellValue("A{$row}", "NEXT DUE:- " . Displaydateformat($detector->next_due));
-                $sheet->mergeCells("E{$row}:G{$row}")->setCellValue("E{$row}", "UNIT:- " . getUnitname($detector->unit));
-                $sheet->mergeCells("H{$row}:K{$row}")->setCellValue("H{$row}", "FREQUENCY:- " . getFrequencyname($detector->frequency));
+                $sheet->mergeCells("E{$row}:G{$row}")->setCellValue("E{$row}", "UNIT:- " . $detector->unit_name);
+                $sheet->mergeCells("H{$row}:K{$row}")->setCellValue("H{$row}", "FREQUENCY:- " . $detector->frequency_name);
 
                 $sheet->getStyle("A" . ($row - 1) . ":K{$row}")->applyFromArray([
                     'font' => ['bold' => true],
@@ -874,9 +873,9 @@ class SandBucketInspectionController extends Controller
                 ];
 
                 foreach ($inspection_data as $detail) {
-
+              
                     $sheet->setCellValue("A{$row}", $sr);
-                    $sheet->setCellValue("B{$row}", getLocationname($detail['location'] ?? ''));
+                    $sheet->setCellValue("B{$row}", getLocationname($detail['location']) ?? '');
                     $sheet->setCellValue("C{$row}", $detail['fire_bucket_stand_no'] ?? '');
                     $sheet->setCellValue("D{$row}", $detail['fire_bucket_no'] ?? '');
                     $sheet->setCellValue("E{$row}", $statusMap[$detail['fire_bucket_condition']] ?? ($detail['fire_bucket_condition'] ?? ''));
@@ -983,7 +982,7 @@ class SandBucketInspectionController extends Controller
             $filename = "Sand Bucket Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
         }
@@ -1002,7 +1001,6 @@ class SandBucketInspectionController extends Controller
                 $approved_by = GetFireSignature($forklift_details->approved_by, $forklift_details->id, SAND_BUCKET_INSPECTION);
                 $verified_by = GetFireSignature($forklift_details->verified_by, $forklift_details->id, SAND_BUCKET_INSPECTION);
                 $checked_by = GetFireSignature($forklift_details->checked_by, $forklift_details->id, SAND_BUCKET_INSPECTION);
-
                 $data = [
                     'status_log' => $status_log,
                     'forklift_details' => $forklift_details,

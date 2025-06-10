@@ -288,13 +288,13 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
+                                                {{-- @php
                                                     $signature = GetSafetySignature(
                                                         $inspection_details->verified_by,
                                                         $inspection_details->id,
                                                         EYE_WASH_INSPECTION,
                                                     );
-                                                @endphp
+                                                @endphp --}}
                                             @endif
                                             @if (isset($inspection_details->created_at))
                                                 <div class="col-md-4 mb-2">
@@ -307,7 +307,7 @@
                                                 </div>
                                             @endif
 
-                                            @if (isset($signature))
+                                            {{-- @if (isset($signature))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"
@@ -316,7 +316,7 @@
                                                             style="width: 150px; margin-top: -10px;" />
                                                     </div>
                                                 </div>
-                                            @endif
+                                            @endif --}}
                                             @if (isset($inspection_details->approved_by))
                                                 @if ($inspection_details->verified_by == $inspection_details->approved_by)
                                                     <div class="col-md-4 mb-2">
@@ -328,13 +328,13 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    @php
+                                                    {{-- @php
                                                         $signature = GetSafetySignature(
                                                             $inspection_details->approved_by,
                                                             $inspection_details->id,
                                                             EYE_WASH_INSPECTION,
                                                         );
-                                                    @endphp
+                                                    @endphp --}}
                                                 @endif
                                             @endif
                                             @if (isset($inspection_details->capa_recomendation))

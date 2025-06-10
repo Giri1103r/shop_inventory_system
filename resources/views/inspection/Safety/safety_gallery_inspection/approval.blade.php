@@ -99,7 +99,7 @@
 
 
 
-                                    @php
+                                    {{-- @php
                                         $signature = GetSafetySignature(
                                             $inspection_details->created_by,
                                             $inspection_details->id,
@@ -115,7 +115,7 @@
                                                     style="width: 100px; margin-top: -10px;" />
                                             </div>
                                         </div>
-                                    @endif
+                                    @endif --}}
                                     @php
                                         $user_response = json_decode($inspection_details->responses, true);
                                     @endphp

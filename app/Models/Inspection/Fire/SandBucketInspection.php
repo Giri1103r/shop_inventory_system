@@ -98,7 +98,7 @@ class SandBucketInspection extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_sand_bucket.inspection_status', decryptId($request->inspection_status));
         }
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_fire_sand_bucket.created_at', '>=', $startDate);
@@ -196,13 +196,30 @@ class SandBucketInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_sand_bucket.*', 'inspection_shift_option.*', 'inspection_fire_sand_bucket_details.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_static_docno.*', 'inspection_fire_sand_bucket.id as fire_id', 'inspection_fire_sand_bucket.created_by as checked_by', 'inspection_fire_sand_bucket.updated_by as verified_by')
+
+        $query = $this->select(
+            'inspection_fire_sand_bucket.*',
+            'inspection_static_docno.*',
+            'inspection_shift_option.shift',
+            'inspection_fire_sand_bucket_details.*',
+            'masters_unit.unit_name',
+            'inspection_fire_sand_bucket_details.location as location_id',
+            'masters_location.location_name',
+            'm1.location_name as details_location_name',
+            'inspection_frequency_option.frequency_name',
+            'inspection_fire_sand_bucket.id as fire_id',
+            'inspection_fire_sand_bucket.created_by as checked_by',
+            'inspection_fire_sand_bucket.updated_by as verified_by'
+        )
             ->leftJoin('masters_location', 'inspection_fire_sand_bucket.location', '=', 'masters_location.id')
+            ->leftJoin('inspection_fire_sand_bucket_details', 'inspection_fire_sand_bucket.id', '=', 'inspection_fire_sand_bucket_details.inspection_id')
+            ->leftJoin('masters_location as m1', 'inspection_fire_sand_bucket_details.location', '=', 'm1.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_sand_bucket.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_sand_bucket.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_static_docno', 'inspection_fire_sand_bucket.document_reference_id', '=', 'inspection_static_docno.id')
-            ->leftJoin('inspection_fire_sand_bucket_details', 'inspection_fire_sand_bucket.id', '=', 'inspection_fire_sand_bucket_details.inspection_id')
-            ->leftJoin('inspection_frequency_option', 'inspection_fire_sand_bucket.frequency', '=', 'inspection_frequency_option.id');
+            ->leftJoin('inspection_frequency_option', 'inspection_fire_sand_bucket.frequency', '=', 'inspection_frequency_option.id')
+            ->where('inspection_fire_sand_bucket.trash', 'NO');
+
 
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
@@ -236,7 +253,7 @@ class SandBucketInspection extends Model
         if (isset($request->next_due) && $request->next_due) {
             $query = $query->where('inspection_fire_sand_bucket.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_fire_sand_bucket.created_at', '>=', $startDate);

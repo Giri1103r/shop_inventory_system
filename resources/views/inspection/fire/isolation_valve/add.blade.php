@@ -536,10 +536,10 @@
                         observation: {
                             required: true,
                         },
-                        signature_image: {
-                            required: true,
-                             filesize: 15728640,
-                        },
+                        // signature_image: {
+                        //     required: true,
+                        //      filesize: 15728640,
+                        // },
 
                     },
                     messages: {
@@ -548,10 +548,10 @@
                             minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 100",
                         },
-                        signature_image: {
-                            required: 'Please upload your signature',
-                            filesize: 'File size should not exceed 15MB',
-                        },
+                        // signature_image: {
+                        //     required: 'Please upload your signature',
+                        //     filesize: 'File size should not exceed 15MB',
+                        // },
                         issue_date: {
                             required: "Date Of Audit is required",
                         },

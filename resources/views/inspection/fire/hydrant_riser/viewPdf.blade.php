@@ -429,7 +429,7 @@
     <table width="100%" style="width:100%;">
         <tr>
             <td width="50%" style="padding:5px;"><b>{{ __('inspection.observation') }} :</b>
-                {{ $hydrant_details->observation == '1' ? 'YES' : 'NO' }}
+                {{ $hydrant_details->observation_needed == '1' ? 'YES' : 'NO' }}
             </td>
 
         </tr>

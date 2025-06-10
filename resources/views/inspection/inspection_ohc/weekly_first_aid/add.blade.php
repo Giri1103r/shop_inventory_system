@@ -346,10 +346,10 @@
                         required: true,
                         date: true
                     },
-                    signature_image: {
-                        required: true,
-                        filesize: 10485760,
-                    },
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 10485760,
+                    // },
                     remark_by: {
                         required: true,
                     },
@@ -386,10 +386,10 @@
                         required: "Next Due Date is required",
                         date: "Please enter a valid date"
                     },
-                    signature_image: {
-                        required: "Signature is required",
-                        filesize: "File size must be less than 10MB."
-                    },
+                    // signature_image: {
+                    //     required: "Signature is required",
+                    //     filesize: "File size must be less than 10MB."
+                    // },
                     remark_by: {
                         required: "Please add remarks",
                     }

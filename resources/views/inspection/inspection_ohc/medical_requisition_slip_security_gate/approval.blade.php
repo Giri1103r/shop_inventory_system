@@ -267,7 +267,7 @@
                                                     {{ displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
                                                 </div>
                                             </div>
-                                            @if (!empty($safetyofficersignature) && !empty($safetyofficersignature->file_path))
+                                            {{-- @if (!empty($safetyofficersignature) && !empty($safetyofficersignature->file_path))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label" style="display: block;">
@@ -287,7 +287,7 @@
                                                         style="width: 150px; margin-top: -10px;"/>
                                                 </div>
                                             </div>
-                                        @endif
+                                        @endif --}}
 
 
                                             <div class="mb-3 col-md-12 form-input">
@@ -322,10 +322,10 @@
 
 
                     },
-                    signature_image: {
-                        required: true,
-                        filesize: 15728640,
-                    }
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
                 messages: {
 
@@ -334,10 +334,10 @@
                         minlength: "Remarks  must contain between 3 and 600 characters.",
                         maxlength: "Remarks must contain between 3 and 600 characters.",
                     },
-                    signature_image: {
-                        required: "Signature is Required",
-                        filesize: "File size must be less than 15MB."
-                    }
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size must be less than 15MB."
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {
@@ -380,10 +380,10 @@
 
 
                     },
-                    signature_image: {
-                        required: true,
-                        filesize: 15728640,
-                    }
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
                 messages: {
 
@@ -392,10 +392,10 @@
                         minlength: "Remarks  must contain between 3 and 600 characters.",
                         maxlength: "Remarks must contain between 3 and 600 characters.",
                     },
-                    signature_image: {
-                        required: "Signature is Required",
-                        filesize: "File size must be less than 15MB."
-                    }
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size must be less than 15MB."
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {

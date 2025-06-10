@@ -265,13 +265,13 @@
             @endforeach
 
             <tr>
-                <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                <td colspan="12" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                     Auditor Name: {{ getUsername(isset($inspection_detail->created_by))}}
                 </td>
-                <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
+                {{-- <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                     {{ __('inspection.signature') }}:
-                    {{-- <img src="{{ admin_url($inspection_file->file_path) }}" alt="Signature" style="width:70px; vertical-align: middle;"> --}}
-                </td>
+                 <img src="{{ admin_url($inspection_file->file_path) }}" alt="Signature" style="width:70px; vertical-align: middle;"> 
+                </td> --}}
             </tr>
 
         </tbody>

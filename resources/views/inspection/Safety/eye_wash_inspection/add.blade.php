@@ -487,10 +487,10 @@
                         shift_id: {
                             required: true,
                         },
-                        signature_image: {
-                            required: true,
-                            filesize: 15728640,
-                        },
+                        // signature_image: {
+                        //     required: true,
+                        //     filesize: 15728640,
+                        // },
                         next_due: {
                             required: true,
                         },
@@ -584,10 +584,10 @@
                         inspection_date: {
                             required: "Inspeciton Date is required",
                         },
-                        signature_image: {
-                            required: "Signature is required",
-                            filesize: "File size must be less than 15MB."
-                        },
+                        // signature_image: {
+                        //     required: "Signature is required",
+                        //     filesize: "File size must be less than 15MB."
+                        // },
                         location_id: {
                             required: "Location is required",
                         },

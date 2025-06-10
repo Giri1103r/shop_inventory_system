@@ -533,9 +533,9 @@
                             minlength: 3,
                             maxlength: 600,
                         },
-                        signature_image:{
-                           filesize: 15728640,
-                        }
+                        // signature_image:{
+                        //    filesize: 15728640,
+                        // }
 
 
                     },
@@ -570,9 +570,9 @@
                             maxlength: 'Remarks should not exceed more than the 600 characters',
 
                         },
-                        signature_image:{
-                            filesize: 'File size should not exceed 15MB',
-                        }
+                        // signature_image:{
+                        //     filesize: 'File size should not exceed 15MB',
+                        // }
                     },
                     errorElement: 'span',
                     errorPlacement: function(error, element) {

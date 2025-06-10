@@ -149,14 +149,14 @@
                                     </table>
 
                                 </div>
-                                <div class="container d-flex justify-content-between">
-                                    {{-- <div class="mb-3 col-md-4 form-input">
+                                {{-- <div class="container d-flex justify-content-between">
+                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Cleaner Signature') }}</label>
                                         <div class="view_data">
                                             <img src="{{ admin_url($cleaner_signature) }}" alt="Cleaner Signature"
                                                 style="width:100px; height:100px;">
                                         </div>
-                                    </div> --}}
+                                    </div> 
                                     @isset($nursing_signature)
                                         <div class="container ">
                                             <div class="mb-3 col-md-4 form-input">
@@ -168,7 +168,7 @@
                                             </div>
                                         </div>
                                     @endisset
-                                </div>
+                                </div> --}}
 
                                 @if ((checkUserRole(ROLE_NURSING_OFFICER) || isAdmin()) )
                                     <div class="row  mb-3">
@@ -246,10 +246,10 @@
                         maxlength: 100,
                         noSpaces: true,
                     },
-                    signature_image: {
-                        required: true,
-                       filesize: 15728640,
-                    }
+                    // signature_image: {
+                    //     required: true,
+                    //    filesize: 15728640,
+                    // }
                 },
                 messages: {
                     capa_remarks: {
@@ -257,10 +257,10 @@
                         minlength: "Minimum Characters should be 3",
                         maxlength: "Maximum Characters should not exceed 100",
                     },
-                    signature_image: {
-                        required: "Signature is Required",
-                        filesize: "File size must be less than 15MB."
-                    }
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size must be less than 15MB."
+                    // }
                 },
                 errorElement: 'div',
                 errorPlacement: function(error, element) {

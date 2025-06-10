@@ -337,7 +337,7 @@
                 </th>
                 <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
                     @if ($medicinerequisition->verified_by != null)
-                        <div style="margin-top: 5px;">Floor Manager Signature :
+                        <div style="margin-top: 5px;">Floor Manager :
                             {{ getUsername($medicinerequisition->verified_by) }}</div>
                     @else
                         <div style="margin-top: 5px;">Not Yet Been Verified Yet</div>
@@ -345,7 +345,7 @@
                 </th>
                 <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
                     @if ($medicinerequisition->approved_by != null)
-                        <div style="margin-top: 5px;">Medical Assistant / Safety Officer Signature :
+                        <div style="margin-top: 5px;">Medical Assistant / Safety Officer :
                             {{ getUsername($medicinerequisition->approved_by) }}</div>
                     @else
                         <div style="margin-top: 5px;">Not Yet Been Approved Yet</div>

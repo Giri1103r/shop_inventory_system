@@ -233,24 +233,24 @@
                             @php $srNo++; @endphp
                         @endforeach
                     @endforeach
-                    @php
+                    {{-- @php
                         $signature = GetFSSignature(
                             $inspection_details->created_by,
                             $inspection_details->id,
                             OHC_TYPE_FLOOR_STRETCHER,
                         );
-                    @endphp
+                    @endphp --}}
                     <tr>
-                        <td colspan="6"
+                        <td colspan="12"
                             style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                             Auditor Name: {{ getUsername(isset($inspection_details->created_by)) }}
                         </td>
-                        <td colspan="6"
+                        {{-- <td colspan="6"
                             style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                             {{ __('inspection.signature') }}:
-                            {{-- <img src="{{ admin_url($signature) }}" alt="Signature"
-                                style="width:70px; vertical-align: middle;"> --}}
-                        </td>
+                             <img src="{{ admin_url($signature) }}" alt="Signature"
+                                style="width:70px; vertical-align: middle;">
+                        </td> --}}
                     </tr>
 
                 </tbody>

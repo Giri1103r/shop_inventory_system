@@ -199,7 +199,7 @@
             DATE OF INSPECTION: {{ Displaydateformat($first->date_of_inspection) }}
         </th>
         <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
-            LOCATION: {{ getLocationName($first->location) }}
+            LOCATION: {{ $first->location_name }}
         </th>
         <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
             SHIFT: {{ $first->shift }}
@@ -212,10 +212,10 @@
             NEXT DUE ON: {{ Displaydateformat($first->next_due) }}
         </th>
         <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
-            UNIT: {{ getUnitName($first->unit) }}
+            UNIT: {{ $first->unit_name }}
         </th>
         <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
-            FREQUENCY: {{ getFrequencyName($first->frequency) }}
+            FREQUENCY: {{ $first->frequency_name }}
         </th>
     </tr>
 
@@ -247,7 +247,7 @@
     @foreach ($group as $details)
         <tr>
             <td style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
-            <td style="border: 1px solid black; padding: 8px;">{{ getLocationname($details->location) }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ $details->details_location_name }}</td>
             <td style="border: 1px solid black; padding: 8px;">{{ $details->fire_bucket_stand_no }}</td>
             <td style="border: 1px solid black; padding: 8px;">{{ $details->fire_bucket_no }}</td>
             <td style="border: 1px solid black; padding: 8px;">

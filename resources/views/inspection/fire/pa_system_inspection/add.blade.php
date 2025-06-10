@@ -499,17 +499,17 @@
                         observation: {
                             required: true,
                         },
-                        signature_image: {
-                            required: true,
-                            filesize: 15728640,
-                        },
+                        // signature_image: {
+                        //     required: true,
+                        //     filesize: 15728640,
+                        // },
 
                     },
                     messages: {
-                        signature_image: {
-                            required: 'Please upload your signature',
-                            filesize: "File size should not exceed 15MB",
-                        },
+                        // signature_image: {
+                        //     required: 'Please upload your signature',
+                        //     filesize: "File size should not exceed 15MB",
+                        // },
                         rev_date: {
                             required: "Revision Date required",
                         },

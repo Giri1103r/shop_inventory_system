@@ -141,7 +141,7 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.obs') }}</label>
                                                     <div class="view_data">
-                                                        {{ $inspection->observation_needed ? "Yes" : "No" }}
+                                                        {{ $inspection->observation_needed == '1' ? 'YES' : 'NO' }}
                                                     </div>
 
                                                 </div>
