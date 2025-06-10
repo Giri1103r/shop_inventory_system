@@ -63,8 +63,10 @@ class PhysicalHealthExamination extends Model
 
         $query = $this->select(
             'inspection_ohc_physical_health_examination.*',
-
-        );
+            'masters_unit.unit_name',
+            'masters_department.department_name',
+        )->join('masters_unit', 'inspection_ohc_physical_health_examination.unit_id', '=', 'masters_unit.id')
+            ->join('masters_department', 'inspection_ohc_physical_health_examination.department_id', '=', 'masters_department.id');
 
 
 
@@ -77,8 +79,7 @@ class PhysicalHealthExamination extends Model
             $query = $query->where(function ($query) use ($search) {
                 $query
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
-                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%');
             });
         }
         if (isset($request->emp_id) && $request->emp_id) {
