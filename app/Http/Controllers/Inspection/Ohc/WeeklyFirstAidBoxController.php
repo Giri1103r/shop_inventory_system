@@ -149,6 +149,8 @@ class WeeklyFirstAidBoxController extends Controller
             return view('inspection.inspection_ohc.weekly_first_aid.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
         }
     }
 
@@ -166,16 +168,16 @@ class WeeklyFirstAidBoxController extends Controller
                 // $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
 
 
-                Session::flash('success', 'Your data has been created successfully!');
+                Session::flash('success', __('common.created_msg'));
                 return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
                 return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
             }
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
         }
     }
@@ -253,7 +255,8 @@ class WeeklyFirstAidBoxController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
         }
     }
 
@@ -451,8 +454,9 @@ class WeeklyFirstAidBoxController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            report($e);
-            return back()->with('error', $e->getMessage());
+            report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
         }
     }
 
@@ -631,8 +635,8 @@ class WeeklyFirstAidBoxController extends Controller
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $ex) {
             report($ex);
-
-            return back()->with('error', $ex->getMessage());
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
         }
     }
 
@@ -679,6 +683,8 @@ class WeeklyFirstAidBoxController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/first-aid-box/weekly-inspection/list'));
         }
     }
 
@@ -693,7 +699,7 @@ class WeeklyFirstAidBoxController extends Controller
             return response()->json(['status' => 'success', 'msg' => __('First Aid  Status is changed')], 200);
         } catch (Exception $ex) {
 
-            return response()->json(['status' => 'error', 'msg' => 'Something went wrong, Please try after sometimes!'], 406);
+            return response()->json(['status' => 'error', 'msg' => __('common.message_error')], 406);
         }
     }
 }

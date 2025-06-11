@@ -139,7 +139,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             return view('inspection.inspection_ohc.ohc_hygiene_checklist.add', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
         }
     }
@@ -213,7 +213,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
         }
     }
@@ -237,7 +237,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             return view('inspection.inspection_ohc.ohc_hygiene_checklist.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
         }
     }
@@ -260,7 +260,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             return view('inspection.inspection_ohc.ohc_hygiene_checklist.approval', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
         }
     }
@@ -321,7 +321,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
         }
     }

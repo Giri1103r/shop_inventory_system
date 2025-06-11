@@ -32,7 +32,7 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label ">{{__('common.unit')}}</label>
+                                                <label class="form-label ">{{ __('common.unit') }}</label>
                                                 <select name="unit_id" id="unit_id" class="form-control single-select"
                                                     style="width: 100%">
                                                     <option value="">Select the unit</option>
@@ -45,7 +45,7 @@
                                         </div>
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label ">{{__('common.department')}}</label>
+                                                <label class="form-label ">{{ __('common.department') }}</label>
                                                 <select name="department_id" id="department_id"
                                                     class=" form-control single-select" style="width: 100%">
                                                     <option value="">Select Department </option>
@@ -54,7 +54,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.from_date') }}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -65,7 +65,7 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.to_date') }}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -104,11 +104,11 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Unit</th>
-                                        <th>Department Name</th>
-                                        <th>Location Name</th>
-                                        <th>Station Master</th>
-                                        <th>Station Number</th>
+                                        <th>{{ __('common.unit') }}</th>
+                                        <th>{{ __('common.department') }}</th>
+                                        <th>{{ __('ohc_management.location_name') }}</th>
+                                        <th>{{ __('ohc_management.station_master') }}</th>
+                                        <th>{{ __('ohc_management.station_number') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -187,7 +187,7 @@
                 serverSide: true,
                 searching: true,
                 ordering: true,
-                scrollX:true,
+                scrollX: true,
                 dom: 'Bfrtip',
                 ajax: {
                     url: "{{ admin_url('ohc/first-aid-location/list') }}",

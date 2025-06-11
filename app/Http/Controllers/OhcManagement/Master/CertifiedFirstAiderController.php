@@ -23,6 +23,7 @@ use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use App\Models\Master\Employee;
+
 class CertifiedFirstAiderController extends Controller
 {
 
@@ -83,10 +84,10 @@ class CertifiedFirstAiderController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('ohc/certified-first-aider/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('ohc/certified-first-aider/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('ohc/certified-first-aider/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('ohc/certified-first-aider/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
 
                             return $btn;
@@ -103,12 +104,12 @@ class CertifiedFirstAiderController extends Controller
                 }
             }
         }
-        $departmentList=$this->department->getdepartment();
+        $departmentList = $this->department->getdepartment();
 
         $unit = $this->unit->getunit();
         $data = array(
             'unit' => $unit,
-            'departmentList'=>$departmentList,
+            'departmentList' => $departmentList,
         );
 
         return view('ohcmanagement.master.certified_first_aid.list', $data);
@@ -126,6 +127,8 @@ class CertifiedFirstAiderController extends Controller
             return view('ohcmanagement.master.certified_first_aid.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/certified-first-aider/list'));
         }
     }
 
@@ -192,6 +195,8 @@ class CertifiedFirstAiderController extends Controller
             return view('ohcmanagement.master.certified_first_aid.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/certified-first-aider/list'));
         }
     }
 
@@ -203,21 +208,23 @@ class CertifiedFirstAiderController extends Controller
 
             $certifiedfirstaider = $this->certifiedfirstaider->find($id);
 
-            $departmentList=$this->department->getdepartment();
+            $departmentList = $this->department->getdepartment();
 
             $unit = $this->unit->getunit();
-            $employeeList=$this->employee->getEmployeefulldata();
+            $employeeList = $this->employee->getEmployeefulldata();
             $data = array(
                 'certifiedfirstaider' => $certifiedfirstaider,
                 'unit' => $unit,
-                'departmentList'=>$departmentList,
-                'employeeList'=>$employeeList
+                'departmentList' => $departmentList,
+                'employeeList' => $employeeList
 
             );
 
             return view('ohcmanagement.master.certified_first_aid.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/certified-first-aider/list'));
         }
     }
 
@@ -307,12 +314,12 @@ class CertifiedFirstAiderController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Unit',
-                'Department',
-                'Employee Code',
-                'Certified First Aider Name',
-                'Mobile Number',
-                'Address',
+                __("common.unit"),
+                __("common.department"),
+                __("common.employee_or_worker_code"),
+                __("ohc_management.certified_first_aider"),
+                __("ohc_management.mobile_no"),
+                __("ohc_management.address"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -364,12 +371,12 @@ class CertifiedFirstAiderController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Unit',
-                'Department',
-                'Employee Code',
-                'Certified First Aider Name',
-                'Mobile Number',
-                'Address',
+                __("common.unit"),
+                __("common.department"),
+                __("common.employee_or_worker_code"),
+                __("ohc_management.certified_first_aider"),
+                __("ohc_management.mobile_no"),
+                __("ohc_management.address"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -409,6 +416,4 @@ class CertifiedFirstAiderController extends Controller
             return redirect(admin_url('ohc/certified-first-aider/list'));
         }
     }
-
-
 }

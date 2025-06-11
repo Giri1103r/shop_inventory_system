@@ -304,7 +304,7 @@ class OccupationHealthInspectionController extends Controller
 
 
 
-                Session::flash('success', __('Your data Created Successfully.!'));
+                Session::flash('success',  __('common.created_msg'));
             } catch (Exception $ex) {
                 report($ex);
                 Session::flash('error', __('common.message_error'));

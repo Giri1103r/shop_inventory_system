@@ -172,7 +172,7 @@ class MonthlyFirstAidboxController extends Controller
             return view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.add', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong !');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }
     }
@@ -187,12 +187,12 @@ class MonthlyFirstAidboxController extends Controller
             $id = $store->id;
             // $files = $this->signature->requestorsignatureUpload($inspection_type, $id);
 
-            Session::flash('success', 'Your data has been added successfully');
+            Session::flash('success',  __('common.created_msg'));
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong !');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }
     }
@@ -224,7 +224,7 @@ class MonthlyFirstAidboxController extends Controller
             return view('inspection.inspection_ohc.monthly_first_aid_audit_checklist.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong !');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-box/monthly-audit/list'));
         }
     }

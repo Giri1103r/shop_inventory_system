@@ -92,7 +92,7 @@ class MedicalFitnessCertificateController extends Controller
                         ->editColumn('unit_id', function ($row) {
                             return getUnitname($row->unit_id);
                         })
-                         ->editColumn('company_id', function ($row) {
+                        ->editColumn('company_id', function ($row) {
                             return getCompanyname($row->company_id);
                         })
                         ->editColumn('department_id', function ($row) {
@@ -242,7 +242,7 @@ class MedicalFitnessCertificateController extends Controller
 
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
-               report($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
@@ -608,14 +608,14 @@ class MedicalFitnessCertificateController extends Controller
 
                 Session::flash('success', 'Your data has been updated successfully!');
             } catch (Exception $ex) {
-                dd($ex);
+                report($ex);
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
             return redirect(admin_url('ohc/medical-fitness/list'));
         } catch (Exception $ex) {
 
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/medical-fitness/list'));
         }
@@ -636,18 +636,20 @@ class MedicalFitnessCertificateController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Employee Code',
-                'Employee Name',
-                'Company Name',
-                'Unit Name',
-                'Department Name',
-                ' Date',
-                'Cheif Complaint',
-                'Remarks',
-                'From Status',
-                'To Status',
-                'Created_by',
-                'Created_at'
+                __("common.employee_or_worker_code"),
+                __("common.employee_or_worker_name"),
+                __("common.company"),
+                __("common.unit"),
+                __("common.department"),
+                __("common.date"),
+                __("ohc_management.chief_complaint"),
+                __("ohc_management.remarks"),
+                __("common.from_status"),
+                __("common.to_status"),
+                __("common.created_by"),
+                __("common.created_date"),
+
+
             ];
 
             $i = 1;
@@ -765,18 +767,18 @@ class MedicalFitnessCertificateController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Employee Code',
-                'Employee Name',
-                'Company Name',
-                'Unit Name',
-                'Department Name',
-                ' Date',
-                'Cheif Complaint',
-                'Remarks',
-                'From Status',
-                'To Status',
-                'Created_by',
-                'Created_at'
+                __("common.employee_or_worker_code"),
+                __("common.employee_or_worker_name"),
+                __("common.company"),
+                __("common.unit"),
+                __("common.department"),
+                __("common.date"),
+                __("ohc_management.chief_complaint"),
+                __("ohc_management.remarks"),
+                __("common.from_status"),
+                __("common.to_status"),
+                __("common.created_by"),
+                __("common.created_date"),
             ];
 
             $data = array(

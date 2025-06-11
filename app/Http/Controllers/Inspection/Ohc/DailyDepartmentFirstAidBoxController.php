@@ -202,7 +202,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
             return view('inspection.inspection_ohc.daily_department_first_aid_box.add', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
     }
@@ -296,17 +296,17 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 }
 
 
-                Session::flash('success', 'Your data has been created successfully!');
+                Session::flash('success', __('common.created_msg'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
     }
@@ -360,7 +360,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
         } catch (Exception $ex) {
             report($ex);
 
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
     }
@@ -411,7 +411,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
             return view('inspection.inspection_ohc.daily_department_first_aid_box.approval', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
     }
@@ -479,7 +479,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
     }
@@ -587,14 +587,14 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 Session::flash('success', 'Your data has been Responded successfully!');
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
     }
@@ -742,7 +742,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
 
                 $inspectionRow = $headerRow + 1;
 
-             
+
 
                 foreach ($inspection_data as $index => $detail) {
                     $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $index + 1);
@@ -869,7 +869,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
     }
@@ -927,7 +927,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
     }
@@ -1189,7 +1189,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
             ]);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-box/daily-departmental/list'));
         }
     }

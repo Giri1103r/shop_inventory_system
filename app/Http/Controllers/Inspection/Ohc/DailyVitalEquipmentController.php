@@ -114,7 +114,7 @@ class DailyVitalEquipmentController extends Controller
             return view('inspection.inspection_ohc.daily_vital_equipment.add', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
         }
     }
@@ -131,7 +131,7 @@ class DailyVitalEquipmentController extends Controller
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
         }
     }
@@ -151,7 +151,7 @@ class DailyVitalEquipmentController extends Controller
             return view('inspection.inspection_ohc.daily_vital_equipment.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
         }
     }
@@ -374,7 +374,7 @@ class DailyVitalEquipmentController extends Controller
         } catch (\Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
         }
     }
@@ -461,8 +461,9 @@ class DailyVitalEquipmentController extends Controller
             $filename = "Daily Vital Equipment.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+           report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ohc/daily-vital-equipment/list'));
         }
     }
 
@@ -674,7 +675,7 @@ class DailyVitalEquipmentController extends Controller
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
         }
     }

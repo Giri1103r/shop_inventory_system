@@ -49,7 +49,8 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">{{ __('inspection.weekly_ambulance_inspection') }}</h4>
+                                        <h4 class="text-white">
+                                            {{ __('ohc_management.weekly_ambulance_inspection_checklist') }}</h4>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -72,13 +73,14 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{__('inspection.next_due')}}</label>
+                                        <label class="form-label view_label">{{ __('inspection.next_due') }}</label>
                                         <div class="view_data">
                                             {{ DisplaydateFormat(isset($weekAmbualance->next_due) ? $weekAmbualance->next_due : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{__('inspection.date_of_inspection')}}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('inspection.date_of_inspection') }}</label>
                                         <div class="view_data">
                                             {{ DisplaydateFormat(isset($weekAmbualance->date_of_inspection) ? $weekAmbualance->date_of_inspection : '') }}
                                         </div>
@@ -160,9 +162,9 @@
                                         <table class="table table-bordered">
                                             <thead class="bg-secondary text-white">
                                                 <tr>
-                                                    <th colspan="3">Check Points</th>
-                                                    <th colspan="3">Status</th>
-                                                    <th colspan="3">Remarks</th>
+                                                    <th colspan="3">{{ __('ohc_management.check_points') }}</th>
+                                                    <th colspan="3">{{ __('common.status') }}</th>
+                                                    <th colspan="3">{{ __('ohc_management.remarks') }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -196,7 +198,7 @@
                                                             </td>
 
                                                             <td colspan="3">
-                                                                {{ $remarks[$checkPoint] ?? 'No Remarks' }}
+                                                                {{ $remarks[$checkPoint] ?? '-' }}
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -225,13 +227,6 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {{-- @php
-                                                $signature = GetOHCSignature(
-                                                    $weekAmbualance->verified_by,
-                                                    $weekAmbualance->id,
-                                                    OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
-                                                );
-                                            @endphp --}}
                                             @endif
                                             @if (isset($weekAmbualance->created_at))
                                                 <div class="col-md-4 mb-2">
@@ -243,21 +238,17 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            {{-- @if (isset(Auth::user()->signature_upload))
-                                            <label class="form-label"
-                                                style="display: block;">{{ __('inspection.signature') }}</label>
-                                            <img src="{{ asset(Auth::user()->signature_upload) }}" alt="Signature Upload"
-                                                style="width: 150px; margin-top: -10px;">
-                                        @elseif(isset($signature))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
+                                            @if (isset($weekAmbualance->capa_needed))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('ohc_management.capa') }}</label>
+                                                        <div class="view_data">
+                                                            {{ isset($weekAmbualance->capa_needed) && $weekAmbualance->capa_needed == 1 ? 'Yes' : 'NO' }}
+
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </div>
-                                        @endif --}}
+                                            @endif
                                             @if ($weekAmbualance->approved_by)
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -313,23 +304,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {{-- @php
-                                                $signature = GetOHCSignature(
-                                                    $weekAmbualance->created_by,
-                                                    $weekAmbualance->id,
-                                                    OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
-                                                );
-                                            @endphp
-                                            @if (isset($signature))
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label"
-                                                            style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
-                                                    </div>
-                                                </div>
-                                            @endif --}}
+
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -365,23 +340,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {{-- @php
-                                                $signature = GetOHCSignature(
-                                                    $weekAmbualance->verified_by,
-                                                    $weekAmbualance->id,
-                                                    OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
-                                                );
-                                            @endphp
-                                            @if (isset($signature))
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label"
-                                                            style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
-                                                    </div>
-                                                </div>
-                                            @endif --}}
+
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -422,21 +381,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- @if (isset(Auth::user()->signature_upload))
-                                            <label class="form-label"
-                                                style="display: block;">{{ __('inspection.signature') }}</label>
-                                            <img src="{{ asset(Auth::user()->signature_upload) }}" alt="Signature Upload"
-                                                style="width: 150px; margin-top: -10px;">
-                                        @elseif(isset($signature))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
-                                                </div>
-                                            </div>
-                                        @endif --}}
+
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
                                                 <label
@@ -471,28 +416,6 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- @php
-                                                $signature = GetOHCSignature(
-                                                    $weekAmbualance->l2_manager_verified_by,
-                                                    $weekAmbualance->id,
-                                                    OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
-                                                );
-                                            @endphp
-                                            @if (isset(Auth::user()->signature_upload))
-                                                <label class="form-label"
-                                                    style="display: block;">{{ __('inspection.signature') }}</label>
-                                                <img src="{{ asset(Auth::user()->signature_upload) }}" alt="Signature Upload"
-                                                    style="width: 150px; margin-top: -10px;">
-                                            @elseif(isset($signature))
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label"
-                                                            style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
-                                                    </div>
-                                                </div>
-                                            @endif --}}
 
                                         <div class="col-md-12 mb-2">
                                             <div class="form-group form-input">
@@ -518,13 +441,13 @@
                                             <table class="table table-bordered">
                                                 <thead class="bg-secondary" style="color: #ffff">
                                                     <tr>
-                                                        <th>S.NO</th>
-                                                        <th>From Status</th>
-                                                        <th>To Status</th>
-                                                        <th>Remarks</th>
-                                                        <th>Approved By</th>
-                                                        <th>Created By</th>
-                                                        <th>Created At</th>
+                                                        <th>{{ __('common.sno') }}</th>
+                                                        <th>{{ __('common.from_status') }}</th>
+                                                        <th>{{ __('common.to_status') }}</th>
+                                                        <th>{{ __('ohc_management.remarks') }}</th>
+                                                        <th>{{ __('common.approved_by') }}</th>
+                                                        <th>{{ __('common.created_by') }}</th>
+                                                        <th>{{ __('common.created_date') }}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>

@@ -126,7 +126,7 @@ class FirstAidMedicineInspectionController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
         }
     }
@@ -204,12 +204,12 @@ class FirstAidMedicineInspectionController extends Controller
                 }
             }
 
-            Session::flash('success', 'Your data has been added successfully');
+            Session::flash('success', __('common.created_msg'));
             return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong !');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
         }
     }
@@ -238,7 +238,7 @@ class FirstAidMedicineInspectionController extends Controller
             return view('inspection.inspection_ohc.first_aid_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong !');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
         }
     }
@@ -494,7 +494,7 @@ class FirstAidMedicineInspectionController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong !');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
         }
     }
@@ -543,7 +543,7 @@ class FirstAidMedicineInspectionController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong !');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
         }
     }
@@ -567,7 +567,7 @@ class FirstAidMedicineInspectionController extends Controller
             return view('inspection.inspection_ohc.first_aid_inspection.approval', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong !');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
         }
     }
@@ -626,7 +626,7 @@ class FirstAidMedicineInspectionController extends Controller
             return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something Went wrong!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
         }
     }

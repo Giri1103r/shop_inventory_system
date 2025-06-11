@@ -157,7 +157,7 @@ class WeeklyAmbulanceController extends Controller
                                 $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($row->inspection_id)) . '/ehs" class="me-1" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->approve_status == WAITING_FOR_CAPA_ACTION || $row->approve_status == L2_MANAGER_REJECTED || $row->approve_status == EHS_OFFICER_REJECTED || $row->approve_status == L1_MANAGER_REJECTED) && (CheckUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())) {
-                                $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($row->inspection_id)) . '/capa" class="" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($row->inspection_id)) . '/capa" class="me-1" title="' . __('inspection.capa_action') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if ($row->approve_status == WAITING_FOR_CAPA_VERIFICATION && (CheckUserRole(ROLE_EHS_OFFICER) || isAdmin())) {
                                 $btn .= '<a href="' . admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($row->inspection_id)) . '/ehsVerify" class="me-1" title="' . __('inspection.ehs_officer_verify') . '"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
@@ -312,7 +312,7 @@ class WeeklyAmbulanceController extends Controller
 
 
 
-                Session::flash('success', __('Your data Created Successfully.!'));
+                Session::flash('success', __('common.created_msg'));
             } catch (Exception $ex) {
                 report($ex);
                 Session::flash('error', __('common.message_error'));
@@ -1127,7 +1127,7 @@ class WeeklyAmbulanceController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
     }
@@ -1187,7 +1187,7 @@ class WeeklyAmbulanceController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/weekly-ambulance/inspection/checklist/list'));
         }
     }

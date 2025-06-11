@@ -236,7 +236,7 @@ class SafetyPettyController extends Controller
             return view('inspection.inspection_ohc.safety_petty.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         }
     }
@@ -303,7 +303,7 @@ class SafetyPettyController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         }
     }
@@ -478,7 +478,7 @@ class SafetyPettyController extends Controller
             ]);
         } catch (\Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         }
     }
@@ -725,7 +725,7 @@ class SafetyPettyController extends Controller
             ]);
         } catch (\Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/safety-petty-logbook/list'));
         }
     }

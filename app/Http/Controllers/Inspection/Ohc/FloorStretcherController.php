@@ -193,7 +193,7 @@ class FloorStretcherController extends Controller
                 Mail::to($email_id)->queue(new OhcFloorStretcher($details));
             }
 
-            Session::flash('success', 'Your data has been added successfully');
+            Session::flash('success', __('common.created_msg'));
             return redirect(admin_url('ohc/floor_stretcher/checklist/list'));
         } catch (Exception $ex) {
             report($ex);

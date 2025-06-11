@@ -4,7 +4,7 @@ return [
 
     // ohc management
 
-    'medicine_details' => 'Medicine Details',
+
     'medicine_name' => 'Medicine Name',
     'quantity' => 'Quantity',
     'freeze_quantity' => 'Freeze Quantity',
@@ -16,27 +16,49 @@ return [
     'threshold_limit' => 'Threshold Limit',
     'approve_status' => 'Approve Status',
     'pack' => 'Pack',
-    'approver_name' => 'Approver Name',
-    'vendor_name'=>'Vendor Name',
-    'license_number'=>'License Number',
-    'address'=>'Address',
-    'hospital_name'=>'Hospital Name',
-    'mobile_no'=>'Mobile Number',
-    'tel_no'=>'Tel Number',
-    'station_master'=>'Station Master',
-    'station_number'=>'Station Number',
-    'location_name'=>'Location Name',
-    'hospital_details'=>'Hospital Details',
-    'vendor_details'=>'Vendor Details',
+    'vendor_name' => 'Vendor Name',
+    'license_number' => 'License Number',
+    'address' => 'Address',
+    'hospital_name' => 'Hospital Name',
+    'mobile_no' => 'Mobile Number',
+    'certified_first_aider' => 'Certified First Aider Name',
+    'tel_no' => 'Tel Number',
+    'station_master' => 'Station Master',
+    'station_number' => 'Station Number',
+    'location_name' => 'Location Name',
 
+
+    // opd - prescribe to patient
+
+    'chief_complaint' => 'Chief Complaint',
+    'treatment' => 'Treatment',
+
+    // medical fitness certificate
+
+    'medical_fitness_certificate_upload' => 'Medical Fitness Certificate Upload',
+    'medical_fitness_certificate_details' => 'Medical Fitness Certificate Details',
+    'file' => 'File',
+
+
+    // ohc master headings
+    'first_aider_location' => 'First Aider Location',
+    'hospital_details' => 'Hospital Details',
+    'medicine_details' => 'Medicine Details',
+    'certified_first_aider_heading' => 'Certified First Aider',
+    'vendor_details' => 'Vendor Details',
+
+    // approval form headings
+    'approver_name' => 'Approver Name',
+    'approved_date' => 'Approver Date',
+    'approved_time' => 'Approver Time',
+    'approve_status' => 'Approve Status',
 
 
     // inspection header of ohc
-
     'medicine_requisition_slip_security_gate_fdo' => 'Medical Requisition Slip Fdo & Security gate',
-
     'medicine_requisition_slip_floor' => 'Medical Requisition Slip- Floor',
     'daily_departmental_first_aid_box' => 'Daily Departmental First Aid Box',
+    'weekly_ambulance_inspection_checklist' => 'Weekly Ambulance Inspection Checklist',
 
     // aprroval heading names
     'safety_officer_approval_pending' => 'Safety Officer Approval Pending',
@@ -45,7 +67,15 @@ return [
     'floor_manager_or_medical_assistant_approval' => 'Floor Manager / Medical Assistant Approval',
     'floor_manager_approval' => 'Floor Manager Approval',
     'floor_manager_approval_pending' => 'Floor Manager Approval Pending',
-    'ehs_head_approval_pending' => 'EHS Head Approval Pending'
+    'ehs_head_approval_pending' => 'EHS Head Approval Pending',
+    'ehs_head_approval' => 'EHS Head Approval',
+    'doctor_approval_pending' => 'Doctor Approval Pending',
+    'doctor_approval' => 'Doctor Approval',
+
+    // weekly ambulance Inspection
+    'check_points' => 'Check Points',
+    'capa'=>'Whether the Inspection has been passed Without the CAPA'
+
 
 
 ];
