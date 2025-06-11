@@ -32,7 +32,7 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label ">Unit</label>
+                                                <label class="form-label ">{{__('common.unit')}}</label>
                                                 <select name="unit_id" id="unit_id" class="form-control single-select"
                                                     style="width: 100%">
                                                     <option value="">Select the unit</option>
@@ -45,7 +45,7 @@
                                         </div>
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label ">Department</label>
+                                                <label class="form-label ">{{__('common.department')}}</label>
                                                 <select name="department_id" id="department_id"
                                                     class=" form-control single-select" style="width: 100%">
                                                     <option value="">Select Department </option>

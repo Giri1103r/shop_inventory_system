@@ -39,7 +39,7 @@
                                         <div class="row">
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit </label>
+                                                    <label class="form-label require">{{__('common.unit')}} </label>
                                                     <select name="unit_id" id="unit_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Unit</option>
@@ -56,7 +56,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label for="department_id" class="form-label require">Department
+                                                    <label for="department_id" class="form-label require">{{__('common.department')}}
                                                     </label>
                                                     <select name="department_id" id="department_id"
                                                         class=" form-control single-select" style="width: 100%">
@@ -74,7 +74,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Location Name</label>
+                                                    <label class="form-label require">{{__('ohc_management.location_name')}}</label>
                                                     <input type="text" name="location_id" id="location_id"
                                                         value="{{ $firstaidlocation->location_id }}" class="form-control"
                                                         placeholder="Location Name">
@@ -85,7 +85,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Station Master</label>
+                                                    <label class="form-label require">{{__('ohc_management.station_master')}}</label>
                                                     <select name="station_master" id="station_master" class=" form-control"
                                                         style="width: 100%">
                                                         <option value="">Select the person</option>
@@ -102,7 +102,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Station Number</label>
+                                                    <label class="form-label require">{{__('ohc_management.station_number')}}</label>
                                                     <input type="text" name="station_number" id="station_number"
                                                         value="{{ $firstaidlocation->station_number }}"
                                                         class="form-control" placeholder="Station Number">
@@ -113,7 +113,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">First Aid Box Number</label>
+                                                    <label class="form-label require">{{__('ohc_management.first_aid_box_no')}}</label>
                                                     <input type="text" name="first_aid_box_no" id="first_aid_box_no"
                                                         value="{{ $firstaidlocation->first_aid_box_no }}"
                                                         class="form-control" placeholder="First Aid Box Number">
@@ -128,7 +128,7 @@
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
-                                            <x-button-cancel href="{{ admin_url('company/list') }}"></x-button-cancel>
+                                            <x-button-cancel href="{{ admin_url('ohc/first-aid-location/list') }}"></x-button-cancel>
                                         </div>
                                     </form>
                                 </div>
