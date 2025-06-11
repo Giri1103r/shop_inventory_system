@@ -67,6 +67,7 @@
                                                             $isEhs = in_array(auth()->user()->role, [
                                                                 ROLE_EHS_HEAD,
                                                                 ROLE_EHS_OFFICER,
+                                                                ROLE_STORE_MANAGER,
                                                             ]);
                                                             $value = encryptId($list->id);
                                                             $requestCompanyId = $loggedInCompanyId;

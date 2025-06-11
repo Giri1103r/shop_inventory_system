@@ -66,7 +66,7 @@ class PpeRequest extends Model
             })->orderBy('ppe_pperequest.id', 'DESC');
         } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
             $companyId = $user->company_id;
-            $query->where('ppe_pperequest.company_id', $companyId)->orderBy('ppe_pperequest.id', 'DESC');
+            $query->orderBy('ppe_pperequest.id', 'DESC');
         } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
             $query->orderBy('ppe_pperequest.id', 'DESC');
         } elseif (in_array(ROLE_ADMIN, $userRole)) {

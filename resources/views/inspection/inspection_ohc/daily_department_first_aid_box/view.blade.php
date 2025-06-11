@@ -49,7 +49,8 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">{{__('ohc_management.daily_departmental_first_aid_box')}}</h4>
+                                        <h4 class="text-white">{{ __('ohc_management.daily_departmental_first_aid_box') }}
+                                        </h4>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -72,37 +73,39 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{__('common.date')}}</label>
+                                        <label class="form-label view_label">{{ __('common.date') }}</label>
                                         <div class="view_data">
                                             {{ displayDateformat(isset($medicinerequisition->date) ? $medicinerequisition->date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{__('common.unit')}}</label>
+                                        <label class="form-label view_label">{{ __('common.unit') }}</label>
                                         <div class="view_data">
                                             {{ getUnitname(isset($medicinerequisition->unit) ? $medicinerequisition->unit : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{__('common.department')}}</label>
+                                        <label class="form-label view_label">{{ __('common.department') }}</label>
                                         <div class="view_data">
                                             {{ getDepartment(isset($medicinerequisition->department) ? $medicinerequisition->department : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{__('inspection.shifts')}}</label>
+                                        <label class="form-label view_label">{{ __('inspection.shifts') }}</label>
                                         <div class="view_data">
                                             {{ getShift(isset($medicinerequisition->shift) ? $medicinerequisition->shift : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{__('ohc_management.first_aid_box_no')}}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.first_aid_box_no') }}</label>
                                         <div class="view_data">
                                             {{ isset($medicinerequisition->first_aid_box_no) ? $medicinerequisition->first_aid_box_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{__('ohc_management.first_aider_name')}}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.first_aider_name') }}</label>
                                         <div class="view_data">
                                             {{ getFirstAider(isset($medicinerequisition->first_aider) ? $medicinerequisition->first_aider : '') }}
                                         </div>
@@ -155,11 +158,13 @@
                                     <div class="col-md-12">
                                         <table class="table table-bordered table-striped">
                                             <thead class="table-secondary">
-                                                <th style="text-align: center">{{__('common.sno')}}</th>
-                                                <th style="text-align: center">{{__('ohc_management.medicine_name')}}</th>
-                                                <th style="text-align: center">{{__('ohc_management.availble_quantity')}}</th>
-                                                <th style="text-align: center">{{__('ohc_management.expiry_date')}}</th>
-                                                <th style="text-align: center">{{__('ohc_management.remarks')}}</th>
+                                                <th style="text-align: center">{{ __('common.sno') }}</th>
+                                                <th style="text-align: center">{{ __('ohc_management.medicine_name') }}
+                                                </th>
+                                                <th style="text-align: center">{{ __('ohc_management.availble_quantity') }}
+                                                </th>
+                                                <th style="text-align: center">{{ __('ohc_management.expiry_date') }}</th>
+                                                <th style="text-align: center">{{ __('ohc_management.remarks') }}</th>
                                             </thead>
                                             <tbody>
                                                 @foreach ($inspection_data as $medicines)
@@ -182,26 +187,30 @@
                                         $medicinerequisition->approve_status == MEDICAL_ASSISTANT_REJECTED)
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">{{__('ohc_management.floor_manager_or_medical_assistant_approval')}}</h4>
+                                            <h4 class="text-white">
+                                                {{ __('ohc_management.floor_manager_or_medical_assistant_approval') }}</h4>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="row">
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.approver_name') }}</label>
                                                 <div class="view_data">
                                                     {{ getUsername(isset($floormanger->created_by) ? $floormanger->created_by : '') }}
                                                 </div>
                                             </div>
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.approved_date') }}</label>
                                                 <div class="view_data">
                                                     {{ displaydateformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
                                                 </div>
                                             </div>
 
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.approved_time') }}</label>
                                                 <div class="view_data">
                                                     {{ displaytimeformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
                                                 </div>
@@ -230,7 +239,8 @@
                                                 </div>
                                             @endif --}}
                                             <div class="mb-3 col-md-12 form-input">
-                                                <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.remarks') }}</label>
                                                 <div class="view_data">
                                                     {{ isset($floormanger->remarks) ? $floormanger->remarks : '' }}
                                                 </div>
@@ -250,13 +260,13 @@
                                             <table class="table table-bordered">
                                                 <thead class="bg-secondary" style="color: #ffff">
                                                     <tr>
-                                                        <th>S.NO</th>
-                                                        <th>From Status</th>
-                                                        <th>To Status</th>
-                                                        <th>Remarks</th>
-                                                        <th>Approved By</th>
-                                                        <th>Created By</th>
-                                                        <th>Created At</th>
+                                                        <th>{{ __('common.sno') }}</th>
+                                                        <th>{{ __('common.from_status') }}</th>
+                                                        <th>{{ __('common.to_status') }}</th>
+                                                        <th>{{ __('ohc_management.remarks') }}</th>
+                                                        <th>{{ __('common.approved_by') }}</th>
+                                                        <th>{{ __('common.created_by') }}</th>
+                                                        <th>{{ __('common.created_date') }}</th>
                                                     </tr>
                                                 </thead>
 

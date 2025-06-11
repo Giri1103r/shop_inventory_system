@@ -25,7 +25,7 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-4 mb-3 form-input">
-                                            <label class="form-label require">Unit</label>
+                                            <label class="form-label require">{{ __('common.unit') }}</label>
                                             <select name="unit_id" id="unit_id" class="form-control single-select"
                                                 style="width: 100%">
                                                 <option value="">Select the unit</option>
@@ -36,7 +36,7 @@
                                             </select>
                                         </div>
                                         <div class="col-md-4 mb-3 form-input">
-                                            <label class="form-label require">Department</label>
+                                            <label class="form-label require">{{ __('common.department') }}</label>
                                             <select name="department_id" id="department_id"
                                                 class=" form-control single-select" style="width: 100%">
                                                 <option value="">Select Department </option>
@@ -44,7 +44,7 @@
                                             </select>
                                         </div>
                                         <div class="col-md-4 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.from_date') }}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -55,7 +55,7 @@
 
                                         </div>
                                         <div class="col-md-4 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.to_date') }}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -73,7 +73,8 @@
                                                 <option value="{{ encryptId(2) }}">Floor manager Approval pending</option>
                                                 <option value="{{ encryptId(3) }}">Floor Manager Approved</option>
                                                 <option value="{{ encryptId(4) }}">Floor Manager Rejected</option>
-                                                <option value="{{ encryptId(5) }}">Safety officer Approval pending</option>
+                                                <option value="{{ encryptId(5) }}">Safety officer Approval pending
+                                                </option>
                                                 <option value="{{ encryptId(6) }}">Safety officer Approved</option>
                                                 <option value="{{ encryptId(7) }}">Safety officer Rejected</option>
                                             </select>
@@ -98,8 +99,8 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Unit</th>
-                                        <th>Department</th>
+                                        <th>{{ __('common.unit') }}</th>
+                                        <th>{{ __('common.department') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>

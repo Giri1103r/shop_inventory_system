@@ -190,7 +190,9 @@
                                             $medicinerequisition->approve_status == MEDICAL_ASSISTANT_APPROVAL_PENDING))
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">{{__('ohc_management.floor_manager_or_medical_assistant_approval_pending')}}</h4>
+                                            <h4 class="text-white">
+                                                {{ __('ohc_management.floor_manager_or_medical_assistant_approval_pending') }}
+                                            </h4>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -203,14 +205,15 @@
                                                 <div class="">
                                                     <div class="mb-3 row">
                                                         <div class="col-md-4 mb-3">
-                                                            <label for="approver_name" class="form-label require">Approver
-                                                                Name</label>
+                                                            <label for="approver_name"
+                                                                class="form-label require">{{ __('ohc_management.approver_name') }}</label>
                                                             <input type="text" class="form-control form-control-sm"
                                                                 id="floor_approver_name" readonly
                                                                 value="{{ Auth::user()->name }}">
                                                         </div>
                                                         <div class="col-md-4 mb-3">
-                                                            <label for="date" class="form-label require">Date</label>
+                                                            <label for="date"
+                                                                class="form-label require">{{ __('common.date') }}</label>
                                                             <input type="text" class="form-control form-control-sm"
                                                                 id="floor_date" name="floor_date" readonly
                                                                 value="{{ date('d-m-Y H:i:s') }}">
@@ -237,7 +240,7 @@
                                                         <div class="col-md-12 mb-3">
                                                             <div class="mb-1">
                                                                 <label for="remarks"
-                                                                    class="form-label require">Remarks</label>
+                                                                    class="form-label require">{{ __('ohc_management.remarks') }}</label>
                                                                 <textarea class="form-control @error('remarks') is-invalid @enderror" id="floor_remarks" name="floor_remarks"
                                                                     rows="3"></textarea>
                                                                 <div class="text-danger" id="remarks_error"></div>
@@ -265,26 +268,27 @@
                                         $medicinerequisition->approve_status == MEDICAL_ASSISTANT_REJECTED)
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">{{__('ohc_management.floor_manager_or_medical_assistant_approval')}}</h4>
+                                            <h4 class="text-white">
+                                                {{ __('ohc_management.floor_manager_or_medical_assistant_approval') }}</h4>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="row">
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                                <label class="form-label view_label">{{ __('ohc_management.approver_name') }}</label>
                                                 <div class="view_data">
                                                     {{ getUsername(isset($floormanger->created_by) ? $floormanger->created_by : '') }}
                                                 </div>
                                             </div>
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                                <label class="form-label view_label">{{ __('ohc_management.approved_date') }}</label>
                                                 <div class="view_data">
                                                     {{ displaydateformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
                                                 </div>
                                             </div>
 
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                                <label class="form-label view_label">{{ __('ohc_management.approved_time') }}</label>
                                                 <div class="view_data">
                                                     {{ displaytimeformat(isset($floormanger->created_at) ? $floormanger->created_at : '') }}
                                                 </div>
@@ -313,7 +317,7 @@
                                                 </div>
                                             @endif --}}
                                             <div class="mb-3 col-md-12 form-input">
-                                                <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                                <label class="form-label view_label">{{ __('ohc_management.remarks') }}</label>
                                                 <div class="view_data">
                                                     {{ isset($floormanger->remarks) ? $floormanger->remarks : '' }}
                                                 </div>
