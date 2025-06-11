@@ -23,6 +23,9 @@ return [
     'hospital_name'=>'Hospital Name',
     'mobile_no'=>'Mobile Number',
     'tel_no'=>'Tel Number',
+    'station_master'=>'Station Master',
+    'station_number'=>'Station Number',
+    'location_name'=>'Location Name',
     'hospital_details'=>'Hospital Details',
     'vendor_details'=>'Vendor Details',
 
