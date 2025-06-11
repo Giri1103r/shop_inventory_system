@@ -198,18 +198,23 @@ class Inventory extends Model
 
             $oldissue = $this->where('unit_id', 1)
                 ->where('medicine_id', $data['medicine_id'])->first();
-            $newIssue  =  $oldissue->total_issue + $data['quantity'];
-            $this->where('unit_id', 1)
-                ->where('medicine_id', $data['medicine_id'])
-                ->update(['total_issue' => $newIssue]);
 
-            $newbalance  =  $oldissue->balance - $data['quantity'];
+            if ($oldissue) {
+                $newIssue  =  $oldissue->total_issue + $data['quantity'];
+                $newbalance  =  $oldissue->balance - $data['quantity'];
 
-            $this->where('unit_id', 1)
-                ->where('medicine_id', $data['medicine_id'])
-                ->update(['balance' => $newbalance]);
+                $this->where('unit_id', 1)
+                    ->where('medicine_id', $data['medicine_id'])
+                    ->update([
+                        'total_issue' => $newIssue,
+                        'balance' => $newbalance
+                    ]);
+            }
         }
+    }
 
+    public function otherunit($user_medicine_requisition, $medicinedata)
+    {
         foreach ($medicinedata as $data) {
             $olddata =   $this->where('unit_id', $user_medicine_requisition->unit_id)
                 ->where('medicine_id', $data['medicine_id'])->first();

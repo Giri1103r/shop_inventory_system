@@ -338,6 +338,7 @@ class MedicineIssuanceController extends Controller
 
                 // stock update
                 $this->inventory->issuestockupdate($user_medicine_issuance, $medicinedata);
+                $this->inventory->otherunit($user_medicine_requisition, $medicinedata);
                 // notification
                 $mailsubject = 'Medicine Issuing to the Unit';
 
