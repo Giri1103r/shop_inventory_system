@@ -108,7 +108,10 @@ class VendorController extends Controller
             $data = array();
             return view('ohcmanagement.master.vendor.add', $data);
         } catch (Exception $ex) {
+
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/vendor/list'));
         }
     }
 
@@ -143,20 +146,20 @@ class VendorController extends Controller
             try {
 
 
-                 $this->vendor->store();
+                $this->vendor->store();
 
 
-                Session::flash('success', 'Your data has been created successfully!');
+                Session::flash('success',  __('common.created_msg'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error',  __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/vendor/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/vendor/list'));
         }
     }
@@ -175,6 +178,8 @@ class VendorController extends Controller
             return view('ohcmanagement.master.vendor.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/vendor/list'));
         }
     }
 
@@ -193,6 +198,8 @@ class VendorController extends Controller
             return view('ohcmanagement.master.vendor.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/vendor/list'));
         }
     }
 
@@ -227,13 +234,13 @@ class VendorController extends Controller
 
             $this->vendor->updates($id);
 
-          
 
-            Session::flash('success', 'Your data has been updated successfully!');
+
+            Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/vendor/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/vendor/list'));
         }
     }
@@ -248,10 +255,10 @@ class VendorController extends Controller
             $id = $request->id;
 
             if (empty($id)) {
-                $isUnique = !$this->vendor->uniqueCheck($vendor_name,$license_no);
+                $isUnique = !$this->vendor->uniqueCheck($vendor_name, $license_no);
             } else {
                 $id = decryptId($id);
-                $isUnique = !$this->vendor->existUniqueCheck($vendor_name,$license_no, $id);
+                $isUnique = !$this->vendor->existUniqueCheck($vendor_name, $license_no, $id);
             }
 
             return Response::json($isUnique);
@@ -287,9 +294,9 @@ class VendorController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Vendor Name',
-                'License Number',
-                'Address',
+                __("ohc_management.vendor_name"),
+                __("ohc_management.license_number"),
+                __("ohc_management.address"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -320,7 +327,7 @@ class VendorController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/vendor/list'));
         }
     }
@@ -338,9 +345,9 @@ class VendorController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Vendor Name',
-                'License Number',
-                'Address',
+                __("ohc_management.vendor_name"),
+                __("ohc_management.license_number"),
+                __("ohc_management.address"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -376,7 +383,7 @@ class VendorController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/vendor/list'));
         }
     }

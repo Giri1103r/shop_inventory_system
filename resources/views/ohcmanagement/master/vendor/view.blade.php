@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Vendor Show')
+@section('title', 'Vendor')
 @section('pageurl', admin_url('ohc/vendor/list'))
 
 
@@ -34,26 +34,26 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Vendor Details</h4>
+                                        <h4 class="text-white">{{__('ohc_management.vendor_details')}}</h4>
                                     </div>
                                 </div>
                                 <div class="row">
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Vendor Name') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.vendor_name') }}</label>
                                         <div class="view_data">
                                             {{ isset($vendor->vendor_name) ? $vendor->vendor_name : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('License No') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.license_number') }}</label>
                                         <div class="view_data">
                                             {{ isset($vendor->license_no) ? $vendor->license_no : '' }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Address') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.address') }}</label>
                                         <div class="view_data">
                                             {{ isset($vendor->address) ? $vendor->address : '' }}
                                         </div>

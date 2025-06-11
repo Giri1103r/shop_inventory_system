@@ -65,7 +65,8 @@ class PpeRequest extends Model
                 }
             })->orderBy('ppe_pperequest.id', 'DESC');
         } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
-            $query->orderBy('ppe_pperequest.id', 'DESC');
+            $companyId = $user->company_id;
+            $query->where('ppe_pperequest.company_id', $companyId)->orderBy('ppe_pperequest.id', 'DESC');
         } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
             $query->orderBy('ppe_pperequest.id', 'DESC');
         } elseif (in_array(ROLE_ADMIN, $userRole)) {
@@ -95,9 +96,9 @@ class PpeRequest extends Model
         if ($request->has('unit_id') && $request->unit_id) {
             $query->where('ppe_pperequest.unit_id',  decryptId($request->unit_id));
         }
-           if ($request->has('dashboard_unit') && $request->dashboard_unit) {
-         
-            $query->where('ppe_pperequest.dashboard_unit',  ($request->dashboard_unit));
+        if ($request->has('dashboard_unit') && $request->dashboard_unit) {
+
+            $query->where('ppe_pperequest.dashboard_unit', ($request->dashboard_unit));
         }
         if ($request->has('company_id') && $request->company_id) {
 

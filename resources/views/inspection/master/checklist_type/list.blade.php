@@ -17,8 +17,8 @@
                         {{-- <x-button-import href="{{ admin_url('inspection/master/checklist-type/import') }}"></x-button-import> --}}
                         {{-- @endif --}}
                         {{-- @if (CheckUserPermission('add')) --}}
-                        <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('inspection/master/checklist-type/add') }}">Add</x-button-add>
+                            {{-- <x-button-add dataId="" class="add btn btn-primary ms-1"
+                                href="{{ admin_url('inspection/master/checklist-type/add') }}">Add</x-button-add> --}}
                         {{-- @endif --}}
                     </div>
                     <div id="search" class="collapse">

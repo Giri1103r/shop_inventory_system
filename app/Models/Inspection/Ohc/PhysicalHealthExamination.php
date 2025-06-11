@@ -4,6 +4,7 @@ namespace App\Models\Inspection\Ohc;
 
 use App\Models\Master\Employee;
 use App\Models\Master\Work;
+use App\Scopes\TrashScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -62,8 +63,10 @@ class PhysicalHealthExamination extends Model
 
         $query = $this->select(
             'inspection_ohc_physical_health_examination.*',
-
-        );
+            'masters_unit.unit_name',
+            'masters_department.department_name',
+        )->join('masters_unit', 'inspection_ohc_physical_health_examination.unit_id', '=', 'masters_unit.id')
+            ->join('masters_department', 'inspection_ohc_physical_health_examination.department_id', '=', 'masters_department.id');
 
 
 
@@ -76,62 +79,37 @@ class PhysicalHealthExamination extends Model
             $query = $query->where(function ($query) use ($search) {
                 $query
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('inspection_shift_option.shift', 'LIKE', '%' . $search . '%')
-                    ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%');
             });
+        }
+        if (isset($request->emp_id) && $request->emp_id) {
+            $query = $query->where('inspection_ohc_physical_health_examination.emp_id', ($request->emp_id));
+        }
+        if (isset($request->emp_name) && $request->emp_name) {
+            $query = $query->where('inspection_ohc_physical_health_examination.emp_name', ($request->emp_name));
         }
         if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('inspection_ohc_hygiene_checklist.created_at', '>=', $startDate);
+            $query->where('inspection_ohc_physical_health_examination.created_at', '>=', $startDate);
         }
         if ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('inspection_ohc_hygiene_checklist.created_at', '<=', $endDate);
+            $query->where('inspection_ohc_physical_health_examination.created_at', '<=', $endDate);
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('inspection_ohc_hygiene_checklist.created_at', [$startDate, $endDate]);
+            $query->whereBetween('inspection_ohc_physical_health_examination.created_at', [$startDate, $endDate]);
         }
         if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_ohc_physical_health_examination.approve_status', decryptId($request->status));
+            $query = $query->where('inspection_ohc_physical_health_examination.status', decryptId($request->status));
         }
         if (isset($request->unit_id) && $request->unit_id) {
-            $query = $query->where('inspection_ohc_physical_health_examination.unit', decryptId($request->unit_id));
+            $query = $query->where('inspection_ohc_physical_health_examination.unit_id', decryptId($request->unit_id));
         }
-        if (isset($request->shift) && $request->shift) {
-            $query = $query->where('inspection_ohc_physical_health_examination.shift', decryptId($request->shift));
-        }
-        if (isset($request->location_id) && $request->location_id) {
-            $query = $query->where('inspection_ohc_physical_health_examination.location', decryptId($request->location_id));
-        }
-        if (isset($request->order) && count($request->order) > 0) {
-            $columnName = $request->order[0]['column'];
-            $columnorder = $request->order[0]['dir'];
-            switch ($columnName) {
-                case "rev_date":
-                    $query->orderBy('inspection_ohc_physical_health_examination.revision_date', $columnorder);
-                    break;
-                case "issue_date":
-                    $query = $query->orderBy('inspection_ohc_physical_health_examination.issue_date', $columnorder);
-                    break;
-                case "document_number":
-                    $query = $query->orderBy('inspection_ohc_physical_health_examination.doc_no', $columnorder);
-                    break;
-                case "status":
-                    $query = $query->orderBy('inspection_ohc_physical_health_examination.status', $columnorder);
-                    break;
-                case "created_by":
-                    $query = $query->orderBy('inspection_ohc_physical_health_examination.created_by', $columnorder);
-                    break;
-                case "created_date":
-                    $query = $query->orderBy('inspection_ohc_physical_health_examination.created_at', $columnorder);
-                    break;
-                default:
-                    $query = $query->orderBy('inspection_ohc_physical_health_examination.id', 'DESC');
-                    break;
-            }
+        if (isset($request->department_id) && $request->department_id) {
+            $query = $query->where('inspection_ohc_physical_health_examination.department_id', decryptId($request->department_id));
         }
 
 
@@ -230,81 +208,6 @@ class PhysicalHealthExamination extends Model
         return self::create($insert_array);
     }
 
-
-   
-
-
-
-
-
-
-
-    public function exportdata()
-    {
-        $request = request();
-        $search = '';
-
-        $query = $this->select(
-            'inspection_ohc_physical_health_examination.*'
-        );
-        if (isset($request->status) && $request->status) {
-            $query = $query->where('inspection_ohc_physical_health_examination.approve_status', decryptId($request->status));
-        }
-        if (isset($request->unit_id) && $request->unit_id) {
-            $query = $query->where('inspection_ohc_physical_health_examination.unit', decryptId($request->unit_id));
-        }
-        if (isset($request->shift) && $request->shift) {
-            $query = $query->where('inspection_ohc_physical_health_examination.shift', decryptId($request->shift));
-        }
-        if (isset($request->location_id) && $request->location_id) {
-            $query = $query->where('inspection_ohc_physical_health_examination.location', decryptId($request->location_id));
-        }
-        if ($request->has('from_date') && !empty($request->from_date)) {
-
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('inspection_ohc_hygiene_checklist.created_at', '>=', $startDate);
-        }
-        if ($request->has('to_date') && !empty($request->to_date)) {
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('inspection_ohc_hygiene_checklist.created_at', '<=', $endDate);
-        }
-        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
-            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('inspection_ohc_hygiene_checklist.created_at', [$startDate, $endDate]);
-        }
-        if (isset($request->order) && count($request->order) > 0) {
-            $columnName = $request->order[0]['column'];
-            $columnorder = $request->order[0]['dir'];
-            switch ($columnName) {
-                case "rev_date":
-                    $query->orderBy('inspection_ohc_physical_health_examination.revision_date', $columnorder);
-                    break;
-                case "issue_date":
-                    $query = $query->orderBy('inspection_ohc_physical_health_examination.issue_date', $columnorder);
-                    break;
-                case "document_number":
-                    $query = $query->orderBy('inspection_ohc_physical_health_examination.doc_no', $columnorder);
-                    break;
-                case "status":
-                    $query = $query->orderBy('inspection_ohc_physical_health_examination.status', $columnorder);
-                    break;
-                case "created_by":
-                    $query = $query->orderBy('inspection_ohc_physical_health_examination.created_by', $columnorder);
-                    break;
-                case "created_date":
-                    $query = $query->orderBy('inspection_ohc_physical_health_examination.created_at', $columnorder);
-                    break;
-                default:
-                    $query = $query->orderBy('inspection_ohc_physical_health_examination.id', 'DESC');
-                    break;
-            }
-        }
-
-        $query->orderBy('inspection_ohc_physical_health_examination.id', 'DESC');
-
-        return  $query->get();
-    }
     public function statuschange($id)
     {
         $request = request();
@@ -325,5 +228,52 @@ class PhysicalHealthExamination extends Model
     public function Selectone($id)
     {
         return $this->where('id', $id)->first();
+    }
+    public function exportdata()
+    {
+        $request = request();
+        $search = '';
+
+        $query = $this->select(
+            'inspection_ohc_physical_health_examination.*'
+        );
+        if ($request->has('from_date') && !empty($request->from_date)) {
+
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_physical_health_examination.created_at', '>=', $startDate);
+        }
+        if ($request->has('to_date') && !empty($request->to_date)) {
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->where('inspection_ohc_physical_health_examination.created_at', '<=', $endDate);
+        }
+        if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
+            $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
+            $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
+            $query->whereBetween('inspection_ohc_physical_health_examination.created_at', [$startDate, $endDate]);
+        }
+        if (isset($request->status) && $request->status) {
+            $query = $query->where('inspection_ohc_physical_health_examination.status', decryptId($request->status));
+        }
+        if (isset($request->unit_id) && $request->unit_id) {
+            $query = $query->where('inspection_ohc_physical_health_examination.unit_id', decryptId($request->unit_id));
+        }
+        if (isset($request->department_id) && $request->department_id) {
+            $query = $query->where('inspection_ohc_physical_health_examination.department_id', decryptId($request->department_id));
+        }
+        if (isset($request->emp_id) && $request->emp_id) {
+            $query = $query->where('inspection_ohc_physical_health_examination.emp_id', ($request->emp_id));
+        }
+        if (isset($request->emp_name) && $request->emp_name) {
+            $query = $query->where('inspection_ohc_physical_health_examination.emp_name', ($request->emp_name));
+        }
+
+        $query->orderBy('inspection_ohc_physical_health_examination.id', 'DESC');
+
+        return  $query->get();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('inspection_ohc_physical_health_examination'));
     }
 }

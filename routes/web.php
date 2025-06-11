@@ -1861,6 +1861,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('list', [PhysicalMedicalExaminationController::class, 'index']);
                 Route::get('add', [PhysicalMedicalExaminationController::class, 'add']);
                 Route::post('add/submit', [PhysicalMedicalExaminationController::class, 'store']);
+                Route::post('status', [PhysicalMedicalExaminationController::class, 'statuschange']);
                 Route::get('view/{id}', [PhysicalMedicalExaminationController::class, 'view']);
                 Route::get('export/pdf', [PhysicalMedicalExaminationController::class, 'ExportPDF']);
                 Route::get('export/excel', [PhysicalMedicalExaminationController::class, 'ExportExcel']);

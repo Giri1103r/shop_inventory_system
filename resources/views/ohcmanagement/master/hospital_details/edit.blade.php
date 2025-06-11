@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Hospital Details Edit')
+@section('title', 'Hospital Details')
 @section('pageurl', admin_url('ohc/hospital-details/list'))
 
 
@@ -40,7 +40,7 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Hospital Name</label>
+                                                    <label class="form-label require">{{__('ohc_management.hospital_name')}}</label>
                                                     <input type="text" name="hospital_name" id="hospital_name"
                                                         value="{{ $hospitalDetails->hospital_name }}" class="form-control"
                                                         placeholder="Hospital Name">
@@ -51,7 +51,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Mobile Number </label>
+                                                    <label class="form-label require">{{__('ohc_management.mobile_no')}}</label>
                                                     <input type="text" name="mobile_no" id="mobile_no"
                                                         class="form-control"value="{{ $hospitalDetails->mobile_no }}"
                                                         placeholder="Enter the Mobile Number">
@@ -62,7 +62,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Telephone Number </label>
+                                                    <label class="form-label require">{{__('ohc_management.tel_no')}}</label>
                                                     <input type="text" name="tel_no" id="tel_no" class="form-control"
                                                         value="{{ $hospitalDetails->tel_no }}"
                                                         placeholder="Enter the Mobile Number">
@@ -73,7 +73,7 @@
                                             </div>
                                             <div class="col-md-12">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Address</label>
+                                                    <label class="form-label require">{{__('ohc_management.address')}}</label>
                                                     <textarea name="address" class="form-control" placeholder="Enter the Address">{{ $hospitalDetails->address }}</textarea>
                                                     @error('address')
                                                         <div class="text-danger">{{ $message }}</div>

@@ -540,17 +540,19 @@ class MedicalRequisitionSlipController extends Controller
                 $this->medicine_requisition_floor_details->floormanagerapprovalupdate($id, $nextStatus);
                 if ($request->action == "approve") {
                     $getsafetyofficer = getSafetyOfficer();
-                    $getsafetyofficers = $getsafetyofficer->pluck('id')->toArray();
-                    $getsafetyofficerEmail = $getsafetyofficer->pluck('email')->toArray();
+
 
                     // medical officer
 
                     $getmedicalassistant = getMedicalAssistant();
-                    $getmedicalassistantEmail = $getmedicalassistant->pluck('email')->toArray();
-                    $getmedicalassistants = $getmedicalassistant->pluck('id')->toArray();
+
                     $details = $this->medicine_requisition_floor_details->Selectone($id);
                     $mailsubject = 'Medicine Requistion Slip Floor approved';
                     if (!empty($getmedicalassistant) || !empty($getsafetyofficer)) {
+                        $getsafetyofficers = $getsafetyofficer->pluck('id')->toArray();
+                        $getsafetyofficerEmail = $getsafetyofficer->pluck('email')->toArray();
+                        $getmedicalassistantEmail = $getmedicalassistant->pluck('email')->toArray();
+                        $getmedicalassistants = $getmedicalassistant->pluck('id')->toArray();
                         $notificationData = array(
                             'notification_type' => OHC_INSPECTION,
                             'module_type' => 3,

@@ -23,25 +23,49 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-
-                                        <div class="col-md-4 mb-3 form-input">
-                                            <label for="issue_date"
-                                                class="form-label ">{{ __('inspection.inspection_date') }}</label>
-                                            <input type="text" name="issue_date" id="issue_date" class="form-control">
-                                        </div>
-                                        <div class="col-md-4 form-input">
-                                            <label for="inspection_status"
-                                                class="form-label ">{{ __('inspection.shifts') }}</label>
-                                            <select name="shift_id" id="shift_id" class="form-control single-select"
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="emp_id"
+                                                class="form-label ">{{ __('common.employee_or_worker_code') }}</label>
+                                            <select name="emp_id" id="emp_id" class="form-control form-control-sm"
                                                 style="width: 100%">
-                                                <option value="">Select Shift</option>
-                                                @foreach ($shifts as $shift)
-                                                    <option value="{{ encryptId($shift->id) }}">
-                                                        {{ $shift->shift }}</option>
-                                                @endforeach
+                                                <option value="">Select the Employee ID</option>
                                             </select>
                                         </div>
-                                        <div class="col-md-4 mb-3 form-input">
+                                        <div class="col-md-3 mb-2">
+                                            <div class="form-group form-input">
+                                                <label
+                                                    class="form-label require">{{ __('common.employee_or_worker_name') }}</label>
+                                                <input type="text" name="emp_name" id="emp_name" class="form-control"
+                                                    placeholder="Employee Name">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">{{ __('common.unit') }}</label>
+                                                <select name="unit_id" id="unit_id" style="width: 100%"
+                                                    class="form-control single-select">
+                                                    <option value="">Select the option</option>
+                                                    @foreach ($unit as $list)
+                                                        <option value="{{ encryptId($list->id) }}">
+                                                            {{ $list->unit_name }}
+                                                        </option>
+                                                    @endforeach
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">{{ __('common.department') }}</label>
+                                                <select name="department_id" id="department_id" style="width: 100%"
+                                                    class="form-control single-select">
+                                                    <option value="">Select the option</option>
+
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
@@ -52,7 +76,7 @@
                                             </div>
 
                                         </div>
-                                        <div class="col-md-4 mb-3 form-input">
+                                        <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">To Date</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
@@ -62,19 +86,19 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-md-4 mb-3 form-input">
+                                        <div class="col-md-3 mb-3 form-input">
                                             <label for="inspection_status"
                                                 class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="inspection_status" id="inspection_status" style="width: 100%"
+                                            <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId('1') }}">WAITING FOR NURSING OFFICER ACTION
+                                                <option value="{{ encryptId('1') }}">Active
                                                 </option>
-                                                <option value="{{ encryptId('2') }}">INSPECTION APPROVED</option>
-                                                <option value="{{ encryptId('3') }}">INSPECTION REJECTED</option>
+                                                <option value="{{ encryptId('0') }}">In-Active</option>
+
                                             </select>
                                         </div>
-                                        <div class="col-md-4 mt-3">
+                                        <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
 
@@ -93,13 +117,15 @@
                                 class="table primary-table-bordered table-bordered table-striped display responsive nowrap w-100 mt-2 datatable-list">
                                 <thead class="thead-primary">
                                     <tr>
-                                        <th>S.NO</th>
-                                        <th>Employee Id</th>
-                                        <th>Employee Name</th>
-                                        <th>Unit</th>
-                                        <th>Department</th>
-                                        <th>Date</th>
-                                        <th>Action</th>
+                                        <th>{{ __('common.sno') }}</th>
+                                        <th>{{ __('common.employee_or_worker_code') }}</th>
+                                        <th>{{ __('common.employee_or_worker_name') }}</th>
+                                        <th>{{ __('common.unit') }}</th>
+                                        <th>{{ __('common.department') }}</th>
+                                        <th>{{ __('common.status') }}</th>
+                                        <th>{{ __('common.created_date') }}</th>
+                                        <th>{{ __('common.created_by') }}</th>
+                                        <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -123,6 +149,35 @@
             flatpickr("#issue_date", {
                 dateFormat: "d-m-Y",
             });
+            // department
+            $(document).on('change', '#unit_id', function() {
+                var unitId = $(this).val();
+                if (unitId) {
+                    $.ajax({
+                        url: "{{ admin_url('department/ajax-list') }}/" + unitId + "/0",
+                        type: 'GET',
+                        dataType: 'json',
+                        success: function(data) {
+                            $('#department_id').empty().append(
+                                '<option value="">Select Department</option>');
+                            $.each(data, function(key, value) {
+                                $('#department_id').append('<option value="' + value
+                                    .id + '">' + value.name + '</option>');
+                            });
+                            $('#department_id').trigger('change.');
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching unit. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#department_id').empty().append('<option value="">Select Department</option>');
+                    $('#department_id').trigger('change.');
+                }
+            });
+
+            // from date filter
+
             $(document).ready(function() {
                 var fromDatepicker = flatpickr("#from_date", {
                     dateFormat: "d-m-Y",
@@ -140,15 +195,72 @@
 
                 });
             });
+
+            // employee id and employee name
+
+            $('#emp_id').select2({
+                ajax: {
+                    url: '{{ admin_url('ohc/employee-cum-patient/employeeid') }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.text
+                                };
+                            })
+                        };
+                    }
+                },
+                minimumInputLength: 1,
+                dropdownCssClass: 'form-control',
+                selectionCssClass: 'form-control'
+            });
+            $(document).on('change', '#emp_id', function() {
+                var empId = $(this).val();
+                if (empId) {
+                    $.ajax({
+                        url: "{{ admin_url('ohc/employee-cum-patient/employeename') }}",
+                        type: 'GET',
+                        data: {
+                            empId: empId
+                        },
+                        dataType: 'json',
+                        success: function(response) {
+                            if (response.employee) {
+                                $('#emp_name').val(response.employee.emp_name).prop('readonly',
+                                    true);
+
+                            } else {
+                                $('#emp_name').val('').prop('readonly', true);
+                            }
+                        },
+                        error: function(xhr) {
+                            alert('Error fetching employee name. Please try again.');
+                        }
+                    });
+                } else {
+                    $('#emp_name').val('').prop('readonly', true);
+                }
+            });
+
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
-                    autoWidth: false,
-                    responsive: true,
-                    processing: false,
                     serverSide: true,
                     searching: true,
                     ordering: true,
+                    bSort: true,
+                    scrollX: true,
+                    autoWidth: true,
+                    responsive: false,
                     dom: 'Bfrtip',
                     layout: {
                         top2Start: 'buttons',
@@ -173,12 +285,13 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.document_number = $('#document_number').val();
-                            d.issue_date = $('#issue_date').val();
-                            d.shift_id = $('#shift_id').val();
+                            d.emp_id = $('#emp_id').val();
+                            d.emp_name = $('#emp_name').val();
+                            d.department_id = $('#department_id').val();
+                            d.unit_id = $('#unit_id').val();
                             d.from_date = $('#from_date').val();
                             d.to_date = $('#to_date').val();
-                            d.inspection_status = $('#inspection_status').val();
+                            d.status = $('#status').val();
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -208,9 +321,18 @@
                             data: 'department_id',
                             name: 'department_id',
                         },
+
                         {
-                            data: 'date',
-                            name: 'date',
+                            data: 'status',
+                            name: 'status',
+                        },
+                        {
+                            data: 'created_date',
+                            name: 'created_date',
+                        },
+                        {
+                            data: 'created_by',
+                            name: 'created_by',
                         },
                         {
                             data: 'action',
@@ -241,9 +363,11 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        issue_date = $('#issue_date').val();
-                                        shift_id = $('#shift_id').val();
-                                        inspection_status = $('#inspection_status').val();
+                                        var emp_id = $('#emp_id').val();
+                                        var emp_name = $('#emp_name').val();
+                                        var unit_id = $('#unit_id').val();
+                                        var department_id = $('#department_id').val();
+                                        var status = $('#status').val();
                                         var from_date = $('#from_date').val();
                                         var to_date = $('#to_date').val();
                                         $(".dt-button").removeClass('processing');
@@ -251,11 +375,13 @@
                                         window.location.href =
                                             "{{ admin_url('ohc/physical-medical-examination/yearly/export/pdf') }}" +
                                             '?search=' + searchValue +
-                                            '&issue_date=' + issue_date +
-                                            '&shift_id=' + shift_id +
+                                            '&emp_id=' + emp_id +
+                                            '&emp_name=' + emp_name +
+                                            '&unit_id=' + unit_id +
+                                            '&department_id=' + department_id +
                                             '&from_date=' + from_date +
                                             '&to_date=' + to_date +
-                                            '&inspection_status=' + inspection_status
+                                            '&status=' + status
                                     }
                                 },
                                 {
@@ -263,22 +389,25 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        document_number = $('#document_number').val();
-                                        issue_date = $('#issue_date').val();
-                                        shift_id = $('#shift_id').val();
+                                        var emp_id = $('#emp_id').val();
+                                        var emp_name = $('#emp_name').val();
+                                        var unit_id = $('#unit_id').val();
+                                        var department_id = $('#department_id').val();
+                                        var status = $('#status').val();
                                         var from_date = $('#from_date').val();
                                         var to_date = $('#to_date').val();
-                                        inspection_status = $('#inspection_status').val();
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =
                                             "{{ admin_url('ohc/physical-medical-examination/yearly/export/excel') }}" +
                                             '?search=' + searchValue +
-                                            '&issue_date=' + issue_date +
-                                            '&shift_id=' + shift_id +
+                                            '&emp_id=' + emp_id +
+                                            '&emp_name=' + emp_name +
+                                            '&unit_id=' + unit_id +
+                                            '&department_id=' + department_id +
                                             '&from_date=' + from_date +
                                             '&to_date=' + to_date +
-                                            '&inspection_status=' + inspection_status
+                                            '&status=' + status
                                     }
                                 },
                             ]
@@ -304,6 +433,7 @@
                 $(document).on('click', '#resetform', function() {
                     $('#formsearch .single-select').val('');
                     $('#formsearch .single-select').trigger('change');
+                    location.reload();
                     setTimeout(function() {
                         table.draw();
                     }, 150);
@@ -314,12 +444,13 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Equipment checklist') }}';
+                        var title =
+                            '{{ __('Do You want to In-Activate Physical Health Examination Checkup') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Equipment checklist') }}';
+                        var title = '{{ __('Do You want to Activate Physical Health Examination Checkup') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
@@ -339,7 +470,7 @@
 
                         if (result.value) {
                             $.ajax({
-                                url: "{{ admin_url('ohc/physical-medical-examination/yearly/list/status') }}",
+                                url: "{{ admin_url('ohc/physical-medical-examination/yearly/status') }}",
                                 type: 'post',
 
                                 data: {

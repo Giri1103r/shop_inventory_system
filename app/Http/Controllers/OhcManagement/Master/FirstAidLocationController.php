@@ -159,12 +159,12 @@ class FirstAidLocationController extends Controller
             }
 
             $firstaidlocation = $this->firstaidlocation->store();
-            Session::flash('success', 'Your data has been Created successfully!');
+            Session::flash('success', __('common.created_msg'));
             return redirect(admin_url('ohc/first-aid-location/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-location/list'));
         }
     }
@@ -182,7 +182,10 @@ class FirstAidLocationController extends Controller
             }
             return view('ohcmanagement.master.first_aider_location.view', $data);
         } catch (Exception $ex) {
+
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/first-aid-location/list'));
         }
     }
 
@@ -207,6 +210,8 @@ class FirstAidLocationController extends Controller
             return view('ohcmanagement.master.first_aider_location.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
+             Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/first-aid-location/list'));
         }
     }
 
@@ -240,11 +245,11 @@ class FirstAidLocationController extends Controller
             $this->firstaidlocation->updates($id);
 
 
-            Session::flash('success', 'Your data has been updated successfully!');
+            Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/first-aid-location/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-location/list'));
         }
     }
@@ -383,7 +388,7 @@ class FirstAidLocationController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-location/list'));
         }
     }
@@ -442,7 +447,7 @@ class FirstAidLocationController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-location/list'));
         }
     }

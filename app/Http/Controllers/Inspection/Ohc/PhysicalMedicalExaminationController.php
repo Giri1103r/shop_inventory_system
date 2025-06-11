@@ -25,6 +25,7 @@ use App\Models\Inspection\Ohc\Master\FamilyHistory;
 use App\Models\Inspection\Ohc\Master\PersonalDetails;
 use App\Models\Inspection\Ohc\OHCHygieneCleaningChecklist;
 use App\Models\Inspection\Ohc\PhysicalHealthExamination;
+use App\Models\Master\Unit;
 use Illuminate\Support\Facades\Mail;
 use Mpdf\Tag\Dd;
 
@@ -37,6 +38,7 @@ class PhysicalMedicalExaminationController extends Controller
     private $personalDetails;
     private $familyHistory;
     private $physicalHealth;
+    private $unit;
 
 
     public function __construct()
@@ -47,6 +49,7 @@ class PhysicalMedicalExaminationController extends Controller
         $this->document_reference = new InspectionStaticDocno();
         $this->personalDetails = new PersonalDetails();
         $this->familyHistory = new FamilyHistory();
+        $this->unit = new Unit();
         $this->physicalHealth = new PhysicalHealthExamination();
     }
 
@@ -114,7 +117,7 @@ class PhysicalMedicalExaminationController extends Controller
                      </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'checklist_status', 'date'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -128,9 +131,11 @@ class PhysicalMedicalExaminationController extends Controller
             }
         }
         $shift  = $this->shift->select('id', 'shift')->where('status', '1')->get();
+        $unit  = $this->unit->getunit();
 
         $data = array(
             'shifts' => $shift,
+            'unit' => $unit,
         );
         return view('inspection.inspection_ohc.physical_medical_examination.list', $data);
     }
@@ -210,7 +215,20 @@ class PhysicalMedicalExaminationController extends Controller
     }
 
 
+    public function StatusChange(Request $request)
+    {
 
+        try {
+            $id = decryptId($request->id);
+
+            $this->physicalHealth->statuschange($id);
+
+            return response()->json(['status' => 'success', 'msg' => __('Physical Health Examination checkup  status changed')], 200);
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['status' => 'error', 'msg' => __('administration.please_try_after_some_time')], 406);
+        }
+    }
 
     public function generalExcel(Request $request)
     {

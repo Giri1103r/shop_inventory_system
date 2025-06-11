@@ -134,6 +134,8 @@ class HospitalDetailsController extends Controller
             return view('ohcmanagement.master.hospital_details.add', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/hospital-details/list'));
         }
     }
 
@@ -178,12 +180,12 @@ class HospitalDetailsController extends Controller
 
 
             $data =  $this->hospital_details->store();
-            Session::flash('success', 'Your data has been created successfully!');
+            Session::flash('success',  __('common.created_msg'));
             return redirect(admin_url('ohc/hospital-details/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/hospital-details/list'));
         }
     }
@@ -201,6 +203,9 @@ class HospitalDetailsController extends Controller
             }
             return view('ohcmanagement.master.hospital_details.view', $data);
         } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/hospital-details/list'));
         }
     }
 
@@ -222,6 +227,8 @@ class HospitalDetailsController extends Controller
             return view('ohcmanagement.master.hospital_details.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/hospital-details/list'));
         }
     }
 
@@ -264,11 +271,11 @@ class HospitalDetailsController extends Controller
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             $this->hospital_details->updates($id);
-            Session::flash('success', 'Your data has been updated successfully!');
+            Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/hospital-details/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/hospital-details/list'));
         }
     }
@@ -329,10 +336,10 @@ class HospitalDetailsController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Hospital Name',
-                'Mobile Number',
-                'Telephone Number',
-                'Address',
+                __("ohc_management.hospital_name"),
+                __("ohc_management.mobile_no"),
+                __("ohc_management.tel_no"),
+                __("ohc_management.address"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -364,7 +371,7 @@ class HospitalDetailsController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/hospital-details/list'));
         }
     }
@@ -382,10 +389,10 @@ class HospitalDetailsController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Hospital Name',
-                'Mobile Number',
-                'Telephone Number',
-                'Address',
+                __("ohc_management.hospital_name"),
+                __("ohc_management.mobile_no"),
+                __("ohc_management.tel_no"),
+                __("ohc_management.address"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -421,7 +428,7 @@ class HospitalDetailsController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/hospital-details/list'));
         }
     }

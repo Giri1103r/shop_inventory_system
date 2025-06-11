@@ -16,8 +16,8 @@
 
 
                         {{-- @if (CheckUserPermission('add')) --}}
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('ohc/vendor/add') }}">Add</x-button-add>
+                        <x-button-add dataId="" class="add btn btn-primary ms-1"
+                            href="{{ admin_url('ohc/vendor/add') }}">Add</x-button-add>
                         {{-- @endif --}}
 
                     </div>
@@ -28,28 +28,28 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="ohc/vendor_id" class="form-label">Vendor Name</label>
-                                            <input type="text" name="vendor_name" id="vendor_name" class="form-control"
-                                                >
+                                            <label for="ohc/vendor_id"
+                                                class="form-label">{{ __('ohc_management.vendor_name') }}</label>
+                                            <input type="text" name="vendor_name" id="vendor_name" class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="ohc/vendor_name" class="form-label">License No</label>
-                                            <input type="text" name="licence_no" id="licence_no" class="form-control"
-                                               >
+                                            <label for="ohc/vendor_name"
+                                                class="form-label">{{ __('ohc_management.license_number') }}</label>
+                                            <input type="text" name="licence_no" id="licence_no" class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
-                                            <div class="input-group date form-input custom-height">
-                                                <input type="text" class="form-control " name="from_date" id="from_date"
-                                                    autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
-                                            </div>
+                                            <label for="emp_name" class="form-label ">{{ __('common.from_date') }}<< /label>
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" class="form-control " name="from_date"
+                                                            id="from_date" autocomplete="off">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.to_date') }}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -89,9 +89,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Vendor Name</th>
-                                        <th>Address</th>
-                                        <th>License Number</th>
+                                        <th>{{ __('ohc_management.vendor_name') }}</th>
+                                        <th>{{ __('ohc_management.address') }}</th>
+                                        <th>{{ __('ohc_management.license_number') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -177,11 +177,11 @@
 
                     },
                     error: function(xhr, error, code) {
-                            if (xhr.status === 419) {
-                                alert('Session has expired. You will be redirected to the login page.');
-                                window.location.href = "{{ url('') }}"; // Redirect to login page
-                            }
+                        if (xhr.status === 419) {
+                            alert('Session has expired. You will be redirected to the login page.');
+                            window.location.href = "{{ url('') }}"; // Redirect to login page
                         }
+                    }
                 },
                 columns: [{
                         data: 'DT_RowIndex',
@@ -243,7 +243,7 @@
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var vendor_name = $('#vendor_name').val();
-                                   var license_no = $('#license_no').val();
+                                    var license_no = $('#license_no').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var status = $('#status').val();
@@ -266,7 +266,7 @@
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var vendor_name = $('#vendor_name').val();
-                                   var license_no = $('#license_no').val();
+                                    var license_no = $('#license_no').val();
                                     var from_date = $('#from_date').val();
                                     var to_date = $('#to_date').val();
                                     var status = $('#status').val();

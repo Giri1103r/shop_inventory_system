@@ -163,17 +163,17 @@ class CertifiedFirstAiderController extends Controller
                 $company = $this->certifiedfirstaider->store();
 
 
-                Session::flash('success', 'Your data has been created successfully!');
+                Session::flash('success', __('common.created_msg'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error',  __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/certified-first-aider/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/certified-first-aider/list'));
         }
     }
@@ -252,11 +252,11 @@ class CertifiedFirstAiderController extends Controller
             $this->certifiedfirstaider->updates($id);
 
 
-            Session::flash('success', 'Your data has been updated successfully!');
+            Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/certified-first-aider/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/certified-first-aider/list'));
         }
     }
@@ -346,7 +346,7 @@ class CertifiedFirstAiderController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/certified-first-aider/list'));
         }
     }
@@ -405,7 +405,7 @@ class CertifiedFirstAiderController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/certified-first-aider/list'));
         }
     }
