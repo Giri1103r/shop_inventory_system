@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Issuance Import')
+@section('title', 'Medicine Issuance')
 @section('pageurl', admin_url('ohc/medicine-issuance/list'))
 
 
@@ -24,7 +24,8 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('administration.employee_import') }}</h4> --}}
                                 <div class="d-flex justify-content-end p-2 gap-2">
-                                    <x-button-download href="{{ admin_url('ohc/medicine-issuance/sample-download') }}"></x-button-download>
+                                    <x-button-download
+                                        href="{{ admin_url('ohc/medicine-issuance/sample-download') }}"></x-button-download>
                                     <x-button-back href="{{ admin_url('ohc/medicine-issuance/add') }}"></x-button-back>
                                 </div>
 
@@ -32,38 +33,38 @@
 
 
 
-                                <div class="card-body ">
+                            <div class="card-body ">
 
-                                    <div class="basic-form">
-                                        <form method="POST" id="medicineImport" enctype="multipart/form-data"
-                                            action="{{ admin_url('ohc/medicine-issuance/import/submit') }}">
-                                            @csrf
-                                            <div class="row">
-                                                <input type="hidden" id="unit_id_hidden" name="unit_id">
-                                                <input type="hidden" id="department_id_hidden" name="department_id">
-                                                <input type="hidden" id="issue_date_hidden" name="issue_date">
+                                <div class="basic-form">
+                                    <form method="POST" id="medicineImport" enctype="multipart/form-data"
+                                        action="{{ admin_url('ohc/medicine-issuance/import/submit') }}">
+                                        @csrf
+                                        <div class="row">
+                                            <input type="hidden" id="unit_id_hidden" name="unit_id">
+                                            <input type="hidden" id="department_id_hidden" name="department_id">
+                                            <input type="hidden" id="issue_date_hidden" name="issue_date">
 
-                                                <div class="mb-3 col-md-6 form-input">
-                                                    <label class="form-label required">Medicine File</label>
-                                                    <input type="file" name="medicine_upload" class="form-control"
-                                                        placeholder="">
-                                                </div>
+                                            <div class="mb-3 col-md-6 form-input">
+                                                <label class="form-label required">{{ __('ohc_management.file') }}</label>
+                                                        <input type="file" name="medicine_upload" class="form-control"
+                                                            placeholder="">
                                             </div>
-                                            <hr>
+                                        </div>
+                                        <hr>
 
-                                            <div class="submit-button" style="text-align: right;">
-                                                <x-button-submit></x-button-submit>
-                                                <x-button-reset class=""></x-button-reset>
-                                                <x-button-cancel
-                                                    href="{{ admin_url('ohc/medicine-requisition/list') }}"></x-button-cancel>
+                                        <div class="submit-button" style="text-align: right;">
+                                            <x-button-submit></x-button-submit>
+                                            <x-button-reset class=""></x-button-reset>
+                                            <x-button-cancel
+                                                href="{{ admin_url('ohc/medicine-issuance/list') }}"></x-button-cancel>
 
-                                            </div>
+                                        </div>
 
 
-                                        </form>
-                                    </div>
-
+                                    </form>
                                 </div>
+
+                            </div>
 
                         </div>
                     </div>

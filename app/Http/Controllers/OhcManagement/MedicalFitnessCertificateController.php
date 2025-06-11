@@ -153,7 +153,7 @@ class MedicalFitnessCertificateController extends Controller
             return view('ohcmanagement.medical_fitness_certificate.add');
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
@@ -243,14 +243,14 @@ class MedicalFitnessCertificateController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/medical-fitness/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
@@ -275,7 +275,7 @@ class MedicalFitnessCertificateController extends Controller
             return view('ohcmanagement.medical_fitness_certificate.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
@@ -416,12 +416,12 @@ class MedicalFitnessCertificateController extends Controller
                 return redirect(admin_url('ohc/medical-fitness/list'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
                 return redirect(admin_url('ohc/medical-fitness/list'));
             }
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
@@ -496,12 +496,12 @@ class MedicalFitnessCertificateController extends Controller
                 return redirect(admin_url('ohc/medical-fitness/list'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
                 return redirect(admin_url('ohc/medical-fitness/list'));
             }
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
@@ -521,7 +521,7 @@ class MedicalFitnessCertificateController extends Controller
             return view('ohcmanagement.medical_fitness_certificate.edit', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
@@ -603,20 +603,20 @@ class MedicalFitnessCertificateController extends Controller
                     );
                     notificationSave($notificationData);
 
-                    Session::flash('success', 'Your data has been updated successfully!');
+                    Session::flash('success', __('common.updated_msg'));
                 }
 
-                Session::flash('success', 'Your data has been updated successfully!');
+                Session::flash('success', __('common.updated_msg'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/medical-fitness/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
@@ -705,7 +705,7 @@ class MedicalFitnessCertificateController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
@@ -749,7 +749,7 @@ class MedicalFitnessCertificateController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }
@@ -811,7 +811,7 @@ class MedicalFitnessCertificateController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medical-fitness/list'));
         }
     }

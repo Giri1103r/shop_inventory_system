@@ -30,7 +30,7 @@
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Discard Medicine Details</h4>
+                                        <h4 class="text-white">{{ __('ohc_management.discard_medicine_details') }}</h4>
                                     </div>
                                 </div>
 
@@ -44,7 +44,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Quantity') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($user_discard->quantity) ? $user_discard->quantity : '') }}
+                                            {{ isset($user_discard->quantity) ? $user_discard->quantity : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
@@ -84,7 +84,7 @@
                                     </div>
 
                                 </div>
-{{-- Paramedicies Request  --}}
+                                {{-- Paramedicies Request  --}}
 
                                 <div>
                                     <form method="POST" id="paramedicesForm"
@@ -123,7 +123,7 @@
                                         <div class="d-flex float-end gap-2 mx-auto">
                                             <button type="submit" name="action" value="approve"
                                                 class="btn btn-success w-100">Approve</button>
-                                                {{-- <button type="submit" name="action" value="reject"
+                                            {{-- <button type="submit" name="action" value="reject"
                                                 class="btn btn-danger w-100">Reject</button> --}}
                                         </div>
                                     </form>
@@ -139,8 +139,8 @@
 
 @stop
 @push('script')
-<script>
-     $(function() {
+    <script>
+        $(function() {
             // Add custom regex rule
             $.validator.addMethod(
                 "regex",
@@ -186,5 +186,5 @@
                 },
             });
         });
-</script>
+    </script>
 @endpush

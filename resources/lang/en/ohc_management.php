@@ -39,6 +39,22 @@ return [
     'medical_fitness_certificate_details' => 'Medical Fitness Certificate Details',
     'file' => 'File',
 
+    // medicine issuance
+
+    'issued_date' => 'Issue Date',
+
+    // file upload
+    'file_upload_msg' => 'File Upload Successfully!',
+    'file_upload_error_msg' => 'File Upload Failed!',
+
+    // medicine first aid
+
+    'medicine_first_aid' => 'Medicine First Aid',
+
+    // discard medicine details
+
+    'discard_medicine_details' => 'Discard medicine Details',
+
 
     // ohc master headings
     'first_aider_location' => 'First Aider Location',
@@ -74,7 +90,7 @@ return [
 
     // weekly ambulance Inspection
     'check_points' => 'Check Points',
-    'capa'=>'Whether the Inspection has been passed Without the CAPA'
+    'capa' => 'Whether the Inspection has been passed Without the CAPA'
 
 
 
