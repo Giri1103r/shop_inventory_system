@@ -483,7 +483,7 @@ class WeeklyAmbulanceController extends Controller
             $id = decryptId($request->id);
             $weekly_ambulance_details_inspection = $this->weekly_ambulance_details->capaSubmit($id);
             $weeklyAmbulance = $this->weekly_ambulance_details->WeekambulanceSelectone($id);
-            $signature_update = $this->signature->signatureUpload(OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
+            // $signature_update = $this->signature->signatureUpload(OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
             $ehsOfficers = $weeklyAmbulance->verified_by;
             $userIds = [
                 'users' => $ehsOfficers,
@@ -547,7 +547,7 @@ class WeeklyAmbulanceController extends Controller
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->remarks;
             $weekly_ambulance_details_inspection = $this->weekly_ambulance_details->capaVerifySubmit($id, $status, $remarks);
-            $signature_update = $this->signature->signatureUpload(OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
+            // $signature_update = $this->signature->signatureUpload(OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST);
             $inspection_details = $this->weekly_ambulance_details->WeekambulanceSelectone($id);
             if ($status == 1) {
                 $message = 'CAPA Action Verified Successfully';
@@ -559,7 +559,7 @@ class WeeklyAmbulanceController extends Controller
             } else {
                 $message = 'EHS Officer Rejected the CAPA Action';
                 $web_link =   admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($inspection_details->id) . '/capa');
-                $users = $inspection_details->created_by;
+                $users = string_to_array($inspection_details->created_by);
                 $to_status = EHS_OFFICER_REJECTED;
             }
             $mailsubject = 'Weekly Ambulance Inspection Checklist';
@@ -637,7 +637,7 @@ class WeeklyAmbulanceController extends Controller
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
                 $web_link =   admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($weekAmbulance->id) . '/capa');
-                $users = $weekAmbulance->created_by;
+                $users =string_to_array( $weekAmbulance->created_by);
                 $to_status = L1_MANAGER_REJECTED;
             }
             $mailsubject = 'Weekly Ambulance Inspection Checklist';
@@ -714,6 +714,7 @@ class WeeklyAmbulanceController extends Controller
                 $message = 'Level Two Manager Rejected the CAPA Action';
                 $web_link =   admin_url('ohc/weekly-ambulance/inspection/checklist/verification/' . encryptId($weeklyAmbulance->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
+                 $users = string_to_array($weeklyAmbulance->created_by);
             }
 
             $mailsubject = 'Weekly Ambulance Inspection Checklist';

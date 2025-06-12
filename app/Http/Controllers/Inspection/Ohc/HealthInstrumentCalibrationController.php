@@ -152,7 +152,7 @@ class HealthInstrumentCalibrationController extends Controller
                 'health_instrument.*.frequency_id' => 'required',
                 'health_instrument.*.date_of_calibration' => 'required',
                 'health_instrument.*.due_date_of_calibration' => 'required',
-                'health_instrument.*.instrument_remarks' => 'required',
+
             ];
 
             $messages = [
@@ -170,7 +170,7 @@ class HealthInstrumentCalibrationController extends Controller
                 'health_instrument.*.frequency_id.required' => 'Calibration frequency is required.',
                 'health_instrument.*.date_of_calibration.required' => 'Please select the date of calibration.',
                 'health_instrument.*.due_date_of_calibration.required' => 'Please select the due date of calibration.',
-                'health_instrument.*.instrument_remarks.required' => 'Remarks are required.',
+
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);

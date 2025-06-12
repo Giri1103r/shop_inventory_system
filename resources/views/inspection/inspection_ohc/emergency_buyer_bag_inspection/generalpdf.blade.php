@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title> EMERGENCY BUYER BAG IBSPECTION | KARAM</title>
+    <title> EMERGENCY BUYER BAG INSPECTION | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    FIRST AID BAG INSPECTION CHECKLIST</td>
+                   EMERGENCY BUYER BAG INSPECTION</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -224,7 +224,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    WEEKLY FIRST AID CHECKLIST
+                   EMERGENCY BUYER BAG INSPECTION
                 </td>
             </tr>
         </table>
@@ -276,7 +276,7 @@
                         <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
                     </td>
                 </tr>
-            
+
 
 
             <tr>

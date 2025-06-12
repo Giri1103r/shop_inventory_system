@@ -32,7 +32,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">Date of Inspection</label>
+                                                    class="form-label ">Date of Inspection</label>
                                                 <div class="view_data">
                                                     {{ displaydateformat(isset($inspection_details->date_of_inspection) ? $inspection_details->date_of_inspection : '') }}
 
@@ -44,7 +44,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">Location First Aid Bag</label>
+                                                    class="form-label ">Location First Aid Bag</label>
                                                 <div class="view_data">
                                                     {{ isset($inspection_details->location_first_aid_bag) ? $inspection_details->location_first_aid_bag : '' }}
 
@@ -64,7 +64,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">Due Date</label>
+                                                    class="form-label ">Due Date</label>
                                                 <div class="view_data">
                                                     {{ displaydateformat(isset($inspection_details->due_date) ? $inspection_details->due_date : '') }}
 

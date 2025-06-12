@@ -36,7 +36,7 @@ class HealthInstrumentCalibration extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*', 'inspection_ohc_health_instrument_calibration_track_sheet.created_at as inspection_created_at', 'inspection_ohc_health_instrument_calibration_track_sheet.created_at as inspection_created_by', 'masters_unit.unit_name')
+        $query = $this->select('inspection_ohc_health_instrument_calibration_track_sheet.*', 'inspection_ohc_health_instrument_calibration_track_sheet.created_at as inspection_created_at', 'inspection_ohc_health_instrument_calibration_track_sheet.created_by as inspection_created_by', 'masters_unit.unit_name')
             ->leftjoin('masters_unit', 'masters_unit.id', '=', 'inspection_ohc_health_instrument_calibration_track_sheet.unit_id');
 
         $org_total =  $query;

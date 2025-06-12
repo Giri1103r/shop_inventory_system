@@ -331,7 +331,9 @@ class EmployeeController extends Controller
                 );
         } catch (Exception $ex) {
 
-            report($ex);
+          report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('employee/list'));
         }
     }
 
@@ -391,9 +393,9 @@ class EmployeeController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            report($ex);
-            Session::flash('error', 'Something went Wrong please try again after some time');
-            return redirect()->back();
+          report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('employee/list'));
         }
     }
 
@@ -443,7 +445,7 @@ class EmployeeController extends Controller
         $id = $request->id;
         $departments = $this->department->where('unit_id',$unit_id)->select('id','department_name')  ->where('status', 1)
         ->where('trash', 'NO') ->get();
-       
+
         return response()->json($departments);
     }
 }
