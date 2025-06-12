@@ -224,13 +224,13 @@ class OHCHygieneCleaningChecklistController extends Controller
             $id = decryptId($request->id);
             $inspection_details = $this->ohc_hygiene->selectOne($id);
             // $cleaner_signature = GetOHCSignature($inspection_details->created_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
-            // $nursing_signature = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
+            $nursing_signature = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
             $data = [
                 'inspection_details' => $inspection_details,
                 // 'cleaner_signature' => $cleaner_signature,
-                // 'nursing_signature' => $nursing_signature,
+                'nursing_signature' => $nursing_signature,
                 'document_no' => $document_no,
 
             ];
