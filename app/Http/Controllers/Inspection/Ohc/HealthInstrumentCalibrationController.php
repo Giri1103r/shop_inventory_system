@@ -88,7 +88,7 @@ class HealthInstrumentCalibrationController extends Controller
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'issue_date', 'created_by', 'status', 'created_at'])
+                        ->rawColumns(['action', 'issue_date', 'inspection_created_by', 'status', 'created_at'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()

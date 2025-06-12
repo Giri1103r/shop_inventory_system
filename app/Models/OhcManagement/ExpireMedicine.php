@@ -53,12 +53,7 @@ class ExpireMedicine extends Model
 
 
 
-        if ($request->search['value'] != null) {
-            $search = $request->search['value'];
-            $query->where(function ($query) use ($search) {
-                $query->orWhere('unit_id', 'LIKE', '%' . $search . '%');
-            });
-        }
+      
         if ($request->has('medicine_id') && $request->medicine_id) {
             $query = $query->where('ohc_management_expire_medicine.medicine_id', $request->medicine_id);
         }
