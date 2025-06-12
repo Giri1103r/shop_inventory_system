@@ -26,6 +26,11 @@ return [
     'station_master' => 'Station Master',
     'station_number' => 'Station Number',
     'location_name' => 'Location Name',
+    'hsn_number' => 'HSN Number',
+    'batch_number' => 'Batch Number',
+    'rate' => 'Rate',
+    'stock_entry_date' => 'Stock Entry Date',
+    'is_out_side_worker_or_employee' => 'Is Outside Worker / Employee',
 
 
     // opd - prescribe to patient
@@ -55,6 +60,16 @@ return [
 
     'discard_medicine_details' => 'Discard medicine Details',
 
+    // medicine requisition
+
+    'req_id' => 'Requisition ID',
+    'request_date' => 'Request Date',
+    'medicine_requisition' => 'Medicine Requisition',
+
+    // medicine receving
+    'medicine_receiving_form' => 'Medicine Receving Form',
+
+
 
     // ohc master headings
     'first_aider_location' => 'First Aider Location',
@@ -68,6 +83,7 @@ return [
     'approved_date' => 'Approver Date',
     'approved_time' => 'Approver Time',
     'approve_status' => 'Approve Status',
+    'status_log' => 'Status Logs',
 
 
     // inspection header of ohc
@@ -87,6 +103,10 @@ return [
     'ehs_head_approval' => 'EHS Head Approval',
     'doctor_approval_pending' => 'Doctor Approval Pending',
     'doctor_approval' => 'Doctor Approval',
+    'ehs_officer_verification_pending' => 'EHS Officer Verification Pending',
+    'l1_ehs_officer_verification_pending' => 'L1 EHS Officer Approval  Pending',
+    'l1_ehs_officer_verification' => 'L1 EHS Officer Approval',
+    'ehs_officer_verification' => 'EHS Officer Verification',
 
     // weekly ambulance Inspection
     'check_points' => 'Check Points',

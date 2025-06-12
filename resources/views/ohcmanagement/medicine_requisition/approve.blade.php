@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Requisition Approval')
+@section('title', 'Medicine Requisition')
 @section('pageurl', admin_url('ohc/medicine-requisition/list'))
 
 
@@ -30,43 +30,43 @@
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Medicine Requisition</h4>
+                                        <h4 class="text-white">{{ __('ohc_management.medicine_requisition') }}</h4>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Requisition ID') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.req_id') }}</label>
                                         <div class="view_data">
                                             {{ isset($user_medicine_requisition->req_id) ? $user_medicine_requisition->req_id : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Unit') }}</label>
+                                        <label class="form-label view_label">{{ __('common.unit') }}</label>
                                         <div class="view_data">
                                             {{ getUnitname(isset($user_medicine_requisition->unit_id) ? $user_medicine_requisition->unit_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Department') }}</label>
+                                        <label class="form-label view_label">{{ __('common.department') }}</label>
                                         <div class="view_data">
                                             {{ getdepartment(isset($user_medicine_requisition->department_id) ? $user_medicine_requisition->department_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Request date') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.request_date') }}</label>
                                         <div class="view_data">
                                             {{ displaydateformat(isset($user_medicine_requisition->request_date) ? $user_medicine_requisition->request_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Created at') }}</label>
+                                        <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
                                             {{ getUsername(isset($user_medicine_requisition->created_by) ? $user_medicine_requisition->created_by : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Created Date') }}</label>
+                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
                                         <div class="view_data">
                                             {{ displaydateformat(isset($user_medicine_requisition->created_at) ? $user_medicine_requisition->created_at : '') }}
                                         </div>
@@ -78,11 +78,11 @@
 
                                             <thead class="bg-secondary" style="color: #ffff">
                                                 <tr>
-                                                    <th>S.No</th>
-                                                    <th>Medicine Name</th>
-                                                    <th>Available Quantity</th>
-                                                    <th>Quantity</th>
-                                                    <th>Remarks</th>
+                                                    <th>{{ __('common.sno') }}</th>
+                                                    <th>{{ __('ohc_management.medicine_name') }}</th>
+                                                    <th>{{ __('ohc_management.available_quantity') }}</th>
+                                                    <th>{{ __('ohc_management.quantity') }}</th>
+                                                    <th>{{ __('ohc_management.remarks') }}</th>
                                                 </tr>
                                             </thead>
 
@@ -109,7 +109,7 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">EHS Head Approval Pending</h4>
+                                        <h4 class="text-white">{{ __('ohc_management.ehs_head_approval_pending') }}</h4>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -122,22 +122,24 @@
 
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-input">
-                                                    <label for="ehs_head" class="require form-label">Approver
-                                                        Name</label>
+                                                    <label for="ehs_head"
+                                                        class="require form-label">{{ __('ohc_management.approver_name') }}</label>
                                                     <input type="text" name="approver_name" id="approver_name"
                                                         class="form-control" value="{{ Auth::user()->name }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-input">
-                                                    <label for="ehs_head" class="require form-label">Date</label>
+                                                    <label for="ehs_head"
+                                                        class="require form-label">{{ __('common.date') }}</label>
                                                     <input type="text" name="date" id="date" class="form-control"
                                                         value="{{ date('d-m-Y H:i:s') }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-12 mb-3">
                                                 <div class="mb-1 form-input">
-                                                    <label for="remarks" class="form-label require">Remarks</label>
+                                                    <label for="remarks"
+                                                        class="form-label require">{{ __('ohc_management.remarks') }}</label>
                                                     <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" rows="3"></textarea>
                                                     <div class="text-danger" id="remarks_error"></div>
                                                     @error('remarks')

@@ -44,7 +44,7 @@ class MedicineReceiving extends Model
         $empId = $user->employee_id;
         $query = $this->select(
             'ohc_management_medicine_receiving.*',
-          'ohc_management_medicine_receiving.approve_status as approvedStatus',
+            'ohc_management_medicine_receiving.approve_status as approvedStatus',
             'ohc_master_vendor.vendor_name',
             'ohc_master_medicine.pack',
         )
@@ -72,10 +72,10 @@ class MedicineReceiving extends Model
             $search = $request->search['value'];
             $query->where(function ($query) use ($search) {
                 $query->orWhere('ohc_master_medicine.medicine', 'LIKE', '%' . $search . '%')
-               ->orWhere('ohc_management_medicine_receiving.hsn_id', 'LIKE', '%' . $search . '%')
-               ->orWhere('batch_number', 'LIKE', '%' . $search . '%')
-               ->orWhere('ohc_management_medicine_receiving.expire_date', 'LIKE', '%' . $search . '%')
-               ->orWhere('rate', 'LIKE', '%' . $search . '%');
+                    ->orWhere('ohc_management_medicine_receiving.hsn_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('batch_number', 'LIKE', '%' . $search . '%')
+                    ->orWhere('ohc_management_medicine_receiving.expire_date', 'LIKE', '%' . $search . '%')
+                    ->orWhere('rate', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('medicine_id') && $request->medicine_id) {
@@ -98,11 +98,11 @@ class MedicineReceiving extends Model
         }
         if ($request->has('approve_status') && $request->approve_status) {
 
-            $query = $query->where('ohc_management_medicine_receiving.approve_status',  $request->approve_status . '%');
+            $query = $query->where('ohc_management_medicine_receiving.approve_status',  decryptId($request->approve_status));
         }
         if ($request->has('expire_date') && $request->expire_date) {
 
-            $query = $query->where('ohc_management_medicine_receiving.expire_date', 'LIKE', '%' . DBdateformat($request->expire_date ). '%');
+            $query = $query->where('ohc_management_medicine_receiving.expire_date', 'LIKE', '%' . DBdateformat($request->expire_date) . '%');
         }
 
         $totalFilteredRecords = $query->count();
@@ -144,7 +144,7 @@ class MedicineReceiving extends Model
 
         return $this->create($insert_array);
     }
-    public function updates($id,$pack)
+    public function updates($id, $pack)
     {
         $request = request();
 
@@ -205,7 +205,7 @@ class MedicineReceiving extends Model
 
         // Additional filters
         if ($request->filled('approve_status')) {
-            $query->where('ohc_management_medicine_receiving.approve_status', 'LIKE', '%' . $request->approve_status . '%');
+            $query->where('ohc_management_medicine_receiving.approve_status',  decryptId($request->approve_status));
         }
         if ($request->filled('medicine_id')) {
             $query->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $request->medicine_id . '%');
@@ -292,7 +292,7 @@ class MedicineReceiving extends Model
             $query->where('ohc_management_medicine_receiving.medicine_id', 'LIKE', '%' . $request->medicine_id . '%');
         }
         if ($request->has('expire_date') && $request->expire_date) {
-            $query->where('ohc_management_medicine_receiving.expire_date',DBdateformat( $request->expire_date));
+            $query->where('ohc_management_medicine_receiving.expire_date', DBdateformat($request->expire_date));
         }
 
         // Apply ORDER BY conditionally
@@ -339,7 +339,7 @@ class MedicineReceiving extends Model
 
         if ($request->filled('expire_date')) {
 
-            $query->where('ohc_management_medicine_receiving.expire_date',DBdateformat($request->expire_date));
+            $query->where('ohc_management_medicine_receiving.expire_date', DBdateformat($request->expire_date));
         }
         return $query->orderByDesc('ohc_management_medicine_receiving.id')->get();
     }

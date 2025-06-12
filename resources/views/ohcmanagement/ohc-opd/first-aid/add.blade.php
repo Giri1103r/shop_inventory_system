@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'First Aid Add')
+@section('title', 'First Aid')
 @section('pageurl', admin_url('ohc/first-aid/list'))
 
 
@@ -39,8 +39,7 @@
 
                                             <div class="col-md-4  mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label" for="is_outside_worker"> Is OutSide
-                                                        Worker/Employee</label><br>
+                                                    <label class="form-label" for="is_outside_worker">{{__('ohc_management.is_out_side_worker_or_employee')}}</label><br>
                                                     <input type="checkbox" id="is_outside_worker" name="is_outside_worker"
                                                         value="1">
                                                 </div>

@@ -113,10 +113,10 @@ class MedicineRequisitionController extends Controller
                         ->editColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
-                            $btn .= '<a href="' . admin_url('ohc/medicine-requisition/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/medicine-requisition/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
                             if (CheckUserPermission('edit') && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING && $row->created_by == Auth::id()) {
-                            $btn .= '<a href="' . admin_url('ohc/medicine-requisition/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/medicine-requisition/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             }
                             if ((checkUserRole(ROLE_SUPERADMIN) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING) || (checkUserRole(ROLE_EHS_HEAD) && $row->approve_status == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING)) {
                                 $btn .= '<a href="' . admin_url('ohc/medicine-requisition/approval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
@@ -166,7 +166,7 @@ class MedicineRequisitionController extends Controller
             return view('ohcmanagement.medicine_requisition.add', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-requisition/list'));
         }
     }
@@ -198,7 +198,7 @@ class MedicineRequisitionController extends Controller
                 $this->ohcStatus->storeMedicineRecevingdata($id);
                 $details = $this->user_medicine_requisition->selectOne($user_medicine_requisition->id);
                 // Email details
-                $mailsubject = getUsername($details ->created_by) .'Request the Medicine for the stock';
+                $mailsubject = getUsername($details->created_by) . 'Request the Medicine for the stock';
                 $user_role = ROLE_EHS_HEAD;
 
                 // Fetch users with the specified role
@@ -247,48 +247,47 @@ class MedicineRequisitionController extends Controller
                 );
                 notificationSave($notificationData);
 
-                Session::flash('success', 'Your data has been created successfully!');
+                Session::flash('success', __('common.created_msg'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/medicine-requisition/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-requisition/list'));
         }
     }
 
     public function edit(Request $request)
     {
-            try {
-                $id = decryptId($request->id);
+        try {
+            $id = decryptId($request->id);
 
 
-                $user_medicine_requisition = $this->user_medicine_requisition->selectOne($id);
-                $departmentList = $this->department->getdepartment();
-                $unit = $this->unit->getunit();
-                $medicine = $this->inventory->getstockdata();
-                $medicine_requisition = $this->medicine_requisition->selectOne($id);
+            $user_medicine_requisition = $this->user_medicine_requisition->selectOne($id);
+            $departmentList = $this->department->getdepartment();
+            $unit = $this->unit->getunit();
+            $medicine = $this->inventory->getstockdata();
+            $medicine_requisition = $this->medicine_requisition->selectOne($id);
 
-                $data = array(
-                    'medicine' => $medicine,
-                    'unit' => $unit,
-                    'departmentList' => $departmentList,
-                    'user_medicine_requisition' => $user_medicine_requisition,
-                    'medicine_requisition' => $medicine_requisition
+            $data = array(
+                'medicine' => $medicine,
+                'unit' => $unit,
+                'departmentList' => $departmentList,
+                'user_medicine_requisition' => $user_medicine_requisition,
+                'medicine_requisition' => $medicine_requisition
 
-                );
-                return view('ohcmanagement.medicine_requisition.edit', $data);
-            } catch (Exception $ex) {
-                report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
-                return redirect(admin_url('ohc/medicine-requisition/list'));
-            }
-
+            );
+            return view('ohcmanagement.medicine_requisition.edit', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/medicine-requisition/list'));
+        }
     }
     public function update(Request $request)
     {
@@ -323,7 +322,7 @@ class MedicineRequisitionController extends Controller
                         $medicineIds = decryptId($encryptedId);
 
                         $update_data = $this->medicine_requisition
-                            ->where('id', $medicineIds)->where('req_id',$id)
+                            ->where('id', $medicineIds)->where('req_id', $id)
                             ->update([
                                 'status' => 0,
                                 'trash'  => 'Yes'
@@ -371,7 +370,7 @@ class MedicineRequisitionController extends Controller
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
-                        'message' => "Request For the Medicine by " . getUsername(  $details->created_by),
+                        'message' => "Request For the Medicine by " . getUsername($details->created_by),
                         'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                         'id' => $id,
                         'module' => 1,
@@ -382,17 +381,17 @@ class MedicineRequisitionController extends Controller
                 );
                 notificationSave($notificationData);
 
-                Session::flash('success', 'Your data has been updated successfully!');
+                Session::flash('success', __('common.updated_msg'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/medicine-requisition/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-requisition/list'));
         }
     }
@@ -415,6 +414,9 @@ class MedicineRequisitionController extends Controller
             );
             return view('ohcmanagement.medicine_requisition.view', $data);
         } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/medicine-requisition/list'));
         }
     }
 
@@ -427,8 +429,7 @@ class MedicineRequisitionController extends Controller
                 $medicine_requisition = $this->medicine_requisition->selectOne($id);
             }
             if ($user_medicine_requisition->approve_status != STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING) {
-                return redirect(admin_url('ohc/medicine-requisition/view/' . encryptId($id)))
-                 ;
+                return redirect(admin_url('ohc/medicine-requisition/view/' . encryptId($id)));
             }
 
             $data = array(
@@ -438,6 +439,9 @@ class MedicineRequisitionController extends Controller
 
             return view('ohcmanagement.medicine_requisition.approve', $data);
         } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/medicine-requisition/list'));
         }
     }
     public function apporvalsubmit(Request $request)
@@ -543,9 +547,9 @@ class MedicineRequisitionController extends Controller
             return redirect(admin_url('ohc/medicine-requisition/list'))
                 ->with('success', 'Request has been processed successfully.');
         } catch (Exception $ex) {
-            report($ex);
-            return redirect(admin_url('ohc/medicine-requisition/list'))
-                ->with('error', 'Something went wrong, Please try again later.');
+             report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/medicine-requisition/list'));
         }
     }
 
@@ -587,8 +591,9 @@ class MedicineRequisitionController extends Controller
             $filename = "Medicine Requisition.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+              report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/medicine-requisition/list'));
         }
     }
     public function StatusChange(Request $request)
@@ -610,18 +615,17 @@ class MedicineRequisitionController extends Controller
 
     // delete
 
-    public function delete(Request $request,$id){
-        try{
+    public function delete(Request $request, $id)
+    {
+        try {
             $ids = decryptId($id);
             // dd( $ids);
             $this->medicine_requisition->deleterecord($ids);
             return response()->json(['status' => 'success', 'msg' => 'Deleted successfully'], 200);
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['status' => 'error', 'msg' => 'Something went wrong'], 200);
         }
-    catch (Exception $ex) {
-        report($ex);
-        return response()->json(['status' => 'error', 'msg' => 'Something went wrong'], 200);
-    }
-
     }
 
     // import
@@ -696,17 +700,17 @@ class MedicineRequisitionController extends Controller
                 $id = $medicnieRequisition->id;
                 $this->ohcStatus->storeMedicineRecevingdata($id);
                 // dispatch(new ImportRequisitionjob($details, $medicnieRequisition));
-                   dispatch((new ImportRequisitionjob($details, $medicnieRequisition))->onQueue('medicine_requisition'));
+                dispatch((new ImportRequisitionjob($details, $medicnieRequisition))->onQueue('medicine_requisition'));
             }
 
             $insert_data['log_id'] = $insert_id;
             $insert_data['Uploded_by'] = Auth::user()->toArray();
 
-            Session::flash('success', __('Medicine uploaded sucessfully'));
+            Session::flash('success', __('ohc_management.file_upload_msg'));
             return redirect(admin_url('ohc/medicine-requisition/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', __('Medicine  upload failed'));
+            Session::flash('error', __('ohc_management.file_upload_error_msg'));
             return redirect(admin_url('ohc/medicine-requisition/list'));
         }
     }
@@ -724,14 +728,14 @@ class MedicineRequisitionController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Requisition ID',
-                'Unit Name',
-                'Department Name',
-                'Request Date',
-                'From Status',
-                'To Status',
-                'Created by',
-                'Created at'
+                __("ohc_management.req_id"),
+                __("common.unit"),
+                __("common.department"),
+                __("common.from_status"),
+                __("common.to_status"),
+                __("common.created_by"),
+                __("common.created_at"),
+
             ];
 
             $i = 1;
@@ -782,7 +786,9 @@ class MedicineRequisitionController extends Controller
                 );
         } catch (Exception $ex) {
 
-            report($ex);
+             report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/medicine-requisition/list'));
         }
     }
 
@@ -799,14 +805,13 @@ class MedicineRequisitionController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Requisition ID',
-                'Unit Name',
-                'Department Name',
-                'Request Date',
-                'From Status',
-                'To Status',
-                'Created by',
-                'Created at'
+                __("ohc_management.req_id"),
+                __("common.unit"),
+                __("common.department"),
+                __("common.from_status"),
+                __("common.to_status"),
+                __("common.created_by"),
+                __("common.created_at"),
             ];
 
             $data = array(
@@ -838,7 +843,9 @@ class MedicineRequisitionController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-            report($ex);
+              report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/medicine-requisition/list'));
         }
     }
 
