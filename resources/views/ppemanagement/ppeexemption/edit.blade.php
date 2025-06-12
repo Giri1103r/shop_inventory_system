@@ -42,7 +42,7 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label for="emp_id" class="form-label require">Employee ID</label>
+                                                    <label for="emp_id" class="form-label require">{{__('ppe_management.ppe_emp_id')}}</label>
                                                     <input type="text" name="emp_id"
                                                         class="form-control form-control-sm "id="emp_id"
                                                         value="{{ $employee->employee_id }}" readonly>
@@ -50,7 +50,7 @@
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label for="emp_name" class="form-label require">Employee Name</label>
+                                                    <label for="emp_name" class="form-label require">{{__('ppe_management.ppe_emp_name')}}</label>
                                                     <input type="text" name="emp_name"
                                                         class="form-control form-control-sm " id="emp_name"
                                                         value="{{ $employee->name }}" readonly>
@@ -59,14 +59,14 @@
 
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label for="department" class="form-label require">Department</label>
+                                                    <label for="department" class="form-label require">{{__('common.department')}}</label>
                                                     <input type="text" name="department" id="department"
                                                         class="form-control form-control-sm"
                                                         value="{{ getDepartment($employee->department_id) }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
-                                                <label for="date" class="form-label require">From Date</label>
+                                                <label for="date" class="form-label require">{{__('ppe_management.from_date')}}</label>
                                                 <div class="input-group date form-input">
                                                     <input type="text" class="form-control form-conrol-sm"
                                                         name="from_date" value="{{ $ppeexemption->from_date }}"
@@ -81,7 +81,7 @@
                                                 <div class="text-danger" id="from_date_error"></div>
                                             </div>
                                             <div class="col-md-4 mb-2">
-                                                <label for="date" class="form-label require">To Date</label>
+                                                <label for="date" class="form-label require">{{__('ppe_management.to_date')}}</label>
                                                 <div class="input-group date form-input">
                                                     <input type="text" class="form-control form-conrol-sm" name="to_date"
                                                         value="{{ $ppeexemption->to_date }}" id="to_date"
@@ -99,7 +99,7 @@
                                             </div>
 
                                             <div class="col-md-12 mb-2">
-                                                <label for="reason" class="form-label require">Reason</label>
+                                                <label for="reason" class="form-label require">{{__('ppe_management.ppe_reason')}}</label>
                                                 <textarea name="reason" id="reason" cols="3" rows="4" class="form-control form-control-sm"
                                                     placeholder="Enter the Reason">{{ $ppeexemption->reason }}</textarea>
                                                 @error('reason')
@@ -149,7 +149,7 @@
                 $('#checkbox').prop('checked', !$('#checkbox').prop('checked'));
             });
         });
-      
+
 
         $(document).ready(function() {
             var fromDatepicker = flatpickr("#from_date", {

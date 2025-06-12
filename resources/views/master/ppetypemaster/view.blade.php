@@ -32,39 +32,39 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">PPE Master Details</h4>
+                                        <h4 class="text-white">{{__('ppe_management.ppe_master_details')}}</h4>
                                     </div>
                                 </div>
                                 <div class="row">
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Item Code') }}</label>
+                                        <label class="form-label view_label">{{__('ppe_management.item_code')}}</label>
                                         <div class="view_data">
                                             {{ isset($ppetypemaster->item_code) ? $ppetypemaster->item_code : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('PPE  Name') }}</label>
+                                        <label class="form-label view_label">{{__('ppe_management.ppe_name')}}</label>
                                         <div class="view_data">
                                             {{ isset($ppetypemaster->ppe_name) ? $ppetypemaster->ppe_name : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('PPE Type') }}</label>
+                                        <label class="form-label view_label">{{__('ppe_management.ppe_type')}}</label>
                                         <div class="view_data">
                                             {{ getPpeType(isset($ppetypemaster->ppe_type) ? $ppetypemaster->ppe_type : '') }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Protection Category') }}</label>
+                                        <label class="form-label view_label">{{__('ppe_management.protection_category')}}</label>
                                         <div class="view_data">
                                             {{ isset($ppetypemaster->ppe_category) ? $ppetypemaster->ppe_category : '' }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('PPE Standard') }}</label>
+                                        <label class="form-label view_label">{{__('ppe_management.ppe_standard')}}</label>
                                         <div class="view_data">
                                             {{ isset($ppetypemaster->ppe_standard) ? $ppetypemaster->ppe_standard : '' }}
                                         </div>
@@ -94,7 +94,7 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Image</label>
+                                        <label class="form-label view_label">{{__('ppe_management.image')}}</label>
                                         @if (isset($ppetypemaster) && $ppetypemaster && $ppetypemaster->ppe_image)
                                             <p>
                                                 <a href="{{ asset('public/' . $ppetypemaster->ppe_image) }}"

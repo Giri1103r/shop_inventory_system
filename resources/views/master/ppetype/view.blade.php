@@ -32,20 +32,20 @@
 
                             <div class="row">
                                 <div class="card-header-inner">
-                                    <h4 class="text-white">PPE Type  Details</h4>
+                                    <h4 class="text-white">{{__('ppe_management.ppe_type_master_details')}}</h4>
                                 </div>
                             </div>
                             <div class="row">
 
                                 <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('PPE ID') }}</label>
+                                    <label class="form-label view_label">{{__('ppe_management.ppe_type_id')}}</label>
                                     <div class="view_data">
                                         {{ isset($ppetype->ppe_id) ? $ppetype->ppe_id : '' }}
                                     </div>
                                 </div>
 
                                 <div class="mb-3 col-md-4 form-input">
-                                    <label class="form-label view_label">{{ __('PPE Type') }}</label>
+                                    <label class="form-label view_label">{{__('ppe_management.ppe_type')}}</label>
                                     <div class="view_data">
                                         {{ isset($ppetype->ppe_type) ? $ppetype->ppe_type : '' }}
                                     </div>

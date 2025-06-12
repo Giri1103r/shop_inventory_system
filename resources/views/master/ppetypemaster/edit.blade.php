@@ -35,7 +35,7 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Item Code</label>
+                                                    <label class="form-label require">{{__('ppe_management.item_code')}}</label>
                                                     <input type="text" name ="item_code" id="item_code"
                                                         class="form-control" placeholder="Item Code"
                                                         value="{{ $ppetypemaster->item_code }}">
@@ -47,7 +47,7 @@
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">PPE Name</label>
+                                                    <label class="form-label require">{{__('ppe_management.ppe_name')}}</label>
                                                     <input type="text" name="ppe_name" id="ppe_name"
                                                         class="form-control" placeholder="Enter the PPE name"
                                                         value="{{ $ppetypemaster->ppe_name }}">
@@ -59,7 +59,7 @@
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">PPE Type</label>
+                                                    <label class="form-label require">{{__('ppe_management.ppe_type')}}</label>
                                                     <select name="ppe_type" id="ppe_type" style="width: 100%"
                                                         class="form-select single-select ">
                                                         <option value="">Select the ppe type</option>
@@ -89,7 +89,7 @@
 
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Protection Category</label>
+                                                    <label class="form-label require">{{__('ppe_management.protection_category')}}</label>
                                                     <input type="text" name="protection_category"
                                                         id="protection_category" class="form-control "
                                                         placeholder="Enter the protection category"
@@ -127,7 +127,7 @@
                                             </div> --}}
                                             <div class="col-md-12 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">PPE Standard</label>
+                                                    <label class="form-label require">{{__('ppe_management.ppe_standard')}}</label>
                                                     <textarea name="ppe_standard"    id="ppe_standard" cols="3" rows="4" class="form-control form-control-sm" placeholder="Enter the ppe standard">{{ $ppetypemaster->ppe_standard }}</textarea>
 
                                                     @error('ppe_standard')

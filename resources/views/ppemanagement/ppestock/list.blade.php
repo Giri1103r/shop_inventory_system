@@ -25,17 +25,17 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_id" class="form-label ">Item Code</label>
+                                            <label for="emp_id" class="form-label ">{{__('ppe_management.item_code')}}</label>
                                             <input type="text" name="item_code" id="item_code" class="form-control ">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">Item Inventory Id</label>
+                                            <label for="emp_name" class="form-label ">{{ __('ppe_management.inven_item_id') }}</label>
                                             <input type="text" name="inventory_item_id" id="inventory_item_id"
                                                 class="form-control ">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <label for="emp_name" class="form-label ">{{__('ppe_management.from_date')}}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -45,7 +45,7 @@
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <label for="emp_name" class="form-label ">{{__('ppe_management.to_date')}}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -75,11 +75,11 @@
                                         <th>{{ __('common.sno') }}</th>
                                         {{-- <th>Org ID</th> --}}
                                         {{-- <th>Inventory Item ID</th> --}}
-                                        <th>Item Code</th>
+                                        <th>{{__('ppe_management.item_code')}}</th>
                                         {{-- <th>PPE Name</th> --}}
                                         {{-- <th>SUB</th> --}}
                                         {{-- <th>UOM</th> --}}
-                                        <th>Quantity</th>
+                                        <th>{{ __('ppe_management.ppe_qunatity') }}</th>
                                         {{-- <th>{{ __('common.created_by') }}</th> --}}
                                         {{-- <th>{{ __('common.created_date') }}</th> --}}
                                         <th>{{ __('common.action') }}</th>

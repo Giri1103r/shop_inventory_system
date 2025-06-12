@@ -33,15 +33,15 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">PPE ID</label>
+                                            <label for="inspectiontype" class="form-label ">{{__('ppe_management.ppe_type_id')}}</label>
                                             <input type="text" name="ppe_id" id="ppe_id" class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">PPE Type</label>
+                                            <label for="inspectiontype" class="form-label ">{{__('ppe_management.ppe_type')}}</label>
                                             <input type="text" name="ppe_type" id="ppe_type" class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="from_date" class="form-label ">From Date</label>
+                                            <label for="from_date" class="form-label ">{{__('ppe_management.from_date')}}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -52,7 +52,7 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="to_date" class="form-label ">To Date</label>
+                                            <label for="to_date" class="form-label ">{{__('ppe_management.to_date')}}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -92,8 +92,8 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>PPE ID</th>
-                                        <th>PPE Type</th>
+                                        <th>{{__('ppe_management.ppe_type_id')}}</th>
+                                        <th>{{__('ppe_management.ppe_type')}}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -178,7 +178,7 @@
                     error: function(xhr, error, code) {
                             if (xhr.status === 419) {
                                 alert('Session has expired. You will be redirected to the login page.');
-                                window.location.href = "{{ url('') }}"; 
+                                window.location.href = "{{ url('') }}";
                             }
                         }
                 },

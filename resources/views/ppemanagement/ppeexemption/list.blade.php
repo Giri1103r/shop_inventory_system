@@ -26,7 +26,7 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_id" class="form-label ">Emp Id</label>
+                                            <label for="emp_id" class="form-label ">{{__('ppe_management.ppe_emp_id')}}</label>
                                             <select name="emp_id" id="emp_id" class="form-control form-control-sm"
                                                 style="width: 100%">
                                                 <option value="">Select the Employee ID</option>
@@ -34,13 +34,13 @@
                                         </div>
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">Employee Name</label>
+                                                <label class="form-label require">{{__('ppe_management.ppe_emp_name')}}</label>
                                                 <input type="text" name="emp_name" id="emp_name" class="form-control"
                                                     placeholder="Employee Name">
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="company_id" class="form-label ">Company</label>
+                                            <label for="company_id" class="form-label ">{{__('common.company')}}</label>
                                             <select name="company_id" id="company_id"
                                                 class="form-control single-select form-control-sm" style="width: 100%">
                                                 <option value="">Select the company</option>
@@ -78,7 +78,7 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="location_id" class="form-label ">Location</label>
+                                            <label for="location_id" class="form-label ">{{__('common.location')}}</label>
                                             <select name="location_id" id="location_id"
                                                 class="form-control single-select form-control-sm" style="width: 100%">
                                                 <option value="">Select the Location</option>
@@ -87,7 +87,7 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="unit_id" class="form-label">Unit</label>
+                                            <label for="unit_id" class="form-label">{{__('common.unit')}}</label>
                                             <select name="unit_id" id="unit_id"
                                                 class="form-control single-select form-control-sm" style="width: 100%">
                                                 <option value="">Select the Unit</option>
@@ -96,7 +96,7 @@
                                         </div>
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">Department</label>
+                                                <label class="form-label require">{{__('common.department')}}</label>
                                                 <select name="department_id" id="department_id"
                                                     class="form-control single-select form-control-sm" style="width: 100%">
                                                     <option value="">Select the department</option>
@@ -105,7 +105,7 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <label for="emp_name" class="form-label ">{{__('ppe_management.from_date')}}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -116,7 +116,7 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <label for="emp_name" class="form-label ">{{__('ppe_management.to_date')}}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -135,7 +135,7 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">Approve Status</label>
+                                            <label for="emp_name" class="form-label ">{{__('ppe_management.ppe_approval_status')}}</label>
                                             <select name="approve_status" id="approve_status" style="width: 100%"
                                                 class="form-select single-select">
                                                 <option value="">Select the approve status</option>
@@ -162,18 +162,18 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Employee / Worker ID</th>
-                                        <th>Employee / Worker Name</th>
-                                        <th>Company</th>
-                                        <th>Location</th>
-                                        <th>Unit</th>
-                                        <th>Department</th>
-                                        <th>From Date</th>
-                                        <th>To Date</th>
-                                        <th>Reason</th>
-                                        <th>Status</th>
-                                        <th data-priority="2">Approve Status</th>
-                                        <th data-priority="1">Action</th>
+                                        <th>{{__('ppe_management.ppe_request_employee_worker_id')}}</th>
+                                        <th>{{__('ppe_management.ppe_request_employee_worker_name')}}</th>
+                                        <th>{{__('common.company')}}</th>
+                                        <th>{{__('common.location')}}</th>
+                                        <th>{{__('common.unit')}}</th>
+                                        <th>{{__('common.department')}}</th>
+                                        <th>{{__('ppe_management.from_date')}}</th>
+                                        <th>{{__('ppe_management.to_date')}}</th>
+                                        <th>{{__('ppe_management.ppe_reason')}}</th>
+                                        <th>{{__('common.status')}}</th>
+                                        <th data-priority="2">{{__('ppe_management.ppe_approval_status')}}</th>
+                                        <th data-priority="1">{{__('common.action')}}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>

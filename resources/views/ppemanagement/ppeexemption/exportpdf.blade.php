@@ -129,32 +129,32 @@
 
 
             <tr>
-                <td width="50%" style="padding:5px;"><b>Employee Name</b></td>
+                <td width="50%" style="padding:5px;"><b>{{__('ppe_management.ppe_emp_name')}}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ isset($ppeexemption->emp_name) ? $ppeexemption->emp_name : '' }}</td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Employee Id</b></td>
+                <td width="50%" style="padding:5px;"><b>{{__('ppe_management.ppe_emp_id')}}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;"> {{ isset($ppeexemption->emp_id) ? $ppeexemption->emp_id : '' }}
                 </td>
             </tr>
 
             <tr>
-                <td width="50%" style="padding:5px;"><b>From Date</b></td>
+                <td width="50%" style="padding:5px;"><b>{{__('ppe_management.from_date')}}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ isset($ppeexemption->from_date) ? $ppeexemption->from_date : '' }}</td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>To Date</b></td>
+                <td width="50%" style="padding:5px;"><b>{{__('ppe_management.to_date')}}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ isset($ppeexemption->to_date) ? $ppeexemption->to_date : '' }}</td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Company</b></td>
+                <td width="50%" style="padding:5px;"><b>{{__('common.company')}}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ getCompanyname(isset($ppeexemption->company) ? $ppeexemption->company : '') }}
@@ -162,21 +162,21 @@
 
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Location</b></td>
+                <td width="50%" style="padding:5px;"><b>{{__('common.location')}}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ getLocationname(isset($ppeexemption->location_id) ? $ppeexemption->location_id : '') }}
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Unit</b></td>
+                <td width="50%" style="padding:5px;"><b>{{__('common.unit')}}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ getUnitname(isset($ppeexemption->unit) ? $ppeexemption->unit : '') }}
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Department</b></td>
+                <td width="50%" style="padding:5px;"><b>{{__('common.department')}}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ getDepartment(isset($ppeexemption->department) ? $ppeexemption->department : '') }}</td>
@@ -185,21 +185,21 @@
 
 
             <tr>
-                <td width="50%" style="padding:5px;"><b>Reason</b></td>
+                <td width="50%" style="padding:5px;"><b>{{__('ppe_management.ppe_reason')}}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;"> {{ isset($ppeexemption->reason) ? $ppeexemption->reason : '' }}
                 </td>
             </tr>
 
             <tr>
-                <td width="50%" style="padding:5px;"><b>Created By</b></td>
+                <td width="50%" style="padding:5px;"><b>{{__('common.created_by')}}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ getUsername(isset($ppeexemption->created_by) ? $ppeexemption->created_by : '') }}
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Created Date</b></td>
+                <td width="50%" style="padding:5px;"><b>{{__('common.created_date')}}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;"> {{ displayDateformat($ppeexemption->created_at) }}
                 </td>

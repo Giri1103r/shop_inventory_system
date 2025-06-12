@@ -31,12 +31,12 @@
                                     <form method="POST" id="PpeTypeForm" enctype="multipart/form-data"
                                         action="{{ admin_url('ppe_type/edit/submit') }}">
                                         @csrf
-                                        <input type="hidden" name="id" value="{{ $encryptid }}">
+                                        <input type="hidden" name="id" id="id" value="{{ $encryptid }}">
                                         <div class="row">
 
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">PPE Type</label>
+                                                    <label class="form-label require">{{__('ppe_management.ppe_type')}}</label>
                                                     <input type="text"name="ppe_type" id="ppe_type" class="form-control"
                                                         placeholder="Enter the PPE name" value="{{ $ppetype->ppe_type }}">
                                                     <div class="text-danger" id="ppe_type_error"></div>

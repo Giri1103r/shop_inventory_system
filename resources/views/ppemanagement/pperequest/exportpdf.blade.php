@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    PPE Request
+                    {{ __('ppe_management.ppe_request') }}
                 </td>
             </tr>
         </table>
@@ -149,8 +149,8 @@
         <table style="width:100%;">
             <tr>
                 <td
-                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;" >
-                   PPE Request
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    {{ __('ppe_management.ppe_request') }}
                 </td>
             </tr>
         </table>
@@ -158,53 +158,54 @@
 
     <table width="100%" style="width:100%;">
         <tr>
-            <td width="50%" style="padding:5px;"><b>Employee Name</b></td>
+            <td width="50%" style="padding:5px;"><b>{{ __('ppe_management.ppe_emp_name') }}</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">{{ isset($pperequest->emp_name) ? $pperequest->emp_name : '' }}</td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Employee Id</b></td>
+            <td width="50%" style="padding:5px;"><b>{{ __('ppe_management.ppe_emp_id') }}</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;"> {{ isset($pperequest->emp_id) ? $pperequest->emp_id : '' }}</td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Company</b></td>
+            <td width="50%" style="padding:5px;"><b>{{ __('common.company') }}</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
                 {{ getCompanyname(isset($pperequest->company_id) ? $pperequest->company_id : '') }}</td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Location</b></td>
+            <td width="50%" style="padding:5px;"><b>{{ __('common.location') }}</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
                 {{ getLocationname(isset($pperequest->location_id) ? $pperequest->location_id : '') }}</td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Unit</b></td>
+            <td width="50%" style="padding:5px;"><b>{{ __('common.unit') }}</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
                 {{ getUnitname(isset($pperequest->unit_id) ? $pperequest->unit_id : '') }}</td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Department</b></td>
+            <td width="50%" style="padding:5px;"><b>{{ __('common.department') }}</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
                 {{ getDepartment(isset($pperequest->department) ? $pperequest->department : '') }}</td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Reason</b></td>
+            <td width="50%" style="padding:5px;"><b>{{ __('ppe_management.ppe_reason') }}</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
-                {{  !empty($pperequest->employee_reason) ? $pperequest->employee_reason : $pperequest->employee_remarks }}</td>
+                {{ !empty($pperequest->employee_reason) ? $pperequest->employee_reason : $pperequest->employee_remarks }}
+            </td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Created By</b></td>
+            <td width="50%" style="padding:5px;"><b>{{ __('common.created_by') }}</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
                 {{ getUsername(isset($pperequest->created_by) ? $pperequest->created_by : '') }}</td>
         </tr>
         <tr>
-            <td width="50%" style="padding:5px;"><b>Created Date</b></td>
+            <td width="50%" style="padding:5px;"><b>{{ __('common.created_date') }}</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;"> {{ displayDateformat($pperequest->created_at) }}</td>
         </tr>
@@ -220,7 +221,7 @@
                     <tr>
                         <td
                             style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                           Previous History
+                            {{ __('ppe_management.ppe_previous_history') }}
                         </td>
                     </tr>
                 </table>
@@ -229,11 +230,11 @@
             <table class="table table-bordered table-hover tblborder ">
                 <thead>
                     <tr>
-                        <th>Employee Name</th>
-                        <th>Employee Id</th>
-                        <th>Previous applied Date</th>
-                        <th>Approval Status</th>
-                        <th>Remarks</th>
+                        <th>{{ __('ppe_management.ppe_emp_name') }}</th>
+                        <th>{{ __('ppe_management.ppe_emp_id') }}</th>
+                        <th>{{ __('ppe_management.ppe_previous_appiled_date') }}</th>
+                        <th>{{ __('ppe_management.ppe_approval_status') }}</th>
+                        <th>{{ __('ppe_management.ppe_remarks') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -260,86 +261,95 @@
 
 
     @if ($pperequest->approve_status != STATUS_HOD_APPROVAL_PENDING)
-    <div>
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
-                        Status Logs
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <div class="table-responsive">
-            <div class="col-md-12">
-                <table class="table table-bordered table-hover tblborder">
-                    <thead>
-                        <tr>
-                            <th>From Status</th>
-                            <th>To Status</th>
-                            <th>Approved By</th>
-                            <th>Remarks</th>
-                            <th>Created Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>User Applied</td>
-                            <td>HOD Approval Pending</td>
-                            <td>{{ getUsername(isset($pperequest->created_by) ? $pperequest->created_by : '') }}</td>
-                            <td>{{ isset($pperequest->employee_reason) ? $pperequest->employee_reason : '' }}</td>
-                            <td>{{ displaydateformat(isset($pperequest->created_at) ? $pperequest->created_at : '') }}</td>
-                        </tr>
-                        <tr>
-                            <td>HOD Approval Pending</td>
-                            <td>
-                                @if (isset($hodstatuslog['to_status']) && $hodstatuslog['to_status'] == STATUS_HOD_APPROVED)
-                                    HOD Approved
-                                @elseif (isset($hodstatuslog['to_status']) && $hodstatuslog['to_status'] == STATUS_HOD_REJECTED)
-                                    HOD Rejected
-                                @else
-                                    <p>-</p>
-                                @endif
-                            </td>
-                            <td>{{ isset($hodstatuslog->created_by) && $hodstatuslog->created_by != '' ? getUsername($hodstatuslog->created_by) : '-' }}</td>
-                            <td>{{ isset($hodstatuslog->remarks) ? $hodstatuslog->remarks : '-' }}</td>
-                            <td>{{ isset($hodstatuslog->created_at) && $hodstatuslog->created_at != '' ? displaydateformat($hodstatuslog->created_at) : '-' }}</td>
-                        </tr>
-                        <tr>
-                            <td>EHS Officer Approval Pending</td>
-                            <td>
-                                @if (isset($ehsstatuslog['to_status']) && $ehsstatuslog['to_status'] == STATUS_EHS_APPROVED)
-                                    EHS Officer Approved
-                                @elseif (isset($ehsstatuslog['to_status']) && $ehsstatuslog['to_status'] == STATUS_EHS_REJECTED)
-                                    EHS Officer Rejected
-                                @else
-                                    <p>-</p>
-                                @endif
-                            </td>
-                            <td>{{ isset($ehsstatuslog->created_by) && $ehsstatuslog->created_by != '' ? getUsername($ehsstatuslog->created_by) : '-' }}</td>
-                            <td>{{ isset($ehsstatuslog->remarks) ? $ehsstatuslog->remarks : '-' }}</td>
-                            <td>{{ isset($ehsstatuslog->created_at) && $ehsstatuslog->created_at != '' ? displaydateformat($ehsstatuslog->created_at) : '-' }}</td>
-                        </tr>
-                        <tr>
-                            <td>Store Manager Issue Pending</td>
-                            <td>
-                                @if (isset($smStatuslog['to_status']) && $smStatuslog['to_status'] == STATUS_ISSUED)
-                                    Issued
-                                @else
-                                    <p>-</p>
-                                @endif
-                            </td>
-                            <td>{{ isset($smStatuslog->created_by) && $smStatuslog->created_by != '' ? getUsername($smStatuslog->created_by) : '-' }}</td>
-                            <td>{{ isset($smStatuslog->remarks) ? $smStatuslog->remarks : '-' }}</td>
-                            <td>{{ isset($smStatuslog->created_at) && $smStatuslog->created_at != '' ? displaydateformat($smStatuslog->created_at) : '-' }}</td>
-                        </tr>
-                    </tbody>
+        <div>
+            <div style="width:100%;">
+                <table style="width:100%;">
+                    <tr>
+                        <td
+                            style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
+                            {{ __('inspection.status_log') }}
+                        </td>
+                    </tr>
                 </table>
             </div>
+            <div class="table-responsive">
+                <div class="col-md-12">
+                    <table class="table table-bordered table-hover tblborder">
+                        <thead>
+                            <tr>
+                                <th>From Status</th>
+                                <th>To Status</th>
+                                <th>Approved By</th>
+                                <th>Remarks</th>
+                                <th>Created Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>User Applied</td>
+                                <td>HOD Approval Pending</td>
+                                <td>{{ getUsername(isset($pperequest->created_by) ? $pperequest->created_by : '') }}
+                                </td>
+                                <td>{{ isset($pperequest->employee_reason) ? $pperequest->employee_reason : '' }}</td>
+                                <td>{{ displaydateformat(isset($pperequest->created_at) ? $pperequest->created_at : '') }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>HOD Approval Pending</td>
+                                <td>
+                                    @if (isset($hodstatuslog['to_status']) && $hodstatuslog['to_status'] == STATUS_HOD_APPROVED)
+                                        HOD Approved
+                                    @elseif (isset($hodstatuslog['to_status']) && $hodstatuslog['to_status'] == STATUS_HOD_REJECTED)
+                                        HOD Rejected
+                                    @else
+                                        <p>-</p>
+                                    @endif
+                                </td>
+                                <td>{{ isset($hodstatuslog->created_by) && $hodstatuslog->created_by != '' ? getUsername($hodstatuslog->created_by) : '-' }}
+                                </td>
+                                <td>{{ isset($hodstatuslog->remarks) ? $hodstatuslog->remarks : '-' }}</td>
+                                <td>{{ isset($hodstatuslog->created_at) && $hodstatuslog->created_at != '' ? displaydateformat($hodstatuslog->created_at) : '-' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>EHS Officer Approval Pending</td>
+                                <td>
+                                    @if (isset($ehsstatuslog['to_status']) && $ehsstatuslog['to_status'] == STATUS_EHS_APPROVED)
+                                        EHS Officer Approved
+                                    @elseif (isset($ehsstatuslog['to_status']) && $ehsstatuslog['to_status'] == STATUS_EHS_REJECTED)
+                                        EHS Officer Rejected
+                                    @else
+                                        <p>-</p>
+                                    @endif
+                                </td>
+                                <td>{{ isset($ehsstatuslog->created_by) && $ehsstatuslog->created_by != '' ? getUsername($ehsstatuslog->created_by) : '-' }}
+                                </td>
+                                <td>{{ isset($ehsstatuslog->remarks) ? $ehsstatuslog->remarks : '-' }}</td>
+                                <td>{{ isset($ehsstatuslog->created_at) && $ehsstatuslog->created_at != '' ? displaydateformat($ehsstatuslog->created_at) : '-' }}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Store Manager Issue Pending</td>
+                                <td>
+                                    @if (isset($smStatuslog['to_status']) && $smStatuslog['to_status'] == STATUS_ISSUED)
+                                        Issued
+                                    @else
+                                        <p>-</p>
+                                    @endif
+                                </td>
+                                <td>{{ isset($smStatuslog->created_by) && $smStatuslog->created_by != '' ? getUsername($smStatuslog->created_by) : '-' }}
+                                </td>
+                                <td>{{ isset($smStatuslog->remarks) ? $smStatuslog->remarks : '-' }}</td>
+                                <td>{{ isset($smStatuslog->created_at) && $smStatuslog->created_at != '' ? displaydateformat($smStatuslog->created_at) : '-' }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <br>
         </div>
-        <br>
-    </div>
-@endif
+    @endif
 
     <br>
 

@@ -36,7 +36,7 @@
 
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">PPE Type</label>
+                                                    <label class="form-label require">{{__('ppe_management.ppe_type')}}</label>
                                                     <input type="text" name="ppe_type" id="ppe_type"
                                                         class="form-control" placeholder="Enter the PPE type">
                                                     <div class="text-danger" id="ppe_type_error"></div>

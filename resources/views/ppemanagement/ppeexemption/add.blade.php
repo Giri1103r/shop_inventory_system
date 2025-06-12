@@ -37,7 +37,7 @@
                                             @if (checkUserrole(ROLE_SUPERADMIN) || checkUserRole(ROLE_WORKER_REQUEST))
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label require">Request For</label>
+                                                        <label class="form-label require">{{__('ppe_management.ppe_request_for')}}</label>
                                                         <div class="gap-2">
                                                             <label class="form-check form-check-inline">
                                                                 <input type="radio" name="request_for"
@@ -58,7 +58,7 @@
 
                                                 <div class="col-md-4 mb-3" id="emp_id_container">
                                                     <div class="form-group form-input">
-                                                        <label for="emp_id" class="form-label require">Employee ID</label>
+                                                        <label for="emp_id" class="form-label require">{{__('ppe_management.ppe_emp_id')}}</label>
                                                         <select name="emp_id" id="emp_id"
                                                             class="form-select form-select-sm single-select"
                                                             style="width: 100%">
@@ -71,8 +71,7 @@
 
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
-                                                        <label for="emp_name" class="form-label require">Employee
-                                                            Name</label>
+                                                        <label for="emp_name" class="form-label require">{{__('ppe_management.ppe_emp_name')}}</label>
                                                         <input type="text" name="emp_name"
                                                             class="form-control form-control-sm" id="emp_name" readonly>
                                                         <div class="text-danger"></div>
@@ -80,7 +79,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
-                                                        <label for="department" class="form-label require">Company</label>
+                                                        <label for="department" class="form-label require">{{__('common.company')}}</label>
                                                         <input type="text" name="company_id" id="company_id"
                                                             class="form-control form-control-sm" readonly>
                                                         <div class="text-danger"></div>
@@ -88,7 +87,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
-                                                        <label for="department" class="form-label require">location</label>
+                                                        <label for="department" class="form-label require">{{__('common.location')}}</label>
                                                         <input type="text" name="location_id" id="location_id"
                                                             class="form-control form-control-sm" readonly>
                                                         <div class="text-danger"></div>
@@ -96,7 +95,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
-                                                        <label for="department" class="form-label require">Unit</label>
+                                                        <label for="department" class="form-label require">{{__('common.unit')}}</label>
                                                         <input type="text" name="unit_id" id="unit_id"
                                                             class="form-control form-control-sm" readonly>
                                                         <div class="text-danger"></div>
@@ -106,7 +105,7 @@
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
                                                         <label for="department"
-                                                            class="form-label require">Department</label>
+                                                            class="form-label require">{{__('common.department')}}</label>
                                                         <input type="text" name="department" id="department"
                                                             class="form-control form-control-sm" readonly>
                                                         <div class="text-danger"></div>
@@ -115,7 +114,7 @@
                                             @else
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
-                                                        <label for="emp_id" class="form-label require">Employee ID</label>
+                                                        <label for="emp_id" class="form-label require">{{__('ppe_management.ppe_emp_id')}}</label>
                                                         <input type="text" name="emp_id"
                                                             class="form-control form-control-sm "id="emp_id"
                                                             value="{{ $employee->employee_id }}" readonly>
@@ -125,8 +124,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
-                                                        <label for="emp_name" class="form-label require">Employee
-                                                            Name</label>
+                                                        <label for="emp_name" class="form-label require">{{__('ppe_management.ppe_emp_name')}}</label>
                                                         <input type="text" name="emp_name"
                                                             class="form-control form-control-sm " id="emp_name"
                                                             value="{{ $employee->name }}" readonly>
@@ -136,7 +134,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
-                                                        <label for="department" class="form-label require">Company</label>
+                                                        <label for="department" class="form-label require">{{__('common.company')}}</label>
                                                         <input type="text" name="company_id" id="company_id"
                                                             class="form-control form-control-sm"
                                                             value="{{ getCompanyname($employee->company_id) }}" readonly>
@@ -146,7 +144,7 @@
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
                                                         <label for="department"
-                                                            class="form-label require">location</label>
+                                                            class="form-label require">{{__('common.location')}}</label>
                                                         <input type="text" name="location_id" id="location_id"
                                                             class="form-control form-control-sm"
                                                             value="{{ getLocationname($employee->location_id) }}" readonly>
@@ -155,7 +153,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
-                                                        <label for="department" class="form-label require">Unit</label>
+                                                        <label for="department" class="form-label require">{{__('common.unit')}}</label>
                                                         <input type="text" name="unit_id" id="unit_id"
                                                             class="form-control form-control-sm"
                                                             value="{{ getUnitname($employee->unit_id) }}" readonly>
@@ -165,7 +163,7 @@
                                                 <div class="col-md-4 mb-3">
                                                     <div class="form-group form-input">
                                                         <label for="department"
-                                                            class="form-label require">Department</label>
+                                                            class="form-label require">{{__('common.department')}}</label>
                                                         <input type="text" name="department" id="department"
                                                             class="form-control form-control-sm"
                                                             value="{{ getDepartment($employee->department_id) }}" readonly>
@@ -175,7 +173,7 @@
                                                 </div>
                                             @endif
                                             <div class="col-md-4 mb-2">
-                                                <label for="date" class="form-label require">From Date</label>
+                                                <label for="date" class="form-label require">{{__('ppe_management.from_date')}}</label>
                                                 <div class="input-group date form-input">
                                                     <input type="text" class="form-control form-control-sm"
                                                         name="from_date" id="from_date" placeholder="Enter the From Date"
@@ -191,7 +189,7 @@
 
                                             </div>
                                             <div class="col-md-4 mb-2">
-                                                <label for="date" class="form-label require">To Date</label>
+                                                <label for="date" class="form-label require">{{__('ppe_management.to_date')}}</label>
                                                 <div class="input-group date form-input">
                                                     <input type="text" class="form-control form-control-sm"
                                                         name="to_date" autocomplete="off" id="to_date"
@@ -210,7 +208,7 @@
 
 
                                             <div class="col-md-12 mb-2">
-                                                <label for="reason" class="form-label require">Reason</label>
+                                                <label for="reason" class="form-label require">{{__('ppe_management.ppe_reason')}}</label>
                                                 <textarea name="reason" id="reason" cols="3" rows="4" class="form-control form-control-sm"
                                                     placeholder="Enter the Reason"></textarea>
                                                 @error('reason')
@@ -227,8 +225,7 @@
                                                     </button>
                                                 </div>
                                                 <div class="col-md-4 mb-3 file-upload-block" id="file-upload-0">
-                                                    <label for="ppe_file_0" class="form-label require">Reference Document
-                                                        Upload</label>
+                                                    <label for="ppe_file_0" class="form-label require">{{__('ppe_management.ppe_refer_doc_upload')}}</label>
                                                     <input type="file" class="form-control ppe-file-input"
                                                         accept: "image/png, image/jpeg, image/jpg, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                                         name="ppe_file[0][]" id="ppe_file_0" multiple>

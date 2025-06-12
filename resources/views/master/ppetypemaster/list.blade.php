@@ -36,15 +36,15 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">Item Code</label>
+                                            <label for="inspectiontype" class="form-label ">{{__('ppe_management.item_code')}}</label>
                                             <input type="text" name="item_code" id="item_code" class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">PPE Name</label>
+                                            <label for="inspectiontype" class="form-label ">{{__('ppe_management.ppe_name')}}</label>
                                             <input type="text" name="ppe_name" id="ppe_name" class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">PPE Type</label>
+                                            <label for="inspectiontype" class="form-label ">{{__('ppe_management.ppe_type')}}</label>
                                             <select name="ppe_type" id="ppe_type" style="width: 100%"
                                                 class="form-select   single-select">
                                                 <option value="">Select the ppe type</option>
@@ -55,7 +55,7 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <label for="emp_name" class="form-label ">{{__('ppe_management.from_date')}}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -66,7 +66,7 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <label for="emp_name" class="form-label ">{{__('ppe_management.to_date')}}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -106,10 +106,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Item Code</th>
-                                        {{-- <th>PPE Name</th> --}}
-                                        {{-- <th>PPE Type</th> --}}
-                                        {{-- <th>PPE Standard</th> --}}
+                                        <th>{{__('ppe_management.item_code')}}</th>
+                                        {{-- <th>{{__('ppe_management.ppe_name')}}</th> --}}
+                                        {{-- <th>{{__('ppe_management.ppe_type')}}</th> --}}
+                                        {{-- <th>{{__('ppe_management.ppe_standard')}}</th> --}}
                                         <th>{{ __('common.status') }}</th>
                                         {{-- <th>{{ __('common.created_by') }}</th> --}}
                                         {{-- <th>{{ __('common.created_date') }}</th> --}}

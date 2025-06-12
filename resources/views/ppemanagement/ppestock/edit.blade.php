@@ -35,7 +35,7 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label for="org" class="form-label require">Org</label>
+                                                    <label for="org" class="form-label require">{{ __('ppe_management.org') }}</label>
                                                     <input type="text" name="org"
                                                         class="form-control form-control-sm" id="org"
                                                         value="{{ $ppestock->org }}">
@@ -45,7 +45,7 @@
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label for="item_code" class="form-label require">Item code</label>
+                                                    <label for="item_code" class="form-label require">{{__('ppe_management.item_code')}}</label>
                                                     <input type="text" name="item_code"
                                                         class="form-control form-control-sm" id="item_code"
                                                         value="{{ $ppestock->item_code }}">
@@ -55,8 +55,7 @@
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label for="item_inventory_id" class="form-label require">Item Inventory
-                                                        Id</label>
+                                                    <label for="item_inventory_id" class="form-label require">{{ __('ppe_management.inven_item_id') }}</label>
                                                     <input type="text" name="item_inventory_id" id="item_inventory_id"
                                                         class="form-control form-control-sm"
                                                         value="{{ $ppestock->inventory_item_id }}">
@@ -77,7 +76,7 @@
                                             </div> --}}
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label for="ppe_name" class="form-label require">PPE Name
+                                                    <label for="ppe_name" class="form-label require">{{ __('ppe_management.ppe_name') }}
                                                     </label>
                                                     <input type="text" name="ppe_name" id="ppe_name"
                                                         class="form-control form-control-sm"
@@ -87,7 +86,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
-                                                <label for="sub" class="form-label require">SUB</label>
+                                                <label for="sub" class="form-label require">{{ __('ppe_management.ppe_sub') }}</label>
 
                                                 <input type="text" class="form-control form-conrol-sm" name="sub"
                                                     value="{{ $ppestock->sub }}" id="sub">
@@ -95,13 +94,13 @@
 
                                             </div>
                                             <div class="col-md-4 mb-2">
-                                                <label for="uom" class="form-label require">UOM</label>
+                                                <label for="uom" class="form-label require">{{ __('ppe_management.ppe_uom') }}</label>
                                                 <input type="text" class="form-control form-conrol-sm" name="uom"
                                                     value="{{ $ppestock->uom }}" id="uom">
                                                 <div class="text-danger" id="uom_error"></div>
                                             </div>
                                             <div class="col-md-4 mb-2">
-                                                <label for="quantity" class="form-label require">Quantity</label>
+                                                <label for="quantity" class="form-label require">{{ __('ppe_management.ppe_qunatity') }}</label>
                                                 <input type="text" class="form-control form-conrol-sm" name="quantity"
                                                     value="{{ $ppestock->quantity }}" id="quantity">
                                                 <div class="text-danger" id="quantity_error"></div>
@@ -109,7 +108,7 @@
 
                                             </div>
                                             <div class="col-md-12 mb-2">
-                                                <label for="reason" class="form-label require">Item Description</label>
+                                                <label for="reason" class="form-label require">{{ __('ppe_management.item_description') }}</label>
                                                 <textarea name="item_description" id="item_description" cols="3" rows="4"
                                                     class="form-control form-control-sm" placeholder="Enter the item description">{{ $ppestock->item_description }}</textarea>
                                                 <div class="text-danger" id="item_description_error"></div>

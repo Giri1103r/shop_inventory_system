@@ -80,7 +80,7 @@ class PpeTypeMasterController extends Controller
                             return '<span title="' . e($tooltip) . '">' . e($row->item_code) . '</span>';
                         })
 
-                        ->rawColumns(['action', 'created_at', 'created_by', 'status','item_code'])
+                        ->rawColumns(['action', 'created_at', 'created_by', 'status', 'item_code'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -310,11 +310,11 @@ class PpeTypeMasterController extends Controller
 
             $header = [
                 __("common.sno"),
-                __("Item Code"),
-                __('PPE Name'),
-                __("PPE Type"),
-                __("PPE Standard"),
-                __("Protection Category"),
+                __('ppe_management.item_code'),
+                __('ppe_management.ppe_name'),
+                __('ppe_management.ppe_type'),
+                __('ppe_management.ppe_standard'),
+                __('ppe_management.protection_category'),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -364,11 +364,11 @@ class PpeTypeMasterController extends Controller
 
             $header = [
                 __("common.sno"),
-                __("Item Code"),
-                __('PPE Name'),
-                __("PPE Type"),
-                __("PPE Standard"),
-                __("Protection Category"),
+                __('ppe_management.item_code'),
+                __('ppe_management.ppe_name'),
+                __('ppe_management.ppe_type'),
+                __('ppe_management.ppe_standard'),
+                __('ppe_management.protection_category'),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),

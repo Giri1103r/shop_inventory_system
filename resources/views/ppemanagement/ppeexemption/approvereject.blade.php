@@ -30,62 +30,62 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">User Details</h4>
+                                        <h4 class="text-white">{{__('ppe_management.ppe_request_user_details')}}</h4>
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Employee ID') }}</label>
+                                        <label class="form-label view_label">{{__('ppe_management.ppe_emp_id')}}</label>
                                         <div class="view_data">
                                             {{ isset($ppeexemption->emp_id) ? $ppeexemption->emp_id : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Employee Name') }}</label>
+                                        <label class="form-label view_label">{{__('ppe_management.ppe_emp_name')}}</label>
                                         <div class="view_data">
                                             {{ isset($ppeexemption->emp_name) ? $ppeexemption->emp_name : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Company') }}</label>
+                                        <label class="form-label view_label">{{__('common.company')}}</label>
                                         <div class="view_data">
                                             {{ getCompanyname(isset($ppeexemption->company) ? $ppeexemption->company : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Location') }}</label>
+                                        <label class="form-label view_label">{{__('common.location')}}</label>
                                         <div class="view_data">
                                             {{ getLocationname(isset($ppeexemption->location_id) ? $ppeexemption->location_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Unit') }}</label>
+                                        <label class="form-label view_label">{{__('common.unit')}}</label>
                                         <div class="view_data">
                                             {{ getUnitname(isset($ppeexemption->unit) ? $ppeexemption->unit : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Department') }}</label>
+                                        <label class="form-label view_label">{{__('common.department')}}</label>
                                         <div class="view_data">
                                             {{ getDepartment(isset($ppeexemption->department) ? $ppeexemption->department : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('From Date') }}</label>
+                                        <label class="form-label view_label">{{__('ppe_management.from_date')}}</label>
                                         <div class="view_data">
                                             {{ isset($ppeexemption->from_date) ? $ppeexemption->from_date : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('To Date') }}</label>
+                                        <label class="form-label view_label">{{__('ppe_management.to_date')}}</label>
                                         <div class="view_data">
                                             {{ isset($ppeexemption->to_date) ? $ppeexemption->to_date : '' }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Created By') }}</label>
+                                        <label class="form-label view_label">{{__('common.created_by')}}</label>
                                         <div class="view_data">
                                             {{ getUsername(isset($ppeexemption->created_by) ? $ppeexemption->created_by : '') }}
                                         </div>
@@ -98,7 +98,7 @@
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">Files</label>
+                                        <label class="form-label view_label">{{__('ppe_managemdent.file')}}</label>
                                         @if (isset($ppefiles) && $ppefiles->count() > 0)
                                             <div class="d-flex flex-wrap gap-2">
                                                 @foreach ($ppefiles as $file)
@@ -131,7 +131,7 @@
                                     </div>
 
                                     <div class="mb-3 col-md-12 form-input">
-                                        <label class="form-label view_label">{{ __('Reason') }}</label>
+                                        <label class="form-label view_label">{{__('ppe_management.ppe_reason')}}</label>
                                         <div class="view_data">
                                             {{ isset($ppeexemption->reason) ? $ppeexemption->reason : '' }}
                                         </div>
@@ -140,7 +140,7 @@
                                 @if (checkUserRole(ROLE_EHS_HEAD))
                                     <div class="row mt-2">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">EHS Head Approval</h4>
+                                            <h4 class="text-white">{{__('ppe_management.ppe_ehs_head_approval')}}</h4>
                                         </div>
                                     </div>
                                     <div class="basic-form">
@@ -151,20 +151,19 @@
                                             <div class="">
                                                 <div class="mb-3 row">
                                                     <div class="col-md-4 mb-3">
-                                                        <label for="approver_name" class="form-label require">Approver
-                                                            Name</label>
+                                                        <label for="approver_name" class="form-label require">{{__('ppe_management.ppe_approver_name')}}</label>
                                                         <input type="text" class="form-control form-control-sm"
                                                             id="approver_name" readonly value="{{ Auth::user()->name }}">
                                                     </div>
                                                     <div class="col-md-4 mb-3">
-                                                        <label for="date" class="form-label require">Date</label>
+                                                        <label for="date" class="form-label require">{{__('common.date')}}</label>
                                                         <input type="text" class="form-control form-control-sm"
                                                             id="date" name="date" readonly
                                                             value="{{ date('d-m-Y H:i:s') }}">
                                                     </div>
                                                     <div class="col-md-12 mb-3">
                                                         <div class="mb-1">
-                                                            <label for="remarks" class="form-label require">Remarks</label>
+                                                            <label for="remarks" class="form-label require">{{__('common.remarks')}}</label>
                                                             <textarea class="form-control @error('remarks') is-invalid @enderror" id="remarks" name="remarks" rows="3"></textarea>
                                                             <div class="text-danger" id="remarks_error"></div>
                                                             @error('remarks')

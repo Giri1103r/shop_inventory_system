@@ -59,12 +59,12 @@ class PpeStockInventoryController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
 
-                            if (CheckUserPermission('view')) {
-                                $btn .= '<a href="' . admin_url('ppe_stock_inventory/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            }
-                            if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('ppe_stock_inventory/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
-                            }
+                            // if (CheckUserPermission('view')) {
+                            $btn .= '<a href="' . admin_url('ppe_stock_inventory/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            // }
+                            // if (CheckUserPermission('edit')) {
+                            $btn .= '<a href="' . admin_url('ppe_stock_inventory/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                            // }
                             return $btn;
                         })
 
@@ -209,15 +209,15 @@ class PpeStockInventoryController extends Controller
 
             $header = [
                 __("common.sno"),
-                __("Org"),
-                __('Inventory Item Id'),
-                __("Item Code"),
-                // __("Item Name"),
-                __("PPE Name"),
-                __("SUB"),
-                __("UOM"),
-                __("Quantity"),
-                __("Item Description"),
+                __('ppe_management.org'),
+                __('ppe_management.inven_item_id'),
+                __('ppe_management.item_code'),
+                // __('ppe_management.item_name'),
+                __('ppe_management.ppe_name'),
+                __('ppe_management.ppe_sub'),
+                __('ppe_management.ppe_uom'),
+                __('ppe_management.ppe_qunatity'),
+                __('ppe_management.item_description'),
                 __("common.created_by"),
                 __("common.created_date"),
             ];
@@ -274,15 +274,15 @@ class PpeStockInventoryController extends Controller
 
             $header = [
                 __("common.sno"),
-                __("Org"),
-                __('Inventory Item Id'),
-                __("Item Code"),
-                // __("Item Name"),
-                __("PPE Name"),
-                __("SUB"),
-                __("UOM"),
-                __("Quantity"),
-                __("Item Description"),
+                __('ppe_management.org'),
+                __('ppe_management.inven_item_id'),
+                __('ppe_management.item_code'),
+                // __('ppe_management.item_name'),
+                __('ppe_management.ppe_name'),
+                __('ppe_management.ppe_sub'),
+                __('ppe_management.ppe_uom'),
+                __('ppe_management.ppe_qunatity'),
+                __('ppe_management.item_description'),
                 __("common.created_by"),
                 __("common.created_date"),
             ];

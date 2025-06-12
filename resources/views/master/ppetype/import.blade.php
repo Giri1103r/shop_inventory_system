@@ -36,7 +36,7 @@
                                         @csrf
                                         <div class="row">
                                             <div class="mb-3 col-md-6 form-input">
-                                                <label class="form-label required">File</label>
+                                                <label class="form-label required">{{__('ppe_management.file')}}</label>
                                                 <input type="file" id="ppetype_upload" name="ppetype_upload"
                                                     class="form-control" placeholder="">
                                                 <div class="text-danger" id="ppetype_upload_error"></div>

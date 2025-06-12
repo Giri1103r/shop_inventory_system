@@ -305,8 +305,8 @@ class PpeTypeController extends Controller
 
             $header = [
                 __("common.sno"),
-                __("PPE ID"),
-                __("PPE Type"),
+                __('ppe_management.ppe_type_id'),
+                __('ppe_management.ppe_type'),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
