@@ -31,16 +31,16 @@
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_id" class="form-label ">Emp Id</label>
-                                             <input type="text" class="form-control" name="emp_id" id="emp_id">
+                                            <input type="text" class="form-control" name="emp_id" id="emp_id">
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_id" class="form-label ">Emp Name</label>
-  <input type="text" class="form-control" name="emp_name" id="emp_name">
+                                            <input type="text" class="form-control" name="emp_name" id="emp_name">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <label for="emp_name" class="form-label ">{{__('common.from_date')}}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -51,7 +51,7 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <label for="emp_name" class="form-label ">{{__('common.to_date')}}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -93,15 +93,15 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
 
-                                        <th>Worker/Employee Name</th>
-                                        <th>Worker/Employee Code</th>
-                                        <th>Date of Incident</th>
-                                        <th>Time Of Incident</th>
-                                        <th>Treatment Start Time</th>
-                                        <th>Treatment End Time</th>
-                                        <th>First Aider Name</th>
-                                        <th>Medicine Name</th>
-                                        <th>Treatment Provided</th>
+                                        <th>{{__('common.employee_or_worker_name')}}</th>
+                                        <th>{{__('common.employee_or_worker_code')}}</th>
+                                        <th>{{__('ohc_management.date_of_incident')}}</th>
+                                        <th>{{__('ohc_management.time_of_incident')}}</th>
+                                        <th>{{__('ohc_management.treatment_start_time')}}</th>
+                                        <th>{{__('ohc_management.treatment_end_time')}}</th>
+                                        <th>{{__('ohc_management.first_aider_name')}}</th>
+                                        <th>{{__('ohc_management.medicine_name')}}</th>
+                                        <th>{{__('ohc_management.treatment_provided')}}</th>
                                         <th data-priority='3'>{{ __('common.status') }}</th>
                                         <th data-priority='2'>{{ __('common.created_by') }}</th>
                                         <th data-priority='1'>{{ __('common.action') }}</th>
@@ -149,7 +149,7 @@
             });
         });
 
-     
+
         $(function() {
             /* Initialize DataTable */
             var table = $('.datatable-list').DataTable({

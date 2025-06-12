@@ -34,38 +34,43 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">First Aid</h4>
+                                        <h4 class="text-white">{{__('ohc_management.first_aid')}}</h4>
                                     </div>
                                 </div>
                                 <div class="row">
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Worker/Employee Code') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('common.employee_or_worker_code') }}</label>
                                         <div class="view_data">
                                             {{ isset($opd_first_aid->emp_id) ? $opd_first_aid->emp_id : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Worker/Employee Name') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('common.employee_or_worker_name') }}</label>
                                         <div class="view_data">
                                             {{ isset($opd_first_aid->emp_name) ? $opd_first_aid->emp_name : '' }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Date of Incident') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.date_of_incident') }}</label>
                                         <div class="view_data">
                                             {{ displaydateformat(isset($opd_first_aid->date_of_incident) ? $opd_first_aid->date_of_incident : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Time of Incident') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.time_of_incident') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($opd_first_aid->time_of_incident) ? $opd_first_aid->time_of_incident : '') }}
+                                            {{ isset($opd_first_aid->time_of_incident) ? $opd_first_aid->time_of_incident : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Medicine Name') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.medicine_name') }}</label>
                                         <div class="view_data">
                                             @php
                                                 $SelectedMedicineIds = explode(',', $opd_first_aid->medicine_id ?? '');
@@ -85,47 +90,54 @@
                                     </div>
 
                                     <div class="mb-3 col-md-8 form-input">
-                                        <label class="form-label view_label">{{ __('Treatment Provided') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.treatment_provided') }}</label>
                                         <div class="view_data">
                                             {{ isset($opd_first_aid->treatment_provided) ? $opd_first_aid->treatment_provided : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-8 form-input">
-                                        <label class="form-label view_label">{{ __('Cheif Complaint') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.chief_complaint') }}</label>
                                         <div class="view_data">
                                             {{ isset($opd_first_aid->cheif_complaint) ? $opd_first_aid->cheif_complaint : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Treatment start Time') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.treatment_start_time') }}</label>
                                         <div class="view_data">
                                             {{ isset($opd_first_aid->treatment_start_time) ? $opd_first_aid->treatment_start_time : '' }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Treatment end Time') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.treatment_end_time') }}</label>
                                         <div class="view_data">
                                             {{ isset($opd_first_aid->treatment_end_time) ? $opd_first_aid->treatment_end_time : '' }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Hospital Name') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.hospital_name') }}</label>
                                         <div class="view_data">
                                             {{ getHospitalname(isset($opd_first_aid->hospital_id) ? $opd_first_aid->hospital_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('First Aider Name') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.first_aider_name') }}</label>
                                         <div class="view_data">
-                                            {{ (isset($opd_first_aid->first_aider_name) ? $opd_first_aid->first_aider_name : '') }}
+                                            {{ isset($opd_first_aid->first_aider_name) ? $opd_first_aid->first_aider_name : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Follow up Required') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.follow_up_required') }}</label>
                                         <div class="view_data">
-                                            @if ( $opd_first_aid->follow_up_required == 1)
+                                            @if ($opd_first_aid->follow_up_required == 1)
                                                 {{ __('Yes') }}
                                             @else
                                                 {{ __('No') }}
@@ -136,7 +148,7 @@
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Status') }}</label>
+                                        <label class="form-label view_label">{{ __('common.status') }}</label>
                                         <div class="view_data">
                                             @if ($opd_first_aid->status == 1)
                                                 {{ __('Active') }}
@@ -146,19 +158,19 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Created By') }}</label>
+                                        <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
-                                            {{getUsername(isset($opd_first_aid->created_by) ? $opd_first_aid->created_by : '')  }}
+                                            {{ getUsername(isset($opd_first_aid->created_by) ? $opd_first_aid->created_by : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Created Date') }}</label>
+                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
                                         <div class="view_data">
                                             {{ displaydateformat(isset($opd_first_aid->created_at) ? $opd_first_aid->created_at : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-8 form-input">
-                                        <label class="form-label view_label">{{ __('Remarks ') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.remarks') }}</label>
                                         <div class="view_data">
                                             {{ isset($opd_first_aid->remarks) ? $opd_first_aid->remarks : '' }}
                                         </div>

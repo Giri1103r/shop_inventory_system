@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Prescribe To Patient Edit')
+@section('title', 'Prescribe To Patient')
 @section('pageurl', admin_url('ohc/prescribe-to-patient/list'))
 
 
@@ -854,7 +854,7 @@
                 noCalendar: true,
                 dateFormat: "H:i",
                 time_24hr: true,
-             
+
             });
 
 

@@ -31,6 +31,14 @@ return [
     'rate' => 'Rate',
     'stock_entry_date' => 'Stock Entry Date',
     'is_out_side_worker_or_employee' => 'Is Outside Worker / Employee',
+    'date_of_incident' => 'Date of Incident',
+    'time_of_incident' => 'Time of Incident',
+    'follow_up_required'=>'Follow Up Required',
+    'treatment_start_time'=>'Treatment Start Time',
+    'treatment_end_time'=>'Treatment End Time',
+    'treatment_provided'=>'Treatment Provided',
+    'first_aid'=>'First Aid',
+    'opd_patient_list'=>'OPD Patient List',
 
 
     // opd - prescribe to patient
