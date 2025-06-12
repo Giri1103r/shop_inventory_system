@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'First Aid Edit')
+@section('title', 'First Aid')
 @section('pageurl', admin_url('ohc/first-aid/list'))
 
 
@@ -40,8 +40,7 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label" for="is_outside_worker"> Is OutSide
-                                                        Worker</label><br>
+                                                    <label class="form-label" for="is_outside_worker"> {{__('ohc_management.is_out_side_worker_or_employee')}}</label><br>
                                                     <input type="checkbox" id="is_outside_worker" name="is_outside_worker"
                                                         value="1"
                                                         {{ $opd_first_aid->is_outside_employee == 1 ? 'checked' : '' }}>
@@ -49,7 +48,7 @@
                                             </div>
                                             <div class="col-md-4 employee-id mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label ">Employee code</label>
+                                                    <label class="form-label ">{{__('common.employee_or_worker_code')}}</label>
                                                     <select name="emp_id" class="form-control " id="emp_id"
                                                         style="width: 100%">
                                                         <option value="">Select the Employee ID</option>
@@ -62,21 +61,21 @@
                                             </div>
                                             <div class="col-md-4 employecode mb-2" style="display: none">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Employee code</label>
+                                                    <label class="form-label require">{{__('common.employee_or_worker_code')}}</label>
                                                     <input type="text" name="outside_emp_id" id="outside_emp_id"
                                                         value="{{ $opd_first_aid->emp_id }}" class="form-control">
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Employee Name</label>
+                                                    <label class="form-label require">{{__('common.employee_or_worker_name')}}</label>
                                                     <input type="text" name="emp_name" id="emp_name"
                                                         class="form-control" placeholder="Employee Name" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2 department">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Date Of incident</label>
+                                                    <label class="form-label require">{{__('ohc_management.date_of_incident')}}</label>
 
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="date_of_incident" id="date_of_incident"
@@ -92,7 +91,7 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Time of Incident</label>
+                                                    <label class="form-label require">{{__('ohc_management.time_of_incident')}}</label>
 
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="time_of_incident" id="time_of_incident"
@@ -106,7 +105,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Medicine Name</label>
+                                                    <label class="form-label require">{{__('ohc_management.medicine_name')}}</label>
                                                     <select name="medicine_id[]" multiple id="medicine_id"
                                                         class="select2 form-control">
                                                         <option value="">Select medicine Name</option>
@@ -122,19 +121,19 @@
 
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label ">Treatment Provided</label>
+                                                    <label class="form-label ">{{__('ohc_management.treatment_provided')}}</label>
                                                     <textarea name="treatment_provided" id="treatment_provided" cols="30" rows="5" class="form-control">{{ $opd_first_aid->treatment_provided }}</textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Cheif Complaint</label>
+                                                    <label class="form-label require">{{__('ohc_management.chief_complaint')}}</label>
                                                     <textarea name="cheif_complaint" id="cheif_complaint" cols="30" rows="5" class="form-control">{{ $opd_first_aid->cheif_complaint }}"</textarea>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Treatment Start Time</label>
+                                                    <label class="form-label require">{{__('ohc_management.treatment_start_time')}}</label>
 
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="treatment_start_time"
@@ -148,7 +147,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Treatment End Time</label>
+                                                    <label class="form-label require">{{__('ohc_management.treatment_end_time')}}</label>
 
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="treatment_end_time"
@@ -162,8 +161,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="hospital_id" class="form-label require">Hospital
-                                                        Name</label>
+                                                    <label for="hospital_id" class="form-label require">{{__('ohc_management.hospital_name')}}</label>
 
                                                     <select name="hospital_id" id="hospital_id"
                                                         class="form-control single-select" style="width: 100%">
@@ -179,7 +177,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">First Aider Name</label>
+                                                    <label class="form-label require">{{__('ohc_management.first_aider_name')}}</label>
 
                                                     <select name="first_aider_name" id="first_aider_name"
                                                         placeholder="First Aider Name" class="form-control "
@@ -195,7 +193,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Follow Up Required</label>
+                                                    <label class="form-label require">{{__('ohc_management.follow_up_required')}}</label>
                                                     <select name="follow_up" id="follow_up"
                                                         class="form-select single-select" style="width:100%">
                                                         <option value="">Select the Option</option>
@@ -212,7 +210,7 @@
 
                                             <div class="col-md-12">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label ">Remarks</label>
+                                                    <label class="form-label ">{{__('ohc_management.remarks')}}</label>
                                                     <textarea name="remarks" id="remarks" cols="30" rows="5" class="form-control">{{ $opd_first_aid->remarks }}</textarea>
                                                 </div>
                                             </div>

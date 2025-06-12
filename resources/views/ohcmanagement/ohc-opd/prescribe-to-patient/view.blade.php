@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Prescribe To Patient Show')
+@section('title', 'Prescribe To Patient')
 @section('pageurl', admin_url('ohc/prescribe-to-patient/list'))
 
 
@@ -34,13 +34,13 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">OPD Patient List</h4>
+                                        <h4 class="text-white">{{__('ohc_management.opd_patient_list')}}</h4>
                                     </div>
                                 </div>
                                 <div class="row">
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Is Outside Worker') }}</label>
+                                        <label class="form-label view_label">{{__('ohc_management.is_out_side_worker_or_employee')}}</label>
                                         <div class="view_data">
                                             @if ($opdpatient->is_outside_employee == 1)
                                                 <b><i class="fa-solid fa-check"
@@ -52,31 +52,31 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Employee Name') }}</label>
+                                        <label class="form-label view_label">{{__('common.employee_or_worker_name')}}</label>
                                         <div class="view_data">
                                             {{ isset($opdpatient->emp_name) ? $opdpatient->emp_name : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Employee Id') }}</label>
+                                        <label class="form-label view_label">{{__('common.employee_or_worker_code')}}</label>
                                         <div class="view_data">
                                             {{ isset($opdpatient->emp_id) ? $opdpatient->emp_id : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Unit') }}</label>
+                                        <label class="form-label view_label">{{ __('common.unit') }}</label>
                                         <div class="view_data">
                                             {{ getUnitname(isset($opdpatient->unit_id) ? $opdpatient->unit_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Department') }}</label>
+                                        <label class="form-label view_label">{{ __('common.department') }}</label>
                                         <div class="view_data">
                                             {{ getDepartment(isset($opdpatient->department_id) ? $opdpatient->department_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Mobile Number') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.mobile_no') }}</label>
                                         <div class="view_data">
                                             {{ isset($opdpatient->mobile_no) ? $opdpatient->mobile_no : '' }}
                                         </div>
@@ -88,7 +88,7 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-8 form-input">
-                                        <label class="form-label view_label">{{ __('Address') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.address') }}</label>
                                         <div class="view_data">
                                             {{ isset($opdpatient->address) ? $opdpatient->address : '' }}
                                         </div>

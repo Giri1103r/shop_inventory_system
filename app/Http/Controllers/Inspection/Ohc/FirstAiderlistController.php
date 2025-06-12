@@ -175,14 +175,14 @@ class FirstAiderlistController extends Controller
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error',  __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/first-aider/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aider/list'));
         }
     }
@@ -462,7 +462,7 @@ class FirstAiderlistController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aider/list'));
         }
     }

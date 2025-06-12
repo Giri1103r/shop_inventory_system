@@ -80,7 +80,7 @@ class MedicineReceivingController extends Controller
                         ->editColumn('expire_date', function ($row) {
                             return displaydateformat($row->expire_date);
                         })
-                          ->editColumn('created_date', function ($row) {
+                        ->editColumn('created_date', function ($row) {
                             return displaydateformat($row->created_at);
                         })
                         ->addColumn('approvedStatus', function ($row) {
@@ -106,12 +106,12 @@ class MedicineReceivingController extends Controller
                             $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/view/' . encryptId($row->id)) . '" class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             if (CheckUserPermission('edit') && $row->approve_status == STATUS_OHC_EHS_VERIFICATION_PENDING) {
-                            $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
+                                $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/edit/' . encryptId($row->id)) . '" class="" title="Edit"><i class="fa-solid fa-pen-to-square"></i></a> ';
                             }
                             // $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger"></i></a> ';
 
-                            if ((checkUserRole(ROLE_SUPERADMIN)  && $row->approve_status != STATUS_OHC_OPEN  && $row->approve_status != STATUS_OHC_CLOSE) ||(checkUserRole(ROLE_EHS_OFFICER)&& $row->approve_status == STATUS_OHC_EHS_VERIFICATION_PENDING) ||(checkUserRole(ROLE_L1_EHS_OFFCIER)&& $row->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING)  ||(checkUserRole(ROLE_EHS_HEAD)&& $row->approve_status == STATUS_OHC_AGM_APPROVAL_PENDING) ) {
-                            $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/medicineapproval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
+                            if ((checkUserRole(ROLE_SUPERADMIN)  && $row->approve_status != STATUS_OHC_OPEN  && $row->approve_status != STATUS_OHC_CLOSE) || (checkUserRole(ROLE_EHS_OFFICER) && $row->approve_status == STATUS_OHC_EHS_VERIFICATION_PENDING) || (checkUserRole(ROLE_L1_EHS_OFFCIER) && $row->approve_status == STATUS_OHC_L1_EHS_VERIFICATION_PENDING)  || (checkUserRole(ROLE_EHS_HEAD) && $row->approve_status == STATUS_OHC_AGM_APPROVAL_PENDING)) {
+                                $btn .= '<a href="' . admin_url('ohc/medicine-receiving-form/medicineapproval/view/' . encryptId($row->id)) . '" class="" title="Action"><i class="fa-solid fa-check-to-slot text-success"></i></a> ';
                             }
                             if (($row->created_by == Auth::id() || isAdmin()) && ($row->approve_status == STATUS_OHC_OPEN)) {
                                 $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="stockClose" title="Close" style="color: green;margin-right: 5px;"><i class="fa fa-window-close" aria-hidden="true"></i></a> ';
@@ -123,7 +123,7 @@ class MedicineReceivingController extends Controller
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'expire_date', 'approvedStatus', 'hsn_id','pack'])
+                        ->rawColumns(['action', 'expire_date', 'approvedStatus', 'hsn_id', 'pack'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -153,9 +153,9 @@ class MedicineReceivingController extends Controller
             $medicineStock  = $this->inventory->getmedicinedata();
 
             $existingMedicineIds = $this->medicine_receiving
-            ->where('status', 1)
-            ->pluck('medicine_id')
-            ->toArray();
+                ->where('status', 1)
+                ->pluck('medicine_id')
+                ->toArray();
             $unit = $this->unit->getunit();
             $vendor = $this->vendor->getVendordata();
             $data = [
@@ -163,14 +163,14 @@ class MedicineReceivingController extends Controller
                 'vendor' => $vendor,
                 'unit' => $unit,
                 'medicineStock' => $medicineStock,
-                'existingMedicineIds'=>$existingMedicineIds
+                'existingMedicineIds' => $existingMedicineIds
 
             ];
 
             return view('ohcmanagement.medicine_receiving.add', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
     }
@@ -260,17 +260,17 @@ class MedicineReceivingController extends Controller
                 );
                 notificationSave($notificationData);
 
-                Session::flash('success', 'Your data has been created successfully!');
+                Session::flash('success', __('common.created_msg'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
     }
@@ -290,16 +290,16 @@ class MedicineReceivingController extends Controller
 
 
             $existingMedicineIds = $this->medicine_receiving
-            ->where('status', 1)
-            ->pluck('medicine_id')
-            ->toArray();
+                ->where('status', 1)
+                ->pluck('medicine_id')
+                ->toArray();
             $data = [
                 'medicineStock' => $medicineStock,
                 'vendor' => $vendor,
                 'medicine_receiving' => $medicine_receiving,
                 'hsn' => $hsn,
-                'unitList'=>$unit,
-                'pack'=>$pack
+                'unitList' => $unit,
+                'pack' => $pack
 
 
             ];
@@ -307,7 +307,7 @@ class MedicineReceivingController extends Controller
             return view('ohcmanagement.medicine_receiving.edit', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
     }
@@ -343,10 +343,10 @@ class MedicineReceivingController extends Controller
             try {
 
 
-                $pack = $this->medicine->where('pack',$request->pack_display)->first();
+                $pack = $this->medicine->where('pack', $request->pack_display)->first();
 
 
-                $this->medicine_receiving->updates($id,$pack);
+                $this->medicine_receiving->updates($id, $pack);
 
                 $mailsubject = 'Medicine Request for the Stock';
                 $user_role = ROLE_EHS_OFFICER;
@@ -395,17 +395,17 @@ class MedicineReceivingController extends Controller
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
-                Session::flash('success', 'Your data has been updated successfully!');
+                Session::flash('success', __('common.updated_msg'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
     }
@@ -432,7 +432,7 @@ class MedicineReceivingController extends Controller
             return view('ohcmanagement.medicine_receiving.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
     }
@@ -466,7 +466,7 @@ class MedicineReceivingController extends Controller
             return view('ohcmanagement.medicine_receiving.approve', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
     }
@@ -592,12 +592,12 @@ class MedicineReceivingController extends Controller
                 return redirect(admin_url('ohc/medicine-receiving-form/list'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
                 return redirect(admin_url('ohc/medicine-receiving-form/list'));
             }
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
     }
@@ -635,7 +635,7 @@ class MedicineReceivingController extends Controller
 
                 $this->ohc_status->l1ehsstatuslog($id, $ehsverifydata);
                 if ($action == 'approve') {
-                    $this->ohc_status->l1ehsverificationapprovedstatuslog($id,$ehsverifydata);
+                    $this->ohc_status->l1ehsverificationapprovedstatuslog($id, $ehsverifydata);
                 }
                 $data = $this->medicine_receiving->selectOne($id);
 
@@ -690,12 +690,12 @@ class MedicineReceivingController extends Controller
                 return redirect(admin_url('ohc/medicine-receiving-form/list'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
                 return redirect(admin_url('ohc/medicine-receiving-form/list'));
             }
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
     }
@@ -730,8 +730,8 @@ class MedicineReceivingController extends Controller
                 $this->medicine_receiving->ehsheadstatus($id, $updateStatus);
 
                 $this->ohc_status->ehsheadstatuslog($id, $updateStatus);
-                if($action == 'approve'){
-                    $this->ohc_status->ehsheadapprovedstatuslog($id,$updateStatus);
+                if ($action == 'approve') {
+                    $this->ohc_status->ehsheadapprovedstatuslog($id, $updateStatus);
                 }
 
                 if ($action == 'approve') {
@@ -807,12 +807,12 @@ class MedicineReceivingController extends Controller
                 return redirect(admin_url('ohc/medicine-receiving-form/list'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
                 return redirect(admin_url('ohc/medicine-receiving-form/list'));
             }
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
     }
@@ -831,7 +831,7 @@ class MedicineReceivingController extends Controller
 
                 $data = $this->medicine_receiving->selectOne($id);
                 $unitIds = $this->unit->getUnitcount();
-                $this->expire_medicine->store($data,$unitIds);
+                $this->expire_medicine->store($data, $unitIds);
                 $ids = $data->medicine_id;
 
 
@@ -845,9 +845,8 @@ class MedicineReceivingController extends Controller
                     $newTotalPurchase = $oldQuantity->total_purchase + $data->quantity;
 
 
-                    $this->inventory->where('medicine_id', $ids) ->where('unit_id', 1)->increment('balance', $data->quantity);
-                    $this->inventory->where('medicine_id', $ids) ->where('unit_id', 1)->increment('total_purchase',$data->quantity);
-
+                    $this->inventory->where('medicine_id', $ids)->where('unit_id', 1)->increment('balance', $data->quantity);
+                    $this->inventory->where('medicine_id', $ids)->where('unit_id', 1)->increment('total_purchase', $data->quantity);
                 }
                 $this->medicine_receiving->stockupdate($id);
                 $this->ohc_status->stockstatuslog($id);
@@ -903,11 +902,10 @@ class MedicineReceivingController extends Controller
                 notificationSave($notificationData);
                 return response()->json(['msg' => 'Stock request closed successfully!']);
             } catch (\Exception $ex) {
-              report($ex);
+                report($ex);
 
                 return response()->json(['msg' => 'Something went wrong, Please try again later!'], 500);
             }
-
         } catch (\Exception $ex) {
             report($ex);
 
@@ -930,18 +928,18 @@ class MedicineReceivingController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Medicine Name',
-                'HSN Number',
-                'Pack Details',
-                'Quantity',
-                'Batch Number',
-                'Rate',
-                'Expiry Date',
-                'Vendor Name',
-                'From Status',
-                'To Status',
-                'Created_by',
-                'Stock Entry Date'
+                __("ohc_management.medicine_name"),
+                __("ohc_management.hsn_number"),
+                __("ohc_management.pack"),
+                __("ohc_management.quantity"),
+                __("ohc_management.batch_number"),
+                __("ohc_management.rate"),
+                __("ohc_management.expiry_date"),
+                __("ohc_management.vendor_name"),
+                __("common.from_date"),
+                __("common.to_date"),
+                __("common.created_by"),
+                __("ohc_management.stock_entry_date"),
             ];
 
             $i = 1;
@@ -967,7 +965,7 @@ class MedicineReceivingController extends Controller
                     $export[] = 'EHS Head Approval Pending';
                 } elseif ($data->approve_status == STATUS_OHC_CLOSE) {
                     $export[] = 'Open';
-                }  else {
+                } else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));
                 }
                 if ($data->approve_status == STATUS_OHC_EHS_VERIFICATION_PENDING) {
@@ -980,7 +978,7 @@ class MedicineReceivingController extends Controller
                     $export[] = 'Open';
                 } elseif ($data->approve_status == STATUS_OHC_CLOSE) {
                     $export[] = 'Close';
-                }  else {
+                } else {
                     $export[] = removeUnderScore(getStatus($data->approve_status));
                 }
                 $export[] =  getusername($data->created_by);
@@ -997,8 +995,9 @@ class MedicineReceivingController extends Controller
                     $exportData
                 );
         } catch (Exception $ex) {
-
             report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
     }
 
@@ -1042,7 +1041,8 @@ class MedicineReceivingController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
     }
 
@@ -1061,18 +1061,18 @@ class MedicineReceivingController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Medicine Name',
-                'HSN Number',
-                'Pack Details',
-                'Quantity',
-                'Batch Number',
-                'Rate',
-                'Expiry Date',
-                'Vendor Name',
-                'From Status',
-                'To Status',
-                'Created_by',
-                'Stock Entry Date'
+                __("ohc_management.medicine_name"),
+                __("ohc_management.hsn_number"),
+                __("ohc_management.pack"),
+                __("ohc_management.quantity"),
+                __("ohc_management.batch_number"),
+                __("ohc_management.rate"),
+                __("ohc_management.expiry_date"),
+                __("ohc_management.vendor_name"),
+                __("common.from_date"),
+                __("common.to_date"),
+                __("common.created_by"),
+                __("ohc_management.stock_entry_date"),
             ];
 
             $data = array(
@@ -1103,8 +1103,9 @@ class MedicineReceivingController extends Controller
             $filename = "Medicine Receiving.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-
             report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/medicine-receiving-form/list'));
         }
     }
 
@@ -1156,5 +1157,4 @@ class MedicineReceivingController extends Controller
 
         return response()->json(['error' => 'No HSN number found'], 404);
     }
-
 }

@@ -34,13 +34,13 @@
 
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label ">Requisition ID</label>
+                                                <label class="form-label ">{{ __('ohc_management.req_id') }}</label>
                                                 <input type="text" name="req_id" class="form-control" id="req_id">
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label ">Unit</label>
+                                                <label class="form-label ">{{ __('common.unit') }}</label>
                                                 <select name="unit_id" id="unit_id" class="form-control single-select"
                                                     style="width: 100%">
                                                     <option value="">Select the unit</option>
@@ -53,7 +53,7 @@
                                         </div>
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label ">Department</label>
+                                                <label class="form-label ">{{ __('common.department') }}</label>
                                                 <select name="department_id" id="department_id"
                                                     class=" form-control single-select" style="width: 100%">
                                                     <option value="">Select Department </option>
@@ -62,7 +62,8 @@
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">Request date</label>
+                                            <label for="emp_name"
+                                                class="form-label ">{{ __('ohc_management.req_id') }}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="request_date"
                                                     id="request_date" autocomplete="off">
@@ -73,7 +74,7 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.from_date') }}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -84,7 +85,7 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.to_date') }}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -95,13 +96,14 @@
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label">Approve Status</label>
-                                            <select name="status" id="status" style="width: 100%" class="form-control single-select">
+                                            <select name="status" id="status" style="width: 100%"
+                                                class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="2">EHS Head Approval Pending</option>
-                                                <option value="3">EHS Head Approved</option>
-                                                <option value="4">EHS Head Rejected</option>
-                                                <option value="11">Open</option>
-                                                <option value="12">Close</option>
+                                                <option value="{{ encryptId('2') }} ">EHS Head Approval Pending</option>
+                                                <option value="{{ encryptId('3') }} ">EHS Head Approved</option>
+                                                <option value="{{ encryptId('4') }} ">EHS Head Rejected</option>
+                                                <option value="{{ encryptId('11') }} ">Open</option>
+                                                <option value="{{ encryptId('12') }} ">Close</option>
                                             </select>
                                         </div>
 
@@ -123,12 +125,12 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Requisition ID</th>
-                                        <th>Unit Name</th>
-                                        <th>Department Name</th>
-                                        <th>Request Date</th>
-                                        <th>Approve Status</th>
-                                        <th data-priority="1">Action</th>
+                                        <th>{{ __('ohc_management.req_id') }}</th>
+                                        <th>{{ __('common.unit') }}</th>
+                                        <th>{{ __('common.department') }}</th>
+                                        <th>{{ __('ohc_management.request_date') }}</th>
+                                        <th>{{ __('ohc_management.approve_status') }}</th>
+                                        <th data-priority="1">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>

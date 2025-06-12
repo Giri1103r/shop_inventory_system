@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Receiving Add')
+@section('title', 'Medicine Receiving')
 @section('pageurl', admin_url('ohc/medicine-receiving-form/list'))
 @section('content')
 
@@ -36,8 +36,7 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="medicine_name" class="form-label require">Medicine
-                                                        Name</label>
+                                                    <label for="medicine_name" class="form-label require">{{__('ohc_management.medicine_name')}}</label>
                                                     <select name="medicine_id" id="medicine_id"
                                                         class="form-control form-control-sm single-select"
                                                         style="width: 100%">
@@ -65,7 +64,7 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="hsn_id" class="form-label require">HSN Number</label>
+                                                    <label for="hsn_id" class="form-label require">{{__('ohc_management.hsn_number')}}</label>
                                                     <input type="text" name="hsn_id" id="hsn_id"
                                                         class="form-control">
                                                     @error('hsn_id')
@@ -75,7 +74,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="pack_id" class="form-label require ">Pack Detatils</label>
+                                                    <label for="pack_id" class="form-label require ">{{__('ohc_management.pack')}}</label>
                                                     <input type="text" name="pack_display" id="pack_id"
                                                         class="form-control" readonly>
                                                     <input type="hidden" name="pack_id" id="pack_hidden_id">
@@ -83,7 +82,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="quantity" class="form-label require ">Quantity</label>
+                                                    <label for="quantity" class="form-label require ">{{__('ohc_management.quantity')}}</label>
                                                     <input type="text" name="quantity" id="quantity"
                                                         class="form-control">
                                                     @error('quantity')
@@ -93,8 +92,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="batch_number" class="form-label require ">Batch
-                                                        Number</label>
+                                                    <label for="batch_number" class="form-label require ">{{__('ohc_management.batch_number')}}</label>
                                                     <input type="text" name="batch_number" id="batch_number"
                                                         class="form-control">
                                                     @error('batch_number')
@@ -104,7 +102,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Rate</label>
+                                                    <label for="rate" class="form-label require ">{{__('ohc_management.rate')}}</label>
                                                     <input type="text" name="rate" id="rate"
                                                         class="form-control">
                                                     @error('rate')
@@ -114,8 +112,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Expire
-                                                        Date</label>
+                                                    <label for="rate" class="form-label require ">{{__('ohc_management.expiry_date')}}</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="expire_date" id="expire_date"
                                                             class="form-control" autocomplete="off">
@@ -130,8 +127,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="vendor_name" class="form-label require ">Vendor
-                                                        Name</label>
+                                                    <label for="vendor_name" class="form-label require ">{{__('ohc_management.vendor_name')}}</label>
                                                     <select name="vendor_id" id="vendor_id"
                                                         class="form-control single-select form-control-sm"
                                                         style="width: 100%">

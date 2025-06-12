@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medical Fitness Certificate Show')
+@section('title', 'Medical Fitness Certificate')
 @section('pageurl', admin_url('ohc/medical-fitness/list'))
 
 
@@ -30,57 +30,53 @@
                             <div class="card-body ">
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Employee details</h4>
+                                        <h4 class="text-white">{{__('ohc_management.medical_fitness_certificate_details')}}</h4>
                                     </div>
                                 </div>
 
                                 <div class="row">
-
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Employee code') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('common.employee_or_worker_code') }}</label>
                                         <div class="view_data">
                                             {{ isset($medicalfitness->emp_id) ? $medicalfitness->emp_id : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Employee Name') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('common.employee_or_worker_name') }}</label>
                                         <div class="view_data">
                                             {{ isset($medicalfitness->emp_name) ? $medicalfitness->emp_name : '' }}
                                         </div>
                                     </div>
+
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Company Name') }}</label>
+                                        <label class="form-label view_label">{{ __('common.company') }}</label>
                                         <div class="view_data">
                                             {{ getCompanyname(isset($medicalfitness->company_id) ? $medicalfitness->company_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Unit Name') }}</label>
+                                        <label class="form-label view_label">{{ __('common.unit') }}</label>
                                         <div class="view_data">
                                             {{ getUnitname(isset($medicalfitness->unit_id) ? $medicalfitness->unit_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Department Name') }}</label>
+                                        <label class="form-label view_label">{{ __('common.department') }}</label>
                                         <div class="view_data">
                                             {{ getDepartment(isset($medicalfitness->department_id) ? $medicalfitness->department_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('date') }}</label>
+                                        <label class="form-label view_label">{{ __('common.date') }}</label>
                                         <div class="view_data">
-                                            {{ displaydateformat(isset($medicalfitness->date) ? $medicalfitness->date : '') }}
+                                            {{ displayDateformat(isset($medicalfitness->date) ? $medicalfitness->date : '') }}
                                         </div>
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Created at') }}</label>
-                                        <div class="view_data">
-                                            {{ getUsername(isset($medicalfitness->created_by) ? $medicalfitness->created_by : '') }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">File</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.file') }}</label>
                                         @if (isset($medicalfitness) && $medicalfitness && $medicalfitness->file)
                                             <p>
                                                 @php
@@ -108,21 +104,28 @@
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Created Date') }}</label>
+                                        <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
-                                            {{ displaydateformat(isset($medicalfitness->created_at) ? $medicalfitness->created_at : '') }}
+                                            {{ getUsername(isset($medicalfitness->created_by) ? $medicalfitness->created_by : '') }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
+                                        <div class="view_data">
+                                            {{ displayDateformat($medicalfitness->created_at) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-8 form-input">
-                                        <label class="form-label view_label">{{ __('Chief Complaint') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($medicalfitness->cheif_complaint) ? $medicalfitness->cheif_complaint : '' }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-12 form-input">
-                                        <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.remarks') }}</label>
                                         <div class="view_data">
                                             {{ isset($medicalfitness->remarks) ? $medicalfitness->remarks : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-8 form-input">
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.chief_complaint') }}</label>
+                                        <div class="view_data">
+                                            {{ isset($medicalfitness->cheif_complaint) ? $medicalfitness->cheif_complaint : '' }}
                                         </div>
                                     </div>
                                 </div>
@@ -135,32 +138,36 @@
                                         $medicalfitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">Doctor Approval </h4>
+                                            <h4 class="text-white">{{ __('ohc_management.doctor_approval') }}</h4>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="row">
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.approver_name') }}</label>
                                                 <div class="view_data">
                                                     {{ getUsername(isset($doctorapprovallog->created_by) ? $doctorapprovallog->created_by : '') }}
                                                 </div>
                                             </div>
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.approved_date') }}</label>
                                                 <div class="view_data">
                                                     {{ displaydateformat(isset($doctorapprovallog->created_at) ? $doctorapprovallog->created_at : '') }}
                                                 </div>
                                             </div>
 
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.approved_time') }}</label>
                                                 <div class="view_data">
                                                     {{ displaytimeformat(isset($doctorapprovallog->created_at) ? $doctorapprovallog->created_at : '') }}
                                                 </div>
                                             </div>
                                             <div class="mb-3 col-md-12 form-input">
-                                                <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.remarks') }}</label>
                                                 <div class="view_data">
                                                     {{ isset($doctorapprovallog->remarks) ? $doctorapprovallog->remarks : '' }}
                                                 </div>
@@ -176,32 +183,36 @@
                                         $medicalfitness->approve_status == STATUS_OHC_MEDICAL_EHS_HEAD_APPROVED)
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">EHS Head Approval </h4>
+                                            <h4 class="text-white">{{ __('ohc_management.ehs_head_approval') }}</h4>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="row">
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.approver_name') }}</label>
                                                 <div class="view_data">
                                                     {{ getUsername(isset($ehsheadlog->created_by) ? $ehsheadlog->created_by : '') }}
                                                 </div>
                                             </div>
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.approved_date') }}</label>
                                                 <div class="view_data">
                                                     {{ displaydateformat(isset($ehsheadlog->created_at) ? $ehsheadlog->created_at : '') }}
                                                 </div>
                                             </div>
 
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.approved_time') }}</label>
                                                 <div class="view_data">
                                                     {{ displaytimeformat(isset($ehsheadlog->created_at) ? $ehsheadlog->created_at : '') }}
                                                 </div>
                                             </div>
                                             <div class="mb-3 col-md-12 form-input">
-                                                <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.remarks') }}</label>
                                                 <div class="view_data">
                                                     {{ isset($ehsheadlog->remarks) ? $ehsheadlog->remarks : '' }}
                                                 </div>

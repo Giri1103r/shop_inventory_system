@@ -24,6 +24,7 @@ class WeeklyAmbulance extends Model
         'checked_by',
         'verified_by',
         'approved_by',
+        'capa_needed',
         'approve_status',
         'l1_manager_verified_by',
         'l2_manager_verified_by',
@@ -56,8 +57,16 @@ class WeeklyAmbulance extends Model
         $search = '';
 
 
-        $query = $this->select('inspection_ohc_weekly_ambulance_inspection_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_ohc_weekly_ambulance_inspection_checklist.id as inspection_id',
-        'inspection_ohc_weekly_ambulance_inspection_checklist.created_at as inspection_created_at','inspection_ohc_weekly_ambulance_inspection_checklist.created_by as inspection_created_by')
+        $query = $this->select(
+            'inspection_ohc_weekly_ambulance_inspection_checklist.*',
+            'inspection_shift_option.*',
+            'masters_unit.*',
+            'masters_location.*',
+            'inspection_frequency_option.*',
+            'inspection_ohc_weekly_ambulance_inspection_checklist.id as inspection_id',
+            'inspection_ohc_weekly_ambulance_inspection_checklist.created_at as inspection_created_at',
+            'inspection_ohc_weekly_ambulance_inspection_checklist.created_by as inspection_created_by'
+        )
             ->leftJoin('masters_location', 'inspection_ohc_weekly_ambulance_inspection_checklist.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_ohc_weekly_ambulance_inspection_checklist.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_ohc_weekly_ambulance_inspection_checklist.unit', '=', 'masters_unit.id')
@@ -183,6 +192,7 @@ class WeeklyAmbulance extends Model
                 'approved_by' => Auth::id(),
                 'approve_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
+                'capa_needed' => $request->is_passed,
                 'remarks' => $request->remarks,
             ];
             $this->where('id', $id)->update($update_array);
@@ -191,6 +201,7 @@ class WeeklyAmbulance extends Model
                 'verified_by' => Auth::id(),
                 'approve_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
+                'capa_needed' => $request->is_passed,
                 'capa_recomendation' => $request->remarks,
             ];
             $this->where('id', $id)->update($update_array);
@@ -305,7 +316,7 @@ class WeeklyAmbulance extends Model
                     ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
             });
         }
-          if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_ohc_weekly_ambulance_inspection_checklist.created_at', '>=', $startDate);

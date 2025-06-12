@@ -49,7 +49,8 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                         <h4 class="text-white">{{__('ohc_management.medicine_requisition_slip_security_gate_fdo')}}</h4>
+                                        <h4 class="text-white">
+                                            {{ __('ohc_management.medicine_requisition_slip_security_gate_fdo') }}</h4>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -72,13 +73,13 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{__('common.unit')}}</label>
+                                        <label class="form-label view_label">{{ __('common.unit') }}</label>
                                         <div class="view_data">
                                             {{ getUnitname(isset($medicinerequisition->unit) ? $medicinerequisition->unit : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{__('common.department')}}</label>
+                                        <label class="form-label view_label">{{ __('common.department') }}</label>
                                         <div class="view_data">
                                             {{ getDepartment(isset($medicinerequisition->department) ? $medicinerequisition->department : '') }}
                                         </div>
@@ -137,10 +138,9 @@
                                             <thead class="bg-secondary" style="color: #ffff">
                                                 <tr>
                                                     <th>{{ __('common.sno') }}</th>
-                                                    <th>{{__('ohc_management.medicine_name')}}</th>
-
-                                                    <th>{{__('ohc_management.quantity')}}</th>
-                                                    <th>{{__('ohc_management.remarks')}}</th>
+                                                    <th>{{ __('ohc_management.medicine_name') }}</th>
+                                                    <th>{{ __('ohc_management.quantity') }}</th>
+                                                    <th>{{ __('ohc_management.remarks') }}</th>
 
                                                 </tr>
                                             </thead>
@@ -155,7 +155,7 @@
                                                             <td>{{ $loop->iteration }}</td>
                                                             <td>{{ getMedicinename($data->medicine_id) }}</td>
                                                             <td>{{ $data->quantity }}</td>
-                                                            <td>{{ $data->remarks ?? '-'  }}</td>
+                                                            <td>{{ $data->remarks ?? '-' }}</td>
 
                                                         </tr>
                                                     @endforeach
@@ -170,54 +170,37 @@
                                         $medicinerequisition->approve_status == SAFETY_OFFICER_REJECTED)
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">{{__('inspection.safety_officer_approval')}}</h4>
+                                            <h4 class="text-white">{{ __('ohc_management.safety_officer_approval') }}</h4>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="row">
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approver Name') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.approver_name') }}</label>
                                                 <div class="view_data">
-                                                    {{ getUsername(isset($safetyofficer->created_by) ? $safetyofficer->created_by : '') }}
+                                                    {{ getUsername(isset($safetyofficer->approved_by) ? $safetyofficer->approved_by : '') }}
                                                 </div>
                                             </div>
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Date') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.approved_date') }}</label>
                                                 <div class="view_data">
                                                     {{ displaydateformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
                                                 </div>
                                             </div>
 
                                             <div class="mb-3 col-md-4 form-input">
-                                                <label class="form-label view_label">{{ __('Approved Time') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.approved_time') }}</label>
                                                 <div class="view_data">
                                                     {{ displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
                                                 </div>
                                             </div>
-                                            {{-- @if (isset($safetyofficersignature))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($safetyofficersignature->file_path) }}"
-                                                        alt="Signature Upload"
-                                                        style="width: 150px; margin-top: -10px;" />
-                                                </div>
-                                            </div>
-                                        @elseif(!empty($approversignatureview) && !empty($approversignatureview->signature_upload))
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label"
-                                                    style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($approversignatureview->signature_upload) }}" alt="Approver Signature"
-                                                    style="width: 150px; margin-top: -10px;"/>
 
-                                            </div>
-                                        </div>
-
-                                        @endif --}}
                                             <div class="mb-3 col-md-12 form-input">
-                                                <label class="form-label view_label">{{ __('Remarks') }}</label>
+                                                <label
+                                                    class="form-label view_label">{{ __('ohc_management.remarks') }}</label>
                                                 <div class="view_data">
                                                     {{ isset($safetyofficer->remarks) ? $safetyofficer->remarks : '' }}
                                                 </div>
@@ -238,13 +221,13 @@
                                             <table class="table table-bordered">
                                                 <thead class="bg-secondary" style="color: #ffff">
                                                     <tr>
-                                                        <th>S.NO</th>
-                                                        <th>From Status</th>
-                                                        <th>To Status</th>
-                                                        <th>Remarks</th>
-                                                        <th>Approved By</th>
-                                                        <th>Created By</th>
-                                                        <th>Created At</th>
+                                                        <th>{{ __('common.sno') }}</th>
+                                                        <th>{{ __('common.from_status') }}</th>
+                                                        <th>{{ __('common.to_status') }}</th>
+                                                        <th>{{ __('ohc_management.remarks') }}</th>
+                                                        <th>{{ __('common.approved_by') }}</th>
+                                                        <th>{{ __('common.created_by') }}</th>
+                                                        <th>{{ __('common.created_date') }}</th>
                                                     </tr>
                                                 </thead>
 

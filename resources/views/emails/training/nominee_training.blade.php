@@ -72,6 +72,15 @@
                         <tr>
                             <td style="font-family: sans-serif; font-size: 14px; font-weight: bold; vertical-align: top;"
                                 valign="top">
+                                Trainer Name:
+                            </td>
+                            <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">
+                                {{ getEmployeename($details['trainer_id']) }}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="font-family: sans-serif; font-size: 14px; font-weight: bold; vertical-align: top;"
+                                valign="top">
                                 Venue:
                             </td>
                             <td style="font-family: sans-serif; font-size: 14px; vertical-align: top;" valign="top">

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Certified First Aider Show')
+@section('title', 'Certified First Aider')
 @section('pageurl', admin_url('ohc/certified-first-aider/list'))
 
 
@@ -33,43 +33,45 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Certified First Aider</h4>
+                                        <h4 class="text-white">{{ __('ohc_management.certified_first_aider_heading') }}</h4>
                                     </div>
                                 </div>
                                 <div class="row">
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Unit') }}</label>
+                                        <label class="form-label view_label">{{ __('common.unit') }}</label>
                                         <div class="view_data">
                                             {{ getUnitname(isset($certifiedfirstaider->unit_id) ? $certifiedfirstaider->unit_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Department') }}</label>
+                                        <label class="form-label view_label">{{ __('common.department') }}</label>
                                         <div class="view_data">
                                             {{ getDepartment(isset($certifiedfirstaider->department_id) ? $certifiedfirstaider->department_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Employee Code') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('common.employee_or_worker_code') }}</label>
                                         <div class="view_data">
                                             {{ isset($certifiedfirstaider->emp_id) ? $certifiedfirstaider->emp_id : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Certified first Aider Name') }}</label>
+                                        <label
+                                            class="form-label view_label">{{ __('ohc_management.certified_first_aider') }}</label>
                                         <div class="view_data">
                                             {{ isset($certifiedfirstaider->certifier_name) ? $certifiedfirstaider->certifier_name : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Mobile Number') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.mobile_no') }}</label>
                                         <div class="view_data">
                                             {{ isset($certifiedfirstaider->mobile_no) ? $certifiedfirstaider->mobile_no : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Address') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.address') }}</label>
                                         <div class="view_data">
                                             {{ isset($certifiedfirstaider->address) ? $certifiedfirstaider->address : '' }}
                                         </div>

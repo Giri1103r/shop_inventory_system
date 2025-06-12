@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medical Fitness Certificate Add')
+@section('title', 'Medical Fitness Certificate')
 @section('pageurl', admin_url('ohc/medical-fitness/list'))
 @section('content')
 
@@ -36,7 +36,8 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Employee ID</label>
+                                                    <label
+                                                        class="form-label">{{ __('common.employee_or_worker_code') }}</label>
                                                     <select name="emp_id" class="form-control " id="emp_id"
                                                         style="width: 100%">
                                                         <option value="">Select the Employee ID</option>
@@ -48,7 +49,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Employee Name</label>
+                                                    <label
+                                                        class="form-label require">{{ __('common.employee_or_worker_name') }}</label>
                                                     <input type="text" name="emp_name" id="emp_name"
                                                         class="form-control" placeholder="Employee Name" readonly>
                                                     @error('emp_name')
@@ -58,7 +60,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Company</label>
+                                                    <label class="form-label require">{{ __('common.company') }}</label>
                                                     <input type="text" name="company_id" id="company_id"
                                                         class="form-control" placeholder="Enter the Company name" readonly>
                                                     @error('company_id')
@@ -68,7 +70,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
+                                                    <label class="form-label require">{{ __('common.unit') }}</label>
                                                     <input type="text" name="unit_id" id="unit_id" class="form-control"
                                                         placeholder="Enter the Unit name" readonly>
                                                     @error('company_id')
@@ -78,7 +80,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Department</label>
+                                                    <label class="form-label require">{{ __('common.department') }}</label>
                                                     <input type="text" name="department_id" id="department_id"
                                                         class="form-control" placeholder="Enter the Department" readonly>
                                                     @error('company_id')
@@ -88,7 +90,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Date
+                                                    <label for="rate"
+                                                        class="form-label require ">{{ __('common.date') }}
                                                     </label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="date" id="date"
@@ -105,8 +108,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Medical Fitness Certificate
-                                                        Upload</label>
+                                                    <label
+                                                        class="form-label require">{{ __('ohc_management.medical_fitness_certificate_upload') }}</label>
                                                     <input type="file" name="file" id="file"
                                                         class="form-control">
                                                     <small>Allowed file types: PDF, DOCX, DOC</small>
@@ -114,7 +117,8 @@
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Chief Complaint</label>
+                                                    <label
+                                                        class="form-label require">{{ __('ohc_management.chief_complaint') }}</label>
                                                     <textarea name="cheif_complaint" id="cheif_complaint" class="form-control " cols="30" rows="5"></textarea>
                                                     @error('cheif_complaint')
                                                         <div class="text-danger">{{ $message }}</div>
@@ -123,7 +127,8 @@
                                             </div>
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Remarks</label>
+                                                    <label
+                                                        class="form-label require">{{ __('ohc_management.remarks') }}</label>
                                                     <textarea name="remarks" id="remarks" class="form-control " cols="30" rows="5"></textarea>
                                                     @error('remarks')
                                                         <div class="text-danger">{{ $message }}</div>
@@ -278,10 +283,10 @@
                     company_id: {
                         required: "Please Enter the Company name.",
                     },
-                     unit_id: {
+                    unit_id: {
                         required: "Please Enter the Unit name.",
                     },
-                     department_id: {
+                    department_id: {
                         required: "Please Enter the department name.",
                     },
                     file: {

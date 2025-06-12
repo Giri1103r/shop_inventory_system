@@ -131,7 +131,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             return view('inspection.inspection_ohc.emergency_buyer_bag_inspection.add', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/emergency-buyer-first-aid-bag/checklist/list'));
         }
     }
@@ -183,16 +183,16 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 $inspection_details = $this->emergency_buyer_first_aid_bag->selectOne($emergency_buyer_first_aid_bag_id);
                 // $files = $this->signature->requestorsignatureUpload($inspection_type, $inspection_details->id);
 
-                Session::flash('success', 'Your data has been created successfully!');
+                Session::flash('success', __('common.created_msg'));
                 return redirect(admin_url('ohc/emergency-buyer-first-aid-bag/checklist/list'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error',  __('common.message_error'));
                 return redirect(admin_url('ohc/emergency-buyer-first-aid-bag/checklist/list'));
             }
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/emergency-buyer-first-aid-bag/checklist/list'));
         }
     }
@@ -217,7 +217,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             return view('inspection.inspection_ohc.emergency_buyer_bag_inspection.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong !');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
         }
     }
@@ -258,7 +258,8 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
         }
     }
 
@@ -399,7 +400,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             $sheet->getStyle("A{$row}:F{$row}")->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
             $row++;
 
@@ -408,7 +409,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             $sheet->getStyle("A{$row}:F{$row}")->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
             $row++;
 
@@ -417,7 +418,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             $sheet->mergeCells("A{$signatureRow}:F{$signatureRow}");
             $sheet->getStyle("A{$signatureRow}:F{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
             // if (file_exists($inspection_created_by)) {
@@ -444,7 +445,8 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
             report($e);
-            return back()->with('error', $e->getMessage());
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
         }
     }
 
@@ -569,7 +571,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 $sheet->getStyle("A{$dataRow}:F{$dataRow}")->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
                 $sheet->getRowDimension($dataRow)->setRowHeight(40);
                 $dataRow++;
@@ -580,7 +582,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 $sheet->getStyle("A{$dataRow}:F{$dataRow}")->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
                 $sheet->getRowDimension($dataRow)->setRowHeight(40);
                 $dataRow++;
@@ -592,7 +594,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
 
                 $sheet->getStyle("A{$signatureRow}:F{$signatureRow}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                   'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER,'vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
                 // if (file_exists($inspection_created_by)) {
@@ -608,7 +610,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
                 // }
 
                 $richText = new RichText();
-                $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by) )->getFont()->setBold(true);
+                $richText->createTextRun("Inspected and checked By: " . getUsername($inspection_detail->created_by))->getFont()->setBold(true);
                 $sheet->getCell("A{$signatureRow}")->setValue($richText);
 
                 // Border for complete block
@@ -636,7 +638,9 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-            return back()->with('error', $e->getMessage());
+            report($e);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
         }
     }
 
@@ -683,6 +687,8 @@ class EmergencyBuyerFirstAidBagChecklistController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
         }
     }
 }

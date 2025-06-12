@@ -32,7 +32,8 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="medicine_name" class="form-label ">Medicine Name</label>
+                                            <label for="medicine_name"
+                                                class="form-label ">{{ __('ohc_management.medicine_name') }}</label>
                                             <select name="medicine_id" id="medicine_id"
                                                 class="form-control single-select form-control-sm" style="width: 100%">
                                                 <option value="">Select the Medicine Name</option>
@@ -42,7 +43,8 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="vendor_name" class="form-label ">Vendor Name</label>
+                                            <label for="vendor_name"
+                                                class="form-label ">{{ __('ohc_management.vendor_name') }}</label>
                                             <select name="vendor_id" id="vendor_id"
                                                 class="form-control single-select form-control-sm" style="width: 100%">
                                                 <option value="">Select the Vendor Name</option>
@@ -53,7 +55,8 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">Expire Date</label>
+                                            <label for="emp_name"
+                                                class="form-label ">{{ __('ohc_management.expiry_date') }}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="expire_date"
                                                     id="expire_date" autocomplete="off">
@@ -65,7 +68,7 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.from_date') }}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -76,7 +79,7 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.to_date') }}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -86,15 +89,17 @@
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="vendor_name" class="form-label ">Approve Status</label>
+                                            <label for="vendor_name"
+                                                class="form-label ">{{ __('common.approve_status') }}</label>
                                             <select name="approve_status" id="approve_status"
                                                 class="form-control single-select form-control-sm" style="width: 100%">
                                                 <option value="">Select the approve status</option>
-                                                <option value="2">EHS Officer verification Pending</option>
-                                                <option value="5">L1 EHS verification Pending</option>
-                                                <option value="8">EHS Head Approval Pending</option>
-                                                <option value="11">Open</option>
-                                                <option value="12">Close</option>
+                                                <option value="{{ encryptId('2') }} ">EHS Officer verification Pending
+                                                </option>
+                                                <option value=" {{ encryptId('5') }}">L1 EHS verification Pending</option>
+                                                <option value="{{ encryptId('8') }}">EHS Head Approval Pending</option>
+                                                <option value=" {{ encryptId('11') }}">Open</option>
+                                                <option value="{{ encryptId('12') }}">Close</option>
 
                                             </select>
                                         </div>
@@ -116,17 +121,17 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Medicine Name</th>
-                                        <th>Vendor Name</th>
-                                        <th>HSN Number</th>
-                                        <th>Pack</th>
-                                        <th>Quantity</th>
-                                        <th>Batch Number</th>
-                                        <th>Rate</th>
-                                        <th>Expire Date</th>
-                                        <th>Stock Entry Date</th>
-                                        <th>Approve Status</th>
-                                        <th data-priority="1">Action</th>
+                                        <th>{{ __('ohc_management.medicine_name') }}</th>
+                                        <th>{{ __('ohc_management.vendor_name') }}</th>
+                                        <th>{{ __('ohc_management.hsn_number') }}</th>
+                                        <th>{{ __('ohc_management.pack') }}</th>
+                                        <th>{{ __('ohc_management.quantity') }}</th>
+                                        <th>{{ __('ohc_management.batch_number') }}</th>
+                                        <th>{{ __('ohc_management.rate') }}</th>
+                                        <th>{{ __('ohc_management.expiry_date') }}</th>
+                                        <th>{{ __('ohc_management.stock_entry_date') }}</th>
+                                        <th>{{ __('ohc_management.approve_status') }}</th>
+                                        <th data-priority="1">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -273,7 +278,7 @@
                     data: 'expire_date',
                     name: 'expire_date'
                 },
-                 {
+                {
                     data: 'created_date',
                     name: 'created_date'
                 },

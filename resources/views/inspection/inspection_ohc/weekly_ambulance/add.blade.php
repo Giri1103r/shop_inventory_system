@@ -112,7 +112,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">{{__('common.unit')}}</label>
+                                                    <label class="form-label require">{{ __('common.unit') }}</label>
                                                     <select name="unit_id" id="unit_id" style="width: 100%"
                                                         class="form-control single-select">
                                                         <option value="">Select the option</option>
@@ -123,7 +123,8 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">{{__('inspection.next_due')}}</label>
+                                                    <label for="rate"
+                                                        class="form-label require ">{{ __('inspection.next_due') }}</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="next_due_on" id="next_due_on"
                                                             class="form-control"autocomplete="off">
@@ -135,7 +136,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">{{__('inspection.date_of_inspection')}}</label>
+                                                    <label for="rate"
+                                                        class="form-label require ">{{ __('inspection.date_of_inspection') }}</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="date_of_inspection"
                                                             id="date_of_inspection"
@@ -164,7 +166,7 @@
 
                                                         <tr>
                                                             <th colspan="3">
-                                                                Check Points
+                                                                {{ __('ohc_management.check_points') }}
                                                             </th>
 
                                                             @foreach ($getoption as $option)
@@ -173,7 +175,7 @@
                                                                 </th>
                                                             @endforeach
                                                             <th colspan="3" \>
-                                                                Remarks
+                                                                {{ __('ohc_management.remarks') }}
                                                             </th>
                                                         </tr>
 
@@ -453,12 +455,12 @@
             $('textarea[name^="remarks"]').each(function() {
                 var name = $(this).attr("name");
                 $('#weeklyambulance').validate().settings.rules[name] = {
-                    remarksRequired: true,
+
                     minlength: 3,
                     maxlength: 600
                 };
                 $('#weeklyambulance').validate().settings.messages[name] = {
-                    remarksRequired: "Remarks are required if an option is selected",
+                  
                     minlength: "Remarks must be at least 3 characters",
                     maxlength: "Remarks must not exceed 600 characters"
                 };

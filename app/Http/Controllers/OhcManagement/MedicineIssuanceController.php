@@ -141,7 +141,7 @@ class MedicineIssuanceController extends Controller
             return view('ohcmanagement.medicine_issuance.add', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
     }
@@ -168,7 +168,7 @@ class MedicineIssuanceController extends Controller
             return view('ohcmanagement.medicine_issuance.issue', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
     }
@@ -281,17 +281,17 @@ class MedicineIssuanceController extends Controller
                 notificationSave($notificationData);
 
 
-                Session::flash('success', 'Your data has been created successfully!');
+                Session::flash('success', __('common.created_msg'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/medicine-issuance/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
     }
@@ -338,6 +338,7 @@ class MedicineIssuanceController extends Controller
 
                 // stock update
                 $this->inventory->issuestockupdate($user_medicine_issuance, $medicinedata);
+                $this->inventory->otherunit($user_medicine_requisition, $medicinedata);
                 // notification
                 $mailsubject = 'Medicine Issuing to the Unit';
 
@@ -373,17 +374,17 @@ class MedicineIssuanceController extends Controller
                 notificationSave($notificationData);
 
 
-                Session::flash('success', 'Your data has been created successfully!');
+                Session::flash('success', __('common.created_msg'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/medicine-issuance/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
     }
@@ -410,7 +411,7 @@ class MedicineIssuanceController extends Controller
             return view('ohcmanagement.medicine_issuance.edit', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
     }
@@ -480,7 +481,7 @@ class MedicineIssuanceController extends Controller
                 if (!empty($deletedMedicine)) {
 
                     foreach ($deletedMedicine as $encryptedMedicineId) {
-                        $medicineDatas =($encryptedMedicineId);
+                        $medicineDatas = ($encryptedMedicineId);
 
                         $update_data = $this->medicinelog
                             ->where('medicine_id', $medicineDatas)->where('creator_id', $creatorlog->id)
@@ -617,17 +618,17 @@ class MedicineIssuanceController extends Controller
                 ];
                 notificationSave($notificationData);
 
-                Session::flash('success', 'Your data has been updated successfully!');
+                Session::flash('success', __('common.updated_msg'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, please try again later!');
+                Session::flash('error', __('common.message_error'));
                 return redirect()->back();
             }
 
             return redirect(admin_url('ohc/medicine-issuance/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, please try again later!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
     }
@@ -650,7 +651,7 @@ class MedicineIssuanceController extends Controller
             return view('ohcmanagement.medicine_issuance.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong please try again after some time');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
     }
@@ -742,11 +743,11 @@ class MedicineIssuanceController extends Controller
             $insert_data['log_id'] = $insert_id;
             $insert_data['Uploded_by'] = Auth::user()->toArray();
 
-            Session::flash('success', __('Medicine uploaded sucessfully'));
+            Session::flash('success', __('ohc_management.file_upload_msg'));
             return redirect(admin_url('ohc/medicine-issuance/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', __('Medicine  upload failed'));
+            Session::flash('error', __('ohc_management.file_upload_error_msg'));
             return redirect(admin_url('ohc/medicine-issuance/list'));
         }
     }
@@ -763,11 +764,12 @@ class MedicineIssuanceController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Unit Name',
-                'Department Name',
-                'Issue Date',
-                'Created_by',
-                'Created_at'
+                __("common.unit"),
+                __("common.department"),
+                __("ohc_management.issued_date"),
+                __("common.created_by"),
+                __("common.created_date"),
+
             ];
 
             $i = 1;
@@ -794,6 +796,8 @@ class MedicineIssuanceController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/medicine-issuance/list'));
         }
     }
 
@@ -813,11 +817,11 @@ class MedicineIssuanceController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Unit Name',
-                'Department Name',
-                'Issue Date',
-                'Created_by',
-                'Created_at'
+                __("common.unit"),
+                __("common.department"),
+                __("ohc_management.issued_date"),
+                __("common.created_by"),
+                __("common.created_date"),
             ];
 
             $data = array(
@@ -850,6 +854,8 @@ class MedicineIssuanceController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/medicine-issuance/list'));
         }
     }
 

@@ -152,7 +152,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        Weekly Ambulance Inspection Checklist
+                        {{ __('ohc_management.weekly_ambulance_inspection_checklist') }}
                     </td>
                 </tr>
             </table>

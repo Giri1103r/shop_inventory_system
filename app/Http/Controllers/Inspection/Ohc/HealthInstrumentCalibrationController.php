@@ -88,7 +88,7 @@ class HealthInstrumentCalibrationController extends Controller
                             return $btn;
                         })
 
-                        ->rawColumns(['action', 'issue_date', 'created_by', 'status', 'created_at'])
+                        ->rawColumns(['action', 'issue_date', 'inspection_created_by', 'status', 'created_at'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -127,7 +127,7 @@ class HealthInstrumentCalibrationController extends Controller
             return view('inspection.inspection_ohc.health_instrument.add', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }
     }
@@ -186,16 +186,16 @@ class HealthInstrumentCalibrationController extends Controller
 
                 $health_instrument_details = $this->health_instrument_calibration_details->store($id);
 
-                Session::flash('success', 'Your data has been created successfully!');
+                Session::flash('success', __('common.created_msg'));
                 return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error',  __('common.message_error'));
                 return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
             }
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }
     }
@@ -218,7 +218,7 @@ class HealthInstrumentCalibrationController extends Controller
             return view('inspection.inspection_ohc.health_instrument.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }
     }
@@ -259,7 +259,7 @@ class HealthInstrumentCalibrationController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }
     }
@@ -476,7 +476,7 @@ class HealthInstrumentCalibrationController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }
     }
@@ -688,7 +688,7 @@ class HealthInstrumentCalibrationController extends Controller
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/health-instrument/calibration-track-sheet/list'));
         }
     }

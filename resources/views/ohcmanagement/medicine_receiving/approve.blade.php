@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Receiving Approval')
+@section('title', 'Medicine Receiving')
 @section('pageurl', admin_url('ohc/medicine-receiving-form/list'))
 
 

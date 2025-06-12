@@ -95,7 +95,7 @@ class UserMedicineRequisition extends Model
             $query->where('ohc_management_user_medicine_requisition.created_at', '<=', $endDate);
         }
         if ($request->filled('status')) {
-            $query->where('ohc_management_user_medicine_requisition.approve_status',  $request->status . '%');
+            $query->where('ohc_management_user_medicine_requisition.approve_status', decryptId($request->status));
         }
 
         $totalFilteredRecords = $query->count();
@@ -214,7 +214,7 @@ class UserMedicineRequisition extends Model
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('ohc_management_user_medicine_requisition.approve_status', ($request->status));
+            $query = $query->where('ohc_management_user_medicine_requisition.approve_status', decryptId($request->status));
         }
         if ($request->has('req_id') && $request->req_id) {
 

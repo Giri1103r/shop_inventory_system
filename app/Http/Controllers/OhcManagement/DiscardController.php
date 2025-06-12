@@ -169,7 +169,7 @@ class DiscardController extends Controller
             return view('ohcmanagement.discard.add', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/discard/list'));
         }
     }
@@ -196,7 +196,7 @@ class DiscardController extends Controller
             return view('ohcmanagement.discard.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/discard/list'));
         }
     }
@@ -215,13 +215,13 @@ class DiscardController extends Controller
                 );
             }
             if ($user_discard->approve_status == OHC_DISCARD_EHS_APPROVED) {
-                return redirect(admin_url('ohc/discard/view/' .$request->id));
+                return redirect(admin_url('ohc/discard/view/' . $request->id));
             } else {
                 return view('ohcmanagement.discard.approve', $data);
             }
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/discard/list'));
         }
     }
@@ -265,7 +265,8 @@ class DiscardController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/discard/list'));
         }
     }
 
@@ -343,7 +344,6 @@ class DiscardController extends Controller
                         'created_by' => Auth::id(),
                     ];
                     notificationSave($notificationData);
-
                 } else {
                     $mailsubject =  'Medicine Name Has Been Rejected';
                     $details['mail_subject'] =   $mailsubject;
@@ -372,13 +372,13 @@ class DiscardController extends Controller
                     ->with('success', 'Request has been processed successfully.');
             } catch (Exception $ex) {
                 report($ex);
-                return redirect(admin_url('ohc/discard/list'))
-                    ->with('error', 'Something went wrong, Please try again later.');
+                Session::flash('error', __('common.message_error'));
+                return redirect(admin_url('ohc/discard/list'));
             }
         } catch (Exception $ex) {
             report($ex);
-            return redirect(admin_url('ohc/discard/list'))
-                ->with('error', 'Something went wrong, Please try again later.');
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/discard/list'));
         }
     }
     public function ExportExcel(Request $request)
@@ -394,14 +394,14 @@ class DiscardController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Medicine Name',
-                'Quantity',
-                'Remarks',
-                'Discard Date',
-                'Approve status',
-                'Created by',
-                'Approved by',
-                'Created at'
+                __("ohc_management.medicine_name"),
+                __("ohc_management.quantity"),
+                __("ohc_management.remarks"),
+                __("ohc_management.discarded_date"),
+                __("common.approve_status"),
+                __("common.created_by"),
+                __("common.approved_by"),
+                __("common.created_date"),
             ];
 
             $i = 1;
@@ -431,8 +431,8 @@ class DiscardController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            return redirect(admin_url('ohc/discard/list'))
-            ->with('error', 'Something went wrong, Please try again later.');
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/discard/list'));
         }
     }
 
@@ -449,14 +449,15 @@ class DiscardController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Medicine Name',
-                'Quantity',
-                'Remarks',
-                'Discard Date',
-                'Approve status',
-                'Created by',
-                'Approved by',
-                'Created at'
+                __("ohc_management.medicine_name"),
+                __("ohc_management.quantity"),
+                __("ohc_management.remarks"),
+                __("ohc_management.discarded_date"),
+                __("common.approve_status"),
+                __("common.created_by"),
+                __("common.approved_by"),
+                __("common.created_date"),
+
             ];
 
             $data = array(
@@ -489,8 +490,8 @@ class DiscardController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            return redirect(admin_url('ohc/discard/list'))
-            ->with('error', 'Something went wrong, Please try again later.');
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/discard/list'));
         }
     }
 

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Issuance Add')
+@section('title', 'Medicine Issuance')
 @section('pageurl', admin_url('ohc/medicine-issuance/list'))
 @section('content')
 
@@ -36,7 +36,7 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
+                                                    <label class="form-label require">{{ __('common.unit') }}</label>
                                                     <select name="unit_id" id="unit_id" class="form-control single-select"
                                                         style="width: 100%">
                                                         <option value="">Select the unit</option>
@@ -49,7 +49,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Department</label>
+                                                    <label class="form-label require">{{ __('common.department') }}</label>
                                                     <select name="department_id" id="department_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Department </option>
@@ -59,8 +59,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Issued
-                                                        Date</label>
+                                                    <label for="rate"
+                                                        class="form-label require ">{{ __('ohc_management.issued_date') }}</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="issue_date" id="issue_date"
                                                             class="form-control"autocomplete="off"
@@ -75,15 +75,15 @@
                                         </div>
                                         <div class="row mt-2">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">Medicine details</h4>
+                                                <h4 class="text-white">{{ __('ohc_management.mmedicine_details') }}</h4>
 
                                             </div>
                                             <div
-                                            class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
-                                            <button class="btn btn-primary add-row me-3" type="button" id="add-row"
-                                                style="width: 84px;">
-                                                Add
-                                            </button>
+                                                class="d-flex justify-content-end align-items-center me-2 mb-3 button-container">
+                                                <button class="btn btn-primary add-row me-3" type="button" id="add-row"
+                                                    style="width: 84px;">
+                                                    Add
+                                                </button>
 
                                                 <button type="button" id="import-button" class=" btn btn-success">
                                                     Import
@@ -98,10 +98,10 @@
 
                                                     <thead class="bg-secondary" style="color: #ffff">
                                                         <tr>
-                                                            <th>Medicine</th>
-                                                            <th>Available Quantity</th>
-                                                            <th>Quantity</th>
-                                                            <th>Action</th>
+                                                            <th>{{ __('ohc_management.medicine_name') }}</th>
+                                                            <th>{{ __('ohc_management.available_quantity') }}</th>
+                                                            <th>{{ __('ohc_management.quantity') }}</th>
+                                                            <th>{{ __('common.action') }}</th>
                                                         </tr>
                                                     </thead>
 
@@ -109,8 +109,8 @@
                                                         <tr>
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                    <label for="medicine_id" class="require">Medicine
-                                                                        Name</label>
+                                                                    <label for="medicine_id"
+                                                                        class="require">{{ __('ohc_management.medicine_name') }}</label>
                                                                     <select name="medicine_id[0]" id="medicine_id"
                                                                         class="form-control single-select"
                                                                         style="width: 100%">
@@ -128,8 +128,7 @@
                                                             <td>
                                                                 <div class="form-group form-input">
                                                                     <label for="available_quantity"
-                                                                        class="require">Available
-                                                                        Quantity</label>
+                                                                        class="require">{{ __('ohc_management.available_quantity') }}</label>
                                                                     <input type="text" name="available_quantity[0]"
                                                                         id="available_quantity" value=""
                                                                         placeholder="Available quantity"
@@ -139,9 +138,9 @@
 
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                    <label for="quantity" class="require">Quantity</label>
-                                                                    <input type="number" name="quantity[0]" id="quantity" min="1"
-                                                                        placeholder="Enter the quantity"
+                                                                    <label for="quantity" class="require">{{ __('ohc_management.quantity') }}</label>
+                                                                    <input type="number" name="quantity[0]" id="quantity"
+                                                                        min="1" placeholder="Enter the quantity"
                                                                         class="form-control">
                                                                     <span id="quantity-error" style=" display:none;"
                                                                         class="text-danger">Quantity must be less
@@ -152,10 +151,10 @@
                                                             <td>
 
 
-                                                                    <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
-                                                                        style="width: 30px; height: 30px;">
-                                                                        <i class="fa-solid fa-trash"></i>
-                                                                    </div>
+                                                                <div class="d-flex justify-content-center align-items-center bg-danger mt-2 ml-2 text-white rounded delete-row"
+                                                                    style="width: 30px; height: 30px;">
+                                                                    <i class="fa-solid fa-trash"></i>
+                                                                </div>
 
 
                                                             </td>
@@ -260,7 +259,7 @@
             <tr>
                 <td>
                     <div class="form-group form-input">
-                        <label for="medicine_id" class="require">Medicine Name</label>
+                        <label for="medicine_id" class="require">{{ __('ohc_management.medicine_name') }}</label>
                         <select name="medicine_id[${medicine_issuance_row_count}]" class="form-control single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
                                      @foreach ($medicine as $list)
@@ -273,13 +272,13 @@
                 </td>
                 <td>
                     <div class="form-group form-input">
-                        <label for="quantity" class="require">Available Quantity</label>
+                        <label for="quantity" class="require">{{ __('ohc_management.available_quantity') }}</label>
                         <input type="text" name="available_quantity[${medicine_issuance_row_count}]" class="form-control" readonly>
                     </div>
                 </td>
                 <td>
                     <div class="form-group form-input">
-                        <label for="quantity" class="require">Quantity</label>
+                        <label for="quantity" class="require">{{ __('ohc_management.quantity') }}</label>
                         <input type="number" min = "1" name="quantity[${medicine_issuance_row_count}]"   placeholder="Enter the quantity" class="form-control">
                          <span id="quantity-error" style=" display:none;"  class="text-danger quantity-error">Quantity must be less than available quantity.</span>
 

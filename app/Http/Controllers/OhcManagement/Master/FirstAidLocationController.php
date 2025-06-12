@@ -210,7 +210,7 @@ class FirstAidLocationController extends Controller
             return view('ohcmanagement.master.first_aider_location.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
-             Session::flash('error',  __('common.message_error'));
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/first-aid-location/list'));
         }
     }
@@ -349,12 +349,12 @@ class FirstAidLocationController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Unit',
-                'Deparment',
-                'Location',
-                'Station Master',
-                'Station Number',
-                'First Aid Box Number',
+                __("common.unit"),
+                __("common.department"),
+                __("common.location_name"),
+                __("ohc_management.station_master"),
+                __("ohc_management.station_number"),
+                __("ohc_management.first_aid_box_no"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -406,12 +406,12 @@ class FirstAidLocationController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Unit',
-                'Deparment',
-                'Location',
-                'Station Master',
-                'Station Number',
-                'First Aid Box Number',
+                __("common.unit"),
+                __("common.department"),
+                __("common.location_name"),
+                __("ohc_management.station_master"),
+                __("ohc_management.station_number"),
+                __("ohc_management.first_aid_box_no"),
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),

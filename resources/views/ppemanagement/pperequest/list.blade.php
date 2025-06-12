@@ -60,12 +60,13 @@
                                             <select name="company_id" id="company_id"
                                                 class="form-control single-select form-control-sm" style="width: 100%">
                                                 <option value="">Select the company</option>
-                                                @if (CheckUserRole(ROLE_EHS_OFFICER) || checkUserRole(ROLE_EHS_HEAD))
+                                                @if (CheckUserRole(ROLE_EHS_OFFICER) || checkUserRole(ROLE_EHS_HEAD) || checkUserRole(ROLE_STORE_MANAGER))
                                                     @foreach ($company as $list)
                                                         @php
                                                             $isEhs = in_array(auth()->user()->role, [
                                                                 ROLE_EHS_HEAD,
                                                                 ROLE_EHS_OFFICER,
+                                                                ROLE_STORE_MANAGER,
                                                             ]);
                                                             $value = encryptId($list->id);
                                                             $requestCompanyId = $loggedInCompanyId;

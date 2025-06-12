@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Weekly Ambulance Inspection Checklist
+                    {{ __('ohc_management.weekly_ambulance_inspection_checklist') }}
                 </td>
             </tr>
         </table>
@@ -192,73 +192,7 @@
     @php
         $user_response = json_decode($weeklyAmbulance->checklist, true);
     @endphp
-    {{-- <div class="table-responsive">
-        <div class="col-md-12">
-            <table class="table table-bordered table-hover tblborder">
-                <thead>
-                    <tr>
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            Sr. No
-                        </th>
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;"
-                            colspan="4">
-                            Check Points
-                        </th>
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            Status
-                        </th>
-                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                            Remarks
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php
-                        $decodedData = json_decode($inspectionCkeclist->checklist, true);
-                        $checkItems = $decodedData['check_item'] ?? [];
-                        $statuses = $decodedData['status'] ?? [];
-                        $remarks = $decodedData['remarks'] ?? [];
-                        $srNo = 1;
-                    @endphp
 
-                    @foreach ($checkItems as $groupId => $checkPoints)
-                        @php $rowCount = count($checkPoints); @endphp
-
-                        @foreach ($checkPoints as $index => $checkPoint)
-                            <tr>
-                                @if ($index == 0)
-                                    <td rowspan="{{ $rowCount }}"
-                                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                                        {{ $srNo++ }}
-                                    </td>
-                                    <td rowspan="{{ $rowCount }}"
-                                        style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                                        {{ getSubcategoryname($groupId) }}
-                                    </td>
-                                @endif
-                                <td colspan="3" style="border: 1px solid black; padding: 8px;">
-                                    {{ getSubcategoryDataname($checkPoint) }}
-                                </td>
-                                <td
-                                    style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                                    @if (!empty($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Ok')
-                                        <span style="color: green; font-size: 20px;">✓</span>
-                                    @elseif (!empty($statuses[$checkPoint]) && $statuses[$checkPoint] == 'Not-Ok')
-                                        <span style="color: red; font-size: 20px;">X</span>
-                                    @else
-                                        <i class="fa-solid fa-minus" style="color: #808080; width: 15px;"></i>
-                                    @endif
-                                </td>
-                                <td style="border: 1px solid black; padding: 8px;">
-                                    {{ $remarks[$checkPoint] ?? 'No Remarks' }}
-                                </td>
-                            </tr>
-                        @endforeach
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-    </div> --}}
 
     <table
         style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">

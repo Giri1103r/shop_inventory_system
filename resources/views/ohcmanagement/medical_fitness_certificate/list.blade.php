@@ -33,7 +33,7 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">Employee ID</label>
+                                                <label class="form-label">{{ __('common.employee_or_worker_code') }}</label>
                                                 <select name="emp_id" class="form-control " id="emp_id"
                                                     style="width: 100%">
                                                     <option value="">Select the Employee ID</option>
@@ -42,13 +42,14 @@
                                         </div>
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">Employee Name</label>
+                                                <label
+                                                    class="form-label require">{{ __('common.employee_or_worker_name') }}</label>
                                                 <input type="text" name="emp_name" id="emp_name" class="form-control"
                                                     placeholder="Employee Name" readonly>
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="company" class="form-label ">Company</label>
+                                            <label for="company" class="form-label ">{{ __('common.company') }}</label>
                                             <select name="company_id" id="company_id" class=" form-control single-select"
                                                 style="width: 100%">
                                                 <option value="">Select Company</option>
@@ -62,7 +63,7 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="unit" class="form-label ">Unit</label>
+                                            <label for="unit" class="form-label ">{{ __('common.unit') }}</label>
                                             <select name="unit_id" id="unit_id" class=" form-control single-select"
                                                 style="width: 100%">
                                                 <option value="">Select Unit</option>
@@ -72,7 +73,7 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="unit" class="form-label ">Department</label>
+                                            <label for="unit" class="form-label ">{{ __('common.department') }}</label>
                                             <select name="department_id" id="department_id"
                                                 class=" form-control single-select" style="width: 100%">
                                                 <option value="">Select Department</option>
@@ -80,7 +81,7 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.from_date') }}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -91,7 +92,7 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.to_date') }}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -101,7 +102,8 @@
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label">Approve Status</label>
+                                            <label for="status"
+                                                class="form-label">{{ __('common.approve_status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
@@ -131,16 +133,16 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Employee ID/ Worker ID</th>
-                                        <th>Employee Name/ Worker Worker Name</th>
-                                        <th>Date</th>
+                                        <th>{{ __('common.employee_or_worker_code') }}</th>
+                                        <th>{{ __('common.employee_or_worker_name') }}</th>
+                                        <th>{{ __('common.date') }}</th>
                                         <th>{{ __('common.company') }}</th>
                                         <th>{{ __('common.unit') }}</th>
                                         <th>{{ __('common.department') }}</th>
-                                        <th>Cheif Complaint</th>
-                                        <th>Remarks</th>
-                                        <th>Approve Status</th>
-                                        <th data-priority="1">Action</th>
+                                        <th>{{ __('ohc_management.chief_complaint') }}</th>
+                                        <th>{{ __('ohc_management.remarks') }}</th>
+                                        <th>{{ __('common.approve_status') }}</th>
+                                        <th data-priority="1">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>

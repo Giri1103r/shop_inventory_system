@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Requisition Edit')
+@section('title', 'Medicine Requisition')
 @section('pageurl', admin_url('ohc/medicine-requisition/list'))
 @section('content')
 
@@ -37,7 +37,8 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Requestion ID</label>
+                                                    <label
+                                                        class="form-label require">{{ __('ohc_management.req_id') }}</label>
                                                     <input type="text" name ="req_id" id="req_id" class="form-control"
                                                         placeholder="Requistion ID"
                                                         value="{{ $user_medicine_requisition->req_id }}" readonly>
@@ -45,7 +46,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit </label>
+                                                    <label class="form-label require">{{ __('common.unit') }}</label>
                                                     <input type="text" name="unit_id" id="unit_id"
                                                         value="{{ getUnitname($user_medicine_requisition->unit_id) }}"
                                                         class="form-control" readonly>
@@ -53,7 +54,8 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label for="department_id" class="form-label require">Department
+                                                    <label for="department_id"
+                                                        class="form-label require">{{ __('common.department') }}
                                                     </label>
                                                     <input type="text" name="department_id" id="department_id"
                                                         value="{{ getDepartment($user_medicine_requisition->department_id) }}"
@@ -62,8 +64,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Request
-                                                        Date</label>
+                                                    <label for="rate"
+                                                        class="form-label require ">{{ __('ohc_management.request_date') }}</label>
                                                     <input type="text" name="request_date" id="request_date"
                                                         value="{{ displaydateformat($user_medicine_requisition->request_date) }}"
                                                         class="form-control">
@@ -75,7 +77,7 @@
 
                                         <div class="row mt-2">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">Medicine details</h4>
+                                                <h4 class="text-white">{{__('ohc_management.medicine_details')}}</h4>
 
                                             </div>
                                             <div
@@ -97,11 +99,11 @@
 
                                                     <thead class="bg-secondary" style="color: #ffff">
                                                         <tr>
-                                                            <th>Medicine</th>
-                                                            <th>Available Quantity</th>
-                                                            <th>Quantity</th>
-                                                            <th>Remarks</th>
-                                                            <th>Action</th>
+                                                            <th>{{ __('ohc_management.medicine_name') }}</th>
+                                                            <th>{{ __('ohc_management.available_quantity') }}</th>
+                                                            <th>{{ __('ohc_management.quantity') }}</th>
+                                                            <th>{{ __('ohc_management.remarks') }}</th>
+                                                            <th>{{ __('common.action') }}</th>
                                                         </tr>
                                                     </thead>
 
@@ -112,15 +114,16 @@
                                                                     <input type="hidden" name="encryptid" class="encryptid"
                                                                         value="{{ encryptId($requisition->id) }}">
                                                                     <div class="form-group form-input">
-                                                                        <label for="medicine_id" class="require">Medicine
-                                                                            Name</label>
+                                                                        <label for="medicine_id"
+                                                                            class="require">{{ __('ohc_management.medicine_name') }}</label>
                                                                         <select name="medicine_id[{{ $key }}]"
                                                                             class="form-control medicine">
                                                                             <option value="">Select the Medicine Name
                                                                             </option>
 
                                                                             @foreach ($medicine as $list)
-                                                                                <option value="{{ encryptId($list->medicine_id) }}"
+                                                                                <option
+                                                                                    value="{{ encryptId($list->medicine_id) }}"
                                                                                     @if ($requisition->medicine_id == $list->medicine_id) selected @endif>
                                                                                     {{ getMedicinename($list->medicine_id) }}
                                                                                 </option>
@@ -131,8 +134,7 @@
                                                                 <td>
                                                                     <div class="form-group form-input">
                                                                         <label for="available_quantity"
-                                                                            class="require">Available
-                                                                            Quantity</label>
+                                                                            class="require">{{ __('ohc_management.available_quantity') }}</label>
                                                                         <input type="text"
                                                                             name="available_quantity[{{ $key }}]"
                                                                             id="available_quantity"
@@ -145,7 +147,7 @@
                                                                 <td>
                                                                     <div class="form-group form-input">
                                                                         <label for="quantity"
-                                                                            class="require">Quantity</label>
+                                                                            class="require">{{ __('ohc_management.quantity') }}</label>
                                                                         <input type="number" min = "1"
                                                                             name="quantity[{{ $key }}]"
                                                                             id="quantity" placeholder="Enter the quantity"
@@ -159,7 +161,7 @@
                                                                 <td>
                                                                     <div class="form-group form-input">
                                                                         <label for="remarks"
-                                                                            class="">Remarks</label>
+                                                                            class="">{{ __('ohc_management.remarks') }}</label>
                                                                         <textarea name="remarks[{{ $key }}]" id="remarks" cols="10" rows="2" class="form-control">{{ $requisition->remarks }}</textarea>
                                                                     </div>
                                                                 </td>
@@ -341,7 +343,7 @@
             <tr>
                 <td>
                     <div class="form-group form-input">
-                        <label class="require">Medicine Name</label>
+                        <label class="require">{{ __('ohc_management.medicine_name') }}</label>
                         <select name="medicine_id[${rowcount}]" class="form-control single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
                             @foreach ($medicine as $list)
@@ -352,20 +354,20 @@
                 </td>
                 <td>
                     <div class="form-group form-input">
-                        <label class="require">Available Quantity</label>
+                        <label class="require">{{ __('ohc_management.available_quantity') }}</label>
                         <input type="text" name="available_quantity[${rowcount}]" class="form-control" readonly>
                     </div>
                 </td>
                 <td>
                     <div class="form-group form-input">
-                        <label class="require">Quantity</label>
+                        <label class="require">{{ __('ohc_management.quantity') }}</label>
                         <input type="number" min = "1" name="quantity[${rowcount}]" placeholder="Enter the quantity" class="form-control">
                         <span class="text-danger quantity-error" style="display:none;">Quantity must be less than available quantity.</span>
                     </div>
                 </td>
                  <td>
                     <div class="form-group form-input">
-                        <label for="remarks" class="">Remarks</label>
+                        <label for="remarks" class="">{{ __('ohc_management.remarks') }}</label>
                         <textarea name="remarks[${rowcount}]" cols="10" rows="2" class="form-control"></textarea>
                     </div>
                 </td>

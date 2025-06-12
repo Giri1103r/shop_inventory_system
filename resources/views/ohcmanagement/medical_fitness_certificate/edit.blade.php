@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medical Fitness Certificate Edit')
+@section('title', 'Medical Fitness Certificate')
 @section('pageurl', admin_url('ohc/medical-fitness/list'))
 @section('content')
 

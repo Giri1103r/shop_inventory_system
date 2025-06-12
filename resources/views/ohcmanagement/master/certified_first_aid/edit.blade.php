@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Certified First Aider Edit')
+@section('title', 'Certified First Aider')
 @section('pageurl', admin_url('ohc/certified-first-aider/list'))
 
 
@@ -41,7 +41,7 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit </label>
+                                                    <label class="form-label require">{{__('common.unit')}} </label>
                                                     <select name="unit_id" id="unit_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Unit</option>
@@ -59,7 +59,7 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label for="department_id" class="form-label require">Department
+                                                    <label for="department_id" class="form-label require">{{__('common.department')}}
                                                     </label>
                                                     <select name="department_id" id="department_id"
                                                         class=" form-control single-select" style="width: 100%">
@@ -77,7 +77,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">Employee Code</label>
+                                                    <label class="form-label">{{__('common.employee_or_worker_code')}}</label>
                                                     <select name="emp_id" class="form-control " id="emp_id"
                                                         style="width: 100%">
                                                         <option value="">Select the Employee ID</option>
@@ -93,7 +93,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Certified First Aider Name</label>
+                                                    <label class="form-label require">{{__('ohc_management.certified_first_aider')}}</label>
                                                     <input type="text" name="certifier_name" id="certifier_name"
                                                         class="form-control"
                                                         value="{{ $certifiedfirstaider->certifier_name }}"
@@ -105,7 +105,7 @@
                                             </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Mobile Number</label>
+                                                    <label class="form-label require">{{__('ohc_management.mobile_no')}}</label>
                                                     <input type="text" name="mobile_no" id="mobile_no"
                                                         value="{{ $certifiedfirstaider->mobile_no }}" class="form-control"
                                                         placeholder="Mobile Number">
@@ -117,7 +117,7 @@
 
                                             <div class="col-md-12">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Address</label>
+                                                    <label class="form-label require">{{__('ohc_management.address')}}<</label>
                                                     <textarea name="address" class="form-control" placeholder="Company Address">{{ $certifiedfirstaider->address }}</textarea>
                                                     @error('address')
                                                         <div class="text-danger">{{ $message }}</div>

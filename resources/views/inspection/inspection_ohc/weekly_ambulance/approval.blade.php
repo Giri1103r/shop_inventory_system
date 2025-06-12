@@ -161,9 +161,9 @@
                                         <table class="table table-bordered">
                                             <thead class="bg-secondary text-white">
                                                 <tr>
-                                                    <th colspan="3">Check Points</th>
-                                                    <th colspan="3">Status</th>
-                                                    <th colspan="3">Remarks</th>
+                                                    <th colspan="3">{{ __('ohc_management.check_points') }}</th>
+                                                    <th colspan="3">{{ __('common.status') }}</th>
+                                                    <th colspan="3">{{ __('ohc_management.remarks') }}</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -197,7 +197,7 @@
                                                             </td>
 
                                                             <td colspan="3">
-                                                                {{ $remarks[$checkPoint] ?? 'No Remarks' }}
+                                                                {{ $remarks[$checkPoint] ?? '-' }}
                                                             </td>
                                                         </tr>
                                                     @endforeach
@@ -266,7 +266,8 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-12 mb-2 form-input" id="remarks">
-                                                <label for="remarks " class="form-label require">Remarks</label>
+                                                <label for="remarks "
+                                                    class="form-label require">{{ __('ohc_management.remarks') }}</label>
                                                 <textarea id="remarks" class="form-control" rows="3" placeholder="Please Enter Remarks" name="remarks"></textarea>
                                             </div>
                                             <div class="submit-button" style="text-align: right;">
@@ -300,7 +301,17 @@
                                                     );
                                                 @endphp --}}
                                             @endif
+                                            @if (isset($weekAmbualance->capa_needed))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('ohc_management.capa') }}</label>
+                                                        <div class="view_data">
+                                                           {{ isset($weekAmbualance->capa_needed) && $weekAmbualance->capa_needed == 1 ? 'Yes' : 'NO' }}
 
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
                                             @if (isset($weekAmbualance->created_at))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -620,7 +631,8 @@
                                                 @endif
                                             </div> --}}
                                             <div class="col-md-12 mb-2 form-input" id="capa_remarks">
-                                                <label for="capa_remarks " class="form-label require">Remarks</label>
+                                                <label for="capa_remarks "
+                                                    class="form-label require">{{ __('ohc_management.remarks') }}</label>
                                                 <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
                                                     name="capa_remarks"></textarea>
                                             </div>
@@ -675,7 +687,8 @@
                                                 @endif
                                             </div> --}}
                                             <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
-                                                <label for="remarks" class="form-label require">Remarks</label>
+                                                <label for="remarks"
+                                                    class="form-label require">{{ __('ohc_management.remarks') }}</label>
                                                 <textarea id="" class="form-control" rows="3" placeholder="Please Provide Remarks" name="remarks"></textarea>
                                             </div>
                                         </div>
@@ -729,7 +742,8 @@
                                             </div> --}}
                                         </div>
                                         <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
-                                            <label for="remarks" class="form-label require">Remarks</label>
+                                            <label for="remarks"
+                                                class="form-label require">{{ __('ohc_management.remarks') }}</label>
                                             <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
                                                 name="level_one_manager"></textarea>
                                         </div>
@@ -783,7 +797,8 @@
                                             </div> --}}
                                         </div>
                                         <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
-                                            <label for="remarks" class="form-label require">Remarks</label>
+                                            <label for="remarks"
+                                                class="form-label require">{{ __('ohc_management.remarks') }}</label>
                                             <textarea id="remarks " class="form-control" rows="3" placeholder="Please Provide Remarks"
                                                 name="level_two_manager"></textarea>
                                         </div>

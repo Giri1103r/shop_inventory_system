@@ -181,7 +181,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             return view('inspection.inspection_ohc.medical_requisition_slip_security_gate.add', $data);
         } catch (Exception $ex) {
              report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
     }
@@ -277,14 +277,14 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             }
 
 
-            Session::flash('success', 'Your data has been created successfully!');
+            Session::flash('success',  __('common.created_msg'));
 
 
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
     }
@@ -333,7 +333,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
     }
@@ -381,7 +381,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             return view('inspection.inspection_ohc.medical_requisition_slip_security_gate.approval', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
     }
@@ -449,7 +449,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (\Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
     }
@@ -562,14 +562,14 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                 Session::flash('success', 'Your data has been Responded successfully!');
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try after sometimes!');
+                Session::flash('error',  __('common.message_error'));
             }
 
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
     }
@@ -799,7 +799,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
     }
@@ -852,7 +852,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/medical-requisition-slip/fdo-security-gate/list'));
         }
     }

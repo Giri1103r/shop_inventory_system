@@ -134,7 +134,7 @@ class MedicineFirstAidController extends Controller
             return view('ohcmanagement.medicine-first-aid.add', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-first-aid/list'));
         }
     }
@@ -188,16 +188,16 @@ class MedicineFirstAidController extends Controller
                 }
 
 
-                Session::flash('success', 'Your data has been created successfully!');
+                Session::flash('success', __('common.created_msg'));
             } catch (Exception $ex) {
                 report($ex);
-                Session::flash('error', 'Something went wrong, Please try again later!');
+                Session::flash('error', __('common.message_error'));
             }
             return redirect(admin_url('ohc/medicine-first-aid/list'));
         } catch (Exception $ex) {
 
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try again later!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-first-aid/list'));
         }
     }
@@ -227,7 +227,7 @@ class MedicineFirstAidController extends Controller
             return view('ohcmanagement.medicine-first-aid.edit', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-first-aid/list'));
         }
     }
@@ -321,11 +321,11 @@ class MedicineFirstAidController extends Controller
             $this->medicine_first_aid->updates($id, $user_medicine_first_aid);
 
 
-            Session::flash('success', 'Your data has been updated successfully!');
+            Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/medicine-first-aid/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong, Please try again later!');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-first-aid/list'));
         }
     }
@@ -348,7 +348,7 @@ class MedicineFirstAidController extends Controller
             return view('ohcmanagement.medicine-first-aid.view', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', 'Something went wrong please try again after some time');
+            Session::flash('error', __('common.message_error'));
             return redirect(admin_url('ohc/medicine-first-aid/list'));
         }
     }
@@ -375,12 +375,12 @@ class MedicineFirstAidController extends Controller
             }
 
             $header = [
-                __("common.sno"),
-                'Unit Name',
-                'Department Name',
-                'Issue Date',
-                'Created_by',
-                'Created_at'
+                __("common.unit"),
+                __("common.department"),
+                __("ohc_management.issued_date"),
+                __("common.created_by"),
+                __("common.created_date"),
+
             ];
 
             $i = 1;
@@ -399,7 +399,7 @@ class MedicineFirstAidController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Medicine Issuance.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('First Aid Box Medicine.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -407,6 +407,8 @@ class MedicineFirstAidController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/medicine-first-aid/list'));
         }
     }
 
@@ -450,17 +452,17 @@ class MedicineFirstAidController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Unit Name',
-                'Department Name',
-                'Issue Date',
-                'Created_by',
-                'Created_at'
+                __("common.unit"),
+                __("common.department"),
+                __("ohc_management.issued_date"),
+                __("common.created_by"),
+                __("common.created_date"),
             ];
 
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Medicine Issuance",
+                'pagetitle' => "First Aid Box Medicine",
             );
 
             $property = [
@@ -482,11 +484,13 @@ class MedicineFirstAidController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Medicine Issuance.pdf";
+            $filename = " First Aid Box Medicine.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('error', __('common.message_error'));
+            return redirect(admin_url('ohc/medicine-first-aid/list'));
         }
     }
 

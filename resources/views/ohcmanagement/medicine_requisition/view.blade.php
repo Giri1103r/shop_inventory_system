@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Medicine Requisition Show')
+@section('title', 'Medicine Requisition')
 @section('pageurl', admin_url('ohc/medicine-requisition/list'))
 
 
@@ -36,37 +36,37 @@
 
                                 <div class="row">
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Requisition ID') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.req_id') }}</label>
                                         <div class="view_data">
                                             {{ isset($user_medicine_requisition->req_id) ? $user_medicine_requisition->req_id : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Unit') }}</label>
+                                        <label class="form-label view_label">{{ __('common.unit') }}</label>
                                         <div class="view_data">
                                             {{ getUnitname(isset($user_medicine_requisition->unit_id) ? $user_medicine_requisition->unit_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Department') }}</label>
+                                        <label class="form-label view_label">{{ __('common.department') }}</label>
                                         <div class="view_data">
                                             {{ getdepartment(isset($user_medicine_requisition->department_id) ? $user_medicine_requisition->department_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Request date') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.request_date') }}</label>
                                         <div class="view_data">
                                             {{ displaydateformat(isset($user_medicine_requisition->request_date) ? $user_medicine_requisition->request_date : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Created at') }}</label>
+                                        <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
                                             {{ getUsername(isset($user_medicine_requisition->created_by) ? $user_medicine_requisition->created_by : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Created Date') }}</label>
+                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
                                         <div class="view_data">
                                             {{ displaydateformat(isset($user_medicine_requisition->created_at) ? $user_medicine_requisition->created_at : '') }}
                                         </div>
@@ -78,11 +78,12 @@
 
                                             <thead class="bg-secondary" style="color: #ffff">
                                                 <tr>
-                                                    <th>S.No</th>
-                                                    <th>Medicine Name</th>
-                                                    <th>Available Quantity</th>
-                                                    <th>Quantity</th>
-                                                    <th>Remarks</th>
+
+                                                    <th>{{ __('common.sno') }}</th>
+                                                    <th>{{ __('ohc_management.medicine_name') }}</th>
+                                                    <th>{{ __('ohc_management.available_quantity') }}</th>
+                                                    <th>{{ __('ohc_management.quantity') }}</th>
+                                                    <th>{{ __('ohc_management.remarks') }}</th>
                                                 </tr>
                                             </thead>
 
@@ -128,37 +129,48 @@
 
                                             <tbody>
                                                 @foreach ($logdata as $log)
-                                                <tr>
-                                                    <td>
-                                                        @if($log['from_status'] == STATUS_OHC_STOCK_REQUEST)
-                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Stock Requested</span>
+                                                    <tr>
+                                                        <td>
+                                                            @if ($log['from_status'] == STATUS_OHC_STOCK_REQUEST)
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>Stock
+                                                                    Requested</span>
                                                             @elseif($log['from_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING)
-                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Ehs Head Approval Pending</span>
-                                                        @elseif($log['from_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED)
-                                                            <span class='badge bg-success' style='font-size: 1.0em;'>Ehs Head  Approved</span>
-                                                        @elseif($log['from_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED)
-                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Ehs Head Approval Pending</span>
-                                                        @elseif($log['from_status'] == STATUS_OHC_CLOSE)
-                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Ehs Head  Approved</span>
-                                                        @endif
-                                                    </td>
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>Ehs
+                                                                    Head Approval Pending</span>
+                                                            @elseif($log['from_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED)
+                                                                <span class='badge bg-success' style='font-size: 1.0em;'>Ehs
+                                                                    Head Approved</span>
+                                                            @elseif($log['from_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED)
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>Ehs
+                                                                    Head Approval Pending</span>
+                                                            @elseif($log['from_status'] == STATUS_OHC_CLOSE)
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>Ehs
+                                                                    Head Approved</span>
+                                                            @endif
+                                                        </td>
 
-                                                    <td>
-                                                        @if($log['to_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING)
-                                                            <span class='badge bg-info' style='font-size: 1.0em;'>Ehs Head Approval Pending</span>
-                                                        @elseif($log['to_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED)
-                                                            <span class='badge bg-success' style='font-size: 1.0em;'>Ehs Head  Approved</span>
-                                                        @elseif($log['to_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED)
-                                                            <span class='badge bg-danger' style='font-size: 1.0em;'>Ehs Head  Rejected</span>
-                                                        @elseif($log['to_status'] == STATUS_OHC_CLOSE)
-                                                            <span class='badge bg-success' style='font-size: 1.0em;'>Close</span>
-                                                        @endif
-                                                    </td>
+                                                        <td>
+                                                            @if ($log['to_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVAL_PENDING)
+                                                                <span class='badge bg-info' style='font-size: 1.0em;'>Ehs
+                                                                    Head Approval Pending</span>
+                                                            @elseif($log['to_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_APPROVED)
+                                                                <span class='badge bg-success' style='font-size: 1.0em;'>Ehs
+                                                                    Head Approved</span>
+                                                            @elseif($log['to_status'] == STATUS_OHC_REQUISITION_EHS_HEAD_REJECTED)
+                                                                <span class='badge bg-danger' style='font-size: 1.0em;'>Ehs
+                                                                    Head Rejected</span>
+                                                            @elseif($log['to_status'] == STATUS_OHC_CLOSE)
+                                                                <span class='badge bg-success'
+                                                                    style='font-size: 1.0em;'>Close</span>
+                                                            @endif
+                                                        </td>
 
-                                                    <td>{{ isset($log['remarks']) ? $log['remarks'] : '-' }}</td>
-                                                    <td>{{ isset($log['created_by']) ? getUsername($log['created_by']) : '-' }}</td>
-                                                    <td>{{ isset($log['created_at']) ? Displaydateformat($log['created_at']) : '-' }}</td>
-                                                </tr>
+                                                        <td>{{ isset($log['remarks']) ? $log['remarks'] : '-' }}</td>
+                                                        <td>{{ isset($log['created_by']) ? getUsername($log['created_by']) : '-' }}
+                                                        </td>
+                                                        <td>{{ isset($log['created_at']) ? Displaydateformat($log['created_at']) : '-' }}
+                                                        </td>
+                                                    </tr>
                                                 @endforeach
                                             </tbody>
                                         </table>

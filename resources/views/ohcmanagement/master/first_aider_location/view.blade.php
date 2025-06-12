@@ -34,43 +34,43 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">First Aider Location</h4>
+                                        <h4 class="text-white">{{__('ohc_management.first_aider_location')}}</h4>
                                     </div>
                                 </div>
                                 <div class="row">
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Unit') }}</label>
+                                        <label class="form-label view_label">{{__('common.unit')}}</label>
                                         <div class="view_data">
                                             {{ getUnitName(isset($firstaidlocation->unit_id) ? $firstaidlocation->unit_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Department Name') }}</label>
+                                        <label class="form-label view_label">{{__('common.department')}}</label>
                                         <div class="view_data">
                                             {{ getDepartment(isset($firstaidlocation->department_id) ? $firstaidlocation->department_id : '') }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Location Name') }}</label>
+                                        <label class="form-label view_label">{{__('ohc_management.location_name')}}</label>
                                         <div class="view_data">
                                             {{ isset($firstaidlocation->location_id) ? $firstaidlocation->location_id : ''}}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Station Master') }}</label>
+                                        <label class="form-label view_label">{{__('ohc_management.station_master')}}</label>
                                         <div class="view_data">
                                             {{ isset($firstaidlocation->station_master) ? $firstaidlocation->station_master : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Station Number') }}</label>
+                                        <label class="form-label view_label">{{__('ohc_management.station_number')}}</label>
                                         <div class="view_data">
                                             {{ isset($firstaidlocation->station_number) ? $firstaidlocation->station_number : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('First Aid Box Number') }}</label>
+                                        <label class="form-label view_label">{{__('ohc_management.first_aid_box_no')}}</label>
                                         <div class="view_data">
                                             {{ isset($firstaidlocation->first_aid_box_no) ? $firstaidlocation->first_aid_box_no : '' }}
                                         </div>

@@ -804,7 +804,7 @@
                             </div>
                         </div>
                     </div>
-                    @if (((in_array(ROLE_EHS_OFFICER, getUserRoleId(Auth::id()))|| isAdmin() &&  $safetypermit['permit_status'] == STATUS_EHS_VERIFICATION_PENDING) || ($safetypermit['permit_status'] == STATUS_EHS_VERIFICATION_PENDING  || $safetypermit['permit_status'] == STATUS_PLANTHEAD_REJECTED) && ($safetypermit['verified_by'] == Auth::id())))
+                    @if (((in_array(ROLE_EHS_OFFICER, getUserRoleId(Auth::id()))|| isAdmin() &&  $safetypermit['permit_status'] == STATUS_EHS_VERIFICATION_PENDING) || ($safetypermit['permit_status'] == STATUS_EHS_VERIFICATION_PENDING  || $safetypermit['permit_status'] == STATUS_PLANTHEAD_REJECTED) && ($safetypermit['verified_by'] == Auth::id())) && ($safetypermit['permit_status'] !== STATUS_EHS_REASSIGN) )
                         <div class="card-body ">
                             <div class="row">
                                 <div class="card-header-inner">
@@ -1378,7 +1378,7 @@
             for (let i = 0; i < files.length; i++) {
                 if (files[i].size > maxFileSize) {
                     errorContainer.text('Each file must be less than or equal to 15MB.');
-                    $(this).val(''); 
+                    $(this).val('');
                     break;
                 }
             }

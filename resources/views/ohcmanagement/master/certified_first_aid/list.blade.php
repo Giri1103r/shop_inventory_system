@@ -28,7 +28,7 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label ">Unit</label>
+                                                <label class="form-label ">{{ __('common.unit') }}</label>
                                                 <select name="unit_id" id="unit_id" class="form-control single-select"
                                                     style="width: 100%">
                                                     <option value="">Select the unit</option>
@@ -41,7 +41,7 @@
                                         </div>
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label ">Department</label>
+                                                <label class="form-label ">{{ __('common.department') }}</label>
                                                 <select name="department_id" id="department_id"
                                                     class=" form-control single-select" style="width: 100%">
                                                     <option value="">Select Department </option>
@@ -51,13 +51,14 @@
                                         </div>
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label ">Certified First Aider Name</label>
+                                                <label
+                                                    class="form-label ">{{ __('ohc_management.certified_first_aider') }}</label>
                                                 <input type="text" name="certifier_name" id="certifier_name"
                                                     class=" form-control ">
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.from_date') }}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -68,7 +69,7 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.to_date') }}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -107,12 +108,12 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>Unit</th>
-                                        <th>Department</th>
-                                        <th>Certified First Aider</th>
-                                        <th>Mobile Number</th>
-                                        <th>Employee ID</th>
-                                        <th>Address</th>
+                                        <th>{{ __('common.employee_or_worker_code') }}</th>
+                                        <th>{{ __('common.unit') }}</th>
+                                        <th>{{ __('common.department') }}</th>
+                                        <th>{{ __('ohc_management.certified_first_aider') }}</th>
+                                        <th>{{ __('ohc_management.mobile_no') }}</th>
+                                        <th>{{ __('ohc_management.address') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -177,7 +178,7 @@
 
             var toDatepicker = flatpickr("#to_date", {
                 dateFormat: "d-m-Y",
-              
+
             });
         });
 
@@ -235,6 +236,10 @@
                         searchable: true,
                     },
                     {
+                        data: 'emp_id',
+                        name: 'emp_id'
+                    },
+                    {
                         data: 'unit_id',
                         name: 'unit_id'
                     },
@@ -250,10 +255,7 @@
                         data: 'mobile_no',
                         name: 'mobile_no'
                     },
-                    {
-                        data: 'emp_id',
-                        name: 'emp_id'
-                    },
+
                     {
                         data: 'address',
                         name: 'address'
