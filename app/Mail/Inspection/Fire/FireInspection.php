@@ -26,7 +26,7 @@ class FireInspection extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: env('APP_NAME') . ' - ' . $this->details['fire_type'],
+            subject: 'KARAM' . ' - '  . $this->details['fire_type'],
         );
     }
 
