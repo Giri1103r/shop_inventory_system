@@ -137,7 +137,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                @if (checkUserRole(ROLE_EHS_HEAD))
+                                @if (checkUserRole(ROLE_EHS_HEAD) ||checkUserRole(ROLE_SUPERADMIN) )
                                     <div class="row mt-2">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{__('ppe_management.ppe_ehs_head_approval')}}</h4>

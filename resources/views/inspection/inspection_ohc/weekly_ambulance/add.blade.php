@@ -121,6 +121,20 @@
                                                 </div>
                                             </div>
 
+
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="rate"
+                                                        class="form-label require ">{{ __('inspection.date_of_inspection') }}</label>
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="date_of_inspection"
+                                                            id="date_of_inspection" class="form-control"autocomplete="off">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label for="rate"
@@ -134,21 +148,6 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label for="rate"
-                                                        class="form-label require ">{{ __('inspection.date_of_inspection') }}</label>
-                                                    <div class="input-group date form-input custom-height">
-                                                        <input type="text" name="date_of_inspection"
-                                                            id="date_of_inspection"
-                                                            class="form-control"autocomplete="off">
-                                                        <div class="input-group-addon input-group-text">
-                                                            <span class="fa fa-calendar"></span>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-
                                         </div>
 
                                         <div class="row mt-2">
@@ -234,36 +233,7 @@
                                             </div>
                                         </div>
 
-                                        {{-- @if ($signature_upload->signature_upload != '')
-                                            <label class="form-label view_label">Requestor Signature</label>
 
-                                            <p>
-                                                <a href="{{ asset($signature_upload->signature_upload) }}"
-                                                    target="_blank">
-                                                    <img src="{{ asset($signature_upload->signature_upload) }}"
-                                                        style="width: 100px" alt="image">
-                                                </a>
-                                            </p>
-                                        @else
-                                            <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-
-
-                                                    <label for="signature_image"
-                                                        class="form-label fw-bold require">Requestor Signature</label>
-                                                    <input type="file" class="form-control  validate-file-required"
-                                                        accept="image/png, image/jpeg, image/jpg" name="signature_image"
-                                                        id="signature_image">
-                                                    <div class="text-danger"></div>
-                                                    <small>Allowed file types: png, jpeg, jpg</small>
-                                                </div>
-                                                <!-- Preview Container -->
-                                                <div id="imagePreviewContainer" class="mt-2" style="display: none;">
-                                                    <img id="imagePreview" src="#" alt="Signature Preview"
-                                                        class="img-thumbnail" width="200">
-                                                </div>
-                                            </div>
-                                        @endif --}}
                                 </div>
                                 <hr>
                                 <div class="submit-button" style="text-align: right;">
@@ -294,18 +264,31 @@
                 e.preventDefault();
                 location.reload();
             });
+
+            var toDatepicker = flatpickr("#next_due_on", {
+                dateFormat: "d-m-Y",
+            });
+
+            var fromDatepicker = flatpickr("#date_of_inspection", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+
+                        var nextDay = new Date(startDate);
+                        nextDay.setDate(startDate.getDate() + 1);
+
+                        toDatepicker.set('minDate', nextDay);
+                      
+                    }
+                }
+            });
+
+
         });
 
-        var Datepicker = flatpickr("#date_of_inspection", {
-            dateFormat: "d-m-Y",
-            minDate: new Date()
 
-        });
-        var dueDate = flatpickr("#next_due_on", {
-            dateFormat: "d-m-Y",
-            minDate: new Date()
 
-        });
 
         $(document).on('change', '#location_id', function() {
             var locationId = $(this).val();
@@ -460,7 +443,7 @@
                     maxlength: 600
                 };
                 $('#weeklyambulance').validate().settings.messages[name] = {
-                  
+
                     minlength: "Remarks must be at least 3 characters",
                     maxlength: "Remarks must not exceed 600 characters"
                 };

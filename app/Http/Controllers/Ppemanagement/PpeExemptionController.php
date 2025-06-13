@@ -297,10 +297,13 @@ class PpeExemptionController extends Controller
             if (Auth::check()) {
                 $ppeexemption = $this->ppeexemption->selectOne($id);
             }
+
             if ($ppeexemption->approve_status == 5) {
                 $ehsheadstatus = $this->ppestatus->getehsheadstatuslog($id);
             } elseif ($ppeexemption->approve_status == 6) {
+
                 $ehsheadstatus = $this->ppestatus->getehsheadrejectstatuslog($id);
+                  
             } else {
                 $ehsheadstatus = null;
             }

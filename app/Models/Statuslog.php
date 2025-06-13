@@ -198,7 +198,7 @@ class Statuslog extends Model
     }
     public function getehsheadrejectstatuslog($id)
     {
-        return $this->where('reference_id', $id)->where('type', TYPE_PPE_EXEMPTION)->where('from_status', STATUS_EHS_REJECTED)->first();
+        return $this->where('reference_id', $id)->where('type', TYPE_PPE_EXEMPTION)->where('to_status', STATUS_EHS_REJECTED)->first();
     }
     public function gethodstatuslog($id)
     {
