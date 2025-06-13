@@ -364,6 +364,17 @@
                 @endif
 
             @endif
+
+            @if (isset($forklift_details->is_passed))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('ohc_management.capa') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $forklift_details->is_passed == 1 ? 'Yes' : 'No' }}
+                    </td>
+                </tr>
+            @endif
+
             @if (isset($forklift_details->capa_recomendation))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_recomendation') }}</b></td>

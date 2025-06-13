@@ -203,6 +203,7 @@ class FireMockDrillInspection extends Model
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
+                'is_passed' => $request->is_passed,
                 'date_of_closure' => DBdateformat(Carbon::now()),
             ];
             $this->where('id', $id)->update($update_array);
@@ -212,6 +213,7 @@ class FireMockDrillInspection extends Model
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
                 'capa_recomendation' => $request->remarks,
+                'is_passed' => $request->is_passed,
             ];
             $this->where('id', $id)->update($update_array);
         }

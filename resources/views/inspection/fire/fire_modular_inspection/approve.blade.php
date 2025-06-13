@@ -414,6 +414,16 @@
                                                     </div>
                                                 </div>
                                             @endif
+                                            @if (isset($inspection->is_passed))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label">{{ __('ohc_management.capa') }}</label>
+                                                        <div class="view_data">
+                                                            {{ $inspection->is_passed == 1 ? 'Yes' : 'No' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
                                             @if (isset($inspection->capa_recomendation))
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">

@@ -348,7 +348,6 @@ class FireMockDrillInspectionController extends Controller
 
     public function EHSOfficerSubmit(Request $request)
     {
-
         try {
             $id = decryptId($request->id);
             $inspection_updates = $this->fire_mock_drill_inspection->EHSOfficerUpdate($id);
