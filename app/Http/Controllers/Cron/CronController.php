@@ -454,6 +454,53 @@ class CronController extends Controller
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
+    public function employeeMasterTempCustomToken(Request $request)
+    {
+        try {
+
+            $fromDate = $request->fromdate;
+            $toDate = $request->todate;
+            $customtoken = "KSCAroz4HhR1EIx8qaz3C13z/quTXBkQ3Q5hj7Qx3aA*";
+            $apiKeyTokens = $this->company->getApiKeyToken();
+
+            $responses = [];
+
+            foreach ($apiKeyTokens as $token) {
+                $apiUrl = "https://hrms.esparsh.in/PunchesAPI/api/Attendance/GetEmployeeDetails?token={$customtoken}&fromDate={$fromDate}&toDate={$toDate}";
+
+                $response = Http::get($apiUrl);
+
+                if ($response->successful()) {
+                    $data = $response->json();
+
+                    if (!empty($data['Result'])) {
+                        $this->emp_temp->store($data);
+                        $responses[] = [
+                            'message' => 'Data saved successfully.',
+                            'token' => $token->api_token_key
+                        ];
+                    } else {
+                        $responses[] = [
+                            'message' => 'No data found in API response.',
+                            'token' => $token->api_token_key
+                        ];
+                    }
+                } else {
+                    $responses[] = [
+                        'message' => 'Failed to fetch data from API.',
+                        'status' => $response->status(),
+                        'token' => $token->api_token_key
+                    ];
+                }
+            }
+
+
+            return response()->json($responses);
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
     public function employeeMasterTempAllDetails(Request $request)
     {
         try {

@@ -25,6 +25,7 @@ class IsolationValve extends Model
         'verified_by',
         'approved_by',
         'description',
+        'is_passed',
         'remarks',
         'inspection_status',
         'capa_recomendation',
@@ -108,7 +109,7 @@ class IsolationValve extends Model
             $query = $query->where('inspection_fire_isolation_valve.inspection_status', decryptId($request->inspection_status));
         }
 
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_fire_isolation_valve.created_at', '>=', $startDate);
@@ -260,7 +261,7 @@ class IsolationValve extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_isolation_valve.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_isolation_valve.id as fire_id','inspection_fire_isolation_valve.created_by as checked_by','inspection_fire_isolation_valve_details.*','inspection_static_docno.*','inspection_fire_isolation_valve_details.*')
+        $query = $this->select('inspection_fire_isolation_valve.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_isolation_valve.id as fire_id', 'inspection_fire_isolation_valve.created_by as checked_by', 'inspection_fire_isolation_valve_details.*', 'inspection_static_docno.*', 'inspection_fire_isolation_valve_details.*')
             ->leftJoin('masters_location', 'inspection_fire_isolation_valve.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_isolation_valve.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_isolation_valve.unit', '=', 'masters_unit.id')
@@ -307,7 +308,7 @@ class IsolationValve extends Model
             $query = $query->where('inspection_fire_isolation_valve.inspection_status', decryptId($request->inspection_status));
         }
 
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_fire_isolation_valve.created_at', '>=', $startDate);
@@ -337,6 +338,7 @@ class IsolationValve extends Model
             $update_array = [
                 'verified_by' => Auth::id(),
                 'approved_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
@@ -345,6 +347,7 @@ class IsolationValve extends Model
         } else {
             $update_array = [
                 'verified_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
                 'capa_recomendation' => $request->remarks,

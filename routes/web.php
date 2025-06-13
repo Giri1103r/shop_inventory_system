@@ -206,6 +206,7 @@ Route::get('cron/master/worksave', [CronController::class, 'workSave']);
 Route::get('cron/master/employee/all-details-temp', [CronController::class, 'employeeMasterTempAllDetails']);
 Route::get('cron/master/employee/temp-details', [CronController::class, 'employeeMasterTemp']);
 Route::get('cron/master/employee/temp-custom-details', [CronController::class, 'employeeMasterTempCustom']);
+Route::get('cron/master/employee/temp-custom-token-details', [CronController::class, 'employeeMasterTempCustomToken']);
 Route::get('cron/master/employee_save', [CronController::class, 'EmployeeSave']);
 Route::get('permit_expiry', [CronController::class, 'permitExpiry']);
 Route::get('permit_close', [CronController::class, 'permitClose']);
