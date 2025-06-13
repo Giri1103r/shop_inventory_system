@@ -81,9 +81,9 @@
                                     </div> --}}
                                 </div>
 
-                                <div class="row card">
+                                <div class="row mt-3 card">
                                     <div class="card-header-inner p-2">
-                                        <h4 class="text-white">EHS Officer Approval</h4>
+                                        <h4 class="text-white">{{__("inspection.ehs_officer_approval")}}</h4>
                                     </div>
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('ohc/monthly-medicine-store/inspection/verify/submit') }}"

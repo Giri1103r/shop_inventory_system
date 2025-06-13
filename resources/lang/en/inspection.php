@@ -56,6 +56,7 @@ return [
     'ehs_officer_reverification' => 'EHS Officer Reverification',
     'status_log' => 'Status Log',
     'checklist_add' => 'Please Add the Sub category name in master',
+    'ehs_officer_approval' => 'EHS Officer Approval',
 
     'msds' => 'MSDS',
     'ser_no' => 'Serial Number',

@@ -108,7 +108,8 @@
                                                                     <td>
                                                                         <div class="form-input">
                                                                             <select name="emp_id[{{ $medicines->id }}]"
-                                                                                id="emp_id[{{ $loop->iteration }}]" style="width:100%"
+                                                                                id="emp_id[{{ $loop->iteration }}]"
+                                                                                style="width:100%"
                                                                                 class="form-select single-select emp_id">
                                                                                 <option value="">Select Employee Name
                                                                                 </option>
@@ -181,11 +182,22 @@
                     flatpickr(".expired_date", {
                         dateFormat: "d-m-Y",
                     });
-                    flatpickr(".inspection_date", {
+
+                    var fromDatepicker = flatpickr("#inspection_date", {
                         dateFormat: "d-m-Y",
-                    });
-                    flatpickr(".next_due", {
+                        onChange: function(selectedDates) {
+                            if (selectedDates.length > 0) {
+                                var startDate = selectedDates[0];
+                                toDatepicker.set('minDate', startDate);
+                                toDatepicker.clear();
+                            }
+                        }
+
+                    })
+
+                    var toDatepicker = flatpickr("#next_due", {
                         dateFormat: "d-m-Y",
+
                     });
 
 

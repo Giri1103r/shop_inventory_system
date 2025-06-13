@@ -262,13 +262,13 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Approvals
+                    {{__("inspection.ehs_officer_approval")}}
                 </td>
             </tr>
         </table>
         <table>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approved By</b></td>
+                <td width="50%" style="padding:5px;"><b>Approved By / Rejected By</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ getUsername(isset($inspection_detail->updated_by) ? $inspection_detail->updated_by : '') }}
