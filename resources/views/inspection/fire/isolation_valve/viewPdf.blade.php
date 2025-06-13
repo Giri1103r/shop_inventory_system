@@ -202,20 +202,26 @@
     </div>
     <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
         <tr style="background-color: #ddd;">
-            <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px; background-color: #bbb;">DATE OF INSPECTION :-
+            <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px; background-color: #bbb;">
+                DATE OF INSPECTION :-
                 {{ Displaydateformat($forklift_details->date_of_inspection) }}
             </th>
-            <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px; background-color: #bbb;">LOCATION :-
+            <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px; background-color: #bbb;">
+                LOCATION :-
                 {{ getLocationName($forklift_details->location) }}</th>
-            <th colspan="3" style="border: 1px solid black; text-align: left; padding: 8px; background-color: #bbb;">SHIFT :-
+            <th colspan="3" style="border: 1px solid black; text-align: left; padding: 8px; background-color: #bbb;">
+                SHIFT :-
                 {{ GetShiftName($forklift_details->shift) }}</th>
         </tr>
         <tr style="background-color: #ddd;">
-            <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px; background-color: #bbb;">NEXT DUE ON :-
+            <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px; background-color: #bbb;">
+                NEXT DUE ON :-
                 {{ Displaydateformat($forklift_details->next_due) }}</th>
-            <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px; background-color: #bbb;">UNIT :-
+            <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px; background-color: #bbb;">
+                UNIT :-
                 {{ getUnitName($forklift_details->unit) }} </th>
-            <th colspan="3" style="border: 1px solid black; text-align: left; padding: 8px; background-color: #bbb;">FREQUENCY :-
+            <th colspan="3" style="border: 1px solid black; text-align: left; padding: 8px; background-color: #bbb;">
+                FREQUENCY :-
                 {{ getFrequencyName($forklift_details->frequency) }}</th>
         </tr>
         <tr>
@@ -344,6 +350,15 @@
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
+                </tr>
+            @endif
+            @if (isset($forklift_details->is_passed))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('ohc_management.capa') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ isset($forklift_details->is_passed) && $forklift_details->is_passed == 1 ? 'Yes' : 'NO' }}
+                    </td>
                 </tr>
             @endif
             @if (isset($forklift_details->created_at))

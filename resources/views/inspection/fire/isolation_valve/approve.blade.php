@@ -387,6 +387,16 @@
                                                     );
                                                 @endphp
                                             @endif
+                                            @if (isset($inspection->is_passed))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('ohc_management.capa') }}</label>
+                                                        <div class="view_data">
+                                                            {{ isset($inspection->is_passed) && $inspection->is_passed == 1 ? 'Yes' : 'NO' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
                                             @if (isset($inspection->created_at))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -873,7 +883,7 @@
                     remarks: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
                         noSpaces: true,
                     },
                     // signature_image: {
@@ -885,7 +895,7 @@
                     remarks: {
                         required: "Remarks is Required",
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 600",
                     },
                     // signature_image: {
                     //     required: "Signature is Required",
@@ -922,7 +932,7 @@
                     capa_remarks: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
                         noSpaces: true,
                     },
                     // signature_image: {
@@ -934,7 +944,7 @@
                     capa_remarks: {
                         required: "Remarks is Required",
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 600",
                     },
                     // signature_image: {
                     //     required: "Signature is Required",
@@ -967,7 +977,7 @@
                     level_one_manager: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
                         noSpaces: true,
                     },
                     // signature_image: {
@@ -979,7 +989,7 @@
                     level_one_manager: {
                         required: "Remarks is Required",
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 600",
                     },
                     // signature_image: {
                     //     required: "Signature is Required",
@@ -1012,7 +1022,7 @@
                     level_two_manager: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
                         noSpaces: true,
                     },
                     // signature_image: {
@@ -1024,7 +1034,7 @@
                     level_two_manager: {
                         required: "Remarks is Required",
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 600",
                     },
                     // signature_image: {
                     //     required: "Signature is Required",
