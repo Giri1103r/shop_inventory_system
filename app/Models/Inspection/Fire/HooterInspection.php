@@ -27,6 +27,7 @@ class HooterInspection extends Model
         'approved_by',
         'description',
         'remarks',
+        'is_passed',
         'inspection_status',
         'capa_recomendation',
         'capa_remarks',
@@ -61,6 +62,7 @@ class HooterInspection extends Model
 
 
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+          
         } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
             $query->where('inspection_fire_hooter.created_by', Auth::id());
         }
@@ -119,7 +121,7 @@ class HooterInspection extends Model
             $query = $query->where('inspection_fire_hooter.next_due', 'LIKE', '%' . DBdateformat($request->next_due) . '%');
         }
 
-                   
+
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_hooter.inspection_status', decryptId($request->inspection_status));
         }
@@ -372,6 +374,7 @@ class HooterInspection extends Model
             $update_array = [
                 'verified_by' => Auth::id(),
                 'approved_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
@@ -382,6 +385,7 @@ class HooterInspection extends Model
                 'verified_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'capa_recomendation' => $request->remarks,
             ];
             $this->where('id', $id)->update($update_array);

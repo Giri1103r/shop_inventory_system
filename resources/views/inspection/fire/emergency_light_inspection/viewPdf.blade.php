@@ -386,6 +386,15 @@
                     </td>
                 </tr>
             @endif
+            @if (isset($emergency_light->is_passed))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('ohc_management.capa') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ isset($emergency_light->is_passed) && $emergency_light->is_passed == 1 ? 'Yes' : 'NO' }}
+                    </td>
+                </tr>
+            @endif
             {{-- @if (isset($signature))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>

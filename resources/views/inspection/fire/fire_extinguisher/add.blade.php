@@ -461,22 +461,24 @@
                     e.preventDefault();
                     location.reload();
                 });
-               
+
+                var toDatepicker = flatpickr("#next_due", {
+                    dateFormat: "d-m-Y",
+                });
+
                 var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates) {
                         if (selectedDates.length > 0) {
                             var startDate = selectedDates[0];
-                            toDatepicker.set('minDate', startDate);
-                            toDatepicker.clear();
+
+                            var nextDay = new Date(startDate);
+                            nextDay.setDate(startDate.getDate() + 1);
+
+                            toDatepicker.set('minDate', nextDay);
+
                         }
                     }
-
-                })
-
-                var toDatepicker = flatpickr("#next_due", {
-                    dateFormat: "d-m-Y",
-
                 });
             });
             $(function() {
@@ -610,7 +612,7 @@
                         },
                         signature_image: {
                             required: 'Please upload your signature',
-                             filesize: "Image must be under 15MB.",
+                            filesize: "Image must be under 15MB.",
 
                         },
                         issue_date: {

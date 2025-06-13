@@ -2402,7 +2402,7 @@ if (!function_exists('getMonth')) {
             } else if ($id == WAITING_FOR_L1_VERIFICATION) {
                 return 'EHS Officer Approved - Waiting for Level one Manager Verification';
             } else if ($id == WAITING_FOR_L2_VERIFICATION) {
-                return 'Level One Manager Approved - Waiting for Leven two Manager Verification';
+                return 'Level One Manager Approved - Waiting for Level two Manager Verification';
             } else if ($id == INSPECTION_APPROVED) {
                 return 'Closed';
             } else if ($id == EHS_OFFICER_REJECTED) {

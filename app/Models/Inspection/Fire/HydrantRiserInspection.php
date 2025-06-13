@@ -26,6 +26,7 @@ class HydrantRiserInspection extends Model
         'approved_by',
         'description',
         'remarks',
+        'is_passed',
         'inspection_status',
         'capa_recomendation',
         'capa_remarks',
@@ -322,6 +323,7 @@ class HydrantRiserInspection extends Model
             $update_array = [
                 'verified_by' => Auth::id(),
                 'approved_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
@@ -330,6 +332,7 @@ class HydrantRiserInspection extends Model
         } else {
             $update_array = [
                 'verified_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
                 'capa_recomendation' => $request->remarks,

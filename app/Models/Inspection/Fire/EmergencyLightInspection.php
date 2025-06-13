@@ -25,6 +25,7 @@ class EmergencyLightInspection extends Model
         'verified_by',
         'approved_by',
         'description',
+        'is_passed',
         'remarks',
         'inspection_status',
         'capa_recomendation',
@@ -224,7 +225,7 @@ class EmergencyLightInspection extends Model
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_fire_emergency_light_inspection.created_at', '>=', $startDate);
         }
-        
+
         if ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_fire_emergency_light_inspection.created_at', '<=', $endDate);
@@ -251,6 +252,7 @@ class EmergencyLightInspection extends Model
             $update_array = [
                 'verified_by' => Auth::id(),
                 'approved_by' => Auth::id(),
+                'is_passed' =>$request->is_passed,
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
@@ -259,6 +261,7 @@ class EmergencyLightInspection extends Model
         } else {
             $update_array = [
                 'verified_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
                 'capa_recomendation' => $request->remarks,

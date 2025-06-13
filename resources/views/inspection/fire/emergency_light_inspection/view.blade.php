@@ -151,14 +151,14 @@
                                             <h4 class="text-white">Emergency Light Inspection</h4>
                                         </div>
                                         <div class="col-md-12 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.obs') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $inspection->observation == '1' ? 'YES' : 'NO' }}
-                                                    </div>
-
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">{{ __('inspection.obs') }}</label>
+                                                <div class="view_data">
+                                                    {{ $inspection->observation == '1' ? 'YES' : 'NO' }}
                                                 </div>
+
                                             </div>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="table-responsive">
@@ -240,6 +240,17 @@
                                                             EMERGENCY_LIGHT_INSPECTION,
                                                         );
                                                     @endphp --}}
+                                                @endif
+                                                @if (isset($inspection->is_passed))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label ">{{ __('ohc_management.capa') }}</label>
+                                                            <div class="view_data">
+                                                                {{ isset($inspection->is_passed) && $inspection->is_passed == 1 ? 'Yes' : 'NO' }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 @endif
                                                 @if (isset($inspection->created_at))
                                                     <div class="col-md-4 mb-2">
@@ -538,7 +549,7 @@
                                                                 <th>From Status</th>
                                                                 <th>To Status</th>
                                                                 <th>Remarks</th>
-                                                                <th>Approved By</th>
+                                                                <th>Approve / Rejected By</th>
                                                                 <th>Created By</th>
                                                                 <th>Created At</th>
                                                             </tr>

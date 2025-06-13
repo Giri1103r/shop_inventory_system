@@ -134,7 +134,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">{{__('inspection.shifts')}}</label>
+                                                    <label class="form-label require">{{ __('inspection.shifts') }}</label>
                                                     <select name="shift_id" id="shift_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Shift</option>
@@ -204,7 +204,7 @@
                                         <hr>
                                         <div class="form-wrapper">
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white ms-2" >Hooter Inspection Checklist</h4>
+                                                <h4 class="text-white ms-2">Hooter Inspection Checklist</h4>
                                                 <button class="btn btn-primary add-row mb-2 " type="button"
                                                     id="add-row"
                                                     style="margin-left: 10px;  margin-right: 10px; width: 84px;">
@@ -292,7 +292,8 @@
                                                             @enderror
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
-                                                                    name="connection[1]" id="connection[1]" value="YES"
+                                                                    name="connection[1]" id="connection[1]"
+                                                                    value="YES"
                                                                     {{ old('connection.1') == 'YES' ? 'checked' : '' }}>
                                                                 <label class="form-check-label"
                                                                     for="connection">Connection</label>
@@ -302,7 +303,8 @@
                                                             @enderror
                                                             <div class="form-check form-check-inline">
                                                                 <input class="form-check-input" type="checkbox"
-                                                                    name="auditbility[1]" id="auditbility[1]" value="YES"
+                                                                    name="auditbility[1]" id="auditbility[1]"
+                                                                    value="YES"
                                                                     {{ old('auditbility.1') == 'YES' ? 'checked' : '' }}>
                                                                 <label class="form-check-label"
                                                                     for="auditbility">Audibility</label>
@@ -316,7 +318,7 @@
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                            class="form-label">{{ __('inspection.remarks') }}</label>
                                                         <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;">{{ old('remarks.1') }}</textarea>
 
                                                     </div>
@@ -409,22 +411,26 @@
                     location.reload();
                 });
 
+
+                var toDatepicker = flatpickr("#next_due", {
+                    dateFormat: "d-m-Y",
+                });
+
                 var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates) {
                         if (selectedDates.length > 0) {
                             var startDate = selectedDates[0];
-                            toDatepicker.set('minDate', startDate);
-                            toDatepicker.clear();
+
+                            var nextDay = new Date(startDate);
+                            nextDay.setDate(startDate.getDate() + 1);
+
+                            toDatepicker.set('minDate', nextDay);
+
                         }
                     }
-
-                })
-
-                var toDatepicker = flatpickr("#next_due", {
-                    dateFormat: "d-m-Y",
-
                 });
+
             });
             $(function() {
                 $.validator.addMethod("noSpaces", function(value, element) {
@@ -486,11 +492,11 @@
                             maxlength: 30,
                         },
                         "remarks[1]": {
-                            required: true,
+
                             minlength: 3,
-                            maxlength: 300,
+                            maxlength: 600,
                         },
-                     device_image: {
+                        device_image: {
                             required: true,
                             filesize: 15728640
                         },
@@ -557,9 +563,9 @@
                             maxlength: "Maximum Characters should not exceed 30",
                         },
                         "remarks[1]": {
-                            required: "Please add remarks",
+
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 300",
+                            maxlength: "Maximum Characters should not exceed 600",
                         },
                         device_image: {
                             required: "Please upload an image.",
@@ -693,7 +699,7 @@
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                            class="form-label ">{{ __('inspection.remarks') }}</label>
                                                         <textarea name="remarks[${form_set_count}]" id="remarks-${form_set_count}" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
@@ -752,11 +758,11 @@
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
                         minlength: 3,
-                        maxlength: 300,
+                        maxlength: 600,
                         messages: {
-                            required: 'Please add the remarks',
+
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 300",
+                            maxlength: "Maximum Characters should not exceed 600",
                         }
                     });
 

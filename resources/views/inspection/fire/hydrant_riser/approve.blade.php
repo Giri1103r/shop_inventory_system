@@ -19,7 +19,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('fire/hydrant-riser-inspection/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('fire/hydrant-riser-inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -31,7 +32,7 @@
                                     <div class="row">
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.doc_no') }}</label>
+                                                <label class="form-label ">{{ __('inspection.doc_no') }}</label>
                                                 <div class="view_data">
                                                     {{ $document_no->doc_no }}
                                                 </div>
@@ -39,15 +40,15 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.issue_date') }}</label>
+                                                <label class="form-label ">{{ __('inspection.issue_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ ($document_no->issue_date) }}
+                                                    {{ $document_no->issue_date }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.rev_date') }}</label>
+                                                <label class="form-label ">{{ __('inspection.rev_date') }}</label>
                                                 <div class="view_data">
                                                     {{ $document_no->rev_dt }}
                                                 </div>
@@ -55,16 +56,15 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label require">{{ __('inspection.inspection_date') }}</label>
+                                                <label class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                                 <div class="view_data">
-                                                    {{ ($inspection->date_of_inspection) }}
+                                                    {{ $inspection->date_of_inspection }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.location') }}</label>
+                                                <label class="form-label ">{{ __('inspection.location') }}</label>
                                                 <div class="view_data">
                                                     {{ getLocationname($inspection->location) }}
                                                 </div>
@@ -72,7 +72,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">Shift</label>
+                                                <label class="form-label ">Shift</label>
                                                 <div class="view_data">
                                                     {{ getShiftName($inspection->shift) }}
                                                 </div>
@@ -80,15 +80,15 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
+                                                <label class="form-label ">{{ __('inspection.next_due') }}</label>
                                                 <div class="view_data">
-                                                    {{ ($inspection->next_due) }}
+                                                    {{ $inspection->next_due }}
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                <label class="form-label ">{{ __('inspection.unit') }}</label>
                                                 <div class="view_data">
                                                     {{ getUnitname($inspection->unit) }}
                                                 </div>
@@ -96,7 +96,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.frequency') }}</label>
+                                                <label class="form-label ">{{ __('inspection.frequency') }}</label>
                                                 <div class="view_data">
                                                     {{ getFrequencyname($inspection->frequency) }}
                                                 </div>
@@ -104,8 +104,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label require">{{ __('inspection.upload_image') }}</label>
+                                                <label class="form-label ">{{ __('inspection.upload_image') }}</label>
                                                 <div class="view_data">
                                                     <img src="{{ admin_url($inspection_image) }}"
                                                         style="width:50px; height:50px;" alt="" srcset="">
@@ -138,8 +137,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label require">Observation</label>
+                                                    <label class="form-label ">Observation</label>
                                                     <div class="view_data">
                                                         {{ $inspection->observation_needed == '1' ? 'YES' : 'NO' }}
                                                     </div>
@@ -159,8 +157,7 @@
                                                 <!-- SR No -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.sr_no') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.sr_no') }}</label>
                                                         <div class="view_data">
                                                             {{ $loop->iteration }}
                                                         </div>
@@ -170,8 +167,7 @@
                                                 <!-- Resource Code -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.location') }}</label>
                                                         <div class="view_data">
                                                             {{ getLocationname($details->location_check_id) }}
                                                         </div>
@@ -183,19 +179,17 @@
                                                 <!-- Hydrant No  -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Hydrant No</label>
+                                                        <label class="form-label ">Hydrant No</label>
                                                         <div class="view_data">
                                                             {{ $details->hydrant_no }}
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                 <!-- Lugs -->
-                                                 <div class="col-md-4 mb-2">
+                                                <!-- Lugs -->
+                                                <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Lugs</label>
+                                                        <label class="form-label ">Lugs</label>
                                                         <div class="view_data">
                                                             {{ $details->lugs_id == '1' ? 'Present' : 'Missing' }}
                                                         </div>
@@ -204,8 +198,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Rubber Washer</label>
+                                                        <label class="form-label ">Rubber Washer</label>
                                                         <div class="view_data">
                                                             {{ $details->rubber_washer == '1' ? 'Intact' : 'Damaged' }}
                                                         </div>
@@ -214,8 +207,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Check Nut</label>
+                                                        <label class="form-label ">Check Nut</label>
                                                         <div class="view_data">
                                                             {{ $details->check_nut == '1' ? 'Present' : 'Missing' }}
                                                         </div>
@@ -224,8 +216,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Spindle Wheel</label>
+                                                        <label class="form-label ">Spindle Wheel</label>
                                                         <div class="view_data">
                                                             {{ $details->spindle_wheel == '1' ? 'Functional' : 'Non-Functional' }}
                                                         </div>
@@ -234,8 +225,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Blank Cap</label>
+                                                        <label class="form-label ">Blank Cap</label>
                                                         <div class="view_data">
                                                             {{ $details->blank_cap == '1' ? 'Present' : 'Missing' }}
                                                         </div>
@@ -244,8 +234,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Blank Cap</label>
+                                                        <label class="form-label ">Blank Cap</label>
                                                         <div class="view_data">
                                                             {{ $details->female_coupling == '1' ? 'Functional' : 'Non-Functional' }}
 
@@ -255,8 +244,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Lever</label>
+                                                        <label class="form-label ">Lever</label>
                                                         <div class="view_data">
                                                             {{ $details->lever == '1' ? 'Functional' : 'Non-Functional' }}
 
@@ -267,8 +255,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Flow Test</label>
+                                                        <label class="form-label ">Flow Test</label>
                                                         <div class="view_data">
                                                             {{ $details->flow_test }}
                                                         </div>
@@ -279,7 +266,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.physical_condition') }}</label>
+                                                            class="form-label ">{{ __('inspection.physical_condition') }}</label>
                                                         <div class="view_data">
                                                             @if ($details->physical_condition == GOOD)
                                                                 <p>Good</p>
@@ -294,8 +281,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Condition of ISV</label>
+                                                        <label class="form-label ">Condition of ISV</label>
                                                         <div class="view_data">
                                                             {{ $details->condition_of_ivs == '1' ? 'Functional' : 'Non-Functional' }}
 
@@ -306,8 +292,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">Approach</label>
+                                                        <label class="form-label ">Approach</label>
                                                         <div class="view_data">
                                                             {{ $details->approach }}
                                                         </div>
@@ -318,8 +303,7 @@
                                                 <!-- Remarks -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.remarks') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.remarks') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->remarks }}
                                                         </div>
@@ -334,7 +318,9 @@
                                     <hr>
                                 </div>
 
-                                @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION && (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
+                                @if (
+                                    $inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
+                                        (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -374,7 +360,7 @@
                                                 @endif
                                             </div> --}}
                                             <div class="col-md-12 form-input">
-                                                <label class="form-label required">Whether the Inspection has been
+                                                <label class="form-label require">Whether the Inspection has been
                                                     passed Without the CAPA
                                                     ?</label>
                                                 <div class="mb-3 form-input">
@@ -388,7 +374,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-12 mb-2 form-input" id="remarks">
-                                                <label for="remarks" class="form-label">Remarks</label>
+                                                <label for="remarks" class="form-label require">Remarks</label>
                                                 <textarea id="remarks" class="form-control" rows="3" placeholder="Please Enter Remarks" name="remarks"></textarea>
                                             </div>
                                             <div class="submit-button" style="text-align: right;">
@@ -421,7 +407,7 @@
                                                     //     HYDRANT_RISER,
                                                     // );
 
-                                                     $updated_time = GetFireUpdatedTime(
+                                                    $updated_time = GetFireUpdatedTime(
                                                         $inspection->verified_by,
                                                         $inspection->id,
                                                         HYDRANT_RISER,
@@ -429,7 +415,16 @@
                                                     );
                                                 @endphp
                                             @endif
-
+                                            @if (isset($inspection->is_passed))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('ohc_management.capa') }}</label>
+                                                        <div class="view_data">
+                                                            {{ isset($inspection->is_passed) && $inspection->is_passed == 1 ? 'Yes' : 'NO' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
                                             @if (isset($updated_time->created_at))
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -570,7 +565,7 @@
                                                         WAITING_FOR_CAPA_VERIFICATION,
                                                     );
                                                 @endphp
-                                                 <div class="col-md-4 mb-2">
+                                                <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.date') }}</label>
                                                         <div class="view_data">
@@ -630,7 +625,7 @@
                                                     WAITING_FOR_L1_VERIFICATION,
                                                 );
                                             @endphp
-                                             <div class="col-md-4 mb-2">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.date') }}</label>
                                                     <div class="view_data">
@@ -688,7 +683,7 @@
                                                     WAITING_FOR_L2_VERIFICATION,
                                                 );
                                             @endphp
-                                             <div class="col-md-4 mb-2">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.date') }}</label>
                                                     <div class="view_data">
@@ -764,7 +759,7 @@
                                                 @endif
                                             </div> --}}
                                             <div class="col-md-12 mb-2 form-input" id="capa_remarks">
-                                                <label for="capa_remarks" class="form-label">Remarks</label>
+                                                <label for="capa_remarks" class="form-label require">Remarks</label>
                                                 <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
                                                     name="capa_remarks"></textarea>
                                             </div>
@@ -777,7 +772,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION &&  (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
+                                @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('fire/hydrant-riser-inspection/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -816,7 +811,7 @@
                                                 @endif
                                             </div> --}}
                                             <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
-                                                <label for="remarks" class="form-label">Remarks</label>
+                                                <label for="remarks" class="form-label require">Remarks</label>
                                                 <textarea id="" class="form-control" rows="3" placeholder="Please Provide Remarks" name="remarks"></textarea>
                                             </div>
                                         </div>
@@ -827,7 +822,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && (checkUserRole(ROLE_L1_MANAGER) || isAdmin()) )
+                                @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && (checkUserRole(ROLE_L1_MANAGER) || isAdmin()))
                                     <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('fire/hydrant-riser-inspection/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -868,7 +863,7 @@
                                         </div>
 
                                         <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
-                                            <label for="remarks" class="form-label">Remarks</label>
+                                            <label for="remarks" class="form-label require">Remarks</label>
                                             <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
                                                 name="level_one_manager"></textarea>
                                         </div>
@@ -879,7 +874,7 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION && (checkUserRole(ROLE_L2_MANAGER) || isAdmin()) )
+                                @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION && (checkUserRole(ROLE_L2_MANAGER) || isAdmin()))
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('fire/hydrant-riser-inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
@@ -919,7 +914,7 @@
                                             </div> --}}
                                         </div>
                                         <div class="col-md-12 mb-2 form-input" id="capa_recomendation">
-                                            <label for="remarks" class="form-label">Remarks</label>
+                                            <label for="remarks" class="form-label require">Remarks</label>
                                             <textarea id="remarks" class="form-control" rows="3" placeholder="Please Provide Remarks"
                                                 name="level_two_manager"></textarea>
                                         </div>
@@ -946,7 +941,7 @@
                     remarks: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
                         noSpaces: true,
                     },
                     // signature_image: {
@@ -958,7 +953,7 @@
                     remarks: {
                         required: "Remarks is Required",
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 600",
                     },
                     // signature_image: {
                     //     required: "Signature is Required",
@@ -995,7 +990,7 @@
                     capa_remarks: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
                         noSpaces: true,
                     },
                     // signature_image: {
@@ -1007,7 +1002,7 @@
                     capa_remarks: {
                         required: "Remarks is Required",
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 600",
                     },
                     // signature_image: {
                     //     required: "Signature is Required",
@@ -1042,7 +1037,7 @@
                     level_one_manager: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
                         noSpaces: true,
                     },
                     // signature_image: {
@@ -1054,7 +1049,7 @@
                     level_one_manager: {
                         required: "Remarks is Required",
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 600",
                     },
                     // signature_image: {
                     //     required: "Signature is Required",
@@ -1087,7 +1082,7 @@
                     level_two_manager: {
                         required: true,
                         minlength: 3,
-                        maxlength: 100,
+                        maxlength: 600,
                         noSpaces: true,
                     },
                     // signature_image: {
@@ -1099,7 +1094,7 @@
                     level_two_manager: {
                         required: "Remarks is Required",
                         minlength: "Minimum Characters should be 3",
-                        maxlength: "Maximum Characters should not exceed 100",
+                        maxlength: "Maximum Characters should not exceed 600",
                     },
                     // signature_image: {
                     //     required: "Signature is Required",
