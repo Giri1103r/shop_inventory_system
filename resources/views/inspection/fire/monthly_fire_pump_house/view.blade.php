@@ -200,6 +200,17 @@
                                                         );
                                                     @endphp
                                                 @endif
+                                                @if (isset($inspection_details->is_passed))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label ">{{ __('ohc_management.capa') }}</label>
+                                                            <div class="view_data">
+                                                                {{ isset($inspection_details->is_passed) && $inspection_details->is_passed == 1 ? 'Yes' : 'NO' }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
                                                 @if (isset($inspection_details->created_at))
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">

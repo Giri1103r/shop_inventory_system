@@ -224,7 +224,9 @@ class OccupationHealthInspectionController extends Controller
             );
             return view('inspection.inspection_ohc.occupational_heath_inspection.add', $data);
         } catch (Exception $ex) {
-            report($ex);
+           report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/inspection/list'));
         }
     }
 

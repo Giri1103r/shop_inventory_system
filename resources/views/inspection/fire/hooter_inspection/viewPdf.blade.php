@@ -575,13 +575,13 @@
                     <table class="table table-bordered table-hover tblborder">
                         <thead>
                             <tr>
-                                <th>S.NO</th>
-                                <th>From Status</th>
-                                <th>To Status</th>
-                                <th>Remarks</th>
-                                <th>Approved By</th>
-                                <th>Created By</th>
-                                <th>Created At</th>
+                                <th>{{ __('common.sno') }}</th>
+                                <th>{{ __('common.from_status') }}</th>
+                                <th>{{ __('common.to_status') }}</th>
+                                <th>{{ __('common.remarks') }}</th>
+                                <th>{{ __('common.approve_or_reject') }}</th>
+                                <th>{{ __('common.created_by') }}</th>
+                                <th>{{ __('common.created_date') }}</th>
                             </tr>
                         </thead>
                         <tbody>

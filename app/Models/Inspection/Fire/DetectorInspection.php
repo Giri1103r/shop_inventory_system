@@ -34,6 +34,7 @@ class DetectorInspection extends Model
         'level_one_manager_remarks',
         'level_two_manager_remarks',
         'capa_ehs_remarks',
+        'is_passed',
         'l1_manager_verified_by',
         'l2_manager_verified_by',
         'status',
@@ -275,6 +276,7 @@ class DetectorInspection extends Model
             $update_array = [
                 'verified_by' => Auth::id(),
                 'approved_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
@@ -283,6 +285,7 @@ class DetectorInspection extends Model
         } else {
             $update_array = [
                 'verified_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
                 'capa_recomendation' => $request->remarks,

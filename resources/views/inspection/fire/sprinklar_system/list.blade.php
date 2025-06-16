@@ -26,7 +26,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">{{ __('inspection.inspection_date') }}</label>
+                                                    class="form-label ">{{ __('inspection.inspection_date') }}</label>
 
 
                                                 <div class="input-group date form-input custom-height">
@@ -41,7 +41,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.next_due') }}</label>
+                                                <label class="form-label ">{{ __('inspection.next_due') }}</label>
 
 
                                                 <div class="input-group date form-input custom-height">
@@ -56,7 +56,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.location') }}</label>
+                                                <label class="form-label ">{{ __('inspection.location') }}</label>
                                                 <select name="location" id="location" class=" form-control single-select"
                                                     style="width: 100%">
                                                     <option value="">Select {{ __('inspection.location') }}
@@ -70,7 +70,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                <label class="form-label ">{{ __('inspection.unit') }}</label>
                                                 <select name="unit" id="unit" class=" form-control single-select"
                                                     style="width: 100%">
                                                     <option value="">Select Unit</option>
@@ -80,7 +80,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">Shift</label>
+                                                <label class="form-label ">Shift</label>
                                                 <select name="shift" id="shift" class=" form-control single-select"
                                                     style="width: 100%">
                                                     <option value="">Select Shift</option>
@@ -95,7 +95,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.frequency') }}</label>
+                                                <label class="form-label ">{{ __('inspection.frequency') }}</label>
                                                 <select name="frequency" id="frequency" class=" form-control single-select"
                                                     style="width: 100%">
                                                     <option value="">Select Frequency</option>

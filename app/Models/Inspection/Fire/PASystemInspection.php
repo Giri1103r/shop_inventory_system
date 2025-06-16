@@ -34,6 +34,7 @@ class PASystemInspection extends Model
         'level_one_manager_remarks',
         'level_two_manager_remarks',
         'capa_ehs_remarks',
+        'is_passed',
         'l1_manager_verified_by',
         'l2_manager_verified_by',
         'status',
@@ -75,12 +76,12 @@ class PASystemInspection extends Model
             $search = $request->search['value'];
 
             $query = $query->where(function ($query) use ($search) {
-            $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"')
-                  ->orWhereRaw("DATE_FORMAT(inspection_fire_pa_system.date_of_inspection, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
-                  ->orWhereRaw("DATE_FORMAT(inspection_fire_pa_system.next_due, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
-                  ->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"')
-                  ->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"')
-                  ->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
+                $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"')
+                    ->orWhereRaw("DATE_FORMAT(inspection_fire_pa_system.date_of_inspection, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
+                    ->orWhereRaw("DATE_FORMAT(inspection_fire_pa_system.next_due, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
+                    ->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"')
+                    ->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"')
+                    ->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
 
@@ -189,7 +190,7 @@ class PASystemInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_pa_system.*', 'inspection_fire_pa_system_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*','inspection_fire_pa_system.id as fire_pa_inspection_id','inspection_fire_pa_system.created_by as checked_by')
+        $query = $this->select('inspection_fire_pa_system.*', 'inspection_fire_pa_system_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_fire_pa_system.id as fire_pa_inspection_id', 'inspection_fire_pa_system.created_by as checked_by')
             ->leftJoin('masters_location', 'inspection_fire_pa_system.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_pa_system.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_pa_system.unit', '=', 'masters_unit.id')
@@ -200,11 +201,11 @@ class PASystemInspection extends Model
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
                 $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"')
-                      ->orWhereRaw("DATE_FORMAT(inspection_fire_pa_system.date_of_inspection, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
-                      ->orWhereRaw("DATE_FORMAT(inspection_fire_pa_system.next_due, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
-                      ->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"')
-                      ->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"')
-                      ->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
+                    ->orWhereRaw("DATE_FORMAT(inspection_fire_pa_system.date_of_inspection, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
+                    ->orWhereRaw("DATE_FORMAT(inspection_fire_pa_system.next_due, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
+                    ->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"')
+                    ->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"')
+                    ->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
         if (isset($request->location_id) && $request->location_id) {
@@ -231,7 +232,7 @@ class PASystemInspection extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_pa_system.inspection_status', 'LIKE', '%' . decryptId($request->inspection_status) . '%');
         }
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_fire_pa_system.created_at', '>=', $startDate);
@@ -251,7 +252,7 @@ class PASystemInspection extends Model
         $data = $query->get();
         if ($data) {
             return $data = $data->groupBy('fire_pa_system_id');
-        }else{
+        } else {
             return $data;
         }
 
@@ -266,6 +267,7 @@ class PASystemInspection extends Model
             $update_array = [
                 'verified_by' => Auth::id(),
                 'approved_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
@@ -275,6 +277,7 @@ class PASystemInspection extends Model
         } else {
             $update_array = [
                 'verified_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
                 'capa_recomendation' => $request->remarks,
@@ -376,5 +379,4 @@ class PASystemInspection extends Model
     {
         static::addGlobalScope(new TrashScope('inspection_fire_pa_system'));
     }
-
 }

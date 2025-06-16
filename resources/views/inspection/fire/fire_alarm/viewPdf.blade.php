@@ -201,7 +201,7 @@
         </table>
     </div>
     <br>
-    <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center;"> 
+    <table style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center;">
         <tr style="background-color: #ddd;">
             <th colspan="4" style="border: 1px solid black; text-align: left; padding: 8px;">
                 DATE OF INSPECTION :- {{ Displaydateformat($forklift_details->date_of_inspection) }}
@@ -224,7 +224,7 @@
                 FREQUENCY :- {{ getFrequencyName($forklift_details->frequency) }}
             </th>
         </tr>
-    
+
         <tr style="background-color: #ddd;">
             <th rowspan="2" style="border: 1px solid black; padding: 8px;">SR. NO</th>
             <th rowspan="2" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
@@ -239,15 +239,15 @@
             <th style="border: 1px solid black; padding: 8px;">MANUAL CALL POINT</th>
             <th style="border: 1px solid black; padding: 8px;">APPROACH</th>
         </tr>
-    
+
         @foreach ($inspection as $details)
             <tr>
                 <td style="border: 1px solid black; padding: 6px;">{{ $details->sr_no }}</td>
                 <td style="border: 1px solid black; padding: 6px;">{{ GetDeptName($details->department) }}</td>
                 <td style="border: 1px solid black; padding: 6px;">{{ $details->resource_code }}</td>
                 <td style="border: 1px solid black; padding: 6px;">{{ $details->quantity }}</td>
-    
-    
+
+
                 <td style="border: 1px solid black; padding: 6px;">
                     @if ($details->glass == FUNCTIONAL)
                         {{ __('inspection.functional') }}
@@ -255,8 +255,8 @@
                         {{ __('inspection.non_functional') }}
                     @endif
                 </td>
-    
-                
+
+
                 <td style="border: 1px solid black; padding: 6px;">
                     @if ($details->hammer == FUNCTIONAL)
                         {{ __('inspection.functional') }}
@@ -264,8 +264,8 @@
                         {{ __('inspection.non_functional') }}
                     @endif
                 </td>
-    
-                
+
+
                 <td style="border: 1px solid black; padding: 6px;">
                     @if ($details->mannual_call_point == PRESENT)
                         {{ __('inspection.present') }}
@@ -273,16 +273,16 @@
                         {{ __('inspection.missing') }}
                     @endif
                 </td>
-    
-                
+
+
                 <td style="border: 1px solid black; padding: 6px;">{{ $details->approach }}</td>
-    
-                
+
+
                 <td style="border: 1px solid black; padding: 6px;">{{ $details->remarks }}</td>
             </tr>
         @endforeach
-    
-        
+
+
         <tr>
             <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
                 <div>
@@ -316,8 +316,8 @@
             </td>
         </tr>
     </table>
-    
-    
+
+
 
     <br>
 
@@ -346,6 +346,15 @@
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
                         {{ Displaydateformat($forklift_details->created_at) }}
+                    </td>
+                </tr>
+            @endif
+            @if (isset($forklift_details->is_passed))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('ohc_management.capa') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ isset($forklift_details->is_passed) && $forklift_details->is_passed == 1 ? 'Yes' : 'NO' }}
                     </td>
                 </tr>
             @endif
@@ -548,13 +557,13 @@
                     <table class="table table-bordered table-hover tblborder">
                         <thead>
                             <tr>
-                                <th>S.NO</th>
-                                <th>From Status</th>
-                                <th>To Status</th>
-                                <th>Remarks</th>
-                                <th>Approved By</th>
-                                <th>Created By</th>
-                                <th>Created At</th>
+                                <th>{{ __('common.sno') }}</th>
+                                <th>{{ __('common.from_status') }}</th>
+                                <th>{{ __('common.to_status') }}</th>
+                                <th>{{ __('common.remarks') }}</th>
+                                <th>{{ __('common.approve_or_reject') }}</th>
+                                <th>{{ __('common.created_by') }}</th>
+                                <th>{{ __('common.created_date') }}</th>
                             </tr>
                         </thead>
                         <tbody>

@@ -25,6 +25,7 @@ class CoTypeFireExtinguisher extends Model
         'checked_by',
         'verified_by',
         'approved_by',
+        'is_passed',
         'description',
         'remarks',
         'inspection_status',
@@ -57,7 +58,7 @@ class CoTypeFireExtinguisher extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_co_type_fire_extinguisher.*','inspection_static_docno.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_co_type_fire_extinguisher.id as fire_co_type_id')
+        $query = $this->select('inspection_co_type_fire_extinguisher.*', 'inspection_static_docno.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_co_type_fire_extinguisher.id as fire_co_type_id')
             ->leftJoin('masters_location', 'inspection_co_type_fire_extinguisher.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_co_type_fire_extinguisher.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('inspection_static_docno', 'inspection_co_type_fire_extinguisher.document_reference_id', '=', 'inspection_static_docno.id')
@@ -77,11 +78,11 @@ class CoTypeFireExtinguisher extends Model
 
             $query = $query->where(function ($query) use ($search) {
                 $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"')
-                      ->orWhereRaw("DATE_FORMAT(inspection_co_type_fire_extinguisher.inspection_date, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
-                      ->orWhereRaw("DATE_FORMAT(inspection_co_type_fire_extinguisher.next_due, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
-                      ->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"')
-                      ->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"')
-                      ->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
+                    ->orWhereRaw("DATE_FORMAT(inspection_co_type_fire_extinguisher.inspection_date, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
+                    ->orWhereRaw("DATE_FORMAT(inspection_co_type_fire_extinguisher.next_due, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
+                    ->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"')
+                    ->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"')
+                    ->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
 
@@ -112,7 +113,7 @@ class CoTypeFireExtinguisher extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_co_type_fire_extinguisher.inspection_status', decryptId($request->inspection_status));
         }
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_co_type_fire_extinguisher.created_at', '>=', $startDate);
@@ -190,15 +191,18 @@ class CoTypeFireExtinguisher extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_co_type_fire_extinguisher.*',
-                'inspection_shift_option.*',
-                'masters_unit.*', 'masters_location.*',
-                'inspection_frequency_option.*',
-                'inspection_co_type_fire_extinguisher_details.*',
-                'inspection_static_docno.*',
-                'inspection_co_type_fire_extinguisher.created_by as checked_by','inspection_co_type_fire_extinguisher.id as fire_id',
-                'inspection_co_type_fire_extinguisher_details.type as extinguisher_type'
-            )
+        $query = $this->select(
+            'inspection_co_type_fire_extinguisher.*',
+            'inspection_shift_option.*',
+            'masters_unit.*',
+            'masters_location.*',
+            'inspection_frequency_option.*',
+            'inspection_co_type_fire_extinguisher_details.*',
+            'inspection_static_docno.*',
+            'inspection_co_type_fire_extinguisher.created_by as checked_by',
+            'inspection_co_type_fire_extinguisher.id as fire_id',
+            'inspection_co_type_fire_extinguisher_details.type as extinguisher_type'
+        )
             ->leftJoin('masters_location', 'inspection_co_type_fire_extinguisher.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_co_type_fire_extinguisher.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_co_type_fire_extinguisher.unit', '=', 'masters_unit.id')
@@ -210,11 +214,11 @@ class CoTypeFireExtinguisher extends Model
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
                 $query->orWhereRaw('masters_location.location_name LIKE "%' . $search . '%"')
-                      ->orWhereRaw("DATE_FORMAT(inspection_co_type_fire_extinguisher.inspection_date, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
-                      ->orWhereRaw("DATE_FORMAT(inspection_co_type_fire_extinguisher.next_due, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
-                      ->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"')
-                      ->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"')
-                      ->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
+                    ->orWhereRaw("DATE_FORMAT(inspection_co_type_fire_extinguisher.inspection_date, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
+                    ->orWhereRaw("DATE_FORMAT(inspection_co_type_fire_extinguisher.next_due, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
+                    ->orWhereRaw('masters_unit.unit_name LIKE "%' . $search . '%"')
+                    ->orWhereRaw('inspection_shift_option.shift LIKE "%' . $search . '%"')
+                    ->orWhereRaw('inspection_frequency_option.frequency_name LIKE "%' . $search . '%"');
             });
         }
 
@@ -242,7 +246,7 @@ class CoTypeFireExtinguisher extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_co_type_fire_extinguisher.inspection_status', decryptId($request->inspection_status));
         }
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_co_type_fire_extinguisher.created_at', '>=', $startDate);
@@ -272,6 +276,7 @@ class CoTypeFireExtinguisher extends Model
             $update_array = [
                 'verified_by' => Auth::id(),
                 'approved_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
@@ -281,6 +286,7 @@ class CoTypeFireExtinguisher extends Model
         } else {
             $update_array = [
                 'verified_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
                 'capa_recomendation' => $request->remarks,
@@ -383,5 +389,4 @@ class CoTypeFireExtinguisher extends Model
     {
         static::addGlobalScope(new TrashScope('inspection_co_type_fire_extinguisher'));
     }
-
 }

@@ -160,10 +160,10 @@
                                                 <tr>
                                                     <th style="text-align: center;" colspan="2">Check Points</th>
                                                     @foreach ($getoption as $option)
-                                                        <th style="text-align: center;" >{{ $option }}</th>
+                                                        <th style="text-align: center;">{{ $option }}</th>
                                                     @endforeach
-                                                    <th style="text-align: center;" >Quantity</th>
-                                                    <th  style="text-align: center;" colspan="3">Remarks</th>
+                                                    <th style="text-align: center;">Quantity</th>
+                                                    <th style="text-align: center;" colspan="3">Remarks</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -186,7 +186,8 @@
                                                                 </td>
                                                             @endif --}}
 
-                                                            <td style="text-align: center;" colspan="2">{{ getSubcategoryDataname($checkPoint) }}
+                                                            <td style="text-align: center;" colspan="2">
+                                                                {{ getSubcategoryDataname($checkPoint) }}
                                                             </td>
 
                                                             @foreach ($getoption as $option)
@@ -219,7 +220,7 @@
                                                                 </td>
                                                             @endforeach
 
-                                                            <td style="text-align: center;" >
+                                                            <td style="text-align: center;">
                                                                 {{ $quantity[$checkPoint] ?? 'No Quantity Available' }}
                                                             </td>
 
@@ -544,13 +545,13 @@
                                             <table class="table table-bordered">
                                                 <thead class="bg-secondary" style="color: #ffff">
                                                     <tr>
-                                                        <th>S.NO</th>
-                                                        <th>From Status</th>
-                                                        <th>To Status</th>
-                                                        <th>Remarks</th>
-                                                        <th>Approved By</th>
-                                                        <th>Created By</th>
-                                                        <th>Created At</th>
+                                                        <th>{{ __('common.sno') }}</th>
+                                                        <th>{{ __('common.from_status') }}</th>
+                                                        <th>{{ __('common.to_status') }}</th>
+                                                        <th>{{ __('common.remarks') }}</th>
+                                                        <th>{{ __('common.approve_or_reject') }}</th>
+                                                        <th>{{ __('common.created_by') }}</th>
+                                                        <th>{{ __('common.created_date') }}</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>

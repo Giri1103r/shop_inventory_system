@@ -624,6 +624,24 @@ if (!function_exists('getActive')) {
     }
 }
 
+
+if (!function_exists('getActiveOrInactive')) {
+
+    function getActiveOrInactive($value)
+    {
+        $status = "";
+        if ($value == 0) {
+            $status = "In-Active";
+        } elseif ($value == 1) {
+            $status = "active";
+        } else {
+            $status = "";
+        }
+
+        return $status;
+    }
+}
+
 if (!function_exists('getCustomValue')) {
 
     function getCustomValue($table, $column, $value)

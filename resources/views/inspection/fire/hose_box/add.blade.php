@@ -121,7 +121,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">{{ __('inspection.shifts')}}</label>
+                                                    <label class="form-label require">{{ __('inspection.shifts') }}</label>
                                                     <select name="shift_id" id="shift_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Shift</option>
@@ -394,21 +394,23 @@
                     location.reload();
                 });
 
+                var toDatepicker = flatpickr("#next_due", {
+                    dateFormat: "d-m-Y",
+                });
+
                 var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates) {
                         if (selectedDates.length > 0) {
                             var startDate = selectedDates[0];
-                            toDatepicker.set('minDate', startDate);
-                            toDatepicker.clear();
+
+                            var nextDay = new Date(startDate);
+                            nextDay.setDate(startDate.getDate() + 1);
+
+                            toDatepicker.set('minDate', nextDay);
+
                         }
                     }
-
-                })
-
-                var toDatepicker = flatpickr("#next_due", {
-                    dateFormat: "d-m-Y",
-
                 });
             });
             $(function() {

@@ -412,22 +412,24 @@
                     e.preventDefault();
                     location.reload();
                 });
-              
+
+                var toDatepicker = flatpickr("#next_due", {
+                    dateFormat: "d-m-Y",
+                });
+
                 var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates) {
                         if (selectedDates.length > 0) {
                             var startDate = selectedDates[0];
-                            toDatepicker.set('minDate', startDate);
-                            toDatepicker.clear();
+
+                            var nextDay = new Date(startDate);
+                            nextDay.setDate(startDate.getDate() + 1);
+
+                            toDatepicker.set('minDate', nextDay);
+
                         }
                     }
-
-                })
-
-                var toDatepicker = flatpickr("#next_due", {
-                    dateFormat: "d-m-Y",
-
                 });
             });
             $(function() {
@@ -525,7 +527,7 @@
                         },
                         signature_image: {
                             required: true,
-                             filesize: 15728640,
+                            filesize: 15728640,
                         },
 
                     },
@@ -537,7 +539,7 @@
                         },
                         signature_image: {
                             required: 'Please upload your signature',
-                             filesize: "File size should not exceed 15MB",
+                            filesize: "File size should not exceed 15MB",
                         },
                         issue_date: {
                             required: "Date Of Audit is required",

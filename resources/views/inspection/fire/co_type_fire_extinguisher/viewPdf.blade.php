@@ -299,51 +299,7 @@
                     </td>
                 </tr>
             @endforeach
-            {{-- @php
-            $prepared_by_signature = GetFireSignature(
-                $forklift_details->created_by,
-                $forklift_details->id,
-                CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
-            );
-            $verified_by_signature = GetFireSignature(
-                $forklift_details->updated_by,
-                $forklift_details->id,
-                CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
-            );
-            $verified_by_signature = GetFireSignature(
-                $forklift_details->approved_by,
-                $forklift_details->id,
-                CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
-            );
-        @endphp
-        <tr>
-            <td colspan="4"
-                style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
-                    style="height: 50px;">
-                <div>Checked & Prepared By: {{ getUsername($forklift_details->created_by) }}</div>
-            </td>
-            <td colspan="4"
-                style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                @if ($forklift_details->updated_by != null)
-                    <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
-                        style="height: 50px;">
-                    <div>Verified By: {{ getUsername($forklift_details->updated_by) }}</div>
-                @else
-                    <p>Inspection has not been Verified Yet</p>
-                @endif
-            </td>
-            <td colspan="5"
-                style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                @if ($forklift_details->approved_by != null)
-                    <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
-                        style="height: 50px;">
-                    <div>Approved By: {{ getUsername($forklift_details->approved_by) }}</div>
-                @else
-                    <p>Inspection has not been Verified Yet</p>
-                @endif
-            </td>
-        </tr> --}}
+           
             <tr>
                 <td colspan="4"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
@@ -394,6 +350,15 @@
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
+                </tr>
+            @endif
+            @if (isset($forklift_details->is_passed))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('ohc_management.capa') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ isset($forklift_details->is_passed) && $forklift_details->is_passed == 1 ? 'Yes' : 'NO' }}
+                    </td>
                 </tr>
             @endif
             @if (isset($forklift_details->created_at))
@@ -604,13 +569,13 @@
                     <table class="table table-bordered table-hover tblborder">
                         <thead>
                             <tr>
-                                <th>S.NO</th>
-                                <th>From Status</th>
-                                <th>To Status</th>
-                                <th>Remarks</th>
-                                <th>Approved By</th>
-                                <th>Created By</th>
-                                <th>Created At</th>
+                                <th>{{ __('common.sno') }}</th>
+                                <th>{{ __('common.from_status') }}</th>
+                                <th>{{ __('common.to_status') }}</th>
+                                <th>{{ __('common.remarks') }}</th>
+                                <th>{{ __('common.approve_or_reject') }}</th>
+                                <th>{{ __('common.created_by') }}</th>
+                                <th>{{ __('common.created_date') }}</th>
                             </tr>
                         </thead>
                         <tbody>

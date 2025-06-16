@@ -407,22 +407,24 @@
                     e.preventDefault();
                     location.reload();
                 });
-               
+
+                 var toDatepicker = flatpickr("#next_due", {
+                    dateFormat: "d-m-Y",
+                });
+
                 var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates) {
                         if (selectedDates.length > 0) {
                             var startDate = selectedDates[0];
-                            toDatepicker.set('minDate', startDate);
-                            toDatepicker.clear();
+
+                            var nextDay = new Date(startDate);
+                            nextDay.setDate(startDate.getDate() + 1);
+
+                            toDatepicker.set('minDate', nextDay);
+
                         }
                     }
-
-                })
-
-                var toDatepicker = flatpickr("#next_due", {
-                    dateFormat: "d-m-Y",
-
                 });
             });
             $(function() {
@@ -511,7 +513,7 @@
                         "remarks[1]": {
                             required: true,
                             minlength: 3,
-                            maxlength: 300,
+                            maxlength: 600,
                         },
                         "qbd[1]": {
                             required: true,
@@ -597,7 +599,7 @@
                         "remarks[1]": {
                             required: 'Please add the remarks',
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 300",
+                            maxlength: "Maximum Characters should not exceed 600",
                         },
                         device_image: {
                             required: "Please upload an image.",

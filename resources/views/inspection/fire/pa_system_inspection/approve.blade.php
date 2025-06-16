@@ -19,8 +19,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back
-                                        href="{{ admin_url('fire/pa-system-inspection/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('fire/pa-system-inspection/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -55,8 +54,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.inspection_date') }}</label>
+                                                <label class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                                 <div class="view_data">
                                                     {{ Displaydateformat($inspection->date_of_inspection) }}
                                                 </div>
@@ -104,8 +102,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.upload_image') }}</label>
+                                                <label class="form-label ">{{ __('inspection.upload_image') }}</label>
                                                 <div class="view_data">
                                                     <img src="{{ admin_url($inspection_image) }}"
                                                         style="width:100px; height:50px;" alt="" srcset="">
@@ -134,22 +131,11 @@
                                     <div class="form-observation">
                                         <div class="row mt-4 form-obs">
                                             <div class="card-header-inner p-2">
-                                                <h4 class="text-white">{{__('inspection.fire_pa_system_obs')}}</h4>
+                                                <h4 class="text-white">{{ __('inspection.fire_pa_system_obs') }}</h4>
                                             </div>
-                                            {{-- <div class="col-md-12 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.obs') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $inspection->observation }}
-                                                    </div>
-
-                                                </div>
-                                            </div> --}}
-
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label ">Observation</label>
+                                                    <label class="form-label ">Observation</label>
                                                     <div class="view_data">
                                                         {{ $inspection->observation_needed == '1' ? 'YES' : 'NO' }}
                                                     </div>
@@ -163,13 +149,13 @@
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">{{__('inspection.fire_pa_system_checklist')}}</h4>
+                                                    <h4 class="text-white">{{ __('inspection.fire_pa_system_checklist') }}
+                                                    </h4>
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.sr_no') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.sr_no') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->sr_no }}
                                                         </div>
@@ -178,8 +164,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.location') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.location') }}</label>
                                                         <div class="view_data">
                                                             {{ getLocationname($details->location) }}
                                                         </div>
@@ -187,8 +172,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.unit') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.unit') }}</label>
                                                         <div class="view_data">
                                                             {{ getUnitname($details->unit) }}
                                                         </div>
@@ -197,8 +181,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Audio Quality</label>
+                                                        <label class="form-label ">Audio Quality</label>
                                                         <div class="view_data">
                                                             @if ($details->audio_quality == GOOD)
                                                                 GOOD
@@ -212,8 +195,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Mic Condition</label>
+                                                        <label class="form-label ">Mic Condition</label>
                                                         <div class="view_data">
                                                             @if ($details->mic_condition == GOOD)
                                                                 GOOD
@@ -227,8 +209,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Mic Quantity</label>
+                                                        <label class="form-label ">Mic Quantity</label>
                                                         <div class="view_data">
                                                             {{ $details->mic_quantity }}
                                                         </div>
@@ -236,8 +217,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Physical Condition</label>
+                                                        <label class="form-label ">Physical Condition</label>
                                                         <div class="view_data">
                                                             @if ($details->physical_condition == GOOD)
                                                                 GOOD
@@ -251,11 +231,10 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Cable Condition</label>
+                                                        <label class="form-label ">Cable Condition</label>
                                                         <div class="view_data">
                                                             @if ($details->cable_condition == GOOD)
-                                                               GOOD
+                                                                GOOD
                                                             @elseif($details->cable_condition == FAIR)
                                                                 FAIR
                                                             @elseif($details->cable_condition == POOR)
@@ -267,8 +246,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Operation</label>
+                                                        <label class="form-label ">Operation</label>
                                                         <div class="view_data">
                                                             @if ($details->operation == FUNCTIONAL)
                                                                 {{ __('inspection.functional') }}
@@ -281,8 +259,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.remarks') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.remarks') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->remarks }}
                                                         </div>
@@ -294,8 +271,9 @@
                                     <hr>
                                 </div>
 
-                                @if ($inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
-                                        (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()) )
+                                @if (
+                                    $inspection->inspection_status == WAITING_FOR_EHS_OFFICER_VERIFICATION &&
+                                        (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -305,8 +283,7 @@
                                         action="{{ admin_url('fire/pa-system-inspection/ehsofficer/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
-                                            name="id">
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
                                         <div class="row">
                                             <div class="col-md-4 form-group form-input mb-2">
                                                 <label class="form-label ">{{ __('inspection.name') }}</label>
@@ -318,23 +295,7 @@
                                                 <input type="text" name="date" id = "date" class="form-control"
                                                     value="{{ todayDate() }}" readonly>
                                             </div>
-                                            {{-- <div class="col-md-4 form-group form-input mb-2">
-                                                @if (isset(Auth::user()->signature_upload))
-                                                    <label class="form-label"
-                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
-                                                @else
-                                                    <div class="form-input col-md-12 mb-2">
-                                                        <label class="form-label require">Signature</label>
-                                                        <input type="file" name="signature_image"
-                                                            id="signature_upload" class="form-control form-control-sm"
-                                                            accept="image/*" placeholder="Enter the image">
-                                                        <small>Allowed file types: jpg, jpeg, png</small>
-                                                        <div id="signature_upload" class="text-danger"></div>
-                                                    </div>
-                                                @endif
-                                            </div> --}}
+
                                             <div class="col-md-12 form-input">
                                                 <label class="form-label required">Whether the Inspection has been
                                                     passed Without the CAPA
@@ -383,6 +344,16 @@
                                                         FIRE_PA_SYSTEM_INSPECTION,
                                                     );
                                                 @endphp --}}
+                                            @endif
+                                            @if (isset($inspection->is_passed))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('ohc_management.capa') }}</label>
+                                                        <div class="view_data">
+                                                            {{ isset($inspection->is_passed) && $inspection->is_passed == 1 ? 'Yes' : 'NO' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             @endif
                                             @if (isset($inspection->created_at))
                                                 <div class="col-md-4 mb-2">
@@ -648,19 +619,17 @@
                                     $inspection->inspection_status == WAITING_FOR_CAPA_ACTION ||
                                         $inspection->inspection_status == L2_MANAGER_REJECTED ||
                                         $inspection->inspection_status == EHS_OFFICER_REJECTED ||
-                                        $inspection->inspection_status == L1_MANAGER_REJECTED  &&
-                                        (checkUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin()) )
+                                        ($inspection->inspection_status == L1_MANAGER_REJECTED && (checkUserRole(ROLE_FIRE_ASSOCIATES) || isAdmin())))
                                     <div class="row mt-3">
                                         <div class="card-header-inner">
                                             <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
                                         </div>
                                     </div>
                                     <form method="POST" id="capaAction"
-                                        action="{{ admin_url('fire/pa-system-inspection/capa/submit') }}" autocomplete="off"
-                                        enctype="multipart/form-data">
+                                        action="{{ admin_url('fire/pa-system-inspection/capa/submit') }}"
+                                        autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
-                                            name="id">
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
                                         <div class="row">
                                             <div class="col-md-4 form-group form-input mb-2">
                                                 <label class="form-label ">{{ __('inspection.name') }}</label>
@@ -703,13 +672,12 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()) )
+                                @if ($inspection->inspection_status == WAITING_FOR_CAPA_VERIFICATION && (checkUserRole(ROLE_EHS_OFFICER) || isAdmin()))
                                     <form method="POST" id="forklistassessmentAdd"
                                         action="{{ admin_url('fire/pa-system-inspection/capa/reverify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
-                                            name="id">
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">{{ __('inspection.ehs_officer_verify') }}</h4>
@@ -754,13 +722,12 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && (checkUserRole(ROLE_L1_MANAGER) || isAdmin()) )
+                                @if ($inspection->inspection_status == WAITING_FOR_L1_VERIFICATION && (checkUserRole(ROLE_L1_MANAGER) || isAdmin()))
                                     <form method="POST" id="levelOneManager"
                                         action="{{ admin_url('fire/pa-system-inspection/level-one/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
-                                            name="id">
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">
@@ -807,13 +774,12 @@
                                     </form>
                                 @endif
 
-                                @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION  && (checkUserRole(ROLE_L2_MANAGER) || isAdmin()) )
+                                @if ($inspection->inspection_status == WAITING_FOR_L2_VERIFICATION && (checkUserRole(ROLE_L2_MANAGER) || isAdmin()))
                                     <form method="POST" id="levelTwoManager"
                                         action="{{ admin_url('fire/pa-system-inspection/level-two/verify/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
-                                        <input type="hidden" value="{{ encryptId($inspection->id) }}"
-                                            name="id">
+                                        <input type="hidden" value="{{ encryptId($inspection->id) }}" name="id">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">
@@ -868,189 +834,189 @@
 
     @stop
     @push('script')
-    <script>
-        $('#forklistassessmentAdd').validate({
-            rules: {
-                remarks: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+        <script>
+            $('#forklistassessmentAdd').validate({
+                rules: {
+                    remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+                        noSpaces: true,
+                    },
+                    // signature_image: {
+                    //     required: true,
+                    //     filesize: 15728640,
+                    // }
                 },
-                // signature_image: {
-                //     required: true,
-                //     filesize: 15728640,
-                // }
-            },
-            messages: {
-                remarks: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    remarks: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 600",
+                    },
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size should not exceed 15MB",
+                    // }
                 },
-                // signature_image: {
-                //     required: "Signature is Required",
-                //     filesize: "File size should not exceed 15MB",
-                // }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
+                }
+            });
 
-        $.validator.addMethod("noSpaces", function(value) {
-            return value.trim().length > 0;
-        }, "Spaces are not allowed");
+            $.validator.addMethod("noSpaces", function(value) {
+                return value.trim().length > 0;
+            }, "Spaces are not allowed");
 
-        $('#capaAction').validate({
-            rules: {
-                capa_remarks: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+            $('#capaAction').validate({
+                rules: {
+                    capa_remarks: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+                        noSpaces: true,
+                    },
+                    // signature_image: {
+                    //     required: true,
+                    //    filesize: 15728640,
+                    // }
                 },
-                // signature_image: {
-                //     required: true,
-                //    filesize: 15728640,
-                // }
-            },
-            messages: {
-                capa_remarks: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    capa_remarks: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 600",
+                    },
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size should not exceed 15MB",
+                    // }
                 },
-                // signature_image: {
-                //     required: "Signature is Required",
-                //     filesize: "File size should not exceed 15MB",
-                // }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
+                }
+            });
 
-        $('#levelOneManager').validate({
-            rules: {
-                level_one_manager: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+            $('#levelOneManager').validate({
+                rules: {
+                    level_one_manager: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+                        noSpaces: true,
+                    },
+                    // signature_image: {
+                    //     required: true,
+                    //    filesize: 15728640,
+                    // }
                 },
-                // signature_image: {
-                //     required: true,
-                //    filesize: 15728640,
-                // }
-            },
-            messages: {
-                level_one_manager: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    level_one_manager: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 600",
+                    },
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size should not exceed 15MB",
+                    // }
                 },
-                // signature_image: {
-                //     required: "Signature is Required",
-                //     filesize: "File size should not exceed 15MB",
-                // }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
+                }
+            });
 
-        $('#levelTwoManager').validate({
-            rules: {
-                level_two_manager: {
-                    required: true,
-                    minlength: 3,
-                    maxlength: 100,
-                    noSpaces: true,
+            $('#levelTwoManager').validate({
+                rules: {
+                    level_two_manager: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 600,
+                        noSpaces: true,
+                    },
+                    // signature_image: {
+                    //     required: true,
+                    //    filesize: 15728640,
+                    // }
                 },
-                // signature_image: {
-                //     required: true,
-                //    filesize: 15728640,
-                // }
-            },
-            messages: {
-                level_two_manager: {
-                    required: "Remarks is Required",
-                    minlength: "Minimum Characters should be 3",
-                    maxlength: "Maximum Characters should not exceed 100",
+                messages: {
+                    level_two_manager: {
+                        required: "Remarks is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 600",
+                    },
+                    // signature_image: {
+                    //     required: "Signature is Required",
+                    //     filesize: "File size should not exceed 15MB",
+                    // }
                 },
-                // signature_image: {
-                //     required: "Signature is Required",
-                //     filesize: "File size should not exceed 15MB",
-                // }
-            },
-            errorElement: 'div',
-            errorPlacement: function(error, element) {
-                error.addClass('invalid-feedback');
-                element.closest('.form-input').append(error);
-            },
-            highlight: function(element) {
-                $(element).addClass('is-invalid');
-            },
-            unhighlight: function(element) {
-                $(element).removeClass('is-invalid');
-                $(element).closest('.form-input').find('.invalid-feedback').remove();
-            },
-            submitHandler: function(form) {
-                form.submit();
-            },
-            invalidHandler: function(event, validator) {
-                var errors = validator.numberOfInvalids();
-                validator.errorList.forEach(function(error) {});
-            }
-        });
-    </script>
-@endpush
+                errorElement: 'div',
+                errorPlacement: function(error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-input').append(error);
+                },
+                highlight: function(element) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function(element) {
+                    $(element).removeClass('is-invalid');
+                    $(element).closest('.form-input').find('.invalid-feedback').remove();
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                },
+                invalidHandler: function(event, validator) {
+                    var errors = validator.numberOfInvalids();
+                    validator.errorList.forEach(function(error) {});
+                }
+            });
+        </script>
+    @endpush

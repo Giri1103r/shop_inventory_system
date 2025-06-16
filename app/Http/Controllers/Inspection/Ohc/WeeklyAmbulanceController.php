@@ -262,7 +262,7 @@ class WeeklyAmbulanceController extends Controller
                 $weekly_ambulance_details = $this->weekly_ambulance_details->store($responses);
                 $data = [
                     'type' => OHC_TYPE_WEEKLY_AMBULANCE_CHECKLIST,
-                    'from_status' => OHC_CREATION,
+                    'from_status' => 0,
                     'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                     'reference_id' => $weekly_ambulance_details->id,
                     'remarks' =>  "",
