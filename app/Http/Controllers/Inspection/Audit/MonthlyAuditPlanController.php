@@ -169,6 +169,7 @@ class MonthlyAuditPlanController extends Controller
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('audit/monthly-audit/audit-plan/list'));
         }
         return redirect(admin_url('audit/monthly-audit/audit-plan/list'));
     }
@@ -189,6 +190,8 @@ class MonthlyAuditPlanController extends Controller
             return view('inspection.inspection_audit.monthlyAudit.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('audit/monthly-audit/audit-plan/list'));
         }
     }
 
@@ -347,7 +350,8 @@ class MonthlyAuditPlanController extends Controller
             $writer->save('php://output');
         } catch (\Exception $e) {
             report($e);
-            return redirect()->back()->with('error', 'Something went wrong while exporting.');
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('audit/monthly-audit/audit-plan/list'));
         }
     }
 
@@ -391,7 +395,9 @@ class MonthlyAuditPlanController extends Controller
             $filename = "Monthly Audit Plan Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
+             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('audit/monthly-audit/audit-plan/list'));
         }
     }
 
@@ -427,7 +433,8 @@ class MonthlyAuditPlanController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('audit/monthly-audit/audit-plan/list'));
         }
     }
 
@@ -554,7 +561,8 @@ class MonthlyAuditPlanController extends Controller
             ]);
         } catch (\Exception $e) {
             report($e);
-            return back()->with('error', 'Failed to export Monthly Audit Plan');
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('audit/monthly-audit/audit-plan/list'));
         }
     }
 }

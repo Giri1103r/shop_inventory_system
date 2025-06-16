@@ -258,16 +258,29 @@
                 e.preventDefault();
                 location.reload();
             });
-            flatpickr("#next_due_date", {
-                dateFormat: "d-m-Y",
-            });
-            flatpickr("#date_of_inspection", {
-                dateFormat: "d-m-Y",
-            });
+
             flatpickr(".expired_date", {
+                dateFormat: "d-m-Y",
+                minDate: new Date(),
+            });
+            var toDatepicker = flatpickr("#next_due_date", {
                 dateFormat: "d-m-Y",
             });
 
+            var fromDatepicker = flatpickr("#date_of_inspection", {
+                dateFormat: "d-m-Y",
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+
+                        var nextDay = new Date(startDate);
+                        nextDay.setDate(startDate.getDate() + 1);
+
+                        toDatepicker.set('minDate', nextDay);
+
+                    }
+                }
+            });
 
             $('#EmergencyFirstAidBagAdd').validate({
                 rules: {
@@ -394,13 +407,13 @@
 
                 $('textarea[name^="remarks"]').each(function() {
                     $(this).rules('add', {
-                        required: true,
+
                         minlength: 3,
-                        maxlength: 300,
+                        maxlength: 600,
                         messages: {
-                            required: "Remarks is required",
+                           
                             minlength: "Minimum 3 characters required",
-                            maxlength: "Maximum character does not exceed 300"
+                            maxlength: "Maximum character does not exceed 600"
                         }
                     });
                 });

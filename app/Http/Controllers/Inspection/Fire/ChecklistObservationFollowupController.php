@@ -1243,7 +1243,7 @@ class ChecklistObservationFollowupController extends Controller
             $sheet->setCellValue("T$dataStartRow", displaydateformat($data->target_date) ?? '-');
             $sheet->setCellValue("U$dataStartRow", displaydateformat($data->closed_date) ?? '-');
             $sheet->setCellValue("V$dataStartRow", getActiveOrInactive($data->status) ?? '-');
-            $sheet->mergeCells("w$dataStartRow:x$dataStartRow")->setCellValue("w$dataStartRow", $data->remarks ?? '');
+            $sheet->mergeCells("w$dataStartRow:x$dataStartRow")->setCellValue("w$dataStartRow", $data->capa_remarks ?? '');
 
 
 

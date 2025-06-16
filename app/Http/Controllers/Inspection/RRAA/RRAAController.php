@@ -89,7 +89,7 @@ class RRAAController extends Controller
                                      </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'issue_date' ,'created_by'])
+                        ->rawColumns(['action', 'created_date', 'issue_date', 'created_by'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -165,9 +165,9 @@ class RRAAController extends Controller
             }
 
 
-                $this->rraa_details->store();
+            $this->rraa_details->store();
 
-                Session::flash('success', __('Your data has been created successfully'));
+            Session::flash('success', __('Your data has been created successfully'));
 
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
         } catch (Exception $ex) {
@@ -208,13 +208,13 @@ class RRAAController extends Controller
                 $data = array(
                     'rraa_details' => $rraa_details,
                     'document_no' => $document_no,
-                    'get_rraa_file'=>$get_rraa_file
+                    'get_rraa_file' => $get_rraa_file
                 );
             }
             return view('inspection.rraa.view', $data);
         } catch (Exception $ex) {
             report($ex);
-             Session::flash('error',  __('common.message_error'));
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
         }
     }
@@ -348,14 +348,37 @@ class RRAAController extends Controller
 
                 $headerRow = $currentRow + 3;
                 $headers = [
-                    'Sr. No', 'Category', 'OHS Compliance Index (Role)', 'Scope', 'Responsibility',
-                    'Authority', 'Accountability', 'Remark',
+                    'Sr. No',
+                    'Category',
+                    'OHS Compliance Index (Role)',
+                    'Frequency',
+                    'Scope',
+                    'Responsibility',
+                    'Authority',
+                    'Accountability',
+                    'Remark',
                 ];
                 $mergeMap = [
-                    'A', 'C', 'F', 'I', 'L', 'O', 'Q', 'S'
+                    'A',
+                    'B',
+                    'E',
+                    'G',
+                    'I',
+                    'L',
+                    'O',
+                    'Q',
+                    'S'
                 ];
                 $mergeEnds = [
-                    'B', 'E', 'H', 'K', 'N', 'P', 'R', 'T'
+                    'A',
+                    'D',
+                    'F',
+                    'H',
+                    'K',
+                    'N',
+                    'P',
+                    'R',
+                    'T'
                 ];
 
                 foreach ($headers as $i => $text) {
@@ -379,9 +402,10 @@ class RRAAController extends Controller
                 ]);
 
                 $dataRow = $headerRow + 1;
-                $sheet->mergeCells("A{$dataRow}:B{$dataRow}")->setCellValue("A{$dataRow}", 1);
-                $sheet->mergeCells("C{$dataRow}:E{$dataRow}")->setCellValue("C{$dataRow}", getCategoryname($data->category));
-                $sheet->mergeCells("F{$dataRow}:H{$dataRow}")->setCellValue("F{$dataRow}", $data->ohs_compliance_index);
+                $sheet->mergeCells("A{$dataRow}:A{$dataRow}")->setCellValue("A{$dataRow}", 1);
+                $sheet->mergeCells("B{$dataRow}:D{$dataRow}")->setCellValue("B{$dataRow}", getCategoryname($data->category));
+                $sheet->mergeCells("E{$dataRow}:F{$dataRow}")->setCellValue("E{$dataRow}", $data->ohs_compliance_index);
+                $sheet->mergeCells("G{$dataRow}:H{$dataRow}")->setCellValue("G{$dataRow}", getFrequencyname($data->frequency));
                 $sheet->mergeCells("I{$dataRow}:K{$dataRow}")->setCellValue("I{$dataRow}", $data->scope);
                 $sheet->mergeCells("L{$dataRow}:N{$dataRow}")->setCellValue("L{$dataRow}", getUsername($data->responsibility));
                 $sheet->mergeCells("O{$dataRow}:P{$dataRow}")->setCellValue("O{$dataRow}", $data->authority);
@@ -411,7 +435,6 @@ class RRAAController extends Controller
             }, $fileName, [
                 'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             ]);
-
         } catch (\Exception $e) {
             report($e);
             Session::flash('error', 'Something went wrong! Please try again later.');
@@ -453,7 +476,8 @@ class RRAAController extends Controller
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
         }
     }
 
@@ -523,6 +547,7 @@ class RRAAController extends Controller
                 'Sr. No',
                 'Category',
                 'OHS Compliance Index (Role)',
+                'Frequency',
                 'Scope',
                 'Responsibility',
                 'Authority',
@@ -531,7 +556,15 @@ class RRAAController extends Controller
             ];
 
             $mergeMap = [
-                'A4:B4', 'C4:E4', 'F4:H4', 'I4:K4', 'L4:N4', 'O4:P4', 'Q4:R4', 'S4:T4'
+                'A4:A4',
+                'B4:D4',
+                'E4:F4',
+                'G4:H4',
+                'I4:K4',
+                'L4:N4',
+                'O4:P4',
+                'Q4:R4',
+                'S4:T4'
             ];
 
             foreach ($headers as $index => $label) {
@@ -555,9 +588,11 @@ class RRAAController extends Controller
             ]);
 
             $row = 5;
-            $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", '1');
-            $sheet->mergeCells("C{$row}:E{$row}")->setCellValue("C{$row}", getCategoryname($rraa_details->category) ?? '');
-            $sheet->mergeCells("F{$row}:H{$row}")->setCellValue("F{$row}", $rraa_details->ohs_compliance_index ?? '');
+            $sheet->mergeCells("A{$row}:A{$row}")->setCellValue("A{$row}", '1');
+            $sheet->mergeCells("B{$row}:D{$row}")->setCellValue("B{$row}", getCategoryname($rraa_details->category) ?? '-');
+            $sheet->mergeCells("E{$row}:F{$row}")->setCellValue("E{$row}", $rraa_details->ohs_compliance_index ?? '-');
+            $sheet->mergeCells("G{$row}:H{$row}")->setCellValue("G{$row}", getFrequencyname($rraa_details->frequency) ?? '-');
+
             $sheet->mergeCells("I{$row}:K{$row}")->setCellValue("I{$row}", $rraa_details->scope ?? '');
             $sheet->mergeCells("L{$row}:N{$row}")->setCellValue("L{$row}", getUsername($rraa_details->responsibility) ?? '');
             $sheet->mergeCells("O{$row}:P{$row}")->setCellValue("O{$row}", $rraa_details->authority ?? '');
@@ -590,7 +625,4 @@ class RRAAController extends Controller
             return redirect(admin_url('rraa/ohc_fire_environment_compliance/list'));
         }
     }
-
-
-
 }

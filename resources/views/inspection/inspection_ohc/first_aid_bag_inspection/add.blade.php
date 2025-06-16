@@ -143,13 +143,17 @@
                                                 <table class="table table-bordered table-striped">
                                                     <thead class="table-secondary">
                                                         <tr>
-                                                            <th style="text-align: center">Sr. No.</th>
-                                                            <th style="text-align: center">Name Of Inspection</th>
-                                                            <th style="text-align: center">Freeze Quantity</th>
-                                                            <th style="text-align: center">Available Quantity</th>
-                                                            <th style="text-align: center">Expiry Date</th>
+                                                            <th style="text-align: center">{{ __('common.sno') }}</th>
+                                                            <th style="text-align: center">
+                                                                {{ __('ohc_management.medicine_name') }}</th>
+                                                            <th style="text-align: center">
+                                                                {{ __('ohc_management.freeze_quantity') }}</th>
+                                                            <th style="text-align: center">
+                                                                {{ __('ohc_management.available_quantity') }}</th>
+                                                            <th style="text-align: center">
+                                                                {{ __('ohc_management.expiry_date') }}</th>
                                                             <th style="text-align: center">Inspected By</th>
-                                                            <th style="text-align: center">Remark</th>
+                                                            <th style="text-align: center">{{ __('common.remarks') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
@@ -308,12 +312,27 @@
                 });
                 flatpickr(".expired_date", {
                     dateFormat: "d-m-Y",
+                    minDate: new Date(),
                 });
-                flatpickr(".inspection_date", {
+
+
+                var toDatepicker = flatpickr(".next_due", {
                     dateFormat: "d-m-Y",
                 });
-                flatpickr(".next_due", {
+
+                var fromDatepicker = flatpickr(".inspection_date", {
                     dateFormat: "d-m-Y",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+
+                            var nextDay = new Date(startDate);
+                            nextDay.setDate(startDate.getDate() + 1);
+
+                            toDatepicker.set('minDate', nextDay);
+
+                        }
+                    }
                 });
 
 
@@ -456,13 +475,13 @@
 
                     $('textarea[name^="remarks"]').each(function() {
                         $(this).rules('add', {
-                            required: true,
+                         
                             minlength: 3,
-                            maxlength: 300,
+                            maxlength: 600,
                             messages: {
                                 required: "Remarks is required",
                                 minlength: "Minimum 3 characters required",
-                                maxlength: "Maximum character does not exceed 300"
+                                maxlength: "Maximum character does not exceed 600"
                             }
                         });
                     });

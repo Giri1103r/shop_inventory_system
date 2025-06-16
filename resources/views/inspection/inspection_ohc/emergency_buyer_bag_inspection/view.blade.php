@@ -31,8 +31,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">Date of Inspection</label>
+                                                <label class="form-label ">Date of Inspection</label>
                                                 <div class="view_data">
                                                     {{ displaydateformat(isset($inspection_details->date_of_inspection) ? $inspection_details->date_of_inspection : '') }}
 
@@ -43,8 +42,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">Location First Aid Bag</label>
+                                                <label class="form-label ">Location First Aid Bag</label>
                                                 <div class="view_data">
                                                     {{ isset($inspection_details->location_first_aid_bag) ? $inspection_details->location_first_aid_bag : '' }}
 
@@ -63,8 +61,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">Due Date</label>
+                                                <label class="form-label ">Due Date</label>
                                                 <div class="view_data">
                                                     {{ displaydateformat(isset($inspection_details->due_date) ? $inspection_details->due_date : '') }}
 
@@ -82,7 +79,7 @@
                                             </div>
                                         </div>
 
-                                         <div class="col-md-4 mb-2">
+                                        <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">Frequency</label>
                                                 <div class="view_data">
@@ -93,22 +90,27 @@
 
                                         <table class="table table-bordered table-striped">
                                             <thead class="table-secondary">
-                                                <th style="text-align: center">Sr. No.</th>
-                                                <th style="text-align: center">Medicine Name</th>
-                                                <th style="text-align: center">Available Quantity</th>
-                                                <th style="text-align: center">Expiry Date</th>
-                                                <th style="text-align: center">Remark</th>
+                                                <th style="text-align: center">{{ __('common.sno') }}</th>
+                                                <th style="text-align: center">{{ __('ohc_management.medicine_name') }}</th>
+                                                <th style="text-align: center">{{ __('ohc_management.freeze_quantity') }}
+                                                </th>
+                                                <th style="text-align: center">
+                                                    {{ __('ohc_management.available_quantity') }}</th>
+                                                <th style="text-align: center">{{ __('ohc_management.expiry_date') }}</th>
+                                                <th style="text-align: center">{{ __('common.remarks') }}</th>
                                             </thead>
                                             <tbody>
                                                 @foreach ($inspection_data as $medicines)
                                                     <tr>
                                                         <td class="text-center">{{ $loop->iteration }}</td>
                                                         <td class="text-center">
-                                                            {{ getMedicinename($medicines['medicine_id']) }}
-                                                        <td class="text-center">{{ $medicines['available_quantity'] }}
+                                                            {{ getMedicinename($medicines['medicine_id']) }}</td>
+                                                        <td class="text-center">{{ $medicines['freeze_quantity'] }}</td>
+                                                        <td class="text-center">{{ $medicines['available_quantity'] }}</td>
+
                                                         <td class="text-center">
-                                                            {{ Displaydateformat($medicines['expired_date']) }}
-                                                        <td class="text-center">{{ $medicines['remarks'] }}
+                                                            {{ Displaydateformat($medicines['expired_date']) }}</td>
+                                                        <td class="text-center">{{ $medicines['remarks']  }}</td>
                                                     </tr>
                                                 @endforeach
                                             </tbody>
