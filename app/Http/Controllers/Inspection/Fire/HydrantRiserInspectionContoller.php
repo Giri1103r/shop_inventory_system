@@ -463,7 +463,6 @@ class HydrantRiserInspectionContoller extends Controller
             $title = $message;
             $user = $inspection_details->created_by;
             $email_id = getUseremail($user);
-            // dd($email_id);
             $url = admin_url('fire/hydrant-riser-inspection/verification/' . encryptId($id) . '/capa');
             $details = array(
                 'fire_type' => 'Fire Hydrant And Riser Inspection',
@@ -556,7 +555,6 @@ class HydrantRiserInspectionContoller extends Controller
 
     public function CAPAVerifySubmit(Request $request)
     {
-        // dd($request);
         try {
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
@@ -631,7 +629,6 @@ class HydrantRiserInspectionContoller extends Controller
 
     public function levelOneManagerSubmit(Request $request)
     {
-        // dd($request->all());
         try {
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;
@@ -708,7 +705,6 @@ class HydrantRiserInspectionContoller extends Controller
 
     public function levelTwoManagerSubmit(Request $request)
     {
-        // dd($request->all());
         try {
             $id = decryptId($request->id);
             $status = $request->has('approved') ? 1 : 0;

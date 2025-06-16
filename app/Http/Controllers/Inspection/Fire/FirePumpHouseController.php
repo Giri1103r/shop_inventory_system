@@ -141,10 +141,10 @@ class FirePumpHouseController extends Controller
             $checklist_details = getCheckListQuestion(CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST);
             $options =  getoption(CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST);
             $getoption = string_to_array($options->type);
-            // if (count($checklist_details) <= 0) {
-            //     Session::flash('success', __('inspection.checklist_add'));
-            //     return redirect(admin_url('inspection/master/checklist-sub-type-data/add'));
-            // }
+            if (count($checklist_details) <= 0) {
+                Session::flash('success', __('inspection.checklist_add'));
+                return redirect(admin_url('inspection/master/checklist-sub-type-data/add'));
+            }
             $staticDocno  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
                 ['type', "DailyFirePumpHouseChecklist"],
                 ['status', '1']
@@ -169,10 +169,10 @@ class FirePumpHouseController extends Controller
     public function store(Request $request)
     {
         try {
-                $inspection_type = DAILY_FIRE_PUMP;
                 $inspection = $this->dailyFire->store();
-                $id = $inspection->id;
-                $inspection_file = $this->signature->dailyFirePump($inspection_type, $id);
+                // $inspection_type = DAILY_FIRE_PUMP;
+                // $id = $inspection->id;
+                // $inspection_file = $this->signature->dailyFirePump($inspection_type, $id);
 
                 Session::flash('success', __('Your data has been created successfully'));
 
@@ -264,7 +264,7 @@ class FirePumpHouseController extends Controller
 
                 $sheet->mergeCells("G{$currentRow}:M" . ($currentRow + 2));
                 $sheet->setCellValue("G{$currentRow}", "DAILY FIRE PUMP HOUSE INSPECTION CHECKLIST");
-                $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                $sheet->getStyle("G{$currentRow}:M{$currentRow}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -350,11 +350,11 @@ class FirePumpHouseController extends Controller
                         $sheet->mergeCells("J$row:L$row")->setCellValue("J$row", $pump);
                         $statusSymbol = $status === 'YES' ? '✓' : (($status === 'NO' || $status === 'N/A') ? 'X' : '-');
                         $sheet->mergeCells("M$row:O$row")->setCellValue("M$row", $statusSymbol);
-                        $sheet->mergeCells("P$row:S$row")->setCellValue("P$row", $remark);
+                        $sheet->mergeCells("P$row:S$row")->setCellValue("P$row", $remark ? $remark : '-');
 
                         $sheet->getStyle("D$row:S$row")->applyFromArray([
                             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                            'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                            'alignment' => ['vertical' => Alignment::VERTICAL_CENTER,'horizontal' => Alignment::HORIZONTAL_CENTER],
                         ]);
 
                         $row++;
@@ -386,13 +386,13 @@ class FirePumpHouseController extends Controller
 
                     $textRow = $signatureStartRow ;
                     $sheet->mergeCells("A$textRow:S$textRow");
-                    $sheet->setCellValue("A$textRow", "Creator Signature: " . getUserName($details->created_by));
+                    $sheet->setCellValue("A$textRow", "Requestor Name : " . getUserName($details->created_by));
 
                     $sheet->getStyle("A$textRow:S$textRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => [
+                            'alignment' => [
                             'horizontal' => Alignment::HORIZONTAL_CENTER,
-                            'vertical' => Alignment::VERTICAL_TOP,
+                            'vertical' => Alignment::VERTICAL_CENTER,
                             'wrapText' => true,
                         ],
                         'font' => ['bold' => true],
@@ -475,7 +475,6 @@ class FirePumpHouseController extends Controller
     {
         try {
             $id = decryptId($id);
-            // dd($id);
             if (Auth::check()) {
                 $dailyFire =   $this->dailyFire->selectDataForPdf($id);
                 $document_no = $this->static_docno->selectOne($dailyFire->document_reference_id);
@@ -657,11 +656,13 @@ class FirePumpHouseController extends Controller
                     $statusSymbol = $status === 'YES' ? '✓' : ($status === 'NO' || $status === 'N/A' ? 'X' : '-');
                     $sheet->mergeCells("M$row:O$row")->setCellValue("M$row", $statusSymbol);
 
-                    $sheet->mergeCells("P$row:S$row")->setCellValue("P$row", $remark);
+                    $sheet->mergeCells("P$row:S$row")->setCellValue("P$row", $remark ? $remark : '-');
 
                     $sheet->getStyle("D$row:S$row")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                        'alignment' => ['vertical' => Alignment::VERTICAL_CENTER,
+                                          'horizontal' =>Alignment::HORIZONTAL_CENTER,
+                                        ],
                     ]);
 
                     $row++;
@@ -696,13 +697,13 @@ class FirePumpHouseController extends Controller
                 $textRow = $signatureStartRow ;
                 $sheet->mergeCells("A$textRow:S$textRow");
 
-                $sheet->setCellValue("A$textRow", "Creator Signature: " . getUserName($dailyFire->created_by));
+                $sheet->setCellValue("A$textRow", "Requestor Name : " . getUserName($dailyFire->created_by));
 
                 $sheet->getStyle("A$textRow:S$textRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => [
                         'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_TOP,
+                        'vertical' => Alignment::VERTICAL_CENTER,
                         'wrapText' => true,
                     ],
                     'font' => ['bold' => true],

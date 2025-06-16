@@ -151,12 +151,12 @@
                                                         @foreach ($details as $index => $checklist)
                                                             <tr>
                                                                 <td
-                                                                    style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
+                                                                    style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold; text-align: center;">
                                                                     {{ $i }}
                                                                 </td>
 
                                                                 <td colspan="2"
-                                                                    style="border: 1px solid black; padding: 8px;">
+                                                                    style="border: 1px solid black; padding: 8px; text-align: center;">
                                                                     {{ $checklist->checklist_name }}
                                                                 </td>
                                                                 <td

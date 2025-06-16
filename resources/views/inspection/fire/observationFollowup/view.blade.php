@@ -88,8 +88,7 @@
                                         <!-- Resource Code -->
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.resource_code') }}</label>
+                                                <label class="form-label ">{{ __('inspection.resource_code') }}</label>
                                                 <div class="view_data">
                                                     {{ $observation->equipment_code }}
                                                 </div>
@@ -127,8 +126,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('Resource Code of Equipment') }}</label>
+                                                <label class="form-label ">{{ __('Resource Code of Equipment') }}</label>
                                                 <div class="view_data">
                                                     {{ $observation->equipment_code }}
                                                 </div>
@@ -153,8 +151,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('Observation of the Month') }}</label>
+                                                <label class="form-label ">{{ __('Observation of the Month') }}</label>
                                                 <div class="view_data">
                                                     {{ $observation->month }}
                                                 </div>
@@ -301,10 +298,10 @@
                                 @endif
 
                                 @if (
-                                  ($observation->observation_status == WAITING_FOR_CAPA_VERIFICATION &&
+                                    $observation->observation_status >= WAITING_FOR_CAPA_VERIFICATION &&
                                         $observation->observation_status != EHS_OFFICER_REJECTED &&
                                         $observation->observation_status != L1_MANAGER_REJECTED &&
-                                        $observation->observation_status != L2_MANAGER_REJECTED))
+                                        $observation->observation_status != L2_MANAGER_REJECTED)
                                     <div class="basic-form mx-3">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
@@ -326,12 +323,21 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @if (isset($observation->closed_date))
+                                                    <div class="col-md-4 mt-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label ">{{ __('inspection.closed_date') }}</label>
+                                                            <div class="view_data">
+                                                                {{ Displaydateformat($observation->closed_date) }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
                                                 <div class="col-md-4 mt-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label ">Closed
-                                                            Date</label>
+                                                        <label class="form-label ">Status</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($observation->closed_date) }}
+                                                            {{ getObservationCAPAStatus($observation->capa_status) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -475,8 +481,7 @@
                                     </div>
                                 @endif
 
-                                @if (
-                                    $observation->observation_status == INSPECTION_APPROVED)
+                                @if ($observation->observation_status == INSPECTION_APPROVED)
                                     <div class="basic-form mx-3">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">

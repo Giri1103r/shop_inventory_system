@@ -125,7 +125,7 @@
                                                         @endif
                                                     </td>
                                                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                                                        {{ $data['remarks'] ?? '-' }}
+                                                        {{ !empty($data['remarks']) ? $data['remarks'] : '-' }}
                                                     </td>
                                                 </tr>
                                                 @php $srNo++; @endphp

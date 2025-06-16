@@ -73,7 +73,7 @@ class ChecklistObservationFollowupController extends Controller
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =    $this->followup->list();
+                    $data =  $this->followup->list();
                     $datatables = DataTables::of($data['data'])
                         ->addIndexColumn()
                         ->addColumn('status', function ($row) {
@@ -326,6 +326,7 @@ class ChecklistObservationFollowupController extends Controller
             return redirect(admin_url('fire/checklist-observation/list'));
         }
     }
+
     public function view($id, $observationid, Request $request)
     {
         try {
@@ -339,7 +340,6 @@ class ChecklistObservationFollowupController extends Controller
                     'observation' => $observation,
                     'document_no' => $document_no,
                 );
-                // dd($data);
             }
             return view('inspection.fire.observationFollowup.view', $data);
         } catch (Exception $ex) {
@@ -405,9 +405,6 @@ class ChecklistObservationFollowupController extends Controller
 
     public function EHSOfficerSubmit(Request $request)
     {
-
-
-
         try {
             $id = decryptId($request->id);
             $observationid = decryptId($request->observation_id);
@@ -532,6 +529,7 @@ class ChecklistObservationFollowupController extends Controller
             return redirect(admin_url('fire/checklist-observation/list'));
         }
     }
+
     public function CAPAVerifySubmit(Request $request)
     {
 
@@ -868,6 +866,7 @@ class ChecklistObservationFollowupController extends Controller
             return redirect(admin_url('fire/checklist-observation/list'));
         }
     }
+
     public function statusChange(Request $request)
     {
         try {

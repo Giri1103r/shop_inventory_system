@@ -299,7 +299,7 @@
                                         inspection_status = $('#inspection_status').val();
                                         var from_date = $('#from_date').val();
                                         var to_date = $('#to_date').val();
-                                        
+
                                         $(".dt-button").removeClass('processing');
                                         $('body').click();
                                         window.location.href =

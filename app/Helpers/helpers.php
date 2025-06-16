@@ -2011,6 +2011,20 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getObservationCAPAStatus')) {
+        function getObservationCAPAStatus($id)
+        {
+            if ($id == 1) {
+                return 'Open';
+            } else if ($id == 2) {
+                return 'In-Progress';
+            } else {
+                return 'Closed';
+            }
+        }
+    }
+
+
     if (!function_exists('getoption')) {
         function getoption($id)
         {

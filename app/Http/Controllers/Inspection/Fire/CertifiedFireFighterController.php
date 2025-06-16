@@ -147,11 +147,13 @@ class CertifiedFireFighterController extends Controller
 
                 Session::flash('success', __('Your data has been created successfully'));
             } catch (Exception $ex) {
+                report($ex);
                 Session::flash('error', __('common.message_error'));
             }
 
             return redirect(admin_url('fire/certified-fire-fighter/list'));
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('fire/certified-fire-fighter/list'));
         }
