@@ -243,67 +243,67 @@
 
         <tbody>
             @foreach ($inspection as $details)
-            <tr>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $loop->iteration }}</td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->sr_no }}</td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ getLocationname($details->location) }}
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ getUnitname($details->unit) }}
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    @if ($details->audio_quality == GOOD)
-                        GOOD
-                    @elseif($details->audio_quality == FAIR)
-                        FAIR
-                    @elseif($details->audio_quality == POOR)
-                        POOR
-                    @endif
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    @if ($details->mic_condition == GOOD)
-                        GOOD
-                    @elseif($details->mic_condition == FAIR)
-                        FAIR
-                    @elseif($details->mic_condition == POOR)
-                        POOR
-                    @endif
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ $details->mic_quantity }}
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    @if ($details->physical_condition == GOOD)
-                        GOOD
-                    @elseif($details->physical_condition == FAIR)
-                        FAIR
-                    @elseif($details->physical_condition == POOR)
-                        POOR
-                    @endif
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    @if ($details->cable_condition == GOOD)
-                        GOOD
-                    @elseif($details->cable_condition == FAIR)
-                        FAIR
-                    @elseif($details->cable_condition == POOR)
-                        POOR
-                    @endif
-                </td>
+                <tr>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $loop->iteration }}</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->sr_no }}</td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ getLocationname($details->location) }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ getUnitname($details->unit) }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        @if ($details->audio_quality == GOOD)
+                            GOOD
+                        @elseif($details->audio_quality == FAIR)
+                            FAIR
+                        @elseif($details->audio_quality == POOR)
+                            POOR
+                        @endif
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        @if ($details->mic_condition == GOOD)
+                            GOOD
+                        @elseif($details->mic_condition == FAIR)
+                            FAIR
+                        @elseif($details->mic_condition == POOR)
+                            POOR
+                        @endif
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $details->mic_quantity }}
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        @if ($details->physical_condition == GOOD)
+                            GOOD
+                        @elseif($details->physical_condition == FAIR)
+                            FAIR
+                        @elseif($details->physical_condition == POOR)
+                            POOR
+                        @endif
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        @if ($details->cable_condition == GOOD)
+                            GOOD
+                        @elseif($details->cable_condition == FAIR)
+                            FAIR
+                        @elseif($details->cable_condition == POOR)
+                            POOR
+                        @endif
+                    </td>
 
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    @if ($details->operation == FUNCTIONAL)
-                        {{ __('inspection.functional') }}
-                    @elseif($details->operation == NON_FUNCTIONAL)
-                        {{ __('inspection.non_functional') }}
-                    @endif
-                </td>
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                    {{ $details->remark }}
-                </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        @if ($details->operation == FUNCTIONAL)
+                            {{ __('inspection.functional') }}
+                        @elseif($details->operation == NON_FUNCTIONAL)
+                            {{ __('inspection.non_functional') }}
+                        @endif
+                    </td>
+                    <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                        {{ $details->remark }}
+                    </td>
 
-            </tr>
+                </tr>
             @endforeach
             {{-- @php
                 $prepared_by_signature = GetFireSignature(
@@ -351,11 +351,12 @@
                 </td>
             </tr> --}}
 
-             <tr>
+            <tr>
 
                 <th style="border: 1px solid black; padding: 8px;" colspan="4">
                     @if (isset($forklift_details->created_by))
-                        <div style="margin-top: 5px;">Checked By:{{ getUsername($forklift_details->created_by) }}</div>
+                        <div style="margin-top: 5px;">Checked By:{{ getUsername($forklift_details->created_by) }}
+                        </div>
                     @else
                         <div style="margin-top: 5px;"> Inspection has not been Checked Yet</div>
                     @endif
@@ -363,7 +364,8 @@
                 <th style="border: 1px solid black; padding: 8px;" colspan="3">
 
                     @if (isset($forklift_details->verified_by))
-                        <div style="margin-top: 5px;">Verified By:{{ getUsername($forklift_details->verified_by) }}</div>
+                        <div style="margin-top: 5px;">Verified By:{{ getUsername($forklift_details->verified_by) }}
+                        </div>
                     @else
                         <div style="margin-top: 5px;"> Inspection has not been Verified Yet</div>
                     @endif
@@ -371,7 +373,8 @@
                 <th style="border: 1px solid black; padding: 8px;" colspan="4">
 
                     @if (isset($forklift_details->approved_by))
-                        <div style="margin-top: 5px;">Approved By:{{ getUsername($forklift_details->approved_by) }}</div>
+                        <div style="margin-top: 5px;">Approved By:{{ getUsername($forklift_details->approved_by) }}
+                        </div>
                     @else
                         <div style="margin-top: 5px;">Inspection has not been Approved Yet</div>
                     @endif
@@ -397,6 +400,15 @@
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
+                </tr>
+            @endif
+            @if (isset($forklift_details->is_passed))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('ohc_management.capa') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ isset($forklift_details->is_passed) && $forklift_details->is_passed == 1 ? 'Yes' : 'NO' }}
+                    </td>
                 </tr>
             @endif
             @if (isset($forklift_details->created_at))
@@ -458,7 +470,8 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->fire_associate_updated_at) }}
+                <td width="48%" style="padding:5px;">
+                    {{ Displaydateformat($forklift_details->fire_associate_updated_at) }}
                 </td>
             </tr>
             <tr>
@@ -493,7 +506,8 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->ehs_officer_verified_at) }}
+                <td width="48%" style="padding:5px;">
+                    {{ Displaydateformat($forklift_details->ehs_officer_verified_at) }}
                 </td>
             </tr>
             <tr>
@@ -529,7 +543,8 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->l1_manager_updated_at) }}
+                <td width="48%" style="padding:5px;">
+                    {{ Displaydateformat($forklift_details->l1_manager_updated_at) }}
                 </td>
             </tr>
             <tr>
@@ -564,7 +579,8 @@
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($forklift_details->l2_manager_updated_at) }}
+                <td width="48%" style="padding:5px;">
+                    {{ Displaydateformat($forklift_details->l2_manager_updated_at) }}
                 </td>
             </tr>
             <tr>
@@ -603,13 +619,13 @@
                     <table class="table table-bordered table-hover tblborder">
                         <thead>
                             <tr>
-                                <th>S.NO</th>
-                                <th>From Status</th>
-                                <th>To Status</th>
-                                <th>Remarks</th>
-                                <th>Approved By</th>
-                                <th>Created By</th>
-                                <th>Created At</th>
+                                <th>{{ __('common.sno') }}</th>
+                                <th>{{ __('common.from_status') }}</th>
+                                <th>{{ __('common.to_status') }}</th>
+                                <th>{{ __('common.remarks') }}</th>
+                                <th>{{ __('common.approve_or_reject') }}</th>
+                                <th>{{ __('common.created_by') }}</th>
+                                <th>{{ __('common.created_date') }}</th>
                             </tr>
                         </thead>
                         <tbody>

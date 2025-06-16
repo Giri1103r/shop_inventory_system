@@ -30,6 +30,7 @@ class MonthlyFirePumpHouseInspection extends Model
         'level_two_manager_remarks',
         'checked_by',
         'verified_by',
+        'is_passed',
         'approved_by',
         'l1_manager_verified_by',
         'l2_manager_verified_by',
@@ -52,7 +53,7 @@ class MonthlyFirePumpHouseInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_monthly_fire_pumphouse.*', 'inspection_shift_option.*', 'masters_unit.*','inspection_static_docno.*', 'inspection_fire_monthly_fire_pumphouse.id as inspection_id')
+        $query = $this->select('inspection_fire_monthly_fire_pumphouse.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_static_docno.*', 'inspection_fire_monthly_fire_pumphouse.id as inspection_id')
             ->leftJoin('inspection_shift_option', 'inspection_fire_monthly_fire_pumphouse.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('inspection_static_docno', 'inspection_fire_monthly_fire_pumphouse.document_reference_id', '=', 'inspection_static_docno.id')
             ->leftJoin('masters_unit', 'inspection_fire_monthly_fire_pumphouse.unit', '=', 'masters_unit.id');
@@ -92,7 +93,7 @@ class MonthlyFirePumpHouseInspection extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_monthly_fire_pumphouse.inspection_status', decryptId($request->inspection_status));
         }
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_fire_monthly_fire_pumphouse.created_at', '>=', $startDate);
@@ -149,7 +150,7 @@ class MonthlyFirePumpHouseInspection extends Model
         $perPage = $request->input('per_page', 10);
         $search = $request->input('search', '');
 
-        $query = $this->select('inspection_fire_monthly_fire_pumphouse.*', 'inspection_shift_option.*', 'masters_unit.*','inspection_fire_monthly_fire_pumphouse.id as inspection_id', 'inspection_static_docno.*')
+        $query = $this->select('inspection_fire_monthly_fire_pumphouse.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_fire_monthly_fire_pumphouse.id as inspection_id', 'inspection_static_docno.*')
             ->leftJoin('inspection_shift_option', 'inspection_fire_monthly_fire_pumphouse.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_fire_monthly_fire_pumphouse.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_static_docno', 'inspection_fire_monthly_fire_pumphouse.document_reference_id', '=', 'inspection_static_docno.id');
@@ -275,6 +276,7 @@ class MonthlyFirePumpHouseInspection extends Model
             $update_array = [
                 'verified_by' => Auth::id(),
                 'approved_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
@@ -285,6 +287,7 @@ class MonthlyFirePumpHouseInspection extends Model
                 'verified_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'capa_recomendation' => $request->remarks,
             ];
             $this->where('id', $id)->update($update_array);
@@ -392,7 +395,7 @@ class MonthlyFirePumpHouseInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_monthly_fire_pumphouse.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_fire_monthly_fire_pumphouse.id as fire_id','inspection_static_docno.*','inspection_fire_monthly_fire_pumphouse.created_by as checked_by')
+        $query = $this->select('inspection_fire_monthly_fire_pumphouse.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_fire_monthly_fire_pumphouse.id as fire_id', 'inspection_static_docno.*', 'inspection_fire_monthly_fire_pumphouse.created_by as checked_by')
             ->leftJoin('inspection_shift_option', 'inspection_fire_monthly_fire_pumphouse.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('inspection_static_docno', 'inspection_fire_monthly_fire_pumphouse.document_reference_id', '=', 'inspection_static_docno.id')
             ->leftJoin('masters_unit', 'inspection_fire_monthly_fire_pumphouse.unit', '=', 'masters_unit.id');
@@ -421,7 +424,7 @@ class MonthlyFirePumpHouseInspection extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_monthly_fire_pumphouse.inspection_status', decryptId($request->inspection_status));
         }
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_fire_monthly_fire_pumphouse.created_at', '>=', $startDate);

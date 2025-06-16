@@ -26,7 +26,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">{{ __('inspection.inspection_date') }}</label>
+                                                    class="form-label ">{{ __('inspection.inspection_date') }}</label>
 
                                                 <div class="input-group date form-input custom-height">
                                                     <input type="text" name="inspection_date" id = "inspection_date"

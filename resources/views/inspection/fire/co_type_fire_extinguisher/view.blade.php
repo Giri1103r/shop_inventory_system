@@ -19,7 +19,8 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('fire/fire-extinguisher/co2/list') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('fire/fire-extinguisher/co2/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -55,8 +56,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.inspection_date') }}</label>
+                                                <label class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                                 <div class="view_data">
                                                     {{ Displaydateformat($inspection->inspection_date) }}
                                                 </div>
@@ -104,8 +104,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.upload_image') }}</label>
+                                                <label class="form-label ">{{ __('inspection.upload_image') }}</label>
                                                 <div class="view_data">
                                                     <img src="{{ admin_url($inspection_image) }}"
                                                         style="width:50px; height:50px;" alt="" srcset="">
@@ -135,7 +134,8 @@
                                     <div class="form-observation">
                                         <div class="row mt-4 form-obs">
                                             <div class="card-header-inner p-2">
-                                                <h4 class="text-white">{{ __('inspection.co_type_fire_extinguisher_inspection_obs') }}</h4>
+                                                <h4 class="text-white">
+                                                    {{ __('inspection.co_type_fire_extinguisher_inspection_obs') }}</h4>
                                             </div>
                                             {{-- <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
@@ -148,8 +148,7 @@
                                             </div> --}}
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label ">Observation</label>
+                                                    <label class="form-label ">Observation</label>
                                                     <div class="view_data">
                                                         {{ $inspection->observation_needed == '1' ? 'YES' : 'NO' }}
                                                     </div>
@@ -163,13 +162,13 @@
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2 col-12">
-                                                    <h4 class="text-white">  {{ __('inspection.co_type_fire_extinguisher_inspection') }}</h4>
+                                                    <h4 class="text-white">
+                                                        {{ __('inspection.co_type_fire_extinguisher_inspection') }}</h4>
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.sr_no') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.sr_no') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->sr_no }}
                                                         </div>
@@ -198,8 +197,7 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.location') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.location') }}</label>
                                                         <div class="view_data">
                                                             {{ getLocationname($details->location) }}
                                                         </div>
@@ -208,30 +206,27 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.type') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.type') }}</label>
                                                         <div class="view_data">
-                                                           {{ getExtinguisherTypeName($details->type) }}
+                                                            {{ getExtinguisherTypeName($details->type) }}
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.capacity') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.capacity') }}</label>
                                                         <div class="view_data">
-                                                           {{ $details->capacity }}
+                                                            {{ $details->capacity }}
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.quantity') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.quantity') }}</label>
                                                         <div class="view_data">
-                                                           {{ $details->quantity }}
+                                                            {{ $details->quantity }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -266,10 +261,9 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Weight of CO2 in FE</label>
+                                                        <label class="form-label ">Weight of CO2 in FE</label>
                                                         <div class="view_data">
-                                                           {{ $details->weight_of_co2_in_fe }}
+                                                            {{ $details->weight_of_co2_in_fe }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -290,18 +284,16 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">Approach</label>
+                                                        <label class="form-label ">Approach</label>
                                                         <div class="view_data">
-                                                           {{ $details->approach }}
+                                                            {{ $details->approach }}
                                                         </div>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.remarks') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.remarks') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->remarks }}
                                                         </div>
@@ -338,6 +330,16 @@
                                                         CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
                                                     );
                                                 @endphp --}}
+                                            @endif
+                                            @if (isset($inspection->is_passed))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('ohc_management.capa') }}</label>
+                                                        <div class="view_data">
+                                                            {{ isset($inspection->is_passed) && $inspection->is_passed == 1 ? 'Yes' : 'NO' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             @endif
                                             @if (isset($inspection->created_at))
                                                 <div class="col-md-4 mb-2">
@@ -655,13 +657,13 @@
                                                 <table class="table table-bordered">
                                                     <thead>
                                                         <tr>
-                                                            <th>S.NO</th>
-                                                            <th>From Status</th>
-                                                            <th>To Status</th>
-                                                            <th>Remarks</th>
-                                                            <th>Approved By</th>
-                                                            <th>Created By</th>
-                                                            <th>Created At</th>
+                                                            <th>{{ __('common.sno') }}</th>
+                                                            <th>{{ __('common.from_status') }}</th>
+                                                            <th>{{ __('common.to_status') }}</th>
+                                                            <th>{{ __('common.remarks') }}</th>
+                                                            <th>{{ __('common.approve_or_reject') }}</th>
+                                                            <th>{{ __('common.created_by') }}</th>
+                                                            <th>{{ __('common.created_date') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>

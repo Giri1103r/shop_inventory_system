@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Fire Equipment Monthly Phsyical Inspection View')
+@section('title', 'Fire Equipment Monthly Phsyical Inspection')
 @section('pageurl', admin_url('fire/equipment-monthly-physical-inspection/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -97,7 +97,7 @@
                                             @foreach ($image as $img)
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                       
+
                                                         <img src="{{ admin_url($img->file_path) }}" alt=" Upload"
                                                             style="width: 100px; margin-top: -10px;" />
                                                     </div>

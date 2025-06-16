@@ -179,23 +179,7 @@
                                                         accept="image/*">
                                                 </div>
                                             </div>
-                                            {{-- <div class="col-md-4 form-group form-input mb-2">
-                                                @if (isset(Auth::user()->signature_upload))
-                                                    <label class="form-label"
-                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
-                                                @else
-                                                    <div class="form-input col-md-12 mb-2">
-                                                        <label class="form-label require">Signature</label>
-                                                        <input type="file" name="signature_image"
-                                                            id="signature_upload" class="form-control form-control-sm"
-                                                            accept="image/*" placeholder="Enter the image">
-                                                        <small>Allowed file types: jpg, jpeg, png</small>
-                                                        <div id="signature_upload" class="text-danger"></div>
-                                                    </div>
-                                                @endif
-                                            </div> --}}
+                                          
                                             <input type="hidden" name="document_reference_id"
                                                 value="{{ encryptId($document_no->id) }}">
                                         </div>
@@ -432,21 +416,23 @@
                     location.reload();
                 });
 
+                var toDatepicker = flatpickr("#next_due", {
+                    dateFormat: "d-m-Y",
+                });
+
                 var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates) {
                         if (selectedDates.length > 0) {
                             var startDate = selectedDates[0];
-                            toDatepicker.set('minDate', startDate);
-                            toDatepicker.clear();
+
+                            var nextDay = new Date(startDate);
+                            nextDay.setDate(startDate.getDate() + 1);
+
+                            toDatepicker.set('minDate', nextDay);
+
                         }
                     }
-
-                })
-
-                var toDatepicker = flatpickr("#next_due", {
-                    dateFormat: "d-m-Y",
-
                 });
             });
             // location based unit
@@ -554,7 +540,7 @@
                         "approach[1]": {
                             required: true,
                             minlength: 3,
-                            maxlength: 300,
+                            maxlength: 600,
                         },
                         "location[1]": {
                             required: true,
@@ -565,7 +551,7 @@
                         "remarks[1]": {
                             required: true,
                             minlength: 3,
-                            maxlength: 300,
+                            maxlength: 600,
                         },
 
                         observation: {
@@ -637,13 +623,13 @@
                         "remarks[1]": {
                             required: "Please Enter the Remarks",
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 300",
+                            maxlength: "Maximum Characters should not exceed 600",
                         },
 
                         "approach[1]": {
                             required: "Please Enter the Approach",
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 300",
+                            maxlength: "Maximum Characters should not exceed 600",
                         },
                         "qualtiy_quantity_sand[1]": {
                             required: "Please select the Quality and Quantity of Sand",

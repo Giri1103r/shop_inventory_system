@@ -30,6 +30,7 @@ class CartridgeTypeFireExtinguisher extends Model
         'inspection_status',
         'capa_recomendation',
         'capa_remarks',
+        'is_passed',
         'level_one_manager_remarks',
         'level_two_manager_remarks',
         'capa_ehs_remarks',
@@ -58,14 +59,14 @@ class CartridgeTypeFireExtinguisher extends Model
         $request = request();
         $search = '';
         $query = $this->select(
-                'inspection_cartridge_type_fire_extinguisher.*',
-                'inspection_shift_option.*',
-                'inspection_static_docno.*',
-                'masters_unit.*',
-                'masters_location.*',
-                'inspection_frequency_option.*',
-                'inspection_cartridge_type_fire_extinguisher.id as fire_co_type_id'
-            )
+            'inspection_cartridge_type_fire_extinguisher.*',
+            'inspection_shift_option.*',
+            'inspection_static_docno.*',
+            'masters_unit.*',
+            'masters_location.*',
+            'inspection_frequency_option.*',
+            'inspection_cartridge_type_fire_extinguisher.id as fire_co_type_id'
+        )
             ->leftJoin('masters_location', 'inspection_cartridge_type_fire_extinguisher.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_cartridge_type_fire_extinguisher.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_cartridge_type_fire_extinguisher.unit', '=', 'masters_unit.id')
@@ -121,7 +122,7 @@ class CartridgeTypeFireExtinguisher extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_cartridge_type_fire_extinguisher.inspection_status', decryptId($request->inspection_status));
         }
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_cartridge_type_fire_extinguisher.created_at', '>=', $startDate);
@@ -199,17 +200,17 @@ class CartridgeTypeFireExtinguisher extends Model
         $request = request();
         $search = '';
         $query = $this->select(
-                'inspection_cartridge_type_fire_extinguisher.*',
-                'inspection_cartridge_type_fire_extinguisher_details.*',
-                'inspection_shift_option.*',
-                'inspection_static_docno.*',
-                'masters_unit.*',
-                'masters_location.*',
-                'inspection_frequency_option.*',
-                'inspection_cartridge_type_fire_extinguisher.created_by as checked_by',
-                'inspection_cartridge_type_fire_extinguisher.id as fire_id',
-                'inspection_cartridge_type_fire_extinguisher_details.type as extinguisher_type'
-                )
+            'inspection_cartridge_type_fire_extinguisher.*',
+            'inspection_cartridge_type_fire_extinguisher_details.*',
+            'inspection_shift_option.*',
+            'inspection_static_docno.*',
+            'masters_unit.*',
+            'masters_location.*',
+            'inspection_frequency_option.*',
+            'inspection_cartridge_type_fire_extinguisher.created_by as checked_by',
+            'inspection_cartridge_type_fire_extinguisher.id as fire_id',
+            'inspection_cartridge_type_fire_extinguisher_details.type as extinguisher_type'
+        )
             ->leftJoin('masters_location', 'inspection_cartridge_type_fire_extinguisher.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_cartridge_type_fire_extinguisher.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_cartridge_type_fire_extinguisher.unit', '=', 'masters_unit.id')
@@ -253,7 +254,7 @@ class CartridgeTypeFireExtinguisher extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_cartridge_type_fire_extinguisher.inspection_status', decryptId($request->inspection_status));
         }
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_cartridge_type_fire_extinguisher.created_at', '>=', $startDate);
@@ -283,6 +284,7 @@ class CartridgeTypeFireExtinguisher extends Model
             $update_array = [
                 'verified_by' => Auth::id(),
                 'approved_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
@@ -294,6 +296,7 @@ class CartridgeTypeFireExtinguisher extends Model
                 'verified_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'capa_recomendation' => $request->remarks,
                 'ehs_officer_verified_at' => Carbon::now(),
             ];

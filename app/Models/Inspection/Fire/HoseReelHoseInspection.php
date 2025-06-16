@@ -34,6 +34,7 @@ class HoseReelHoseInspection extends Model
         'capa_ehs_remarks',
         'l1_manager_verified_by',
         'l2_manager_verified_by',
+        'is_passed',
         'status',
         'trash',
         'created_by',
@@ -339,6 +340,7 @@ class HoseReelHoseInspection extends Model
             $update_array = [
                 'verified_by' => Auth::id(),
                 'approved_by' => Auth::id(),
+                'is_passed' => $request->is_passed,
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
@@ -348,6 +350,7 @@ class HoseReelHoseInspection extends Model
             $update_array = [
                 'verified_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'is_passed' => $request->is_passed,
                 'updated_by' => Auth::id(),
                 'capa_recomendation' => $request->remarks,
             ];

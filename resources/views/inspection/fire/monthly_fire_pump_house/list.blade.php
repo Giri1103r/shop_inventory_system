@@ -23,16 +23,21 @@
                                     <div class="row">
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                <input type="text" name="inspection_date" id = "inspection_date"
-                                                    class="form-control">
+                                                <label class="form-label ">{{ __('inspection.inspection_date') }}</label>
+
+                                                <div class="input-group date form-input custom-height">
+                                                    <input type="text" name="inspection_date" id = "inspection_date"
+                                                        class="form-control">
+                                                    <div class="input-group-addon input-group-text">
+                                                        <span class="fa fa-calendar"></span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">Shift</label>
+                                                <label class="form-label ">Shift</label>
                                                 <select name="shift" id="shift" class=" form-control single-select"
                                                     style="width: 100%">
                                                     <option value="">Select Shift</option>
@@ -46,7 +51,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{ __('inspection.unit') }}</label>
+                                                <label class="form-label ">{{ __('inspection.unit') }}</label>
                                                 <select name="unit" id="unit" class=" form-control single-select"
                                                     style="width: 100%">
                                                     <option value="">Select Unit</option>
@@ -92,8 +97,8 @@
                                         <div class="col-md-4 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">To Date</label>
                                             <div class="input-group date form-input  custom-height">
-                                                <input type="text" class="form-control " name="to_date"
-                                                    id="to_date" autocomplete="off">
+                                                <input type="text" class="form-control " name="to_date" id="to_date"
+                                                    autocomplete="off">
                                                 <div class="input-group-addon input-group-text">
                                                     <span class="fa fa-calendar"></span>
                                                 </div>
@@ -143,7 +148,7 @@
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
 
-                  var fromDatepicker = flatpickr("#from_date", {
+                var fromDatepicker = flatpickr("#from_date", {
                     dateFormat: "d-m-Y",
                     onChange: function(selectedDates) {
                         if (selectedDates.length > 0) {
@@ -201,7 +206,7 @@
                             d.shift = $('#shift').val();
                             d.unit = $('#unit').val();
                             d.inspection_status = $('#inspection_status').val();
-                             d.from_date = $('#from_date').val();
+                            d.from_date = $('#from_date').val();
                             d.to_date = $('#to_date').val();
                         },
                         error: function(xhr, error, code) {
@@ -266,7 +271,7 @@
                                         shift = $('#shift').val();
                                         unit = $('#unit').val();
                                         inspection_status = $('#inspection_status').val();
-                                         var from_date = $('#from_date').val();
+                                        var from_date = $('#from_date').val();
                                         var to_date = $('#to_date').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -277,7 +282,7 @@
                                             '&inspection_date=' + inspection_date +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
-                                             '&from_date=' + from_date +
+                                            '&from_date=' + from_date +
                                             '&to_date=' + to_date +
                                             '&inspection_status=' + inspection_status
                                     }
@@ -291,7 +296,7 @@
                                         shift = $('#shift').val();
                                         unit = $('#unit').val();
                                         inspection_status = $('#inspection_status').val();
-                                         var from_date = $('#from_date').val();
+                                        var from_date = $('#from_date').val();
                                         var to_date = $('#to_date').val();
 
                                         $(".dt-button").removeClass('processing');
@@ -302,7 +307,7 @@
                                             '&inspection_date=' + inspection_date +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
-                                             '&from_date=' + from_date +
+                                            '&from_date=' + from_date +
                                             '&to_date=' + to_date +
                                             '&inspection_status=' + inspection_status
                                     }

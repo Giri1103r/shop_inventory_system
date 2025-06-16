@@ -56,8 +56,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.inspection_date') }}</label>
+                                                <label class="form-label ">{{ __('inspection.inspection_date') }}</label>
                                                 <div class="view_data">
                                                     {{ Displaydateformat($inspection->date_of_inspection) }}
                                                 </div>
@@ -105,8 +104,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label
-                                                    class="form-label ">{{ __('inspection.upload_image') }}</label>
+                                                <label class="form-label ">{{ __('inspection.upload_image') }}</label>
                                                 <div class="view_data">
                                                     <img src="{{ admin_url($inspection_image) }}"
                                                         style="width:50px; height:50px;" alt="" srcset="">
@@ -161,8 +159,7 @@
                                                 <!-- Resource Code -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.location') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.location') }}</label>
                                                         <div class="view_data">
                                                             {{ getLocationname($details->location) }}
                                                         </div>
@@ -254,8 +251,7 @@
                                                 <!-- Remarks -->
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.approach') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.approach') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->approach }}
                                                         </div>
@@ -263,8 +259,7 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.remarks') }}</label>
+                                                        <label class="form-label ">{{ __('inspection.remarks') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->remarks }}
                                                         </div>
@@ -310,6 +305,16 @@
                                                         WAITING_FOR_EHS_OFFICER_VERIFICATION,
                                                     );
                                                 @endphp
+                                            @endif
+                                            @if (isset($inspection->is_passed))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('ohc_management.capa') }}</label>
+                                                        <div class="view_data">
+                                                            {{ isset($inspection->is_passed) && $inspection->is_passed == 1 ? 'Yes' : 'NO' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             @endif
                                             @if (isset($inspection->created_at))
                                                 <div class="col-md-4 mb-2">
@@ -656,13 +661,13 @@
                                                 <table class="table table-bordered">
                                                     <thead>
                                                         <tr>
-                                                            <th>S.NO</th>
-                                                            <th>From Status</th>
-                                                            <th>To Status</th>
-                                                            <th>Remarks</th>
-                                                            <th>Approved By</th>
-                                                            <th>Created By</th>
-                                                            <th>Created At</th>
+                                                            <th>{{ __('common.sno') }}</th>
+                                                            <th>{{ __('common.from_status') }}</th>
+                                                            <th>{{ __('common.to_status') }}</th>
+                                                            <th>{{ __('common.remarks') }}</th>
+                                                            <th>{{ __('common.approve_or_reject') }}</th>
+                                                            <th>{{ __('common.created_by') }}</th>
+                                                            <th>{{ __('common.created_date') }}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody>
