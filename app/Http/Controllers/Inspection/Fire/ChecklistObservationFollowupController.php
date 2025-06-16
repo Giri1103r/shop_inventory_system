@@ -30,6 +30,15 @@ use App\Models\Inspection\Fire\ObservationWhyWhyAnalysis;
 use App\Mail\Inspection\Fire\FireInspection;
 use App\Models\User;
 
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
+use PhpOffice\PhpSpreadsheet\RichText\RichText;
+
 class ChecklistObservationFollowupController extends Controller
 {
 
@@ -218,6 +227,9 @@ class ChecklistObservationFollowupController extends Controller
                             $btn .= '<a href="' . admin_url('fire/checklist-observation/generalpdf/' . encryptId($row->inspectionid) . '/' . encryptId($row->observationid)) . '" style="margin-right: 5px;" title="PDF">
                             <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                         </a>';
+                            $btn .= '<a href="' . admin_url('fire/checklist-observation/generalExcel/' . encryptId($row->inspection_id) . '/' . encryptId($row->observationid)) . '"  style="margin-right: 5px;" title="Excel">
+                               <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
+                            </a>';
 
                             return $btn;
                         })
@@ -326,6 +338,8 @@ class ChecklistObservationFollowupController extends Controller
             return redirect(admin_url('fire/checklist-observation/list'));
         }
     }
+
+
     public function view($id, $observationid, Request $request)
     {
         try {
@@ -1094,6 +1108,221 @@ class ChecklistObservationFollowupController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
+            report($ex);
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('fire/checklist-observation/list'));
+        }
+    }
+
+    public function generalExcel(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $observationid = decryptId($request->observationid);
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $data = $this->followup->selectOne($id, $observationid);
+            $document_no = $this->static_docno->selectOne($data->document_reference_id);
+            for ($i = 1; $i <= 200; $i++) {
+                $sheet->getRowDimension($i)->setRowHeight(25);
+            }
+
+            $row = 1;
+            $currentRow = $row;
+            $logoPath = public_path('assets/images/logo-dark.png');
+            $logoLeftPath = public_path('assets/images/logo-dark.png');
+            if (file_exists($logoLeftPath)) {
+                $sheet->mergeCells("A$currentRow:F" . ($currentRow + 2));
+
+                $drawing = new Drawing();
+                $drawing->setName('Left Logo');
+                $drawing->setPath($logoLeftPath);
+                $drawing->setCoordinates("B$currentRow");
+                $drawing->setOffsetX(100);
+                $drawing->setOffsetY(15);
+                $drawing->setWidth(70);
+                $drawing->setHeight(70);
+                $drawing->setWorksheet($sheet);
+
+                $range = "A$currentRow:F" . ($currentRow + 2);
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                ]);
+            }
+            $sheet->mergeCells("G{$currentRow}:S" . ($currentRow + 2));
+            $sheet->setCellValue("G{$currentRow}", "CHECKLIST OBSERVATION FOLLOW UP SHEET");
+            $sheet->getStyle("G{$currentRow}")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
+            $sheet->mergeCells("T$currentRow:V$currentRow")->setCellValue("T$currentRow", 'Doc. No.');
+            $sheet->mergeCells("T" . ($currentRow + 1) . ":V" . ($currentRow + 1))->setCellValue("T" . ($currentRow + 1), 'Issue Dt.');
+            $sheet->mergeCells("T" . ($currentRow + 2) . ":V" . ($currentRow + 2))->setCellValue("T" . ($currentRow + 2), 'Rev. & Dt.');
+
+            $sheet->mergeCells("W$currentRow:X$currentRow")->setCellValue("W$currentRow", $document_no->doc_no);
+            $sheet->mergeCells("W" . ($currentRow + 1) . ":X" . ($currentRow + 1))->setCellValue("W" . ($currentRow + 1), Displaydateformat($document_no->issue_date));
+            $sheet->mergeCells("W" . ($currentRow + 2) . ":X" . ($currentRow + 2))->setCellValue("W" . ($currentRow + 2), $document_no->rev_dt);
+
+            $sheet->getStyle("T$currentRow:X" . ($currentRow + 2))->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
+            ]);
+
+
+            $headerRow = $currentRow + 3;
+            $secondRow = $headerRow + 1;
+
+
+            // First-level vertical headers
+            $sheet->mergeCells("A$headerRow:A$secondRow")->setCellValue("A$headerRow", "SERIAL NO");
+            $sheet->mergeCells("B$headerRow:B$secondRow")->setCellValue("B$headerRow", "UNIT");
+            $sheet->mergeCells("C$headerRow:C$secondRow")->setCellValue("C$headerRow", "DEPARTMENT / LOCATION");
+            $sheet->mergeCells("D$headerRow:D$secondRow")->setCellValue("D$headerRow", "NAME OF EQUIPMENT");
+
+
+            $sheet->mergeCells("E$headerRow:E$secondRow")->setCellValue("E$headerRow", "RESOURCE CODE OF EQUIPMENT");
+
+
+            $sheet->mergeCells("F$headerRow:H$secondRow")->setCellValue("F$headerRow", "OBSERVATION ");
+            $sheet->mergeCells("I$headerRow:I$secondRow")->setCellValue("I$headerRow", "DATE OF OBSERVATION / INSPECTION");
+            $sheet->mergeCells("J$headerRow:J$secondRow")->setCellValue("J$headerRow", "OBSERVATION OF THE MONTH");
+
+            $sheet->mergeCells("K$headerRow:Q$headerRow")->setCellValue("K$headerRow", "WHY WHY ANALYSIS");
+            $sheet->mergeCells("K$secondRow:K$secondRow")->setCellValue("K$secondRow", "WHY 1");
+            $sheet->mergeCells("L$secondRow:L$secondRow")->setCellValue("L$secondRow", "WHY 2");
+            $sheet->mergeCells("M$secondRow:M$secondRow")->setCellValue("M$secondRow", "WHY 3");
+            $sheet->mergeCells("N$secondRow:N$secondRow")->setCellValue("N$secondRow", "WHY 4");
+            $sheet->mergeCells("O$secondRow:O$secondRow")->setCellValue("O$secondRow", "WHY 5");
+            $sheet->mergeCells("P$secondRow:P$secondRow")->setCellValue("P$secondRow", "MAIN ROOT CAUSE");
+            $sheet->mergeCells("Q$secondRow:Q$secondRow")->setCellValue("Q$secondRow", "CORRECTIVE & PREVENTIVE ACTION TAKEN");
+            $sheet->mergeCells("R$headerRow:R$secondRow")->setCellValue("R$headerRow", "DATE OF CORRECTIVE & PREVENTIVE ACTION TAKEN");
+            $sheet->mergeCells("S$headerRow:S$secondRow")->setCellValue("S$headerRow", "RESPONSIBILITY");
+            $sheet->mergeCells("T$headerRow:T$secondRow")->setCellValue("T$headerRow", "TIMELINE");
+            $sheet->mergeCells("U$headerRow:U$secondRow")->setCellValue("U$headerRow", "DATE OF CLOSURE ");
+            $sheet->mergeCells("V$headerRow:V$secondRow")->setCellValue("V$headerRow", "STATUS");
+            $sheet->mergeCells("W$headerRow:X$secondRow")->setCellValue("W$headerRow", "REMARK");
+            foreach (range('A', 'X') as $columnID) {
+                $sheet->getColumnDimension($columnID)->setWidth(20);
+            }
+            $sheet->getStyle("A$headerRow:X$secondRow")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true
+                ],
+                'font' => ['bold' => true],
+            ]);
+
+            $dataStartRow = $secondRow + 1;
+
+            $sheet->setCellValue("A$dataStartRow", $data->sr_no ?? '');
+            $sheet->setCellValue("B$dataStartRow", getunitname($data->unit_id) ?? '');
+            $sheet->setCellValue("C$dataStartRow", getDepartment($data->department_id) ?? '');
+            $sheet->setCellValue("D$dataStartRow", $data->equipment_name ?? '');
+            $sheet->setCellValue("E$dataStartRow", $data->equipment_code ?? '');
+            $sheet->mergeCells("F$dataStartRow:H$dataStartRow")->setCellValue("F$dataStartRow", $data->observation ?? '');
+
+
+            $sheet->setCellValue("I$dataStartRow", displaydateformat($data->date ?? ''));
+            $sheet->setCellValue("J$dataStartRow", $data->month ?? '');
+
+            $sheet->setCellValue("K$dataStartRow", $data->why_1 ?? '-');
+            $sheet->setCellValue("L$dataStartRow", $data->why_2 ?? '-');
+            $sheet->setCellValue("M$dataStartRow", $data->why_3 ?? '-');
+            $sheet->setCellValue("N$dataStartRow", $data->why_4 ?? '-');
+            $sheet->setCellValue("O$dataStartRow", $data->why_5 ?? '-');
+            $sheet->setCellValue("P$dataStartRow", $data->main_root_cause ?? '-');
+            $sheet->setCellValue("Q$dataStartRow", $data->corrective_action ?? '-');
+
+            $sheet->setCellValue("R$dataStartRow", displaydateformat($data->ehs_verified_date) ?? '-');
+            $sheet->setCellValue("S$dataStartRow", getusername($data->responsible_person_id) ?? '-');
+            $sheet->setCellValue("T$dataStartRow", displaydateformat($data->target_date) ?? '-');
+            $sheet->setCellValue("U$dataStartRow", displaydateformat($data->closed_date) ?? '-');
+            $sheet->setCellValue("V$dataStartRow", getActiveOrInactive($data->status) ?? '-');
+            $sheet->mergeCells("w$dataStartRow:x$dataStartRow")->setCellValue("w$dataStartRow", $data->remarks ?? '');
+
+
+
+            $sheet->getStyle("A$dataStartRow:X$dataStartRow")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true
+                ],
+                'font' => ['bold' => true],
+            ]);
+
+            $row = $dataStartRow;
+
+            $signatureRowStart = $dataStartRow + 1;
+            $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
+
+            // Prepared By
+            $sheet->mergeCells("A{$signatureRowStart}:H{$signatureRowStart}");
+            $sheet->getStyle("A{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+
+            $richText = new RichText();
+            $name = getUsername($data->inspection_created_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Prepared By :" . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
+            }
+
+            $sheet->getCell("A{$signatureRowStart}")->setValue($richText);
+
+            // Verified By
+            $sheet->mergeCells("I{$signatureRowStart}:N{$signatureRowStart}");
+            $sheet->getStyle("I{$signatureRowStart}:N{$signatureRowStart}")->applyFromArray([
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+
+            $richText = new RichText();
+            $name = getUsername($data->responsible_person_id);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Verified By :" . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
+            }
+
+            $sheet->getCell("I{$signatureRowStart}")->setValue($richText);
+
+            // Approved By
+            $sheet->mergeCells("O{$signatureRowStart}:X{$signatureRowStart}");
+            $sheet->getStyle("O{$signatureRowStart}:X{$signatureRowStart}")->applyFromArray([
+                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+            ]);
+            $richText = new RichText();
+            $name = getUsername($data->approved_by);
+
+            if (!empty($name)) {
+                $richText->createTextRun("Approved By :" . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
+            }
+
+            $sheet->getCell("O{$signatureRowStart}")->setValue($richText);
+            $fileName = 'checklist_follow_up.xlsx';
+            $writer = new Xlsx($spreadsheet);
+
+            return response()->streamDownload(function () use ($writer) {
+                $writer->save('php://output');
+            }, $fileName, [
+                'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            ]);
+        } catch (\Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/checklist-observation/list'));
