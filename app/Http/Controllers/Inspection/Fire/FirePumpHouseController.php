@@ -141,10 +141,10 @@ class FirePumpHouseController extends Controller
             $checklist_details = getCheckListQuestion(CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST);
             $options =  getoption(CHECKLIST_FIRE_PUMP_HOUSE_INSECTION_CHECKLIST);
             $getoption = string_to_array($options->type);
-            if (count($checklist_details) <= 0) {
-                Session::flash('success', __('inspection.checklist_add'));
-                return redirect(admin_url('inspection/master/checklist-sub-type-data/add'));
-            }
+            // if (count($checklist_details) <= 0) {
+            //     Session::flash('success', __('inspection.checklist_add'));
+            //     return redirect(admin_url('inspection/master/checklist-sub-type-data/add'));
+            // }
             $staticDocno  = $this->static_docno->select('id', 'doc_no', 'issue_date', 'rev_dt')->where([
                 ['type', "DailyFirePumpHouseChecklist"],
                 ['status', '1']
@@ -168,10 +168,7 @@ class FirePumpHouseController extends Controller
 
     public function store(Request $request)
     {
-
         try {
-
-
                 $inspection_type = DAILY_FIRE_PUMP;
                 $inspection = $this->dailyFire->store();
                 $id = $inspection->id;
@@ -181,7 +178,7 @@ class FirePumpHouseController extends Controller
 
             return redirect(admin_url('fire/daily-fire-pump-house-inspection/list'));
         } catch (Exception $ex) {
-
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('fire/daily-fire-pump-house-inspection/list'));
         }

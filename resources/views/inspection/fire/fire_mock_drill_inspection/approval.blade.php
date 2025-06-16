@@ -62,7 +62,8 @@
                                         @if (isset($inspection->date_of_closure))
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.date_of_closure') }}</label>
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.date_of_closure') }}</label>
                                                     <div class="view_data">
                                                         {{ Displaydateformat($inspection->date_of_closure) }}
                                                     </div>
@@ -87,7 +88,7 @@
                                             </div>
                                         @endif --}}
                                         <hr>
-                                        
+
                                         @foreach ($inspection_details as $details)
                                             <div class="form-wrapper">
                                                 <div class="row mt-4 form-set">
@@ -324,6 +325,17 @@
                                                                 class="form-label ">{{ __('inspection.approved_by') }}</label>
                                                             <div class="view_data">
                                                                 {{ getUsername($inspection->approved_by) }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                @if (isset($inspection->is_passed))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label">{{ __('ohc_management.capa') }}</label>
+                                                            <div class="view_data">
+                                                                {{ $inspection->is_passed == 1 ? 'Yes' : 'No' }}
                                                             </div>
                                                         </div>
                                                     </div>

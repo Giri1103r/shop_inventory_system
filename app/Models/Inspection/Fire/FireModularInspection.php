@@ -277,15 +277,19 @@ class FireModularInspection extends Model
                 'inspection_status' => INSPECTION_APPROVED,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
+                'is_passed' =>$request->is_passed,
             ];
             $this->where('id', $id)->update($update_array);
+
         } else {
             $update_array = [
                 'verified_by' => Auth::id(),
                 'inspection_status' => WAITING_FOR_CAPA_ACTION,
                 'updated_by' => Auth::id(),
                 'capa_recomendation' => $request->remarks,
+                'is_passed' =>$request->is_passed,
             ];
+            
             $this->where('id', $id)->update($update_array);
         }
     }
