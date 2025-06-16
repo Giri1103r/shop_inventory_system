@@ -1130,7 +1130,7 @@ class FireModularInspectionController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Fire Modular Inspection.pdf";
-            return $mpdf->Output($filename, 'i');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
@@ -1254,7 +1254,6 @@ class FireModularInspectionController extends Controller
             $row = 9;
             $sr = 1;
             foreach ($inspection_data as $detail) {
-                // dd($inspection_data);
                 $sheet->setCellValue("A{$row}", $sr);
                 $sheet->mergeCells("B{$row}:C{$row}")->setCellValue("B{$row}", getDepartment($detail['department']) ?? '');
                 $sheet->setCellValue("D{$row}", $detail['resource_code'] ?? '');

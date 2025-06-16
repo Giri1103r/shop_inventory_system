@@ -511,29 +511,29 @@
                                                 </div>
 
 
-                                                    <div class="col-md-4 form-group form-input">
-                                                        <label for="capa_status"
-                                                            class="form-label ">{{ __('common.status') }}</label>
-                                                        <select name="capa_status" id="capa_status" style="width: 100%"
-                                                            class="form-control single-select">
-                                                            <option value="">Select Status</option>
-                                                            <option value="{{ 1 }}">Open</option>
-                                                            <option value="{{ 2 }}">In-Progress</option>
-                                                            <option value="{{ 3 }}">Closed</option>
-                                                        </select>
+                                                <div class="col-md-4 form-group form-input">
+                                                    <label for="capa_status"
+                                                        class="form-label ">{{ __('common.status') }}</label>
+                                                    <select name="capa_status" id="capa_status" style="width: 100%"
+                                                        class="form-control single-select">
+                                                        <option value="">Select Status</option>
+                                                        <option value="{{ 1 }}">Open</option>
+                                                        <option value="{{ 2 }}">In-Progress</option>
+                                                        <option value="{{ 3 }}">Closed</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-4 closed_date" style="display:none;">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Closed Date</label>
+                                                        <input type="text" name="closed_date" id="closed_date"
+                                                            class="form-control">
                                                     </div>
-                                                    <div class="col-md-4 closed_date" style="display:none;">
-                                                        <div class="form-group form-input">
-                                                            <label class="form-label require">Closed Date</label>
-                                                            <input type="text" name="closed_date" id="closed_date"
-                                                                class="form-control">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-md-12 form-group form-input">
-                                                        <label for="capa_remarks" class="form-label">Remarks</label>
-                                                        <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
-                                                            name="capa_remarks"></textarea>
-                                                    </div>
+                                                </div>
+                                                <div class="col-md-12 form-group form-input">
+                                                    <label for="capa_remarks" class="form-label">Remarks</label>
+                                                    <textarea id="capa_remarks" class="form-control" rows="3" placeholder="Please provide Remarks..."
+                                                        name="capa_remarks"></textarea>
+                                                </div>
 
                                                 <div class="submit-button mt-3" style="text-align: right;">
                                                     <x-button-submit class="submit"></x-button-submit>
@@ -569,12 +569,22 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4  mt-2 " style="display: none">
+                                                @if (isset($observation->closed_date))
+                                                    <div class="col-md-4  mt-2 " style="display: none">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label ">{{ __('inspection.closed_date') }}</label>
+                                                            <div class="view_data">
+                                                                {{ Displaydateformat($observation->closed_date) }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+                                                <div class="col-md-4 mt-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label ">Closed
-                                                            Date</label>
+                                                        <label class="form-label ">Status</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($observation->closed_date) }}
+                                                            {{ getObservationCAPAStatus($observation->capa_status) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -701,19 +711,19 @@
                                             </div> --}}
 
 
-                                            <div class="row mt-2">
-                                                <div class="col-md-12 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('Remarks') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $observation->ehs_capa_remarks }}
+                                                <div class="row mt-2">
+                                                    <div class="col-md-12 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label ">{{ __('Remarks') }}</label>
+                                                            <div class="view_data">
+                                                                {{ $observation->ehs_capa_remarks }}
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                            </div>
 
+                                            </div>
                                         </div>
-                                    </div>
                                 @endif
 
                                 @if (

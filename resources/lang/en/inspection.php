@@ -302,6 +302,9 @@ return [
     'weekly_ambulance_inspection' => 'Weekly Ambulance Inspection',
     'weekly_ambulance_inspection_checklist' => 'Weekly Ambulance Inspection Checklist',
 
+    //
+    'closed_date' => 'Closed Date',
+
 
 
 ];

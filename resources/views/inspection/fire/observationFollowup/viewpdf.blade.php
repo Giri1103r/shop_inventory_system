@@ -300,7 +300,7 @@
                     {{ Displaydateformat($observation->target_date) }}
                 </td>
                 <td style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">
-                    {{ $observation->closed_date }}
+                    {{ $observation->closed_date ?? '-' }}
                 </td>
                 <td style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">
                     {{ $observation->status == 1 ? 'Active' : 'In-active' }}
@@ -310,6 +310,71 @@
                 </td>
             </tr>
         </table>
+
+        @if (isset($observation->capa_remarks))
+            <div style="width:100%;">
+                <table style="width:100%;">
+                    <tr>
+                        <td
+                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                            {{ __('inspection.fire_associate_action') }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <table width="100%" style="width:100%;">
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.name') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> {{ getUsername($observation->responsible_person_id) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->created_at) }}
+                    </td>
+                </tr>
+                @php
+                    $signature = GetSignature($observation->approved_by, $observation->id, OBSERVATION_FOLLOWUP);
+                @endphp
+                {{-- @if (isset($signature))
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+
+
+                        <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                style="width: 150px; margin-top: -10px;" /></td>
+
+                    </tr>
+                @endif --}}
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_action_remarks') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $observation->capa_remarks }}
+                    </td>
+                </tr>
+                @if (isset($observation->closed_date))
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.closed_date') }}</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->closed_date) }}
+                        </td>
+                    </tr>
+                @endif
+
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('common.status') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> {{ getObservationCAPAStatus($observation->capa_status) }}
+                    </td>
+                </tr>
+
+            </table>
+            <br>
+        @endif
         @if ($observation->approve_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
             <div style="width:100%;">
                 <table style="width:100%;">
@@ -322,11 +387,11 @@
                 </table>
             </div>
             <table width="100%" style="width:100%;">
-                @if (isset($observation->verified_by))
+                @if (isset($observation->ehs_verify_by))
                     <tr>
                         <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
                         <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;"> {{ getUserName($observation->verified_by) }}</td>
+                        <td width="48%" style="padding:5px;"> {{ getUserName($observation->ehs_verify_by) }}</td>
                     </tr>
                 @endif
                 @php
@@ -376,73 +441,26 @@
 
                     </tr>
                 @endif --}}
-                @if (isset($observation->capa_recomendation))
+                @if (isset($observation->ehs_capa_remarks))
                     <tr>
                         <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_recomendation') }}</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
-                            {{ $observation->capa_recomendation }}
+                            {{ $observation->ehs_capa_remarks }}
                         </td>
                     </tr>
-                @else
+                    {{-- @else
                     <tr>
                         <td width="50%" style="padding:5px;"><b>{{ __('inspection.remarks') }}</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
                             {{ $observation->capa_remarks }}
-                    </tr>
+                    </tr> --}}
                 @endif
             </table>
             <br>
         @endif
 
-        @if (isset($observation->capa_remarks))
-            <div style="width:100%;">
-                <table style="width:100%;">
-                    <tr>
-                        <td
-                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                            {{ __('inspection.fire_associate_action') }}
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <table width="100%" style="width:100%;">
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.name') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ getUserName($observation->created_by) }}</td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->created_at) }}
-                    </td>
-                </tr>
-                @php
-                    $signature = GetSignature($observation->approved_by, $observation->id, OBSERVATION_FOLLOWUP);
-                @endphp
-                {{-- @if (isset($signature))
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-
-
-                        <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                style="width: 150px; margin-top: -10px;" /></td>
-
-                    </tr>
-                @endif --}}
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_action_remarks') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $observation->capa_remarks }}
-                    </td>
-                </tr>
-            </table>
-            <br>
-        @endif
 
 
         @if ($observation->capa_ehs_remarks)

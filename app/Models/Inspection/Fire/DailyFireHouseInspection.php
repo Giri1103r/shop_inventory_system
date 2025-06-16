@@ -126,12 +126,11 @@ class DailyFireHouseInspection extends Model
 
     public function selectOne($id)
     {
-        $data =   $this->select('inspection_daily_fire_pump_checklist.*' , 'masters_unit.unit_name', 'inspection_fire_signatureupload.file_path','inspection_static_docno.doc_no as document_no','inspection_static_docno.issue_date as issuedate','inspection_static_docno.rev_dt as rev_date')
+        $data =   $this->select('inspection_daily_fire_pump_checklist.*' , 'masters_unit.unit_name','inspection_static_docno.doc_no as document_no','inspection_static_docno.issue_date as issuedate','inspection_static_docno.rev_dt as rev_date')
         ->leftjoin('masters_unit', 'masters_unit.id', '=', 'inspection_daily_fire_pump_checklist.unit_id')
-        ->leftjoin('inspection_fire_signatureupload', 'inspection_daily_fire_pump_checklist.id', '=', 'inspection_fire_signatureupload.inspection_id')
         ->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_daily_fire_pump_checklist.document_reference_id')
-        ->where('inspection_fire_signatureupload.type', DAILY_FIRE_PUMP)
         ->where('inspection_daily_fire_pump_checklist.id', $id)->first();
+
         return $data;
     }
 
