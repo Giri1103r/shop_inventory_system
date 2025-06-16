@@ -75,7 +75,7 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('ohc_management') }}</label>
+                                        <label class="form-label view_label">{{ __('ohc_management.expiry_date') }}</label>
                                         <div class="view_data">
                                             {{ displaydateformat(isset($medicine_receiving->expire_date) ? $medicine_receiving->expire_date : '') }}
                                         </div>
