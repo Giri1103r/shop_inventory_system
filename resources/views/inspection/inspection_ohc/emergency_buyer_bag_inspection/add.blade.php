@@ -407,11 +407,11 @@
 
                 $('textarea[name^="remarks"]').each(function() {
                     $(this).rules('add', {
-
+                        required: true,
                         minlength: 3,
                         maxlength: 600,
                         messages: {
-                           
+                            required: "Remarks is required",
                             minlength: "Minimum 3 characters required",
                             maxlength: "Maximum character does not exceed 600"
                         }

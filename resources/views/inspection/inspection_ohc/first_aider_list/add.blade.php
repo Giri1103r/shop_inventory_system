@@ -229,16 +229,25 @@
                 location.reload();
             });
         });
-      
-        var Datepicker = flatpickr("#next_review_date", {
+
+
+        var toDatepicker = flatpickr("#next_review_date", {
             dateFormat: "d-m-Y",
-
-
         });
-        var dueDate = flatpickr("#last_updated_date", {
+
+        var fromDatepicker = flatpickr("#last_updated_date", {
             dateFormat: "d-m-Y",
+            onChange: function(selectedDates) {
+                if (selectedDates.length > 0) {
+                    var startDate = selectedDates[0];
 
+                    var nextDay = new Date(startDate);
+                    nextDay.setDate(startDate.getDate() + 1);
 
+                    toDatepicker.set('minDate', nextDay);
+
+                }
+            }
         });
         $(document).ready(function() {
             let rowCount = 1;

@@ -475,7 +475,7 @@
 
                     $('textarea[name^="remarks"]').each(function() {
                         $(this).rules('add', {
-                         
+                            required: true,
                             minlength: 3,
                             maxlength: 600,
                             messages: {
