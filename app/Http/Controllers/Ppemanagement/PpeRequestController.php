@@ -781,6 +781,7 @@ class PpeRequestController extends Controller
                 'remarks' => $remarks,
                 'approved_at' =>  $dateTime,
                 'approved_by' => Auth::id(),
+                'status' => 0,
                 'approve_status' =>  $approveStatus,
             ];
 

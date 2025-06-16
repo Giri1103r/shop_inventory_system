@@ -152,7 +152,7 @@
                                                                 <td>
                                                                     <div class="form-group form-input">
                                                                         <label for="quantity"
-                                                                            class="require">{{ __('ohc_management.quantity') }}<</label>
+                                                                            class="require">{{ __('ohc_management.quantity') }}</label>
                                                                         <input type="number" min = "1"
                                                                             name="quantity[{{ $key }}]"
                                                                             id="quantity" placeholder="Enter the quantity"
@@ -206,61 +206,7 @@
 
 @push('script')
     <script>
-        // $(document).on('click', '.delete-row', function(event) {
-        //     event.preventDefault();
 
-        //     var row = $(this).closest(".medicinedetails");
-        //     var rowId = row.find("input[name='encryptid']").val();
-        //     var totalRows = $(".medicinedetails").length;
-
-        //     if (totalRows <= 1) {
-        //         Swal.fire({
-        //             title: 'Cannot delete!',
-        //             text: 'At least one row is required.',
-        //             icon: 'warning',
-        //             confirmButtonText: 'OK'
-        //         });
-        //         return;
-        //     }
-        //     if (rowId) {
-        //         Swal.fire({
-        //             title: 'Are you sure?',
-        //             text: 'Do you want to delete this record?',
-        //             icon: 'warning',
-        //             showCancelButton: true,
-        //             confirmButtonText: 'Yes, delete it!',
-        //             cancelButtonText: 'No, keep it'
-        //         }).then((result) => {
-        //             if (result.isConfirmed) {
-        //                 $.ajax({
-        //                     url: "{{ url('ohc/medicine-issuance/delete') }}/" +
-        //                         rowId,
-        //                     type: 'POST',
-        //                     data: {
-        //                         _token: '{{ csrf_token() }}',
-        //                         _method: 'POST',
-        //                         id: rowId
-        //                     },
-        //                     success: function(response) {
-        //                         if (response.status === 'success') {
-        //                             row.remove();
-        //                             Swal.fire('Deleted!', response.msg, 'success');
-        //                         } else {
-        //                             Swal.fire('Error!', response.msg, 'error');
-        //                         }
-        //                     },
-        //                     error: function() {
-        //                         Swal.fire('Error!',
-        //                             'Something went wrong. Please try again later.',
-        //                             'error');
-        //                     }
-        //                 });
-        //             }
-        //         });
-        //     } else {
-        //         $(this).closest("tr").remove();
-        //     }
-        // });
 
 
         let deletedPages = [];
@@ -359,7 +305,7 @@
                 </td>
                 <td>
                     <div class="form-group form-input">
-                        <label class="require">{{ __('ohc_management.quantity') }}<</label>
+                        <label class="require">{{ __('ohc_management.quantity') }}</label>
                         <input type="number" min = "1" name="quantity[${rowcount}]" placeholder="Enter the quantity" class="form-control">
                         <span class="text-danger quantity-error" style="display:none;">Quantity must be less than available quantity.</span>
                     </div>
