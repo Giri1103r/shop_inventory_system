@@ -444,8 +444,8 @@
                                                         <th>{{ __('common.sno') }}</th>
                                                         <th>{{ __('common.from_status') }}</th>
                                                         <th>{{ __('common.to_status') }}</th>
-                                                        <th>{{ __('ohc_management.remarks') }}</th>
-                                                        <th>{{ __('common.approved_by') }}</th>
+                                                        <th>{{ __('common.remarks') }}</th>
+                                                        <th>{{ __('common.approve_or_reject') }}</th>
                                                         <th>{{ __('common.created_by') }}</th>
                                                         <th>{{ __('common.created_date') }}</th>
                                                     </tr>
