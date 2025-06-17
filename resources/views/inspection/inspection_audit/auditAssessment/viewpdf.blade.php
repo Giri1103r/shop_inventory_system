@@ -198,7 +198,7 @@
         <tr>
             <th colspan="24"
                 style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                Floor Executive On Duty: {{ $audit_assessment->floor_executive ?? 'N/A' }}
+                Floor Executive On Duty: {{ getEmployeename($audit_assessment->floor_executive) ?? 'N/A' }}
             </th>
         </tr>
 
@@ -221,56 +221,57 @@
         </tr>
 
         @php
-        $srNo = 1;
-    @endphp
-
-    @forelse ($user_response ?? [] as $subcategory => $questions)
-        @php
-            $rowCount = count($questions);
-            $firstRow = true;
+            $srNo = 1;
         @endphp
 
-        @forelse ($questions as $questionId => $answer)
-            <tr>
-                @if ($firstRow)
-                    <td rowspan="{{ $rowCount }}" style="border: 1px solid black; padding: 8px; font-weight: bold;">
-                        {{ GetSubChecklistTypeName($subcategory) }}
-                    </td>
-                    @php
-                        $srNo++;
-                        $firstRow = false;
-                    @endphp
-                @endif
+        @forelse ($user_response ?? [] as $subcategory => $questions)
+            @php
+                $rowCount = count($questions);
+                $firstRow = true;
+            @endphp
 
-                <td colspan="11" style="border: 1px solid black; padding: 8px;">
-                    {{ GetChecklistTypeDate($questionId) }}
-                </td>
-
-                <td colspan="12" style="border: 1px solid black; padding: 8px; text-align: center;">
-                    @if ($answer == 'YES')
-                        <span style="color: green; font-size: 20px;">✓</span>
-                    @elseif ($answer == 'NO')
-                        <span style="color: red; font-size: 20px;">X</span>
-                    @elseif ($answer == 'N/A')
-                        <span style="color: rgb(191, 212, 4); font-size: 20px;">X</span>
+            @forelse ($questions as $questionId => $answer)
+                <tr>
+                    @if ($firstRow)
+                        <td rowspan="{{ $rowCount }}"
+                            style="border: 1px solid black; padding: 8px; font-weight: bold;">
+                            {{ GetSubChecklistTypeName($subcategory) }}
+                        </td>
+                        @php
+                            $srNo++;
+                            $firstRow = false;
+                        @endphp
                     @endif
-                </td>
-            </tr>
+
+                    <td colspan="11" style="border: 1px solid black; padding: 8px;">
+                        {{ GetChecklistTypeDate($questionId) }}
+                    </td>
+
+                    <td colspan="12" style="border: 1px solid black; padding: 8px; text-align: center;">
+                        @if ($answer == 'YES')
+                            <span style="color: green; font-size: 20px;">✓</span>
+                        @elseif ($answer == 'NO')
+                            <span style="color: red; font-size: 20px;">X</span>
+                        @elseif ($answer == 'N/A')
+                            <span style="color: rgb(191, 212, 4); font-size: 20px;">X</span>
+                        @endif
+                    </td>
+                </tr>
+            @empty
+                <tr>
+                    <td colspan="23" style="text-align: center; padding: 10px; border: 1px solid black;">
+                        No Questions Found!
+                    </td>
+                </tr>
+            @endforelse
+
         @empty
             <tr>
-                <td colspan="23" style="text-align: center; padding: 10px; border: 1px solid black;">
+                <td colspan="24" style="text-align: center; padding: 10px; border: 1px solid black;">
                     No Questions Found!
                 </td>
             </tr>
         @endforelse
-
-    @empty
-        <tr>
-            <td colspan="24" style="text-align: center; padding: 10px; border: 1px solid black;">
-                No Questions Found!
-            </td>
-        </tr>
-    @endforelse
 
 
 

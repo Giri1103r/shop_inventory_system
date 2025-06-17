@@ -21,8 +21,7 @@
                         <div class="card">
                             <div class="card-header">
                                 <div class="align-back-btc">
-                                    <x-button-back
-                                        href="{{ admin_url('ohc/daily-vital-equipment/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('ohc/daily-vital-equipment/list') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -30,8 +29,8 @@
 
                                 <div class="basic-form mx-3">
                                     <form method="POST" id="safetygalleryAdd"
-                                        action="{{ admin_url('ohc/daily-vital-equipment/add/submit') }}"
-                                        autocomplete="off" enctype="multipart/form-data">
+                                        action="{{ admin_url('ohc/daily-vital-equipment/add/submit') }}" autocomplete="off"
+                                        enctype="multipart/form-data">
                                         @csrf
 
                                         <div class="row">
@@ -39,16 +38,24 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.doc_no') }}</label>
                                                     <input type="text" name="doc_no" id = "doc_no" class="form-control"
-                                                        placeholder="Document Number" value="{{ $document_no->doc_no }}" readonly>
+                                                        placeholder="Document Number" value="{{ $document_no->doc_no }}"
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.issue_date') }}</label>
-                                                    <input type="text" name="issue_date" id = "issue_date"
-                                                        class="form-control" placeholder="Issued Date"
-                                                        value="{{ displaydateformat($document_no->issue_date) }}" readonly>
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="issue_date" id = "issue_date"
+                                                            class="form-control" placeholder="Issued Date"
+                                                            value="{{ displaydateformat($document_no->issue_date) }}"
+                                                            readonly>
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -63,8 +70,15 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
-                                                    <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control">
+
+
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="inspection_date" id = "inspection_date"
+                                                            class="form-control">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -94,25 +108,9 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            {{-- <div class="col-md-4 form-group form-input mb-2">
-                                                @if (isset(Auth::user()->signature_upload))
-                                                    <label class="form-label"
-                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
-                                                @else
-                                                    <div class="form-input col-md-12 mb-2">
-                                                        <label class="form-label require">Signature</label>
-                                                        <input type="file" name="signature_image" id="signature_upload"
-                                                            class="form-control form-control-sm" accept="image/*"
-                                                            placeholder="Enter the image">
-                                                        <small>Allowed file types: jpg, jpeg, png</small>
-                                                        <div id="signature_upload" class="text-danger"></div>
-                                                    </div>
-                                                @endif
-                                            </div> --}}
+                                            
                                             <input type="hidden" name="document_reference_id"
-                                                    value="{{ encryptId($document_no->id) }}">
+                                                value="{{ encryptId($document_no->id) }}">
                                             <table class="container mt-2 p-5">
                                                 <thead>
                                                     <tr>
@@ -126,7 +124,8 @@
                                                             Check Points
                                                         </th>
 
-                                                        <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; class="require">
+                                                        <th
+                                                            style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center; class="require">
                                                             Quantity
                                                         </th>
 
@@ -163,7 +162,9 @@
                                                                 </td>
                                                                 <td style="border: 1px solid black; padding: 8px; text-align: center;"
                                                                     class="form-input">
-                                                                    <input type="text" name="quantity[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}]" class="form-control" style="resize:none;" >
+                                                                    <input type="text"
+                                                                        name="quantity[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}]"
+                                                                        class="form-control" style="resize:none;">
                                                                 </td>
                                                                 @foreach ($getoption as $option)
                                                                     <td style="border: 1px solid black; padding: 8px; text-align: center;"

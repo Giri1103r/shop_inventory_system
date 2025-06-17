@@ -195,7 +195,7 @@
             <tr>
                 <th colspan="24"
                     style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    Floor Executive On Duty: {{ $details->floor_executive ?? 'N/A' }}
+                    Floor Executive On Duty: {{ getEmployeename($details->floor_executive) ?? 'N/A' }}
                 </th>
             </tr>
 

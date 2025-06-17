@@ -411,7 +411,7 @@ class HealthInstrumentCalibrationController extends Controller
                     $sheet->setCellValue("J{$dataRow}", getFrequencyname($detail['calibration_frequency'] ?? ''));
                     $sheet->setCellValue("K{$dataRow}", Displaydateformat($detail['date_of_calibration'] ?? ''));
                     $sheet->setCellValue("L{$dataRow}", Displaydateformat($detail['due_date_of_calibration'] ?? ''));
-                    $sheet->setCellValue("M{$dataRow}", $detail['remarks'] ?? '');
+                    $sheet->setCellValue("M{$dataRow}", $detail['remarks'] ?? '-');
 
                     $sheet->getStyle("A{$dataRow}:M{$dataRow}")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -665,7 +665,7 @@ class HealthInstrumentCalibrationController extends Controller
                 $sheet->setCellValue("J{$row}", getFrequencyname($detail['calibration_frequency'] ?? ''));
                 $sheet->setCellValue("K{$row}", Displaydateformat($detail['date_of_calibration'] ?? ''));
                 $sheet->setCellValue("L{$row}", Displaydateformat($detail['due_date_of_calibration'] ?? ''));
-                $sheet->setCellValue("M{$row}", $detail['remarks'] ?? '');
+                $sheet->setCellValue("M{$row}", $detail['remarks'] ?? '-');
 
 
                 $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([

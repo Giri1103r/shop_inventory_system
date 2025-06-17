@@ -105,21 +105,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Unit</label>
-                                                    <select name="unit_id" id="unit_id" style="width: 100%"
-                                                        class="form-control single-select">
-                                                        <option value="">Select the option</option>
-                                                        @foreach ($unit as $list)
-                                                            <option value="{{ encryptId($list->id) }}">
-                                                                {{ $list->unit_name }}
-                                                            </option>
-                                                        @endforeach
-                                                    </select>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Location</label>
+                                                    <label class="form-label require">{{ __('common.location') }}</label>
                                                     <select name="location_id" id="location_id" style="width: 100%"
                                                         class="form-control single-select">
                                                         <option value="">Select the option</option>
@@ -133,14 +119,12 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">Next Due On</label>
-                                                    <div class="input-group date form-input custom-height">
-                                                        <input type="text" name="next_due_on" id="next_due_on"
-                                                            class="form-control"autocomplete="off">
-                                                        <div class="input-group-addon input-group-text">
-                                                            <span class="fa fa-calendar"></span>
-                                                        </div>
-                                                    </div>
+                                                    <label class="form-label require">{{ __('common.unit') }}</label>
+                                                    <select name="unit_id" id="unit_id" style="width: 100%"
+                                                        class="form-control single-select">
+                                                        <option value="">Select the option</option>
+                                                       
+                                                    </select>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
@@ -157,6 +141,19 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label for="rate" class="form-label require ">Next Due On</label>
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="next_due_on" id="next_due_on"
+                                                            class="form-control"autocomplete="off">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
 
 
                                         </div>
@@ -204,12 +201,7 @@
                                                                         name="sub_type_id[{{ $checklist->checklist_sub_type_id }}][]"
                                                                         value="{{ $checklist->checklist_id }}">
 
-                                                                    {{-- @if ($index == 0)
-                                                                        <td rowspan="{{ $rowCount }}"
-                                                                            style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold;">
-                                                                            {{ $checklist->subcategory_name }}
-                                                                        </td>
-                                                                    @endif --}}
+
                                                                     <td colspan="2"
                                                                         style="border: 1px solid black; padding: 8px; text-align: center; vertical-align: middle;">
                                                                         {{ $checklist->checklist_name }}
@@ -284,19 +276,51 @@
                 location.reload();
             });
         });
-        var Datepicker = flatpickr("#date_of_inspection", {
-            dateFormat: "d-m-Y",
-            minDate: new Date()
 
+        $(document).on('change', '#location_id', function() {
+            var locationId = $(this).val();
+            if (locationId) {
+                $.ajax({
+                    url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#unit_id').empty().append(
+                            '<option value="">Select unit</option>');
+                        $.each(data, function(key, value) {
+                            $('#unit_id').append('<option value="' + value
+                                .id + '">' + value.name + '</option>');
+                        });
+                        $('#unit_id').trigger('change.');
+                    },
+                    error: function(xhr) {
+                        alert('Error fetching unit. Please try again.');
+                    }
+                });
+            } else {
+                $('#unit_id').empty().append('<option value="">Select unit</option>');
+                $('#unit_id').trigger('change.');
+            }
         });
-        var dueDate = flatpickr("#next_due_on", {
-            dateFormat: "d-m-Y",
-            minDate: new Date()
 
+        var toDatepicker = flatpickr("#next_due_on", {
+            dateFormat: "d-m-Y",
         });
 
+        var fromDatepicker = flatpickr("#date_of_inspection", {
+            dateFormat: "d-m-Y",
+            onChange: function(selectedDates) {
+                if (selectedDates.length > 0) {
+                    var startDate = selectedDates[0];
 
-     
+                    var nextDay = new Date(startDate);
+                    nextDay.setDate(startDate.getDate() + 1);
+
+                    toDatepicker.set('minDate', nextDay);
+
+                }
+            }
+        });
 
         $(function() {
             // Initialize validator

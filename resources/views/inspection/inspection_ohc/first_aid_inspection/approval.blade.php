@@ -64,7 +64,7 @@
                                                     <td class="text-center">{{ getMedicinename($medicines['medicine_id']) }}</td>
                                                     <td class="text-center">{{ $medicines['available_quantity'] }}</td>
                                                     <td class="text-center">{{ Displaydateformat($medicines['expired_date']) }}</td>
-                                                    <td class="text-center">{{ getUsername($medicines['emp_id']) }}</td>
+                                                    <td class="text-center">{{ ($medicines['emp_id']) }}</td>
                                                     <td class="text-center">{{ $medicines['remarks'] }}</td>
                                                 </tr>
                                             @endforeach

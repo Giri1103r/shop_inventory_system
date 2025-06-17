@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inspection\Ohc;
 use Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Mail\Inspection\Ohc\FirstAidEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
@@ -177,7 +178,7 @@ class FirstAidMedicineInspectionController extends Controller
                     'notification_message' => $mailsubject,
                     'mobile_notification' => json_encode(array(
                         'title' => $mailsubject,
-                        'message' => "Safety Walk Observation - Observation Has been Created",
+                        'message' => "First-Aid Medicine Inspection Checklist - Inspection Has been Created",
                         'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                         'id' => $inspection_details->id,
                         'module' => 1,
@@ -188,19 +189,19 @@ class FirstAidMedicineInspectionController extends Controller
                 );
                 notificationSave($notificationData);
 
-                $title = 'First-Aid Medicine Inspection Checklist- Observation has been Created';
+                $title = 'First-Aid Medicine Inspection Checklist- Inspection has been Created';
                 foreach ($ehsOfficers as $user) {
                     $email_id = getUseremail($user);
                     $url = admin_url('ohc/first-aid/opd-medicine-inspection/approval/' . encryptId($inspection_details->id));
                     $details = array(
-                        'safety_type' => 'Safety Walk Observation',
+                        'ohc_type' => 'Monthly OHC First Aid Medicine Inspection',
                         'email' => $email_id,
                         'mail_subject' => $mailsubject,
                         'title' => $title,
                         'url' => $url,
                         'data' => $inspection_details
                     );
-                    Mail::to($email_id)->queue(new SafetyInspection($details));
+                    Mail::to($email_id)->queue(new FirstAidEmail($details));
                 }
             }
 
@@ -372,7 +373,7 @@ class FirstAidMedicineInspectionController extends Controller
                     $sheet->mergeCells("D$inspectionRow:F$inspectionRow")->setCellValue("D$inspectionRow", getMedicinename($detail['medicine_id']));
                     $sheet->mergeCells("G$inspectionRow:H$inspectionRow")->setCellValue("G$inspectionRow", $detail['available_quantity'] ?? '');
                     $sheet->mergeCells("I$inspectionRow:K$inspectionRow")->setCellValue("I$inspectionRow", Displaydateformat($detail['expired_date']));
-                    $sheet->mergeCells("L$inspectionRow:O$inspectionRow")->setCellValue("L$inspectionRow", getUsername($detail['emp_id']));
+                    $sheet->mergeCells("L$inspectionRow:O$inspectionRow")->setCellValue("L$inspectionRow", ($detail['emp_id']));
                     $sheet->mergeCells("P$inspectionRow:S$inspectionRow")->setCellValue("P$inspectionRow", $detail['remarks'] ?? '');
 
                     $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
@@ -609,18 +610,18 @@ class FirstAidMedicineInspectionController extends Controller
             );
             notificationSave($notificationData);
 
-            $title = 'First-Aid Medicine Inspection Checklist - Observation Status';
+            $title = 'First-Aid Medicine Inspection Checklist - Inspection Status';
             $email_id = getUseremail($ehsOfficer);
             $url = admin_url('ohc/first-aid/opd-medicine-inspection/view/' . encryptId($inspection_details->id));
             $details = array(
-                'safety_type' => 'First-Aid Medicine Inspection Checklist',
+                'ohc_type' => 'First-Aid Medicine Inspection Checklist',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => $title,
                 'url' => $url,
                 'data' => $inspection_details
             );
-            Mail::to($email_id)->queue(new SafetyInspection($details));
+            Mail::to($email_id)->queue(new FirstAidEmail($details));
 
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
@@ -731,7 +732,7 @@ class FirstAidMedicineInspectionController extends Controller
                 $sheet->mergeCells("D$row:F$row")->setCellValue("D$row", getMedicinename($detail['medicine_id']));
                 $sheet->mergeCells("G$row:H$row")->setCellValue("G$row", $detail['available_quantity'] ?? '');
                 $sheet->mergeCells("I$row:K$row")->setCellValue("I$row", Displaydateformat($detail['expired_date']));
-                $sheet->mergeCells("L$row:O$row")->setCellValue("L$row", getUsername($detail['emp_id']));
+                $sheet->mergeCells("L$row:O$row")->setCellValue("L$row", ($detail['emp_id']));
                 $sheet->mergeCells("P$row:S$row")->setCellValue("P$row", $detail['remarks'] ?? '');
 
                 $sheet->getStyle("A$row:S$row")->applyFromArray([

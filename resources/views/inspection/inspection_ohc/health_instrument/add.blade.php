@@ -107,7 +107,7 @@
 
                                         <div class="row">
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white"> Health Calibration Details</h4>
+                                                <h4 class="text-white"> Health Instrument Calibration</h4>
                                                 <button class="btn btn-primary mb-2 addmorebutton"
                                                     data-block='lesson_learned_block' data-row='lesson_learned_row'
                                                     type="button" id="dynamic-add-more"
@@ -120,6 +120,24 @@
                                             <div class="row lesson_learned_row" style="margin-top: 20px;">
 
 
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label">Resource Code</label>
+                                                        <input type="text" name="health_instrument[1][resource_code]"
+                                                            id="resource_code_1" class="form-control"
+                                                            placeholder=" Enter Resource Code">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label">Instrument Serial Number</label>
+                                                        <input type="text"
+                                                            name="health_instrument[1][instrument_serial_no]"
+                                                            id="instrument_serial_no_1" class="form-control"
+                                                            placeholder="Enter Instrument Serial Number">
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label"> Instrument Name </label>
@@ -130,31 +148,10 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label">Resource Code</label>
-                                                        <input type="text" name="health_instrument[1][resource_code]"
-                                                            id="resource_code_1" class="form-control"
-                                                            placeholder=" Enter Resource Code">
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
                                                         <label class="form-label">Exact Location</label>
                                                         <input type="text" name="health_instrument[1][exact_location]"
                                                             id="exact_location_1" class="form-control"
                                                             placeholder="Enter Exact Location">
-                                                    </div>
-                                                </div>
-
-
-
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label">Instrument Serial Number</label>
-                                                        <input type="text"
-                                                            name="health_instrument[1][instrument_serial_no]"
-                                                            id="instrument_serial_no_1" class="form-control"
-                                                            placeholder="Enter Instrument Serial Number">
                                                     </div>
                                                 </div>
 
@@ -204,9 +201,16 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label">Date of Calibration</label>
-                                                        <input type="text"
-                                                            name="health_instrument[1][date_of_calibration]"
-                                                            id="date_of_calibration_1" class="form-control">
+
+
+                                                        <div class="input-group date form-input custom-height">
+                                                            <input type="text"
+                                                                name="health_instrument[1][date_of_calibration]"
+                                                                id="date_of_calibration_1" class="form-control">
+                                                            <div class="input-group-addon input-group-text">
+                                                                <span class="fa fa-calendar"></span>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -214,9 +218,16 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label">Next Due Date</label>
-                                                        <input type="text"
-                                                            name="health_instrument[1][due_date_of_calibration]"
-                                                            id="due_date_of_calibration_1" class="form-control">
+
+
+                                                        <div class="input-group date form-input custom-height">
+                                                            <input type="text"
+                                                                name="health_instrument[1][due_date_of_calibration]"
+                                                                id="due_date_of_calibration_1" class="form-control">
+                                                            <div class="input-group-addon input-group-text">
+                                                                <span class="fa fa-calendar"></span>
+                                                            </div>
+                                                        </div>
                                                     </div>
                                                 </div>
 
@@ -275,15 +286,36 @@
 
         document.addEventListener("DOMContentLoaded", function() {
             function initializeFlatpickr() {
-                
-                flatpickr("input[id^='date_of_calibration_']", {
-                    dateFormat: "d-m-Y"
-                });
-                flatpickr("input[id^='due_date_of_calibration_']", {
+
+                var toDatepicker = flatpickr("[id^='due_date_of_calibration_']", {
                     dateFormat: "d-m-Y"
                 });
 
+
+                var fromDatepicker = flatpickr("[id^='date_of_calibration_']", {
+                    dateFormat: "d-m-Y",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+
+                            var nextDay = new Date(startDate);
+                            nextDay.setDate(startDate.getDate() + 1);
+
+                            // Set minDate on *each* due date input (assumes multiple possible inputs)
+                            if (Array.isArray(toDatepicker)) {
+                                toDatepicker.forEach(function(picker) {
+                                    picker.set('minDate', nextDay);
+                                });
+                            } else {
+                                toDatepicker.set('minDate', nextDay);
+                            }
+                        }
+                    }
+                });
+
+
             }
+
 
             function updateRowIndexes() {
 
@@ -361,12 +393,12 @@
                     minlength: 3,
                     maxlength: 2000,
                     required: true,
-                    pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+
                     messages: {
                         minlength: "Instrument name must be at least 3 characters.",
                         maxlength: "Instrument name must not exceed 200 characters.",
                         maxlength: "Instrument name is required.",
-                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                     }
                 });
 
@@ -374,24 +406,24 @@
                     minlength: 3,
                     maxlength: 2000,
                     required: true,
-                    pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+
                     messages: {
                         minlength: "resource code must be at least 3 characters.",
                         maxlength: "resource code must not exceed 200 characters.",
                         required: "resource code is required.",
-                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                     }
                 });
                 newRow.find("input[name$='[exact_location]']").rules("add", {
                     minlength: 3,
                     maxlength: 200,
                     required: true,
-                    pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+
                     messages: {
                         minlength: "Excat Location must be at least 3 characters.",
                         maxlength: "Excat Location must not exceed 200 characters.",
                         required: "Excat Location is required.",
-                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                     }
                 });
 
@@ -399,12 +431,12 @@
                     minlength: 3,
                     required: true,
                     maxlength: 200,
-                    pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+
                     messages: {
                         minlength: "Instrument Serial Number must be at least 3 characters.",
                         maxlength: "Instrument Serial Number must not exceed 200 characters.",
                         required: "Instrument Serial Number is required.",
-                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                     }
                 });
 
@@ -413,36 +445,36 @@
                     minlength: 3,
                     required: true,
                     maxlength: 200,
-                    pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+
                     messages: {
                         minlength: "Make must be at least 3 characters.",
                         maxlength: "Make must not exceed 200 characters.",
                         required: "Make is required.",
-                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                     }
                 });
                 newRow.find("input[name$='[model]']").rules("add", {
                     minlength: 3,
                     maxlength: 200,
                     required: true,
-                    pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+
                     messages: {
                         minlength: "Model must be at least 3 characters.",
                         maxlength: "Model must not exceed 200 characters.",
                         required: "Model is required.",
-                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                     }
                 });
                 newRow.find("input[name$='[instrument_range]']").rules("add", {
                     minlength: 3,
                     required: true,
                     maxlength: 200,
-                    pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+
                     messages: {
                         minlength: "Instrument range must be at least 3 characters.",
                         maxlength: "Instrument range must not exceed 200 characters.",
                         required: "Instrument range is required.",
-                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                     }
                 });
                 newRow.find("select[name$='[frequency_id]']").rules("add", {
@@ -494,12 +526,12 @@
                 minlength: 3,
                 maxlength: 2000,
                 required: true,
-                pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+
                 messages: {
                     minlength: "Instrument name must be at least 3 characters.",
                     maxlength: "Instrument name must not exceed 200 characters.",
                     maxlength: "Instrument name is required.",
-                    pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                 }
             });
 
@@ -507,24 +539,24 @@
                 minlength: 3,
                 maxlength: 2000,
                 required: true,
-                pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+
                 messages: {
                     minlength: "resource code must be at least 3 characters.",
                     maxlength: "resource code must not exceed 200 characters.",
                     required: "resource code is required.",
-                    pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                 }
             });
             newRow.find("input[name$='[exact_location]']").rules("add", {
                 minlength: 3,
                 maxlength: 200,
                 required: true,
-                pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+
                 messages: {
                     minlength: "Excat Location must be at least 3 characters.",
                     maxlength: "Excat Location must not exceed 200 characters.",
                     required: "Excat Location is required.",
-                    pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                 }
             });
 
@@ -532,12 +564,12 @@
                 minlength: 3,
                 required: true,
                 maxlength: 200,
-                pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+
                 messages: {
                     minlength: "Instrument Serial Number must be at least 3 characters.",
                     maxlength: "Instrument Serial Number must not exceed 200 characters.",
                     required: "Instrument Serial Number is required.",
-                    pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                 }
             });
 
@@ -546,36 +578,36 @@
                 minlength: 3,
                 required: true,
                 maxlength: 200,
-                pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+
                 messages: {
                     minlength: "Make must be at least 3 characters.",
                     maxlength: "Make must not exceed 200 characters.",
                     required: "Make is required.",
-                    pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                 }
             });
             newRow.find("input[name$='[model]']").rules("add", {
                 minlength: 3,
                 maxlength: 200,
                 required: true,
-                pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+
                 messages: {
                     minlength: "Model must be at least 3 characters.",
                     maxlength: "Model must not exceed 200 characters.",
                     required: "Model is required.",
-                    pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                 }
             });
             newRow.find("input[name$='[instrument_range]']").rules("add", {
                 minlength: 3,
                 required: true,
                 maxlength: 200,
-                pattern: /^[a-zA-Z0-9\s\-_"'()]+$/,
+
                 messages: {
                     minlength: "Instrument range must be at least 3 characters.",
                     maxlength: "Instrument range must not exceed 200 characters.",
                     required: "Instrument range is required.",
-                    pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                 }
             });
             newRow.find("select[name$='[frequency_id]']").rules("add", {
@@ -636,55 +668,55 @@
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                        pattern: /^[a-zA-Z0-9\s\-_"'()/]+$/
+
                     },
                     "health_instrument[1][instrument_name]": {
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                        pattern: /^[a-zA-Z0-9\s\-_"'()]+$/
+
                     },
                     "health_instrument[1][resource_code]": {
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                        pattern: /^[a-zA-Z0-9\s\-_"'()/]+$/
+
                     },
                     "health_instrument[1][exact_location]": {
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                        pattern: /^[a-zA-Z0-9\s\-_"'()]+$/
+
                     },
                     "health_instrument[1][instrument_serial_no]": {
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                        pattern: /^[a-zA-Z0-9\s\-_"'()/]+$/
+
                     },
                     "health_instrument[1][make]": {
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                        pattern: /^[a-zA-Z0-9\s\-_"'()]+$/
+
                     },
                     "health_instrument[1][model]": {
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                        pattern: /^[a-zA-Z0-9\s\-_"'()]+$/
+
                     },
                     "health_instrument[1][instrument_range]": {
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                        pattern: /^[a-zA-Z0-9\s\-_"'*()/]+$/
+
                     },
                     "health_instrument[1][calibration_frequency]": {
                         required: true,
                         minlength: 3,
                         maxlength: 200,
-                        pattern: /^[a-zA-Z0-9\s\-_"'()]+$/
+
                     },
                     "health_instrument[1][frequency_id]": {
                         required: true,
@@ -708,55 +740,55 @@
                         required: "Document number is required.",
                         minlength: "Document number must be at least 3 characters long.",
                         maxlength: "Document number must not exceed 200 characters.",
-                        pattern: "Only letters, numbers, spaces, and -_'()/ are allowed."
+
                     },
                     "health_instrument[1][instrument_name]": {
                         required: "Instrument name is required.",
                         minlength: "Instrument name must be at least 3 characters.",
                         maxlength: "Instrument name must not exceed 200 characters.",
-                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                     },
                     "health_instrument[1][resource_code]": {
                         required: "Resource code is required.",
                         minlength: "Resource code must be at least 3 characters.",
                         maxlength: "Resource code must not exceed 200 characters.",
-                        pattern: "Only letters, numbers, spaces, and -_'()/ are allowed."
+
                     },
                     "health_instrument[1][exact_location]": {
                         required: "Exact location is required.",
                         minlength: "Exact location must be at least 3 characters.",
                         maxlength: "Exact location must not exceed 200 characters.",
-                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                     },
                     "health_instrument[1][instrument_serial_no]": {
                         required: "Serial number is required.",
                         minlength: "Serial number must be at least 3 characters.",
                         maxlength: "Serial number must not exceed 200 characters.",
-                        pattern: "Only letters, numbers, spaces, and -_'()/ are allowed."
+
                     },
                     "health_instrument[1][make]": {
                         required: "Make is required.",
                         minlength: "Make must be at least 3 characters.",
                         maxlength: "Make must not exceed 200 characters.",
-                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                     },
                     "health_instrument[1][model]": {
                         required: "Model is required.",
                         minlength: "Model must be at least 3 characters.",
                         maxlength: "Model must not exceed 200 characters.",
-                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                     },
                     "health_instrument[1][instrument_range]": {
                         required: "Instrument range is required.",
                         minlength: "Instrument range must be at least 3 characters.",
                         maxlength: "Instrument range must not exceed 200 characters.",
-                        pattern: "Only letters, numbers, spaces, and -_'*/() are allowed."
+                       
                     },
                     "health_instrument[1][calibration_frequency]": {
                         required: "Calibration frequency is required.",
                         minlength: "Calibration frequency must be at least 3 characters.",
                         maxlength: "Calibration frequency must not exceed 200 characters.",
-                        pattern: "Only letters, numbers, spaces, and -_'() are allowed."
+
                     },
                     "health_instrument[1][frequency_id]": {
                         required: "Please Select the option.",

@@ -284,6 +284,7 @@
             });
             flatpickr(".expired_date", {
                 dateFormat: "d-m-Y",
+                minDate: new Date(),
             });
 
             // location based unit
@@ -456,7 +457,7 @@
 
                 $('textarea[name^="remarks"]').each(function() {
                     $(this).rules('add', {
-                        required: 500,
+                        required: true,
                         messages: {
                             required: "Remarks is required"
                         }

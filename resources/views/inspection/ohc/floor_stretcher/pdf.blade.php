@@ -149,7 +149,7 @@
             <table style="width:100%;">
                 <tr>
                     <td style="background-color: #ce0f1f; color: #ffffff; padding: 10px; font-weight: bold;">
-                        Checklist Of Floor Stretcher Inspection Details
+                     Checklist Of Floor Stretcher Inspection
                     </td>
                 </tr>
             </table>
@@ -162,6 +162,21 @@
             @endphp
 
             <table style="width: 100%; border-collapse: collapse; padding: 5px;">
+                  <tr>
+                <th colspan="4" style="border:1px solid black;height:50;width:40">
+                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+                </th>
+                <th colspan="8" style="border:1px solid black;">
+                    <h3>
+                        <span><b>  Monthly Floor Patient Stretcher Checklist</b></span>
+                        <br>
+                    </h3>
+                </th>
+
+
+
+                </th>
+            </tr>
                 <thead>
                     <tr>
                         <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: left;"

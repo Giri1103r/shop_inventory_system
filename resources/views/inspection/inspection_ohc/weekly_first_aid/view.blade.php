@@ -44,7 +44,7 @@
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">Issue Date</label>
+                                                    class="form-label ">Issue Date</label>
                                                 <div class="view_data">
                                                     {{ Displaydateformat($document_no->issue_date) }}
                                                 </div>
@@ -53,7 +53,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">Revision Date</label>
+                                                <label class="form-label ">Revision Date</label>
                                                 <div class="view_data">
                                                     {{ $document_no->rev_dt }}
                                                 </div>
@@ -61,7 +61,7 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require"> Date of Inspection   </label>
+                                                <label class="form-label "> Date of Inspection   </label>
                                                 <div class="view_data">
                                                     {{ Displaydateformat($inspection_details->date_of_inspection) }}
                                                 </div>
@@ -70,7 +70,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">Location ID</label>
+                                                <label class="form-label">Location </label>
                                                 <div class="view_data">
                                                     {{ getLocationname(isset($inspection_details->location) ? $inspection_details->location : '') }}
                                                 </div>
@@ -79,7 +79,7 @@
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">Unit ID</label>
+                                                <label class="form-label">Unit </label>
                                                 <div class="view_data">
                                                     {{ getUnitname(isset($inspection_details->unit) ? $inspection_details->unit : '') }}
                                                 </div>

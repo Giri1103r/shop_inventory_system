@@ -260,12 +260,14 @@ class FirstAidMedicineInspection extends Model
         if ($status == 1) {
             $update_array = [
                 'updated_by' => Auth::id(),
+                'updated_at' => now(),
                 'inspection_status' => OBSERVATION_APPROVED,
                 'approval_remarks' => $remarks,
             ];
         } else {
             $update_array = [
                 'updated_by' => Auth::id(),
+                'updated_at' => now(),
                 'inspection_status' => OBSERVATION_REJECTED,
                 'approval_remarks' => $remarks,
             ];

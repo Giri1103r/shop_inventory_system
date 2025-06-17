@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Ohc Floor Stretcher Checklist')
+@section('title', 'OHC Floor Stretcher Checklist')
 @section('pageurl', admin_url('ohc/floor_stretcher/checklist/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -166,7 +166,7 @@
                                             <label class="form-label"
                                                     style="display: block; ">{{ __('inspection.signature') }}</label>
                                                 <img src="{{ admin_url($inspection_file->file_path) }}"
-                                                    alt="Signature Upload" style="width: 100px; margin-top:-10px"> 
+                                                    alt="Signature Upload" style="width: 100px; margin-top:-10px">
                                         </div>
                                     </div> --}}
                                 </div>

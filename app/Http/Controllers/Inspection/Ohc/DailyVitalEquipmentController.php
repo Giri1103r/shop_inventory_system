@@ -290,10 +290,13 @@ class DailyVitalEquipmentController extends Controller
                         $responseText = strtoupper($answer['response'] ?? '');
                         $statusColor = null;
                         if ($responseText === 'YES') {
-                            $statusSymbol = '✓';
+                            $statusSymbol = 'YES';
                             $statusColor = '008000';
-                        } elseif (in_array($responseText, ['NO', 'N/A'])) {
-                            $statusSymbol = 'X';
+                        } elseif ($responseText === 'NO') {
+                            $statusSymbol = 'NO';
+                            $statusColor = 'FF0000';
+                        } elseif ($responseText === 'N/A') {
+                            $statusSymbol = 'N/A';
                             $statusColor = 'FF0000';
                         } else {
                             $statusSymbol = $responseText;
@@ -461,7 +464,7 @@ class DailyVitalEquipmentController extends Controller
             $filename = "Daily Vital Equipment.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-           report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('ohc/daily-vital-equipment/list'));
         }
@@ -603,15 +606,19 @@ class DailyVitalEquipmentController extends Controller
 
                     $statusSymbol = '-';
                     $responseText = $answer['response'] ?? '';
+                   
                     if ($responseText === 'YES') {
-                        $statusSymbol = '✓';
+                        $statusSymbol = 'YES';
                         $statusColor = '008000';
-                    } elseif (in_array($responseText, ['NO', 'N/A'])) {
-                        $statusSymbol = 'X';
+                    } elseif ($responseText === 'NO') {
+                        $statusSymbol = 'NO';
+                        $statusColor = 'FF0000';
+                    } elseif ($responseText === 'N/A') {
+                        $statusSymbol = 'N/A';
                         $statusColor = 'FF0000';
                     } else {
-                        $statusSymbol = $answer['response'] ?? '-';
-                        $statusColor = null;
+                          $statusSymbol = $answer['response'] ?? '-';
+                        $statusSymbol = $responseText;
                     }
 
                     $sheet->mergeCells("H{$row}:I{$row}")->setCellValue("H{$row}", $statusSymbol);
@@ -645,15 +652,15 @@ class DailyVitalEquipmentController extends Controller
             ]);
 
             $richText = new RichText();
-                $name = getUsername($daily_vital->created_by);
+            $name = getUsername($daily_vital->created_by);
 
-                if (!empty($name)) {
-                    $richText->createTextRun("Inspected and checked By: " . $name)->getFont()->setBold(true);
-                } else {
-                    $richText->createTextRun("Not yet Checked")->getFont()->setBold(true);
-                }
+            if (!empty($name)) {
+                $richText->createTextRun("Inspected and checked By: " . $name)->getFont()->setBold(true);
+            } else {
+                $richText->createTextRun("Not yet Checked")->getFont()->setBold(true);
+            }
 
-                $sheet->getCell("A{$row}")->setValue($richText);
+            $sheet->getCell("A{$row}")->setValue($richText);
 
             // if (file_exists($inspection_created_by)) {
             //     $drawing = new Drawing();
