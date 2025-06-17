@@ -116,9 +116,9 @@
                                                     </div>
 
                                                     <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label">Name</label>
+                                                        <label for="" class="form-label">Unit</label>
                                                         <div class="view_data">
-                                                            {{ $certifiedFireData->emp_name ?? '-' }}
+                                                            {{ getUnitname($certifiedFireData->unit_id) }}
                                                         </div>
                                                     </div>
 
@@ -129,6 +129,13 @@
                                                         </div>
                                                     </div>
 
+                                                    <div class="col-md-4  mt-2 form-input">
+                                                        <label for="" class="form-label">Employee Name</label>
+                                                        <div class="view_data">
+                                                            {{ getEmployeename(!empty($certifiedFireData->emp_name) ? $certifiedFireData->emp_name : '-') }}
+
+                                                        </div>
+                                                    </div>
 
                                                     <div class="col-md-4 form-input mt-2">
                                                         <label class="form-label">Emp Code</label>

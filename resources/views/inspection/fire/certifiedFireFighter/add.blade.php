@@ -82,82 +82,88 @@
                                             </div>
 
                                         </div>
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="card-header-inner d-flex justify-content-between">
-                                                    <h4 class="text-white">Certified Fire Fighter Details</h4>
-                                                    <button class="btn btn-primary addmorebutton mb-2"
-                                                        data-block='lesson_learned_block' data-row='lesson_learned_row'
-                                                        type="button" id="dynamic-add-more"
-                                                        style="margin-left: 10px; width: 84px;">
-                                                        Add
-                                                    </button>
+
+                                        <div class="form-wrapper">
+                                            <div class="card-header-inner d-flex justify-content-between">
+                                                <h4 class="text-white ms-2">
+                                                    {{ __('inspection.certified_fire_fighter_details') }}</h4>
+                                                <button class="btn btn-primary add-row mb-2 " type="button" id="add-row"
+                                                    style="margin-left: 10px;  margin-right: 10px; width: 84px;">
+                                                    Add
+                                                </button>
+                                            </div>
+
+                                            <div class="row mt-4 form-set">
+
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.sr_no') }}</label>
+                                                        <input type="text" name="sr_no[1]" id = "sr_no"
+                                                            class="form-control"
+                                                            value="{{ FireSequence(CERTIFIED_FIRE_FIGHTER) }}" readonly>
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="col-md-4 mb-2 form-input">
+                                                    <label class="form-label require">Unit Name</label>
+                                                    <select name="unit_id[1]"
+                                                        class="form-control unit-select  single-select select2"
+                                                        style="width: 100%" id="unit_id">
+                                                        <option value="">Select the Unit Name</option>
+                                                        @foreach ($unit as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->unit_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-4  mb-2 form-input">
+                                                    <label for="department-select"
+                                                        class="form-label  require">Department</label>
+                                                    <select class="form-control single-select department-select"
+                                                        name="department_id[1]" style="width: 100%" id="department_id">
+                                                        <option value="">Select Department</option>
+
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2 form-input">
+                                                    <label class=" form-label require">Employee Name</label>
+                                                    <select name="emp_name[1]"
+                                                        class="form-control emp-select single-select select2"
+                                                        style="width:100%" id="emp_name">
+                                                        <option value="">Select Employee</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2 form-input">
+                                                    <label class="form-label require">Emp Code</label>
+                                                    <input type="text" name="emp_code[1]" class="form-control"
+                                                        id="emp_code" readonly>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2 form-input">
+                                                    <label class="form-label require">Contact Number</label>
+                                                    <input type="text" name="emp_phone[1]" class="form-control"
+                                                        id="emp_phone" readonly>
+                                                </div>
+                                                <div class="col-md-4 mb-2 form-input">
+                                                    <label class="form-label require">Status</label>
+                                                    <select class="form-control single-select" name="emp_status[1]"
+                                                        style="width: 100%" id="emp_status">
+                                                        <option value="">Select Status </option>
+                                                        <option value="{{ encryptId(1) }}">Active</option>
+                                                        <option value="{{ encryptId(2) }}">Not Active</option>
+                                                    </select>
                                                 </div>
                                             </div>
 
-                                            <div id="lesson_learned_block">
-                                                <div class="row lesson_learned_row" style="margin-top: 20px;">
 
-                                                    <div class="col-md-4 form-input">
-                                                        <label class="form-label require">SR NO</label>
-                                                        <input type="text" class="form-control" name="fire[1][sr_no]"
-                                                            id="sr_no_1" readonly value="SNO-0001">
-                                                    </div>
-
-                                                    <div class="col-md-4 form-input">
-                                                        <label class="form-label require">Name</label>
-                                                        <input type="text" class="form-control" name="fire[1][emp_name]"
-                                                            id="emp_name_1">
-                                                    </div>
-
-                                                    <div class="col-md-4 form-input">
-                                                        <label for="" class="form-label require">Department</label>
-                                                        <select class="form-control single-select"
-                                                            name="fire[1][department_id]" style="width: 100%"
-                                                            id="department_id_1">
-                                                            <option value="">Select Department</option>
-                                                            @foreach ($departmentList as $list)
-                                                                <option value="{{ encryptId($list->id) }}">
-                                                                    {{ $list->department_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                    </div>
-
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label require">Emp Code</label>
-                                                        <input type="text" name="fire[1][emp_code]" class="form-control"
-                                                            id="emp_code_1">
-                                                    </div>
-
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label require">Contact Number</label>
-                                                        <input type="text" name="fire[1][emp_phone]"
-                                                            class="form-control" id="emp_phone_1">
-                                                    </div>
-                                                    <div class="col-md-4 form-input mt-2">
-                                                        <label class="form-label require">Status</label>
-                                                        <select class="form-control single-select"
-                                                            name="fire[1][emp_status]" style="width: 100%"
-                                                            id="emp_status_1">
-                                                            <option value="">Select Status </option>
-                                                            <option value="{{ encryptId(1) }}">Active</option>
-                                                            <option value="{{ encryptId(2) }}">Not Active</option>
-                                                        </select>
-                                                    </div>
-
-
-                                                    <div class="col-md-2 text-right mt-2">
-                                                        <button class="btn btn-danger removerowdata" type="button"
-                                                            style="margin:10px;"><i class="fa fa-trash"></i></button>
-
-                                                    </div>
-
-                                                    <hr>
-                                                </div>
-
-                                            </div>
 
                                         </div>
+
                                         <div class="submit-button" style="text-align: right;">
                                             <x-button-submit class="submit"></x-button-submit>
                                             <x-button-reset class=""></x-button-reset>
@@ -185,291 +191,395 @@
                 e.preventDefault();
                 location.reload();
             });
+
+
+            $(function() {
+                $.validator.addMethod("noSpaces", function(value, element) {
+                    return this.optional(element) || value.trim().length > 0;
+                }, "This field cannot contain only spaces");
+
+                $('#addfire').validate({
+                    rules: {
+                        "unit_id[1]": {
+                            required: true,
+                        },
+                        "department_id[1]": {
+                            required: true,
+                        },
+                        "emp_name[1]": {
+                            required: true,
+                        },
+                        "emp_status[1]": {
+                            required: true,
+                        },
+
+                    },
+                    messages: {
+
+                        "unit_id[1]": {
+                            required: "Please   Select The Unit",
+                        },
+                        "department_id[1]": {
+                            required: "Please Select The Department",
+                        },
+                        "emp_name[1]": {
+                            required: "Please Select The Employee",
+                        },
+                        "emp_status[1]": {
+                            required: "Please Select The Employee Status",
+                        },
+
+
+                    },
+                    errorElement: 'span',
+                    errorPlacement: function(error, element) {
+                        error.addClass('invalid-feedback');
+                        element.closest('.form-input').append(error);
+                    },
+                    highlight: function(element, errorClass, validClass) {
+                        $(element).addClass('is-invalid');
+                    },
+                    unhighlight: function(element, errorClass, validClass) {
+                        $(element).removeClass('is-invalid');
+                    },
+                    submitHandler: function(form) {
+                        form.submit();
+
+                    },
+                    invalidHandler: function(event, validator) {
+                        var errors = validator.numberOfInvalids();
+                    }
+                });
+            });
+
+
         });
 
+        let form_set_count = 2;
+        let formIndex = 1;
+        const minFormSets = 1;
+        const maxFormSets = 200;
+        let serial_number = 2;
+        const maxObsSets = 5;
 
-        document.addEventListener("DOMContentLoaded", function() {
-
-            function updateRowIndexes() {
-                $("#lesson_learned_block .lesson_learned_row").each(function(index) {
-                    let newIndex = index + 1;
-                    let srNoValue = "SNO-" + String(newIndex).padStart(4, '0');
-                    $(this).find("input, select, textarea").each(function() {
-                        let oldName = $(this).attr("name");
-                        let oldId = $(this).attr("id");
-
-                        if (oldName) {
-                            let newName = oldName.replace(/\[\d+\]/, "[" + newIndex + "]");
-                            $(this).attr("name", newName);
-                        }
-
-                        if (oldId) {
-                            let newId = oldId.replace(/\d+$/, newIndex);
-                            $(this).attr("id", newId);
-                        }
-                    });
-                    $(this).find(".sr-no").val(srNoValue);
-                });
-            }
+        $(document).ready(function() {
+            $(document).on('click', '#add-row', function() {
+                let currentFormSets = $('.form-wrapper .form-set').length;
 
 
 
-            $("#dynamic-add-more").on("click", function() {
-                let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
-                if (rowCount >= 200) {
+                if (currentFormSets >= maxFormSets) {
                     Swal.fire({
-                        icon: "error",
-                        title: "Sorry!",
-                        text: "Maximum 200 records only."
+                        icon: 'warning',
+                        title: 'Maximum Hooter Inspection CheckList Reached',
+                        text: 'You can only add up to 200 Hooter Inspection CheckList.',
+                        confirmButtonColor: '#3085d6'
                     });
                     return;
                 }
 
-                let firstRow = $(".lesson_learned_row").first();
+                let newSerialNumber = 'SNO-' + ('00000' + serial_number).slice(-5);
 
-                firstRow.find(".single-select").select2('destroy');
+                var newFormSet = `
+                        <div class="row mt-4 form-set">
 
-                let newRow = firstRow.clone();
-                let newRowNumber = rowCount + 1;
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.sr_no') }}</label>
+                                                        <input type="text" name="sr_no[${form_set_count}]" id = "sr_no_[${form_set_count}]"
+                                                            class="form-control" readonly>
+                                                    </div>
+                                                </div>
 
-                firstRow.find(".single-select").select2();
+                                                <div class="col-md-4 mb-2 form-input">
+                                                    <label class="form-label require">Unit Name</label>
+                                                    <select name="unit_id[${form_set_count}]"
+                                                        class="form-control unit-select  single-select select2"
+                                                        style="width: 100%" id="unit_id_${form_set_count}">
+                                                        <option value="">Select the Unit Name</option>
+                                                        @foreach ($unit as $list)
+                                                            <option value="{{ encryptId($list->id) }}">
+                                                                {{ $list->unit_name }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
 
-                newRow.find("input, select, textarea, button").each(function() {
-                    let oldName = $(this).attr("name");
-                    let oldId = $(this).attr("id");
+                                                 <div class="col-md-4  mb-2 form-input">
+                                                    <label for="department-select" class="form-label  require">Department</label>
+                                                    <select class="form-control single-select department-select" name="department_id[${form_set_count}]"
+                                                        style="width: 100%" id="department_id_${form_set_count}">
+                                                        <option value="">Select Department</option>
 
-                    if (oldName) {
-                        let newName = oldName.replace(/\[\d+\]/, "[" + newRowNumber + "]");
-                        $(this).attr("name", newName);
+                                                    </select>
+                                                </div>
+
+
+                                                <div class="col-md-4 mb-2 form-input">
+                                                    <label class=" form-label require">Employee Name</label>
+                                                    <select name="emp_name[${form_set_count}]"
+                                                        class="form-control emp-select single-select select2"
+                                                        style="width:100%" id="emp_name_${form_set_count}">
+                                                        <option value="">Select Employee</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-md-4 mb-2 form-input">
+                                                    <label class="form-label require">Emp Code</label>
+                                                    <input type="text" name="emp_code[${form_set_count}]" class="form-control"
+                                                        id="emp_code_${form_set_count}">
+                                                </div>
+
+                                                <div class="col-md-4 mb-2 form-input">
+                                                    <label class="form-label require">Contact Number</label>
+                                                    <input type="text" name="emp_phone[${form_set_count}]" class="form-control"
+                                                        id="emp_phone_${form_set_count}">
+                                                </div>
+                                                <div class="col-md-4 mb-2 form-input">
+                                                    <label class="form-label require">Status</label>
+                                                    <select class="form-control single-select" name="emp_status[${form_set_count}]"
+                                                        style="width: 100%" id="emp_status_${form_set_count}">
+                                                        <option value="">Select Status </option>
+                                                        <option value="{{ encryptId(1) }}">Active</option>
+                                                        <option value="{{ encryptId(2) }}">Not Active</option>
+                                                    </select>
+                                                </div>
+
+                                                 <div class="col-md-2 text-right mb-1  mt-4">
+                                                    <button class="btn btn-danger remove-row" type="button"
+                                                        style="margin:10px;"><i class="fa fa-trash"></i></button>
+
+                                                </div>
+                                            </div>
+                      `;
+
+                let newFormSetElement = $(newFormSet);
+
+                let locationSelect = newFormSetElement.find('select[name^="department"]');
+
+                $('.form-wrapper').append(newFormSetElement);
+
+                $("select[name='unit_id[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please select the Unit',
                     }
-                    if (oldId) {
-                        let newId = oldId.replace(/_\d+$/, "_" + newRowNumber);
-                        $(this).attr("id", newId);
-                    }
+                });
 
-                    if ($(this).is("input[type='text'], textarea, input[type='number']")) {
-                        $(this).val("");
-                    }
-                    if ($(this).is("select")) {
-                        $(this).val("").trigger("change");
+                $("select[name='department_id[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please select the Department',
                     }
                 });
-                newRow.find("input[name$='[sr_no]']").val("SNO-" + String(rowCount + 1).padStart(4,
-                    '0'));
-
-                newRow.find(".invalid-feedback").remove();
-                newRow.find(".is-invalid").removeClass("is-invalid");
-
-                newRow.find(".single-select").select2();
-
-                $("#lesson_learned_block").append(newRow);
-
-                newRow.find("input[name$='[emp_name]']").each(function() {
-                    $(this).rules("add", {
-                        required: true,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-                        messages: {
-                            required: "Emp Name is required",
-                            pattern: "Only alphanumeric characters and -, _, ', \", () are allowed.",
-                        }
-                    });
+                $("select[name='emp_name[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please select the Employee Name',
+                    }
+                });
+                $("select[name='emp_status[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please select the Employee Stat',
+                    }
                 });
 
-                newRow.find("input[name$='[emp_phone]']").each(function() {
-                    $(this).rules("add", {
-                        required: true,
-                        pattern: /^[0-9]{10}$/,
-                        messages: {
-                            required: "Phone number is required",
-                            pattern: "Phone number must be exactly 10 digits (only numbers)."
-                        }
-                    });
-                });
 
-                newRow.find("input[name$='[emp_code]']").each(function() {
-                    $(this).rules("add", {
-                        required: true,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-                        messages: {
-                            required: "Emp Code is required",
-                            pattern: "Only alphanumeric characters and -, _, ', \", () are allowed.",
-                        }
-                    });
-                });
+                serial_number++;
+                form_set_count++;
+                updatePageIndices();
 
-                newRow.find("select[name$='[emp_status]']").each(function() {
-                    $(this).rules("add", {
-                        required: true,
-                        messages: {
-                            required: "Emp Status is required",
-                        }
-                    });
-                });
 
-                newRow.find("select[name$='[department_id]']").each(function() {
-                    $(this).rules("add", {
-                        required: true,
-                        messages: {
-                            required: "Department is required",
-                        }
-                    });
-                });
-
-                $('#addfire').validate();
-
-                $('.single-select').select2();
             });
 
-            $(document).on("click", ".removerowdata", function() {
-                let rowCount = $("#lesson_learned_block .lesson_learned_row").length;
-                if (rowCount > 1) {
-                    $(this).closest(".lesson_learned_row").remove();
-                    updateRowIndexes();
-                } else {
-                    Swal.fire({
-                        icon: "error",
-                        title: "Sorry!",
-                        text: "At least one record is required."
-                    });
-                }
+
+            $(document).ready(function() {
+                // for unit select
+                $(document).on('change', '.unit-select', function() {
+                    let row = $(this).closest('.form-set');
+                    let unitId = $(this).val();
+
+                    if (unitId) {
+                        $.ajax({
+                            url: "{{ admin_url('department/ajax-list') }}/" + unitId +
+                                "/0",
+                            type: 'GET',
+                            dataType: 'json',
+                            success: function(data) {
+                                let departmentSelect = row.find('.department-select');
+                                departmentSelect.empty().append(
+                                    '<option value="">Select Department</option>');
+                                $.each(data, function(key, value) {
+                                    departmentSelect.append('<option value="' +
+                                        value.id +
+                                        '">' + value.name + '</option>');
+                                });
+                                departmentSelect.trigger('change');
+                            },
+                            error: function() {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Error fetching department. Please try again.'
+                                });
+                            }
+                        });
+                    } else {
+                        row.find('.department-select').empty().append(
+                            '<option value="">Select Department</option>').trigger('change');
+                    }
+                });
+
+                // for department select
+                $(document).on('change', '.unit-select, .department-select', function() {
+                    let row = $(this).closest('.form-set');
+                    let unitId = row.find('.unit-select').val();
+                    let departmentId = row.find('.department-select').val();
+
+                    if (unitId && departmentId) {
+                        $.ajax({
+                            url: "{{ admin_url('ohc/first-aider/employeename') }}",
+                            type: 'GET',
+                            data: {
+                                unit_id: unitId,
+                                department: departmentId
+                            },
+                            dataType: 'json',
+                            success: function(response) {
+                                let empSelect = row.find('.emp-select');
+                                empSelect.empty().append(
+                                    '<option value="">Select Employee</option>'
+                                );
+                                $.each(response.employee, function(index,
+                                    employee) {
+                                    empSelect.append(
+                                        '<option value="' +
+                                        employee.id + '">' +
+                                        employee.emp_name +
+                                        '</option>');
+                                });
+                            },
+                            error: function() {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Error fetching employees. Please try again.'
+                                });
+                            }
+                        });
+                    } else {
+                        row.find('.emp-select').empty().append(
+                            '<option value="">Select Employee</option>');
+                    }
+                });
+
+                // Employee Select
+                $(document).on('change', '.emp-select', function() {
+                    let row = $(this).closest('.form-set');
+                    let emp_id = $(this).val();
+                    let unitId = row.find('.unit-select').val();
+                    let departmentId = row.find('.department-select').val();
+
+                    if (emp_id) {
+                        // Check for duplicate
+                        let isDuplicate = false;
+                        $('.emp-select').each(function() {
+                            let otherRow = $(this).closest('.form-set');
+                            if (
+                                $(this).val() === emp_id &&
+                                otherRow.find('.unit-select').val() ===
+                                unitId &&
+                                otherRow.find('.department-select').val() ===
+                                departmentId &&
+                                row[0] !== otherRow[0]
+                            ) {
+                                isDuplicate = true;
+                                return false;
+                            }
+                        });
+
+                        if (isDuplicate) {
+                            Swal.fire({
+                                icon: 'warning',
+                                title: 'Duplicate Employee',
+                                text: 'This employee is already selected for the same unit and department!',
+                                confirmButtonColor: '#3085d6'
+                            });
+                            $(this).val('').trigger('change');
+                            return;
+                        }
+
+                        //employee details
+                        $.ajax({
+                            url: "{{ admin_url('fire/certified-fire-fighter/employeedetails') }}",
+                            type: 'GET',
+                            data: {
+                                emp_name: emp_id
+                            },
+                            dataType: 'json',
+                            success: function(data) {
+                                row.find('input[name^="emp_code"]').val(data.employee
+                                    ?.employee_id || "").prop('readonly', true);
+                                row.find('input[name^="emp_phone"]').val(data.employee
+                                    ?.mobile_no || "").prop('readonly', true);
+                            },
+                            error: function() {
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Error',
+                                    text: 'Error fetching employee details. Please try again.'
+                                });
+                            }
+                        });
+
+                    } else {
+                        row.find('input[name^="emp_code"], input[name^="emp_phone"]')
+                            .val('').prop('readonly', true);
+                    }
+                });
             });
+
 
         });
 
 
-        function addValidationRules(row) {
-            newRow.find("input[name$='[emp_name]']").each(function() {
-                $(this).rules("add", {
-                    required: true,
-                    pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-                    messages: {
-                        required: "Emp Name is required",
-                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed.",
-                    }
-                });
-            });
+        function updatePageIndices() {
+            $('.form-wrapper .form-set').each(function(index) {
+                let idx = index + 1;
+                let newSerialNumber = 'SNO-' + ('000000' + idx).slice(-6);
+                $(this).find("input[name^='sr_no']").val(newSerialNumber);
 
-            newRow.find("input[name$='[emp_phone]']").each(function() {
-                $(this).rules("add", {
-                    required: true,
-                    pattern: /^[0-9]{10}$/,
-                    messages: {
-                        required: "Phone number is required",
-                        pattern: "Phone number must be exactly 10 digits (only numbers)."
-                    }
-                });
-            });
+                $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
+                $(this).find('select[name^="unit_id"]').attr('name', 'unit_id[' + idx + ']');
+                $(this).find('select[name^="department_id"]').attr('name', 'department_id[' + idx + ']');
+                $(this).find('select[name^="emp_name"]').attr('name', 'emp_name[' + idx + ']');
+                $(this).find('input[name^="emp_code"]').attr('name', 'emp_code[' + idx + ']');
+                $(this).find('input[name^="emp_phone"]').attr('name', 'emp_phone[' + idx + ']');
+                $(this).find('select[name^="emp_status"]').attr('name', 'emp_status[' + idx + ']');
 
-            newRow.find("input[name$='[emp_code]']").each(function() {
-                $(this).rules("add", {
-                    required: true,
-                    pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-                    messages: {
-                        required: "Emp Code is required",
-                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed.",
-                    }
-                });
-            });
 
-            newRow.find("select[name$='[emp_status]']").each(function() {
-                $(this).rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Emp Status is required",
-                    }
-                });
-            });
 
-            newRow.find("select[name$='[department_id]']").each(function() {
-                $(this).rules("add", {
-                    required: true,
-                    messages: {
-                        required: "Department is required",
-                    }
-                });
-            });
 
+
+                $(this).find('select').select2();
+            });
         }
-        $(function() {
-            $.validator.setDefaults({
-                highlight: function(element) {
-                    $(element).addClass('is-invalid');
-                    if ($(element).hasClass('single-select')) {
-                        $(element).next('.select2-container').find('.select2-selection')
-                            .addClass('is-invalid');
-                    }
-                },
-                unhighlight: function(element) {
-                    $(element).removeClass('is-invalid');
-                    if ($(element).hasClass('single-select')) {
-                        $(element).next('.select2-container').find('.select2-selection')
-                            .removeClass('is-invalid');
-                    }
-                },
-                errorPlacement: function(error, element) {
-                    if (element.hasClass('single-select')) {
-                        error.addClass('invalid-feedback').insertAfter(element.next(
-                            '.select2-container'));
-                    } else {
-                        error.addClass('invalid-feedback').insertAfter(element);
-                    }
-                }
-            });
 
-            $('#addfire').validate({
-                rules: {
-                    'fire[1][emp_name]': {
-                        required: true,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-                    },
-                    'fire[1][emp_code]': {
-                        required: true,
-                        pattern: /^[a-zA-Z0-9\s\-_'"()]*$/,
-                    },
-                    'fire[1][emp_phone]': {
-                        required: true,
-                        number: true,
-                        pattern: /^[0-9]{10}$/,
-                    },
-                    'fire[1][department_id]': {
-                        required: true,
-                    },
-                    'fire[1][emp_status]': {
-                        required: true,
-                    },
-                },
-                messages: {
-                    'fire[1][emp_name]': {
-                        required: "Emp Name is required",
-                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
+        $(document).on('click', '.remove-row', function() {
+            let currentFormSets = $('.form-wrapper .form-set').length;
 
-                    },
-                    'fire[1][emp_code]': {
-                        required: "Emp Code is required",
-                        pattern: "Only alphanumeric characters and -, _, ', \", () are allowed",
-
-                    },
-                    'fire[1][emp_phone]': {
-                        required: "Contact Number is required",
-                        number: "Only numeric values are allowed.",
-                        pattern: "Phone number must be exactly 10 digits (only numbers)."
-                    },
-                    'fire[1][department_id]': {
-                        required: "Department is required",
-                    },
-                    'fire[1][emp_status]': {
-                        required: "Emp Status is required",
-                    },
-                },
-
-                submitHandler: function(form) {
-                    form.submit();
-                }
-            });
-
-            $("#lesson_learned_block .lesson_learned_row").each(function() {
-                addValidationRules($(this));
-            });
+            if (currentFormSets <= minFormSets) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Minimum One CheckList Required',
+                    text: 'At least One Hooter Inspection Checklist is required.',
+                    confirmButtonColor: '#3085d6'
+                });
+                return;
+            }
+            $(this).closest('.form-set').remove();
+            updatePageIndices();
         });
     </script>
 @endpush

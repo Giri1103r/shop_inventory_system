@@ -1466,6 +1466,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::post('status', [CertifiedFireFighterController::class, 'statusChange']);
                     Route::GET('exportViewPdf/{id}', [CertifiedFireFighterController::class, 'ExportViewPDF']);
                     Route::GET('generalExcel/{id}', [CertifiedFireFighterController::class, 'generalExcel']);
+                    Route::GET('employeedetails',[CertifiedFireFighterController::class,'employeedetails']);
                 });
 
                 Route::group(['prefix' => 'equipment-monthly-physical-inspection/'], function () {

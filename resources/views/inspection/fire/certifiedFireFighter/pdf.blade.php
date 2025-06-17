@@ -168,7 +168,7 @@
                         <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width: 125px; height: 50px;">
                     </th>
 
-                    <th colspan="4" style="border: 1px solid black; text-align: center; vertical-align: middle;">
+                    <th colspan="5" style="border: 1px solid black; text-align: center; vertical-align: middle;">
                         <h3 style="margin: 0;"><b>Certified Fire Fighter List</b></h3>
                     </th>
 
@@ -186,8 +186,9 @@
 
                 <tr>
                     <th style="border: 1px solid black; padding: 8px; text-align: center;">SL</th>
-                    <th style="border: 1px solid black; padding: 8px; text-align: center;">NAME</th>
+                    <th style="border: 1px solid black; padding: 8px; text-align: center;">UNIT</th>
                     <th style="border: 1px solid black; padding: 8px; text-align: center;">DEPARTMENT</th>
+                    <th style="border: 1px solid black; padding: 8px; text-align: center;"> EMPLOYEE NAME</th>
                     <th style="border: 1px solid black; padding: 8px; text-align: center;">EMP CODE</th>
                     <th style="border: 1px solid black; padding: 8px; text-align: center;">CONTACT NUMBER</th>
                     <th style="border: 1px solid black; padding: 8px; text-align: center;">STATUS</th>
@@ -196,8 +197,9 @@
                 @foreach ($group as $details)
                     <tr>
                         <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $loop->iteration }}</td>
-                        <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->emp_name }}</td>
+                        <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ getUnitname($details->unit_id) }}</td>
                         <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ GetDeptName($details->department_id) }}</td>
+                        <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ getEmployeename($details->emp_name) }}</td>
                         <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->emp_code }}</td>
                         <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->emp_phone }}</td>
                         <td style="border: 1px solid black; padding: 8px; text-align: center;">

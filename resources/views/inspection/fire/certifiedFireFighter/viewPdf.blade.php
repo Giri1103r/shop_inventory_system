@@ -155,7 +155,18 @@
         </table>
     </div>
 
+    @php
+        $data = $certified_fire_fighter->first()
+    @endphp
+
     <table width="100%" style="width:100%;">
+         <tr>
+            <td width="50%" style="padding:5px;"><b>Certified Fire Fighter No</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($data->fire_no) ? $data->fire_no : '' }}
+            </td>
+        </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Document Number</b></td>
             <td width="2%" style="padding:5px;">:</td>
@@ -195,8 +206,9 @@
         <thead>
             <tr>
                 <th colspan="2" style="border: 1px solid black; padding: 8px;">SL</th>
-                <th colspan="2" style="border: 1px solid black; padding: 8px;">NAME</th>
+                <th colspan="2" style="border: 1px solid black; padding: 8px;">UNIT</th>
                 <th colspan="2" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
+                <th colspan="2" style="border: 1px solid black; padding: 8px;"> EMPLOYEE NAME</th>
                 <th colspan="2" style="border: 1px solid black; padding: 8px;">EMP CODE</th>
                 <th colspan="2" style="border: 1px solid black; padding: 8px;">CONTACT NUMBER</th>
                 <th colspan="2" style="border: 1px solid black; padding: 8px;">STATUS</th>
@@ -207,9 +219,11 @@
             @foreach ($certified_fire_fighter as $details)
                 <tr>
                     <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->sr_no }}</td>
-                    <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->emp_name }}</td>
+                    <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ GetUnitname($details->unit_id) }}
+                    </td>
                     <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ GetDeptName($details->department_id) }}
                     </td>
+                    <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ getEmployeename($details->emp_name) }}</td>
                     <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->emp_code }}</td>
                     <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->emp_phone }}</td>
                     <td colspan="2" style="border: 1px solid black; padding: 8px;">

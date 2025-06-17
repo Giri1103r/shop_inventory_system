@@ -164,7 +164,7 @@ class FireCheckListFollowUp extends Model
     public function selectOne($id, $observationid)
     {
         $data = $this->select('inspection_fire_checklist_follow.*', 'inspection_fire_observation.*', 'inspection_static_docno.*', 'inspection_fire_checklist_follow.id as inspectionid', 'inspection_fire_observation.id as observationid', 'inspection_fire_observation_whywhy.*', 'inspection_fire_signatureupload.file_path',
-        'inspection_fire_checklist_follow.created_by as inspection_created_by')
+        'inspection_fire_checklist_follow.created_by as inspection_created_by','inspection_fire_observation.created_by as observation_created_by','inspection_static_docno.created_by as docno_created_by','inspection_fire_observation_whywhy.created_by as whywhy_created_by','inspection_fire_signatureupload.created_by as signature_created_by')
             ->leftjoin('inspection_fire_observation', 'inspection_fire_observation.inspection_id', '=', 'inspection_fire_checklist_follow.id')
             ->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_fire_checklist_follow.document_reference_id')
             ->leftjoin('inspection_fire_observation_whywhy', 'inspection_fire_observation_whywhy.observation_id', '=', 'inspection_fire_observation.id')
