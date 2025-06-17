@@ -179,7 +179,7 @@
                     {{ Displaydateformat($details->date_of_inspection) }}
                 </td>
                 <td colspan="4" style="border: 1px solid black; padding: 5px;">
-                    <strong>Location First Aid Bag:-:-</strong>
+                    <strong>Location First Aid Bag:-</strong>
                     {{ $details->location_first_aid_bag }}
                 </td>
                 <td colspan="4" style="border: 1px solid black; padding: 5px;">

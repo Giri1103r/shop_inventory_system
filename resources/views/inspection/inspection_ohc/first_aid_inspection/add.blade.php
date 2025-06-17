@@ -200,6 +200,13 @@
                 });
                 flatpickr(".expired_date", {
                     dateFormat: "d-m-Y",
+                    minDate: new Date(),
+                });
+
+
+
+                var toDatepicker = flatpickr("#next_due", {
+                    dateFormat: "d-m-Y",
                 });
 
                 var fromDatepicker = flatpickr("#inspection_date", {
@@ -207,43 +214,41 @@
                     onChange: function(selectedDates) {
                         if (selectedDates.length > 0) {
                             var startDate = selectedDates[0];
-                            toDatepicker.set('minDate', startDate);
-                            toDatepicker.clear();
+
+                            var nextDay = new Date(startDate);
+                            nextDay.setDate(startDate.getDate() + 1);
+
+                            toDatepicker.set('minDate', nextDay);
+
                         }
                     }
-
-                })
-
-                var toDatepicker = flatpickr("#next_due", {
-                    dateFormat: "d-m-Y",
-
                 });
 
-                $('.emp_id').select2({
-                    ajax: {
-                        url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(params) {
-                            return {
-                                search: params.term
-                            };
+               $('.emp_id').select2({
+                        ajax: {
+                            url: '{{ admin_url('ohc/prescribe-to-patient/employeename') }}',
+                            dataType: 'json',
+                            delay: 250,
+                            data: function(params) {
+                                return {
+                                    search: params.term
+                                };
+                            },
+                            processResults: function(data) {
+                                return {
+                                    results: $.map(data, function(item) {
+                                        return {
+                                            id: item.id,
+                                            text: item.text
+                                        };
+                                    })
+                                };
+                            }
                         },
-                        processResults: function(data) {
-                            return {
-                                results: $.map(data, function(item) {
-                                    return {
-                                        id: item.id,
-                                        text: item.text
-                                    };
-                                })
-                            };
-                        }
-                    },
-                    minimumInputLength: 1,
-                    dropdownCssClass: 'form-control',
-                    selectionCssClass: 'form-control'
-                });
+                        minimumInputLength: 1,
+                        dropdownCssClass: 'form-control',
+                        selectionCssClass: 'form-control'
+                    });
 
 
                 $('#safetygalleryAdd').validate({

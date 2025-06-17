@@ -198,11 +198,11 @@
                                                                         <label class="form-label">NFPA Rating:
                                                                             {{ $rating->nfa_rating }}</label>
                                                                         <input type="hidden"
-                                                                            name="nfa_rating_id[0][{{ $ratingIndex }}]"
+                                                                            name="nfa_rating_id[1][{{ $ratingIndex }}]"
                                                                             value="{{ $rating->id }}">
 
                                                                         <input type="number"
-                                                                            name="value_nfa_rating[0][{{ $ratingIndex }}]"
+                                                                            name="value_nfa_rating[1][{{ $ratingIndex }}]"
                                                                             class="form-control mt-1"
                                                                             placeholder="Enter value (0-4)" min="0"
                                                                             max="4">

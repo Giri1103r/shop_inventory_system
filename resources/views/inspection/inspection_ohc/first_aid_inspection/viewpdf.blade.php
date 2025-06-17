@@ -229,7 +229,7 @@
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ Displaydateformat($medicines['expired_date']) }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ getUsername($medicines['emp_id']) }}</td>
+                        {{ ($medicines['emp_id']) }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ $medicines['remarks'] }}</td>
                 </tr>
@@ -262,22 +262,22 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Approvals
+                   EHS Officer Approval
                 </td>
             </tr>
         </table>
         <table>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approved By</b></td>
+                <td width="50%" style="padding:5px;"><b>Inspection Approve / Rejected By</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ getUsername(isset($inspection_detail->updated_by) ? $inspection_detail->updated_by : '') }}
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                <td width="50%" style="padding:5px;"><b>Inspection Approve / Rejected at</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ displayDateformat($inspection_detail->updated_at) }}
+                <td width="48%" style="padding:5px;"> {{ displayDatetimeformat($inspection_detail->updated_at) }}
                 </td>
             </tr>
             <tr>

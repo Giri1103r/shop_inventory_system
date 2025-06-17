@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Ohc Floor Stretcher Checklist')
+@section('title', 'OHC Floor Stretcher Checklist')
 @section('pageurl', admin_url('ohc/floor_stretcher/checklist/list'))
 @section('content')
     <div class="container-fluid">
@@ -106,8 +106,9 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>{{ __('Date Of Inspection') }}</th>
                                         <th>{{ __('inspection.frequency') }}</th>
-                                        <th>{{ __('inspection.shifts') }}</th>
+
                                         <th>{{ __('inspection.unit') }}</th>
+                                        <th>{{ __('inspection.shifts') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>

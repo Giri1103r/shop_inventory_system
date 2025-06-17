@@ -144,39 +144,8 @@
         </table>
     </htmlpagefooter>
 
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td
-                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Checklist Of Floor Stretcher Inspection
-                </td>
-            </tr>
-        </table>
-    </div>
 
-    <table width="100%" style="width:100%;">
 
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($inspection_detail->issue_date) ? $inspection_detail->issue_date : '') }}
-            </td>
-        </tr>
-
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created By</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($inspection_detail->created_by) ? $inspection_detail->created_by : '') }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($inspection_detail->created_at) }}</td>
-        </tr>
-    </table>
 
     <br>
 
@@ -185,7 +154,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Checklist Of Floor Stretcher Inspection Details
+                    Checklist of Floor Stretcher Inspection Details
                 </td>
             </tr>
         </table>
@@ -270,7 +239,7 @@
                 </td>
                 {{-- <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                     {{ __('inspection.signature') }}:
-                 <img src="{{ admin_url($inspection_file->file_path) }}" alt="Signature" style="width:70px; vertical-align: middle;"> 
+                 <img src="{{ admin_url($inspection_file->file_path) }}" alt="Signature" style="width:70px; vertical-align: middle;">
                 </td> --}}
             </tr>
 

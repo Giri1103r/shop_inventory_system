@@ -63,7 +63,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">Floor Executive on Duty</label>
                                         <div class="view_data">
-                                            {{ getUsername(isset($audit_assessment->floor_executive) ? $audit_assessment->floor_executive : '') }}
+                                            {{ getEmployeename(isset($audit_assessment->floor_executive) ? $audit_assessment->floor_executive : '') }}
 
                                         </div>
                                     </div>

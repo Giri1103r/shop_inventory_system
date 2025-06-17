@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Mail\Inspection\Safety;
+namespace App\Mail\Inspection\Ohc;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -9,7 +9,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class SafetyInspection extends Mailable
+class FirstAidEmail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -26,7 +26,7 @@ class SafetyInspection extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'KARAM' . ' - '  . $this->details['safety_type'],
+            subject:'KARAM' . ' - '  . $this->details['ohc_type'],
         );
     }
 
@@ -36,7 +36,7 @@ class SafetyInspection extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.inspection.safety.safety_email',
+            view: 'emails.inspection.ohc.first_aid',
             with: ['details' => $this->details]
         );
     }

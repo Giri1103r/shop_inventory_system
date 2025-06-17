@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Inspection\Ohc;
 use Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Mail\Inspection\Ohc\FirstAidEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
@@ -185,19 +186,19 @@ class MonthlyMedicineStoreController extends Controller
                 );
                 notificationSave($notificationData);
 
-                $title = 'Monthly Medicine Store Observation has been Created';
+                $title = 'Monthly Medicine Store Inspection has been Created';
                 foreach ($ehsOfficers as $user) {
                     $email_id = getUseremail($user);
                     $url = admin_url('ohc/monthly-medicine-store/inspection/approval/' . encryptId($inspection_details->id));
                     $details = array(
-                        'safety_type' => 'Monthly Medicine Store',
+                        'ohc_type' => 'Monthly Medicine Store Inspection',
                         'email' => $email_id,
                         'mail_subject' => $mailsubject,
                         'title' => $title,
                         'url' => $url,
                         'data' => $inspection_details
                     );
-                    Mail::to($email_id)->queue(new SafetyInspection($details));
+                    Mail::to($email_id)->queue(new FirstAidEmail($details));
                 }
             }
 
@@ -390,18 +391,18 @@ class MonthlyMedicineStoreController extends Controller
             );
             notificationSave($notificationData);
 
-            $title = 'Monthly Store Medicine Checklist - Observation Status';
+            $title = 'Monthly Store Medicine Inspection Checklist';
             $email_id = getUseremail($ehsOfficer);
             $url = admin_url('ohc/monthly-medicine-store/inspection/view/' . encryptId($inspection_details->id));
             $details = array(
-                'safety_type' => 'Monthly Store Medicine Checklist',
+                'ohc_type' => 'Monthly Store Medicine Inspection Checklist',
                 'email' => $email_id,
                 'mail_subject' => $mailsubject,
                 'title' => $title,
                 'url' => $url,
                 'data' => $inspection_details
             );
-            Mail::to($email_id)->queue(new SafetyInspection($details));
+            Mail::to($email_id)->queue(new FirstAidEmail($details));
 
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
