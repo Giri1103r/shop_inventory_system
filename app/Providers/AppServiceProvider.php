@@ -400,6 +400,7 @@ class AppServiceProvider extends ServiceProvider
         defined('FIRE_MODULAR_INSPECTION') or define('FIRE_MODULAR_INSPECTION', 23);
         defined('HYDRANT_RISER') or define('HYDRANT_RISER', 4);
         defined('OBSERVATION_FOLLOWUP') or define('OBSERVATION_FOLLOWUP', 17);
+        defined('CERTIFIED_FIRE_FIGHTER') or define('CERTIFIED_FIRE_FIGHTER', 20);
 
 
 

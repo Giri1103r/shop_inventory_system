@@ -2876,6 +2876,10 @@ if (!function_exists('getMonth')) {
                 case HOSE_REEL_INSPECTION:
                     return 'HRI-000001';
                     break;
+
+                case CERTIFIED_FIRE_FIGHTER:
+                    return 'SNO-000001';
+                    break;
             }
         }
     }

@@ -306,5 +306,10 @@ return [
     'closed_date' => 'Closed Date',
 
 
+    // certified fire fighter
+
+    'certified_fire_fighter_details' => 'Certified Fire Fighter Details',
+
+
 
 ];
