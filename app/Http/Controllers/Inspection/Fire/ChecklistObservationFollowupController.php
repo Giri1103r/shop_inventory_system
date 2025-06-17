@@ -556,7 +556,7 @@ class ChecklistObservationFollowupController extends Controller
                 $web_link =   admin_url('fire/checklist-observation/verification/' . encryptId($inspection_details->id));
                 $user = GetLevelOneManager();
                 $users = $user ? $user->pluck('id')->toArray() : [];
-                $users = array_merge($users, [$inspection_details->created_by]);
+                $users = array_merge($users, [$inspection_details->inspection_created_by]);
                 $to_status = WAITING_FOR_L1_VERIFICATION;
                 $mailsubject = 'Observation FollowUp';
                 $notificationData = array(
@@ -666,9 +666,9 @@ class ChecklistObservationFollowupController extends Controller
             if ($status == 1) {
                 $message = 'Level One Manager Verified Successfully';
                 $web_link =   admin_url('fire/checklist-observation/verification/' . encryptId($id));
-                $user = GetLevelOneManager();
+                $user = GetLevelTwoManager();
                 $users = $user ? $user->pluck('id')->toArray() : [];
-                $users = array_merge($users, [$inspection_details->created_by]);
+                $users = array_merge($users, [$inspection_details->inspection_created_by]);
                 $to_status = WAITING_FOR_L2_VERIFICATION;
 
                 $mailsubject = 'Observation FollowUp';
@@ -706,7 +706,7 @@ class ChecklistObservationFollowupController extends Controller
             } else {
                 $message = 'Level One Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/checklist-observation/verification/' . encryptId($id));
-                $users = $inspection_details->ehs_verify_by;
+                $users = array_merge([$inspection_details->ehs_verify_by],[$inspection_details->inspection_created_by]);
                 $to_status = L1_MANAGER_REJECTED;
 
                 $mailsubject = 'Observation FollowUp';
@@ -722,7 +722,7 @@ class ChecklistObservationFollowupController extends Controller
                         'module' => 1,
                     )),
                     'web_link' =>  admin_url('fire/checklist-observation/list'),
-                    'assigned_user' => $users,
+                    'assigned_user' => array_to_string($users),
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);
@@ -781,7 +781,7 @@ class ChecklistObservationFollowupController extends Controller
                 $web_link =   admin_url('fire/checklist-observation/verification/' . encryptId($id) . '/level-one-manager');
                 $user = GetLevelOneManager();
                 $users = $user ? $user->pluck('id')->toArray() : [];
-                $users = array_merge($users, [$inspection_details->created_by]);
+                $users = array_merge($users, [$inspection_details->inspection_created_by], [$inspection_details->ehs_verify_by]);
                 $to_status = INSPECTION_APPROVED;
                 $mailsubject = 'Observation FollowUp';
                 $notificationData = array(
@@ -818,7 +818,8 @@ class ChecklistObservationFollowupController extends Controller
             } else {
                 $message = 'Level Two Manager Rejected the CAPA Action';
                 $web_link =   admin_url('fire/checklist-observation/verification/' . encryptId($id) . '/capa');
-                $users = $inspection_details->created_by;
+                // $users = $inspection_details->inspection_created_by;
+                $users = array_merge([$inspection_details->inspection_created_by], [$inspection_details->ehs_verify_by], [$inspection_details->l1_manager_verified_by]);
                 $to_status = L2_MANAGER_REJECTED;
 
                 $mailsubject = 'Observation FollowUp';
@@ -834,7 +835,7 @@ class ChecklistObservationFollowupController extends Controller
                         'module' => 1,
                     )),
                     'web_link' =>  admin_url('fire/checklist-observation/list'),
-                    'assigned_user' => $users,
+                    'assigned_user' => array_to_string($users),
                     'created_by' => Auth::id(),
                 );
                 notificationSave($notificationData);

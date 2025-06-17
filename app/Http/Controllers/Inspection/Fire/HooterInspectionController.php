@@ -696,7 +696,6 @@ class HooterInspectionController extends Controller
                 $to_status = L2_MANAGER_REJECTED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
             }
-            // dd($users);
 
 
             $mailsubject = 'Fire Hooter Inspection';

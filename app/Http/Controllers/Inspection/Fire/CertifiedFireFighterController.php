@@ -130,7 +130,6 @@ class CertifiedFireFighterController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
         try {
             $rules = [
                 'certified_fire_fighter_no' => 'required',
@@ -144,7 +143,7 @@ class CertifiedFireFighterController extends Controller
             ];
 
             $messages = [
-                
+
                 'certified_fire_fighter_no.required' => "Certified Fire Fighter No is required.",
                 'unit_id.required'                   => "Unit is required.",
                 'department_id.required'            => "Department is required.",
