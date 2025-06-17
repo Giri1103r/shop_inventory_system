@@ -306,40 +306,19 @@
         </div>
         <table width="100%" style="width:100%;">
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approver Name</b></td>
+                <td width="50%" style="padding:5px;"><b>Inspection Approve / Rejected By</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
                     {{ getUsername(isset($safetyofficer->approved_by) ? $safetyofficer->approved_by : '') }}</td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Date</b></td>
+                <td width="50%" style="padding:5px;"><b>Inspection Approve / Rejected At</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;">
-                    {{ Displaydateformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
+                    {{ Displaydatetimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
                 </td>
             </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>Approved Time</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ Displaytimeformat(isset($safetyofficer->created_at) ? $safetyofficer->created_at : '') }}
-                </td>
-            </tr>
-            {{-- <tr>
-                <td width="50%" style="padding:5px;"><b>Signature</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    @if (!empty($safetyofficersignature) && !empty($safetyofficersignature->file_path))
-                        <img src="{{ admin_url($safetyofficersignature->file_path) }}" alt="Approver Signature"
-                            style="width: 150px; height: auto;" />
-                    @elseif(!empty($approversignatureview) && !empty($approversignatureview->signature_upload))
-                        <img src="{{ admin_url($approversignatureview->signature_upload) }}" alt="Approver Signature"
-                            style="width: 150px; height: auto;" />
-                    @else
-                        No Signature Available
-                    @endif
-                </td>
-            </tr> --}}
+          
             <tr>
                 <td width="50%" style="padding:5px;"><b>Remarks</b></td>
                 <td width="2%" style="padding:5px;">:</td>

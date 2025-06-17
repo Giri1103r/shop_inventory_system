@@ -35,6 +35,7 @@ class MedicineRequistionSlipfdodetails extends Model
         'approved_by',
         'l1_manager_verified_by',
         'l2_manager_verified_by',
+        'safety_officer_remarks',
         'created_by',
         'updated_by',
         'status',
@@ -197,7 +198,12 @@ class MedicineRequistionSlipfdodetails extends Model
     }
     public function safetyofficerapprovalupdate($id, $nextStatus)
     {
-        return $this->where('id', $id)->update(['approved_by' => Auth::id(), 'approve_status' => $nextStatus]);
+        $request = request();
+        return $this->where('id', $id)->update([
+            'approved_by' => Auth::id(),
+            'approve_status' => $nextStatus,
+            'safety_officer_remarks' => $request->remarks
+        ]);
     }
     public function exportdata()
     {

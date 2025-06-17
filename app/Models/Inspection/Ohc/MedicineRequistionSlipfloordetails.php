@@ -30,6 +30,11 @@ class MedicineRequistionSlipfloordetails extends Model
         'checked_by',
         'checklist',
         'verified_by',
+        'verified_at',
+        'verified_status',
+        'floor_manager_remarks',
+        'safety_officer_remarks',
+        'approved_at',
         'approve_status',
         'approved_by',
         'l1_manager_verified_by',
@@ -208,12 +213,16 @@ class MedicineRequistionSlipfloordetails extends Model
 
     public function safetyofficerapprovalupdate($id, $nextStatus)
     {
-        return $this->where('id', $id)->update(['approved_by' => Auth::id(), 'approve_status' => $nextStatus]);
+
+       $request = request();
+        return $this->where('id', $id)->update(['approved_by' => Auth::id(), 'approve_status' => $nextStatus,'safety_officer_remarks'=>$request->remarks]);
     }
 
     public function floormanagerapprovalupdate($id, $nextStatus)
     {
-        return $this->where('id', $id)->update(['verified_by' => Auth::id(), 'approve_status' => $nextStatus]);
+         $request = request();
+        return $this->where('id', $id)
+        ->update(['verified_by' => Auth::id(), 'approve_status' => $nextStatus,'verified_status'=>$nextStatus,'floor_manager_remarks'=>$request->floor_remarks,'verified_at'=> now()]);
     }
 
     public function exportdata()

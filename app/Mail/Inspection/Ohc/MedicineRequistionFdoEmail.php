@@ -26,7 +26,7 @@ class MedicineRequistionFdoEmail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: env('APP_NAME') . ' - ' . $this->details['ohc_type'],
+            subject: 'KARAM' . ' - '  . $this->details['ohc_type'],
         );
     }
 

@@ -513,7 +513,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                     $medicine_requisition_fdo_details = $this->medicine_requisition_fdo_details->Selectone($id);
                     $medicine_requisition_fdo_checklist_details = $this->medicine_requisition_fdo_checklist->Selectone($id);
                     $details = array(
-                        'ohc_type' => 'Medical Requisition Slip- Fdo & Security Gate was Approved',
+                        'ohc_type' => 'Medical Requisition Slip- Fdo & Security Gate Inspection',
                         'email' => $email_id,
                         'mail_subject' => $mailsubject,
                         'title' => $title,
@@ -525,7 +525,7 @@ class MedicalRequisitionSlipSecurityGateController extends Controller
                     $userIds = [
                         'users' => $details->created_by,
                     ];
-                    $mailsubject = 'Medical Requisition Slip- Fdo & Security Gate Rejected';
+                    $mailsubject = 'Medical Requisition Slip- Fdo & Security Gate Inspection';
                     $notificationData = array(
                         'notification_type' => OHC_INSPECTION,
                         'module_type' => 2,

@@ -3,7 +3,8 @@
 namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
-use App\Mail\Inspection\Ohc\OccupationalHealthEmail;
+use App\Mail\Inspection\Ohc\MedicineRequistionFloorEmail;
+
 use Illuminate\Http\Request;
 use App\Models\Master\Department;
 use App\Models\Master\Location;
@@ -240,38 +241,43 @@ class MedicalRequisitionSlipController extends Controller
                 $getfloormanager = getFloormanager();
                 if (!empty($getfloormanager)) {
                     $getfloormanagers = $getfloormanager->pluck('id')->toArray();
-                    $details = $this->medicine_requisition_floor_details->Selectone($id);
-                    $mailsubject = 'Medicine Requistion Slip Floor';
+                    $requisitionDetails = $this->medicine_requisition_floor_details->Selectone($id);
+                    $document_no = $this->document_reference->selectOne($requisitionDetails->document_reference_id);
+                    $mailsubject = 'Medicine Requisition Slip Floor';
+
                     $notificationData = array(
                         'notification_type' => OHC_INSPECTION,
                         'module_type' => 2,
                         'notification_message' => $mailsubject,
                         'mobile_notification' => json_encode(array(
                             'title' => $mailsubject,
-                            'message' => "Medicine Requistion Slip floor ",
-                            'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                            'message' => "Medicine Requisition Slip floor ",
+                            'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
                             'id' => $id,
                             'module' => 1,
                         )),
-                        'web_link' =>  admin_url('ohc/medical-requisition-slip/approval/view/' . encryptId($id)),
+                        'web_link' => admin_url('ohc/medical-requisition-slip/approval/view/' . encryptId($id)),
                         'assigned_user' => array_to_string($getfloormanagers),
                         'created_by' => Auth::id(),
                     );
+
                     notificationSave($notificationData);
+
                     foreach ($getfloormanagers as $user) {
                         $email_id = getUseremail($user);
-                        $title = "Medicine Requistion Slip Floor";
-                        $details = array(
-                            'ohc_type' => 'medicine requisition slip floor',
+                        $title = "Medicine Requisition Slip Floor";
+                        $emailDetails = array(
+                            'ohc_type' => 'Medicine requisition slip floor',
                             'email' => $email_id,
                             'mail_subject' => $mailsubject,
                             'title' => $title,
-                            'data' => $details,
-
+                            'data' => $requisitionDetails,
+                            'document_no' => $document_no,
                         );
-                        Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
+                        Mail::to($email_id)->queue(new MedicineRequistionFloorEmail($emailDetails));
                     }
                 }
+
 
 
                 Session::flash('success', __('common.created_msg'));
@@ -546,9 +552,10 @@ class MedicalRequisitionSlipController extends Controller
 
                     $getmedicalassistant = getMedicalAssistant();
 
-                    $details = $this->medicine_requisition_floor_details->Selectone($id);
+
                     $mailsubject = 'Medicine Requistion Slip Floor approved';
                     if (!empty($getmedicalassistant) || !empty($getsafetyofficer)) {
+                        $details = $this->medicine_requisition_floor_details->Selectone($id);
                         $getsafetyofficers = $getsafetyofficer->pluck('id')->toArray();
                         $getsafetyofficerEmail = $getsafetyofficer->pluck('email')->toArray();
                         $getmedicalassistantEmail = $getmedicalassistant->pluck('email')->toArray();
@@ -569,18 +576,19 @@ class MedicalRequisitionSlipController extends Controller
                             'created_by' => Auth::id(),
                         );
                         notificationSave($notificationData);
+                        $document_no = $this->document_reference->selectOne($details->document_reference_id);
                         $title = "Medicine Requisition slip floor";
                         $mailsubject = "Medicine Requisition slip floor was Approved";
                         $details = array(
                             'ohc_type' => 'Medicine Requisition slip floor Floor manager was Approved',
-
+                            'document_no' => $document_no,
                             'mail_subject' => $mailsubject,
                             'title' => $title,
                             'data' => $details
                         );
                         $recipients = array_merge($getsafetyofficerEmail, $getmedicalassistantEmail);
                         if (!empty($recipients)) {
-                            Mail::to($recipients)->queue(new OccupationalHealthEmail($details));
+                            Mail::to($recipients)->queue(new MedicineRequistionFloorEmail($details));
                         }
                     }
                 } else if ($request->action == "reject") {
@@ -588,7 +596,8 @@ class MedicalRequisitionSlipController extends Controller
                     $userIds = [
                         'users' => $details->created_by,
                     ];
-                    $mailsubject = 'Medicine Requistion Slip Floor  Floor manager Rejected';
+                    $document_no = $this->document_reference->selectOne($details->document_reference_id);
+                    $mailsubject = 'Medicine Requistion Slip Floor';
                     $notificationData = array(
                         'notification_type' => OHC_INSPECTION,
                         'module_type' => 3,
@@ -610,13 +619,14 @@ class MedicalRequisitionSlipController extends Controller
                     $email_id = getUseremail($user);
 
                     $details = array(
-                        'ohc_type' => 'Medicine Requistion Slip Floor was Rejected',
+                        'ohc_type' => 'Medicine Requistion Slip Floor',
                         'email' => $email_id,
                         'mail_subject' => $mailsubject,
                         'title' => $title,
-                        'data' => $details
+                        'data' => $details,
+                        'document_no' => $document_no,
                     );
-                    Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
+                    Mail::to($email_id)->queue(new MedicineRequistionFloorEmail($details));
                 }
 
 
@@ -670,6 +680,7 @@ class MedicalRequisitionSlipController extends Controller
                     $userIds = [
                         'users' => $details->created_by,
                     ];
+                    $document_no = $this->document_reference->selectOne($details->document_reference_id);
                     $mailsubject = 'Medicine Requistion Slip Floor Approved';
                     $notificationData = array(
                         'notification_type' => OHC_INSPECTION,
@@ -696,13 +707,15 @@ class MedicalRequisitionSlipController extends Controller
                         'email' => $email_id,
                         'mail_subject' => $mailsubject,
                         'title' => $title,
+                        'document_no' => $document_no,
                         'data' => $details
                     );
-                    Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
+                    Mail::to($email_id)->queue(new MedicineRequistionFloorEmail($details));
                 } elseif ($request->action == "reject") {
                     $userIds = [
                         'users' => $details->created_by,
                     ];
+                    $document_no = $this->document_reference->selectOne($details->document_reference_id);
                     $mailsubject = 'Medicine Requistion Slip Floor was Rejected';
                     $notificationData = array(
                         'notification_type' => OHC_INSPECTION,
@@ -729,9 +742,10 @@ class MedicalRequisitionSlipController extends Controller
                         'email' => $email_id,
                         'mail_subject' => $mailsubject,
                         'title' => $title,
-                        'data' => $details
+                        'data' => $details,
+                        'document_no' => $document_no,
                     );
-                    Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
+                    Mail::to($email_id)->queue(new MedicineRequistionFloorEmail($details));
                 }
 
 

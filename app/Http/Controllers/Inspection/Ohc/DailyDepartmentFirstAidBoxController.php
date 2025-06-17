@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Inspection\Ohc;
 
 use App\Http\Controllers\Controller;
 use App\Mail\Inspection\Ohc\DailyDepartmentFirstAidbox as OhcDailyDepartmentFirstAidbox;
+use App\Mail\Inspection\Ohc\DailyDepartmentFirstAidboxEmail;
 use App\Mail\Inspection\Ohc\OccupationalHealthEmail;
 use App\Models\Inspection\InspectionStaticDocno;
 use Illuminate\Http\Request;
@@ -259,6 +260,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                 // Select One
                 $daily_department_first_aid_box_details = $this->daily_department_first_aid_box_details->Selectone($id);
                 $daily_department_first_aid_box = $this->daily_department_first_aid_box->Selectone($id);
+                $document_no = $this->document_reference->Selectone($daily_department_first_aid_box_details->document_reference_id);
                 // notification and email
                 if (!empty($getmedicalassistant) || !empty($getfloormanager)) {
                     $title = "Daily Department First Aid Box";
@@ -268,12 +270,13 @@ class DailyDepartmentFirstAidBoxController extends Controller
                         'mail_subject' => $mailsubject,
                         'title' => $title,
                         'data' => $daily_department_first_aid_box_details,
+                        'document_no' => $document_no,
                         'checklist' =>   $daily_department_first_aid_box
                     );
 
                     $recipients = array_merge($getfloormanagerEmail, $getmedicalassistantEmail);
                     if (!empty($recipients)) {
-                        Mail::to($recipients)->queue(new OccupationalHealthEmail($details));
+                        Mail::to($recipients)->queue(new DailyDepartmentFirstAidboxEmail($details));
                     }
 
                     $notificationData = array(
@@ -500,6 +503,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                     $nextStatus = MEDICAL_ASSISTANT_REJECTED;
                 }
                 $details = $this->daily_department_first_aid_box_details->Selectone($id);
+                $document_no = $this->document_reference->selectOne( $details->document_reference_id);
                 $data = [
                     'type' => OHC_TYPE_DAILY_DEPARTMENT_FIRST_AID_BOX,
                     'from_status' =>  MEDICAL_ASSISTANT_APPROVAL_PENDING,
@@ -544,14 +548,15 @@ class DailyDepartmentFirstAidBoxController extends Controller
                         'email' => $email_id,
                         'mail_subject' => $mailsubject,
                         'title' => $title,
+                        'document_no' => $document_no,
                         'data' => $details
                     );
-                    Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
+                    Mail::to($email_id)->queue(new DailyDepartmentFirstAidboxEmail($details));
                 } elseif ($request->action == "reject") {
                     $userIds = [
                         'users' => $details->created_by,
                     ];
-                    $mailsubject = 'Daily Departmental First Aid Box was Rejected';
+                    $mailsubject = 'Daily Departmental First Aid Box';
                     $notificationData = array(
                         'notification_type' => OHC_INSPECTION,
                         'module_type' => 1,
@@ -568,7 +573,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
                         'created_by' => Auth::id(),
                     );
                     notificationSave($notificationData);
-                    $title = "Daily Departmental First Aid Box was Rejected";
+                    $title = "Daily Departmental First Aid Box";
                     $user = $details->created_by;
                     $email_id = getUseremail($user);
 
@@ -577,9 +582,10 @@ class DailyDepartmentFirstAidBoxController extends Controller
                         'email' => $email_id,
                         'mail_subject' => $mailsubject,
                         'title' => $title,
+                        'document_no' => $document_no,
                         'data' => $details
                     );
-                    Mail::to($email_id)->queue(new OccupationalHealthEmail($details));
+                    Mail::to($email_id)->queue(new DailyDepartmentFirstAidboxEmail($details));
                 }
 
 

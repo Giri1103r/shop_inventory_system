@@ -30,6 +30,7 @@ class DailyDepartmentFirstAidBoxDetails extends Model
         'checked_by',
         'checklist',
         'verified_by',
+        'floor_manager_remarks',
         'approve_status',
         'approved_by',
         'l1_manager_verified_by',
@@ -217,7 +218,8 @@ class DailyDepartmentFirstAidBoxDetails extends Model
 
     public function floormanagerapprovalupdate($id, $nextStatus)
     {
-        return $this->where('id', $id)->update(['verified_by' => Auth::id(), 'approve_status' => $nextStatus]);
+        $request = request();
+        return $this->where('id', $id)->update(['verified_by' => Auth::id(), 'approve_status' => $nextStatus, 'floor_manager_remarks' => $request->floor_remarks]);
     }
 
     public function exportdata()

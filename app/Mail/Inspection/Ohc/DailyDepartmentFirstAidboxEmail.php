@@ -36,7 +36,7 @@ class DailyDepartmentFirstAidboxEmail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'emails.inspection.safety.safety_email',
+            view: 'emails.inspection.ohc.daily_departmental_first_aid',
             with: ['details' => $this->details]
         );
     }
