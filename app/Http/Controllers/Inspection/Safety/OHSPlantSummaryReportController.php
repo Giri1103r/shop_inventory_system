@@ -486,7 +486,7 @@ class OHSPlantSummaryReportController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (Exception $ex) {
-        
+
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('safety/ohc-plant-summary/list'));
@@ -579,7 +579,7 @@ class OHSPlantSummaryReportController extends Controller
             $filename = "OHS Plant Summary Report.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('safety/ohc-plant-summary/list'));
         }

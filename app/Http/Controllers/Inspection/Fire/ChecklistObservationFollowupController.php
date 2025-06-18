@@ -1296,6 +1296,7 @@ class ChecklistObservationFollowupController extends Controller
 
             $sheet->getCell("I{$signatureRowStart}")->setValue($richText);
 
+
             // Approved By
             $sheet->mergeCells("O{$signatureRowStart}:X{$signatureRowStart}");
             $sheet->getStyle("O{$signatureRowStart}:X{$signatureRowStart}")->applyFromArray([
@@ -1303,7 +1304,7 @@ class ChecklistObservationFollowupController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
             $richText = new RichText();
-            $name = getUsername($data->approved_by);
+            $name = getUsername($data->l1_manager_verified_by);
 
             if (!empty($name)) {
                 $richText->createTextRun("Approved By :" . $name)->getFont()->setBold(true);

@@ -146,7 +146,6 @@ class InterUnitAuditController extends Controller
             report($ex);
             Session::flash('error', __('inspection.checklist_add'));
             return redirect()->back();
-
         }
     }
     public function store(Request $request)
@@ -167,6 +166,7 @@ class InterUnitAuditController extends Controller
 
             return redirect(admin_url('audit/inter-unit-audit/checklist/list'));
         } catch (Exception $ex) {
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('audit/inter-unit-audit/checklist/list'));
         }
@@ -300,6 +300,8 @@ class InterUnitAuditController extends Controller
                 $range = "A$currentRow:S" . ($currentRow + 3);
                 $sheet->getStyle($range)->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'font' => ['bold' => true],
                 ]);
 
                 $headerRow = $currentRow + 4;
@@ -324,9 +326,9 @@ class InterUnitAuditController extends Controller
                     if (!in_array($sectionName, $displayedSections)) {
                         $sheet->mergeCells("A$inspectionRow:S$inspectionRow")
                             ->setCellValue("A$inspectionRow", strtoupper($sectionName));
-                        $sheet->getStyle("A$inspectionRow")->applyFromArray([
+                        $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
                             'font' => ['bold' => true],
-                            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+                            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'horizontal' => Alignment::HORIZONTAL_CENTER],
                             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         ]);
                         $displayedSections[] = $sectionName;
@@ -336,11 +338,11 @@ class InterUnitAuditController extends Controller
                     $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $srNo++);
                     $sheet->mergeCells("D$inspectionRow:J$inspectionRow")->setCellValue("D$inspectionRow", GetChecklistTypeDate($checklistId));
                     $sheet->mergeCells("K$inspectionRow:N$inspectionRow")->setCellValue("K$inspectionRow", $data['response']);
-                    $sheet->mergeCells("O$inspectionRow:S$inspectionRow")->setCellValue("O$inspectionRow", $data['remarks']);
+                    $sheet->mergeCells("O$inspectionRow:S$inspectionRow")->setCellValue("O$inspectionRow", $data['remarks'] ? $data['remarks'] : '-');
 
                     $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                        'alignment' => ['vertical' => Alignment::VERTICAL_CENTER, 'horizontal' => Alignment::HORIZONTAL_CENTER],
                     ]);
 
                     $inspectionRow++;
@@ -403,7 +405,7 @@ class InterUnitAuditController extends Controller
             $filename = "Inter Unit Monthly Audit.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-           report($ex);
+            report($ex);
         }
     }
 
@@ -443,7 +445,7 @@ class InterUnitAuditController extends Controller
             $filename = "Inter Unit Monthly Audit.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-           report($ex);
+            report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }
     }
@@ -533,6 +535,8 @@ class InterUnitAuditController extends Controller
             $range = "A$currentRow:S" . ($currentRow + 3);
             $sheet->getStyle($range)->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'font' => ['bold' => true],
             ]);
 
             $headerRow = $currentRow + 4;
@@ -557,9 +561,9 @@ class InterUnitAuditController extends Controller
                 if (!in_array($sectionName, $displayedSections)) {
                     $sheet->mergeCells("A$inspectionRow:S$inspectionRow")
                         ->setCellValue("A$inspectionRow", strtoupper($sectionName));
-                    $sheet->getStyle("A$inspectionRow")->applyFromArray([
+                    $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
+                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         'font' => ['bold' => true],
-                        'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     ]);
                     $displayedSections[] = $sectionName;
@@ -569,11 +573,11 @@ class InterUnitAuditController extends Controller
                 $sheet->mergeCells("A$inspectionRow:C$inspectionRow")->setCellValue("A$inspectionRow", $srNo++);
                 $sheet->mergeCells("D$inspectionRow:J$inspectionRow")->setCellValue("D$inspectionRow", GetChecklistTypeDate($checklistId));
                 $sheet->mergeCells("K$inspectionRow:N$inspectionRow")->setCellValue("K$inspectionRow", $data['response']);
-                $sheet->mergeCells("O$inspectionRow:S$inspectionRow")->setCellValue("O$inspectionRow", $data['remarks']);
+                $sheet->mergeCells("O$inspectionRow:S$inspectionRow")->setCellValue("O$inspectionRow", $data['remarks'] ? $data['remarks'] : '-');
 
                 $sheet->getStyle("A$inspectionRow:S$inspectionRow")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => ['vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER]
                 ]);
 
                 $inspectionRow++;
@@ -590,7 +594,7 @@ class InterUnitAuditController extends Controller
             $writer->save('php://output');
             exit;
         } catch (\Exception $e) {
-            dd($e);
+            report($e);
             return back()->with('error', 'Something went wrong while generating Excel.');
         }
     }

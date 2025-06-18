@@ -242,9 +242,9 @@
 
                         <td style="border: 2px solid black; padding: 8px;">
                             @if ($detail->observation_status == 1)
-                                Active
+                                Open
                             @elseif($detail->observation_status == 0)
-                                Inactive
+                                Closed
                             @else
                                 Unknown
                             @endif

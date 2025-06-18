@@ -381,7 +381,7 @@ class ForkLiftInspectionController extends Controller
                     $sheet->setCellValue("F{$row}", $detail['correction_preventive_action'] ?? '');
                     $sheet->setCellValue("G{$row}", getUsername($detail['responsibility'] ?? ''));
                     $sheet->setCellValue("H{$row}", DBdateformat($detail['date_of_compliance'] ?? ''));
-                    $status = ($detail['observation_status'] ?? '') == 1 ? 'Active' : 'Inactive';
+                    $status = ($detail['observation_status'] ?? '') == 1 ? 'Open' : 'Closed';
                     $sheet->setCellValue("I{$row}", $status);
                     $sheet->setCellValue("J{$row}", $detail['remarks'] ?? '');
 
@@ -731,7 +731,7 @@ class ForkLiftInspectionController extends Controller
                 $sheet->setCellValue("F$row", $detail['correction_preventive_action'] ?? '');
                 $sheet->setCellValue("G$row", getUsername($detail['responsibility'] ?? ''));
                 $sheet->setCellValue("H$row", DBdateformat($detail['date_of_compliance'] ?? ''));
-                $status = ($detail['observation_status'] ?? '') == 1 ? 'Active' : 'Inactive';
+                $status = ($detail['observation_status'] ?? '') == 1 ? 'Open' : 'Closed';
                 $sheet->setCellValue("I{$row}", $status);
                 $sheet->setCellValue("J$row", $detail['remarks'] ?? '');
 

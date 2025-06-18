@@ -372,13 +372,25 @@
                     location.reload();
                 });
 
-                flatpickr("#inspection_date", {
+                var toDatepicker = flatpickr("#next_due", {
                     dateFormat: "d-m-Y",
                 });
-                flatpickr("#next_due", {
+
+                var fromDatepicker = flatpickr("#inspection_date", {
                     dateFormat: "d-m-Y",
-                    minDate: new Date(),
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            var startDate = selectedDates[0];
+
+                            var nextDay = new Date(startDate);
+                            nextDay.setDate(startDate.getDate() + 1);
+
+                            toDatepicker.set('minDate', nextDay);
+
+                        }
+                    }
                 });
+                
                 $('.floor_executive').select2({
                     ajax: {
                         url: "{{ admin_url('safety/forklift-inspection/monthly/employeeName') }}",
