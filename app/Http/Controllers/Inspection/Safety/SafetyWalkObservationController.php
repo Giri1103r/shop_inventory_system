@@ -506,7 +506,7 @@ class SafetyWalkObservationController extends Controller
                             $sheet->setCellValue("F{$row}", $observation->recomended_action);
                             $sheet->setCellValue("G{$row}", getUsername($observation->responsibility));
                             $sheet->setCellValue("H{$row}", $observation->date_of_compliance);
-                            $sheet->setCellValue("I{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Inactive' : 'Unknown'));
+                            $sheet->setCellValue("I{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Deactive' : 'Unknown'));
                             $sheet->setCellValue("J{$row}", $observation->remarks);
 
                             $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
@@ -555,7 +555,7 @@ class SafetyWalkObservationController extends Controller
                         $sheet->setCellValue("F{$row}", $observation->recomended_action);
                         $sheet->setCellValue("G{$row}", getUsername($observation->responsibility));
                         $sheet->setCellValue("H{$row}", $observation->date_of_compliance);
-                        $sheet->setCellValue("I{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Inactive' : 'Unknown'));
+                        $sheet->setCellValue("I{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Deactive' : 'Unknown'));
                         $sheet->setCellValue("J{$row}", $observation->remarks);
                         $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
                             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -865,7 +865,7 @@ class SafetyWalkObservationController extends Controller
                         $sheet->setCellValue("F{$row}", $observation->recomended_action);
                         $sheet->setCellValue("G{$row}", getUsername($observation->responsibility));
                         $sheet->setCellValue("H{$row}", $observation->date_of_compliance);
-                        $sheet->setCellValue("I{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Inactive' : 'Unknown'));
+                        $sheet->setCellValue("I{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Deactive' : 'Unknown'));
                         $sheet->setCellValue("J{$row}", $observation->remarks);
 
                         $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
@@ -914,7 +914,7 @@ class SafetyWalkObservationController extends Controller
                     $sheet->setCellValue("F{$row}", $observation->recomended_action);
                     $sheet->setCellValue("G{$row}", getUsername($observation->responsibility));
                     $sheet->setCellValue("H{$row}", $observation->date_of_compliance);
-                    $sheet->setCellValue("I{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Inactive' : 'Unknown'));
+                    $sheet->setCellValue("I{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Deactive' : 'Unknown'));
                     $sheet->setCellValue("J{$row}", $observation->remarks);
 
                     $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([

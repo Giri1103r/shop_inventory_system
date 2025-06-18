@@ -299,7 +299,7 @@
                                 @if ($details->observation_status == 1)
                                     Active
                                 @elseif($details->observation_status == 0)
-                                    Inactive
+                                    Deactive
                                 @else
                                     Unknown
                                 @endif
@@ -341,7 +341,7 @@
                         @if ($detail->observation_status == 1)
                             Active
                         @elseif($detail->observation_status == 0)
-                            Inactive
+                            Deactive
                         @else
                             Unknown
                         @endif
