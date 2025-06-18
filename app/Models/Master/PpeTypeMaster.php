@@ -49,7 +49,8 @@ class PpeTypeMaster extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('ppe_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('ppe_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('item_code', 'LIKE', '%' . $search . '%');
             });
         }
 

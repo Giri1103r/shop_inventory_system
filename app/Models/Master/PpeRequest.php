@@ -52,18 +52,25 @@ class PpeRequest extends Model
         if (in_array(ROLE_EHS_HEAD, $userRole)) {
             $query->orderBy('ppe_pperequest.id', 'DESC');
         } elseif (in_array(ROLE_HOD, $userRole)) {
-            $companyId = $user->company_id;
 
-            $reportingEmpIds = Employee::where('reporting_manager', $user->employee_id)
+            $reportingEmployees = Employee::where('reporting_manager', $user->employee_id)
                 ->where('status', 1)
-                ->pluck('emp_id')
-                ->toArray();
-            $query->where(function ($q) use ($reportingEmpIds) {
+                ->get(['emp_id', 'company', 'department']);
 
-                if (!empty($reportingEmpIds)) {
-                    $q->orWhereIn('ppe_pperequest.emp_id', $reportingEmpIds);
-                }
-            })->orderBy('ppe_pperequest.id', 'DESC');
+            if (!$reportingEmployees->isEmpty()) {
+                $query->where(function ($q) use ($reportingEmployees) {
+                    foreach ($reportingEmployees as $emp) {
+                        $q->orWhere(function ($subQ) use ($emp) {
+                            $subQ
+                                ->where('ppe_pperequest.company_id', $emp->company)
+                                ->where('ppe_pperequest.department', $emp->department);
+                        });
+                    }
+                });
+            }
+
+
+            $query->orderBy('ppe_pperequest.id', 'DESC');
         } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
             $companyId = $user->company_id;
             $query->orderBy('ppe_pperequest.id', 'DESC');

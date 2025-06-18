@@ -355,12 +355,12 @@
                 var id = $(this).data('id');
                 var types = $(this).data('type');
                 if (types == 1) {
-                    var title = '{{ __('Do You want to In-Activate  PPE Type ') }}';
+                    var title = '{{ __('Do You want to In-Activate  PPE Master ') }}';
                     var text = '{{ __('common.inactive') }}';
                     var btncolor = '#dc3545'
 
                 } else {
-                    var title = '{{ __('Do You want to Activate PPE Type') }}';
+                    var title = '{{ __('Do You want to Activate PPE Master') }}';
                     var text = '{{ __('common.active') }}';
                     var btncolor = '#7ddc35'
                 }

@@ -38,7 +38,8 @@ class PpeType extends Model
 
             $query->where(function ($query) use ($search) {
                 $query
-                    ->orWhere('ppe_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('ppe_type', 'LIKE', '%' . $search . '%')
+                     ->orWhere('ppe_id', 'LIKE', '%' . $search . '%');
             });
         }
 
