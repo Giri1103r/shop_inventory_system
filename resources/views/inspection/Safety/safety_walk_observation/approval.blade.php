@@ -187,7 +187,7 @@
                                                             @if ($details->observation_status == 1)
                                                                 Active
                                                             @elseif($details->observation_status == 0)
-                                                                Inactive
+                                                                Deactive
                                                             @else
                                                                 Unknown
                                                             @endif

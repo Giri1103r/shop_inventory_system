@@ -486,7 +486,7 @@ class OHSPlantSummaryReportController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (Exception $ex) {
-        
+
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('safety/ohc-plant-summary/list'));
@@ -572,7 +572,7 @@ class OHSPlantSummaryReportController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.Safety.ohc_plant_summary.viewpdf', $data);
+            $html = view('inspection.Safety.ohc_plant_summary.viewPdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 

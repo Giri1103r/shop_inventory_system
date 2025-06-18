@@ -184,10 +184,10 @@
                                                         <label
                                                             class="form-label ">{{ __('inspection.observation_status') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->water == 1)
+                                                            @if ($details->observation_status == 1)
                                                                 Active
-                                                            @elseif($details->water == 0)
-                                                                Inactive
+                                                            @elseif($details->observation_status == 0)
+                                                                Deactive
                                                             @else
                                                                 Unknown
                                                             @endif

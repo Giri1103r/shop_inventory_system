@@ -91,6 +91,7 @@
                                                 $displayedSections = [];
                                             @endphp
                                             @foreach ($user_response as $checklistId => $data)
+                                            {{-- @dd($data) --}}
                                                 @php
                                                     $sectionName = GetSubChecklistTypeName($data['sub_type_id']);
                                                 @endphp
@@ -110,7 +111,7 @@
                                                         style="border: 1px solid black; padding: 8px; font-weight: bold; text-align: center;">
                                                         {{ $srNo }}
                                                     </td>
-                                                    <td colspan="2" style="border: 1px solid black; padding: 8px;">
+                                                    <td colspan="2" style="border: 1px solid black; padding: 8px; text-align: center;">
                                                         {{ GetChecklistTypeDate($checklistId) }}
                                                     </td>
                                                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
@@ -123,7 +124,7 @@
                                                         @endif
                                                     </td>
                                                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                                                        {{ $data['remarks'] ?? '-' }}
+                                                        {{ $data['remarks'] ? $data['remarks'] : '-' }}
                                                     </td>
                                                 </tr>
 

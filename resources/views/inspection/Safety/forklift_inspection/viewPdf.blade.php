@@ -251,9 +251,9 @@
 
                     <td style="border: 2px solid black; padding: 8px;">
                         @if ($detail->observation_status == 1)
-                            Active
+                            Open
                         @elseif($detail->observation_status == 0)
-                            Inactive
+                            Closed
                         @else
                             Unknown
                         @endif
@@ -276,7 +276,7 @@
             <tr>
                 <td colspan="5"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    
+
                     <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
                 </td>
                 <td colspan="5"

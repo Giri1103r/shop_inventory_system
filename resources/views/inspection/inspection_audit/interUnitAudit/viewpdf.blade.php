@@ -259,7 +259,7 @@
                                 @endif
                             </td>
                             <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center;">
-                                {{ $data['remarks'] ?? '-' }}
+                                {{ $data['remarks'] ? $data['remarks'] : '-' }}
                             </td>
                         </tr>
 

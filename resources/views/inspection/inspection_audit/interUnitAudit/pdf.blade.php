@@ -244,7 +244,7 @@
                             style="border: 1px solid black; padding: 8px; font-weight: bold; text-align: center;">
                             {{ $srNo }}
                         </td>
-                        <td colspan="10" style="border: 1px solid black; padding: 8px;">
+                        <td colspan="10" style="border: 1px solid black; padding: 8px; text-align: center;">
                             {{ GetChecklistTypeDate($checklistId) }}
                         </td>
                         <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center;">
@@ -257,7 +257,7 @@
                             @endif
                         </td>
                         <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center;">
-                            {{ $data['remarks'] ?? '-' }}
+                            {{ $data['remarks'] ? $data['remarks'] : '-' }}
                         </td>
                     </tr>
 
