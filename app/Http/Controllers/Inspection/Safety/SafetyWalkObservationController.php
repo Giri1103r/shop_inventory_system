@@ -285,7 +285,6 @@ class SafetyWalkObservationController extends Controller
                 'document_no' => $document_no,
                 'status_log' => $status_log,
             );
-dd($data);
             return view('inspection.Safety.safety_walk_observation.view', $data);
         } catch (Exception $ex) {
             report($ex);
