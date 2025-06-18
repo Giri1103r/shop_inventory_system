@@ -128,9 +128,9 @@ class PpeRequestController extends Controller
                                 $text = "<span class='badge bg-danger' style='font-size: 1.0em;'>HOD Rejected</span>";
                             } else if ($row->approve_status == STATUS_EHS_APPROVAL_PENDING) {
 
-                                if (checkUserRole(ROLE_HOD)) {
+                                if (checkUserRole(ROLE_HOD) || CheckUserRole(ROLE_SUPERADMIN)) {
                                     $text = "<span class='badge bg-success' style='font-size: 1.0em;'>HOD Approved</span>";
-                                } elseif (checkUserRole(ROLE_EHS_OFFICER)) {
+                                } elseif (checkUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_SUPERADMIN)) {
                                     $text = "<span class='badge bg-info' style='font-size: 1.0em;'>EHS Officer Approval Pending</span>";
                                 } else {
                                     $text = "<span class='badge bg-info' style='font-size: 1.0em;'>EHS Officer Approval Pending</span>";

@@ -249,9 +249,11 @@
                         </td>
                         <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center;">
                             @if (($data['response'] ?? '') == 'Ok')
-                                <span style="color: green; font-size: 20px;">✓</span>
+                                <span style="color: green; font-size: 20px;">Ok</span>
                             @elseif (($data['response'] ?? '') == 'Not Ok')
-                                <span style="color: red; font-size: 20px;">X</span>
+                                <span style="color: red; font-size: 20px;">Not Ok</span>
+                            @else
+                                <span style="color: red; font-size: 20px;">N/A</span>
                             @endif
                         </td>
                         <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center;">

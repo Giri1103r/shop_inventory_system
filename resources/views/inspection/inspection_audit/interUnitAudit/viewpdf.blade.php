@@ -168,7 +168,7 @@
                     <th colspan="8" style="border:1px solid black;">
                         <h3>
                             <span><b>Inter Unit Monthly Audit Checklist</b></span>
-                            </h3>
+                        </h3>
                     </th>
 
                     <th colspan="8" style="border:1px solid black;">
@@ -194,27 +194,30 @@
                 <tr>
                     <th colspan="8"
                         style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                        Name of Safety Officer: {{ ($inter_unit_audit->safety_officer) ?? 'N/A' }}
+                        Name of Safety Officer: {{ $inter_unit_audit->safety_officer ?? 'N/A' }}
                     </th>
                     <th colspan="8"
                         style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
                         Date of Audit: {{ Displaydateformat($inter_unit_audit->audit_date) ?? 'N/A' }}
                     </th>
                     <th colspan="8"
-                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    Unit: {{ getUnitname($inter_unit_audit->unit_id) ?? 'N/A' }}
-                </th>
+                        style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                        Unit: {{ getUnitname($inter_unit_audit->unit_id) ?? 'N/A' }}
+                    </th>
                 </tr>
                 <tr>
-                    <th colspan="4" style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    <th colspan="4"
+                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                         Sr. No</th>
                     <th colspan="10"
                         style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                         Check Points</th>
 
-                    <th  colspan="4" style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    <th colspan="4"
+                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                         OK/NOT-OK</th>
-                    <th colspan="6" style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                    <th colspan="6"
+                        style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
                         Remarks</th>
                 </tr>
 
@@ -239,7 +242,8 @@
                         @endif
 
                         <tr>
-                            <td colspan="4" style="border: 1px solid black; padding: 8px; font-weight: bold; text-align: center;">
+                            <td colspan="4"
+                                style="border: 1px solid black; padding: 8px; font-weight: bold; text-align: center;">
                                 {{ $srNo }}
                             </td>
                             <td colspan="10" style="border: 1px solid black; padding: 8px;">
@@ -247,9 +251,11 @@
                             </td>
                             <td colspan="4" style="border: 1px solid black; padding: 8px; text-align: center;">
                                 @if (($data['response'] ?? '') == 'Ok')
-                                    <span style="color: green; font-size: 20px;">✓</span>
+                                    <span style="color: green; font-size: 20px;">Ok</span>
                                 @elseif (($data['response'] ?? '') == 'Not Ok')
-                                    <span style="color: red; font-size: 20px;">X</span>
+                                    <span style="color: red; font-size: 20px;">Not Ok</span>
+                                @else
+                                    <span style="color: red; font-size: 20px;">N/A</span>
                                 @endif
                             </td>
                             <td colspan="6" style="border: 1px solid black; padding: 8px; text-align: center;">
