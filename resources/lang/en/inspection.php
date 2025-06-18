@@ -309,6 +309,7 @@ return [
     // certified fire fighter
 
     'certified_fire_fighter_details' => 'Certified Fire Fighter Details',
+    'ehs_officer_name' => 'EHS Officer Name',
 
 
 

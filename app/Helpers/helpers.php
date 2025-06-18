@@ -2422,6 +2422,21 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getSafetyObservationStatus')) {
+        function getSafetyObservationStatus($id)
+        {
+            if ($id == 1) {
+                return "Waiting For EHS Officer Verification";
+            } else if ($id == 2) {
+                return "Observation Rejected";
+            } else if ($id == 3) {
+                return "Observation Approved";
+            } else {
+                return "Inspection Creation";
+            }
+        }
+    }
+
     if (!function_exists('getInspectionStatus')) {
         function getInspectionStatus($id)
         {

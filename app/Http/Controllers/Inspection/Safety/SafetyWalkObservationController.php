@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Safety\SafetyStatusLog;
 use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Safety\SafetyWalkObservation;
 use App\Models\Inspection\Safety\SafetyWalkObservationDetails;
@@ -29,6 +30,8 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 
+use function PHPSTORM_META\type;
+
 class SafetyWalkObservationController extends Controller
 {
     private $safety_walk;
@@ -38,6 +41,7 @@ class SafetyWalkObservationController extends Controller
     private $location;
     private $signature;
     private $document_reference;
+    private $statusLog;
 
 
 
@@ -50,6 +54,7 @@ class SafetyWalkObservationController extends Controller
         $this->location = new Location();
         $this->signature = new SignatureUpload();
         $this->document_reference = new InspectionStaticDocno();
+        $this->statusLog = new SafetyStatusLog();
     }
 
     public function Index(Request $request)
@@ -207,6 +212,7 @@ class SafetyWalkObservationController extends Controller
             }
 
             $safety_walk_observation =  $this->safety_walk->Store();
+            $inspection_id = $safety_walk_observation->id;
             $safety_walk_observation_details = $this->observation_details->store($safety_walk_observation->id);
             // $signature_update = $this->signature->signatureUpload(SAFETY_WALK_OBSERVATION, $safety_walk_observation->id);
 
@@ -245,6 +251,15 @@ class SafetyWalkObservationController extends Controller
                 Mail::to($email_id)->queue(new SafetyInspection($details));
             }
 
+            $insert_array = [
+                'type' => SAFETY_WALK_OBSERVATION,
+                'inspection_id' => $inspection_id,
+                'from_status' => 0,
+                'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                'created_by' => Auth::id(),
+            ];
+            $this->statusLog->create($insert_array);
+
             Session::flash('success', 'Safety Walk Observation added successfully!');
             return redirect(admin_url('safety/safety-walk-observation/list'));
         } catch (Exception $ex) {
@@ -261,15 +276,16 @@ class SafetyWalkObservationController extends Controller
             $inspection_details = $this->safety_walk->selectOne($id);
             $inspection = $this->observation_details->GetDetails($inspection_details->id);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
-
+            $type =  SAFETY_WALK_OBSERVATION;
+            $status_log = $this->statusLog->selectOne($id, $type);
 
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'document_no' => $document_no,
+                'status_log' => $status_log,
             );
-
-
+dd($data);
             return view('inspection.Safety.safety_walk_observation.view', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -350,6 +366,16 @@ class SafetyWalkObservationController extends Controller
                 'data' => $inspection_details
             );
             Mail::to($email_id)->queue(new SafetyInspection($details));
+
+            $insert_array = [
+                'type' => SAFETY_WALK_OBSERVATION,
+                'inspection_id' => $inspection_details->id,
+                'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                'to_status' => $to_status,
+                'remarks' =>$remarks,
+                'approved_by' => Auth::id(),
+            ];
+            $this->statusLog->create($insert_array);
 
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('safety/safety-walk-observation/list'));
