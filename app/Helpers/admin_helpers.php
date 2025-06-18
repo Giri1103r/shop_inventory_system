@@ -512,7 +512,7 @@ if (!function_exists('GetInspectionCount')) {
                 ];
                 break;
 
-            case 'Fire':
+             case 'Fire':
                 $group_wise_models['Fire'] = [
                     \App\Models\Inspection\Fire\CartridgeTypeFireExtinguisher::class,
                     \App\Models\Inspection\Fire\CoTypeFireExtinguisher::class,

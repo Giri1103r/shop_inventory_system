@@ -339,6 +339,6 @@ class Department extends Model
     public function getunitwiseDepartment()
     {
         $unitId = Auth::user()->unit_id;
-        return $this->where('unit_id', $unitId)->where('trash', 'NO')->get();
+        return $this->where('unit_id', $unitId)->where('status', 1)->where('trash', 'NO')->get();
     }
 }

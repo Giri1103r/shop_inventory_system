@@ -152,7 +152,7 @@ class SafetyGalleryInspection extends Model
     {
 
         $request = request();
-        dd($request->all());
+       
         $responses = $request->checklist;
         foreach ($responses as $index => $respones) {
             foreach ($respones as $question => $value) {
