@@ -56,6 +56,7 @@ class PperequestController extends BaseController
                     $search = $request->search;
                 }
             }
+            $perPage = $request->input('per_page', 10);
             $ppe_request_array = $this->pperequest->select('ppe_pperequest.*', 'ppe_pperequest.created_at as ppe_created_at', 'masters_department.department_name',  'inventory2.*', 'ppe_pperequest.id As ppe_request_id', 'company_management.company_name', 'masters_unit.unit_name', 'masters_location.location_name')
                 ->join('company_management', 'ppe_pperequest.company_id', '=', 'company_management.id')
                 ->join('masters_location', 'ppe_pperequest.location_id', '=', 'masters_location.id')
@@ -68,18 +69,21 @@ class PperequestController extends BaseController
             if (in_array(ROLE_EHS_HEAD, $userRole)) {
                 $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
             } elseif (in_array(ROLE_HOD, $userRole)) {
-                $companyId = $user->company_id;
-
-                $reportingEmpIds = Employee::where('reporting_manager', $user->employee_id)
+                $reportingEmployees = Employee::where('reporting_manager', $user->employee_id)
                     ->where('status', 1)
-                    ->pluck('emp_id')
-                    ->toArray();
-                $ppe_request_array->where(function ($q) use ($reportingEmpIds) {
+                    ->get(['emp_id', 'company', 'department']);
 
-                    if (!empty($reportingEmpIds)) {
-                        $q->orWhereIn('ppe_pperequest.emp_id', $reportingEmpIds);
-                    }
-                })->orderBy('ppe_pperequest.id', 'DESC');
+                if (!$reportingEmployees->isEmpty()) {
+                    $ppe_request_array->where(function ($q) use ($reportingEmployees) {
+                        foreach ($reportingEmployees as $emp) {
+                            $q->orWhere(function ($subQ) use ($emp) {
+                                $subQ
+                                    ->where('ppe_pperequest.company_id', $emp->company)
+                                    ->where('ppe_pperequest.department', $emp->department);
+                            });
+                        }
+                    });
+                }
             } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
                 $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
             } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
@@ -107,7 +111,12 @@ class PperequestController extends BaseController
                 });
             }
 
+            // Pagination
+            $ppes = $ppe_request_array->orderByDesc('ppe_pperequest.id')->paginate($perPage);
 
+            if ($ppes->isEmpty()) {
+                return $this->sendError('No records found.', [], 404);
+            }
 
             $ppe_request_array = $ppe_request_array->orderBy('ppe_request_id', 'DESC')->paginate($request->input('per_page', 10));
 
@@ -157,12 +166,12 @@ class PperequestController extends BaseController
             }
 
             $ppe_request_details = [
-                'per_page' => $ppe_request_list['per_page'],
-                'current_page' => $ppe_request_list['current_page'],
-                'from' => $ppe_request_list['from'],
-                'to' => $ppe_request_list['to'],
-                'total' => $ppe_request_list['total'],
-                'total_page' => $ppe_request_list['last_page'],
+               'per_page' => $ppes->perPage(),
+                'current_page' => $ppes->currentPage(),
+                'from' => $ppes->firstItem(),
+                'to' => $ppes->lastItem(),
+                'total' => $ppes->total(),
+                'total_page' => $ppes->lastPage(),
                 'list' => $data_array,
             ];
 
