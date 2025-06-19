@@ -189,7 +189,28 @@
     </table>
 
     <br>
+    <div style="width:100%;">
+        <table style="width:100%;">
+            <tr>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    Hydrant And Riser Inspection Observation
+                </td>
+            </tr>
+        </table>
+    </div>
 
+    <table width="100%" style="width:100%;">
+
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Observation</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ $hydrant_details->observation_needed == '1' ? 'YES' : 'NO' }}</td>
+        </tr>
+
+    </table>
+    <br>
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>

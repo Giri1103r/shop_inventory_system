@@ -189,7 +189,27 @@
     </table>
 
     <br>
+    <div style="width:100%;">
+        <table style="width:100%;">
+            <tr>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    Detector Inspection Observation
+                </td>
+            </tr>
+        </table>
+    </div>
 
+    <table width="100%" style="width:100%;">
+
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Observation</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ $forklift_details->observation == '1' ? 'YES' : 'NO' }}</td>
+        </tr>
+
+    </table>
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
@@ -300,8 +320,6 @@
 
 
             </tr>
-
-
         @endforeach
         <tr>
             <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
@@ -371,7 +389,7 @@
                     WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 );
             @endphp
-             @if (isset($forklift_details->is_passed))
+            @if (isset($forklift_details->is_passed))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('ohc_management.capa') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>

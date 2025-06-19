@@ -98,7 +98,7 @@
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{__('ppe_managemdent.file')}}</label>
+                                        <label class="form-label view_label">{{__('ppe_management.ppe_files')}}</label>
                                         @if (isset($ppefiles) && $ppefiles->count() > 0)
                                             <div class="d-flex flex-wrap gap-2">
                                                 @foreach ($ppefiles as $file)

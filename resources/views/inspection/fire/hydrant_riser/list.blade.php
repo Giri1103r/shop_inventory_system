@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Hydrent Riser Inspection')
+@section('title', 'Hydrant Riser Inspection')
 @section('pageurl', admin_url('fire/hydrant-riser-inspection/list'))
 
 
