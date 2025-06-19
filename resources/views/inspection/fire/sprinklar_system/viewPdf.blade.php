@@ -189,7 +189,28 @@
     </table>
 
     <br>
+    <div style="width:100%;">
+        <table style="width:100%;">
+            <tr>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    Sprinklar System Inspection Observation
+                </td>
+            </tr>
+        </table>
+    </div>
 
+    <table width="100%" style="width:100%;">
+
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Observation</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ $forklift_details->observation == '1' ? 'YES' : 'NO' }}</td>
+        </tr>
+
+    </table>
+    <br>
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
@@ -265,7 +286,8 @@
         <tbody>
             @foreach ($inspection as $details)
                 <tr style="background-color: {{ $loop->even ? '#f9f9f9' : 'white' }};">
-                    <td style="border: 2px solid black; padding: 10px; text-align: center;">{{ $loop->iteration }}</td>
+                    <td style="border: 2px solid black; padding: 10px; text-align: center;">{{ $loop->iteration }}
+                    </td>
                     <td style="border: 2px solid black; padding: 10px; text-align: center;">
                         {{ GetDeptName($details->department) }}</td>
                     <td style="border: 2px solid black; padding: 10px; text-align: center;">{{ $details->quantity }}

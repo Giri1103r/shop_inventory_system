@@ -111,24 +111,9 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- @php
-                                            $signature = GetFireSignature(
-                                                $inspection->created_by,
-                                                $inspection->id,
-                                                CO_TYPE_FIRE_EXTINGUISHER_INSPECTION,
-                                            );
-                                        @endphp
+                                      
 
-                                        @if (isset($signature))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 100px; margin-top: -10px;" />
-                                                </div>
-                                            </div>
-                                        @endif --}}
+
                                     </div>
                                     <hr>
                                     <div class="form-observation">
@@ -137,15 +122,7 @@
                                                 <h4 class="text-white">
                                                     {{ __('inspection.co_type_fire_extinguisher_inspection_obs') }}</h4>
                                             </div>
-                                            {{-- <div class="col-md-12 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.obs') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $inspection->observation }}
-                                                    </div>
 
-                                                </div>
-                                            </div> --}}
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">Observation</label>

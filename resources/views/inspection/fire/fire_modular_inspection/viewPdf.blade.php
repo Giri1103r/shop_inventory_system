@@ -189,6 +189,28 @@
     </table>
 
     <br>
+    <div style="width:100%;">
+        <table style="width:100%;">
+            <tr>
+                <td
+                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                    Fire Modular Inspection Observation
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <table width="100%" style="width:100%;">
+
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Observation</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ $forklift_details->observation == '1' ? 'YES' : 'NO' }}</td>
+        </tr>
+
+    </table>
+    <br>
 
     <div style="width:100%;">
         <table style="width:100%;">
@@ -246,7 +268,8 @@
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">REMARK</th>
         </tr>
         <tr>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">CONDITION</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="3">CONDITION
+            </th>
         </tr>
         <tr>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">TYPE</th>
@@ -374,11 +397,11 @@
                 @endif
             @endif
             @if (isset($forklift_details->is_passed))
-            <tr>
+                <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('ohc_management.capa') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;">
-                        {{ $forklift_details->is_passed == 1 ? 'Yes' : 'No' }}  
+                        {{ $forklift_details->is_passed == 1 ? 'Yes' : 'No' }}
                     </td>
                 </tr>
             @endif
