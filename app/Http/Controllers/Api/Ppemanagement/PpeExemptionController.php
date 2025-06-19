@@ -55,6 +55,7 @@ class PpeExemptionController extends BaseController
                     $search = $request->search;
                 }
             }
+            $perPage = $request->input('per_page', 10);
             $ppe_exemption_array = $this->ppeexemption->select('ppe_ppeexemption.*', 'masters_department.department_name', 'masters_unit.unit_name', 'company_management.company_name', 'masters_location.location_name')
                 ->join('masters_department', 'ppe_ppeexemption.department', '=', 'masters_department.id')
                 ->join('masters_unit', 'ppe_ppeexemption.unit', '=', 'masters_unit.id')
@@ -84,12 +85,13 @@ class PpeExemptionController extends BaseController
                 });
             }
 
-            $ppes = $ppe_exemption_array->orderBy('ppe_ppeexemption.id', 'DESC')->paginate($request->input('per_page', 10));
+
+
+            $ppes = $ppe_exemption_array->orderByDesc('ppe_ppeexemption.id')->paginate($perPage);
+
             if ($ppes->isEmpty()) {
                 return $this->sendError('No records found.', [], 404);
             }
-
-            $ppe_request_list = $ppe_exemption_array->toArray();
 
 
             $data_array = [];
