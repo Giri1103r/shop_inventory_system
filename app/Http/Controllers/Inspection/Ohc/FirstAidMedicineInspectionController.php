@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Inspection\Ohc;
 use Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Mail\Inspection\Ohc\FirstAidEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
@@ -15,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Mail\Inspection\Ohc\FirstAidEmail;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use App\Models\Inspection\Ohc\OhcSignature;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
@@ -22,6 +22,7 @@ use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Ohc\InspectionOhcStatuslog;
 use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
 use App\Models\Inspection\Ohc\FirstAidMedicineInspection;
 
@@ -31,6 +32,8 @@ class FirstAidMedicineInspectionController extends Controller
     private $medicine;
     private $signature;
     private $document_reference;
+    private $inspection_ohc_status_log;
+
 
 
     public function __construct()
@@ -39,6 +42,7 @@ class FirstAidMedicineInspectionController extends Controller
         $this->medicine = new FirstAidEquipment();
         $this->signature = new OhcSignature();
         $this->document_reference = new InspectionStaticDocno();
+        $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
     }
 
     public function Index(Request $request)
@@ -136,7 +140,6 @@ class FirstAidMedicineInspectionController extends Controller
     {
         try {
 
-
             $rules = [
                 'inspection_date' => 'required',
                 'next_due' => 'required',
@@ -205,6 +208,19 @@ class FirstAidMedicineInspectionController extends Controller
                 }
             }
 
+            $data = [
+                'type' => OHC_OPD_MEDICINE_INSPECTION,
+                'from_status' => 0,
+                'to_status' => OBSERVATION_PENDING,
+                'reference_id' => $inspection_details->id,
+                'remarks' => "",
+                'approved_by' => null,
+                'created_by' => Auth::id(),
+
+            ];
+
+            $this->inspection_ohc_status_log->store($data);
+
             Session::flash('success', __('common.created_msg'));
             return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
         } catch (Exception $ex) {
@@ -226,17 +242,118 @@ class FirstAidMedicineInspectionController extends Controller
             $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
             // $verified_by = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, $inspection_type);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
-
+            $type  = OHC_OPD_MEDICINE_INSPECTION;
+            $status_log = $this->inspection_ohc_status_log->getStatuslog($id, $type);
             $data = array(
                 'inspection_details' => $inspection_details,
                 'inspection_file' => $inspection_file,
                 'inspection_data' => $inspection_data,
                 // 'verified_by' => $verified_by,
                 'document_no' => $document_no,
+                'status_log'=>$status_log
             );
 
 
             return view('inspection.inspection_ohc.first_aid_inspection.view', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
+        }
+    }
+
+
+
+    public function approval(Request $request)
+    {
+        try {
+
+            $id = decryptId($request->id);
+            $inspection_details = $this->medicine_checklist->selectOne($id);
+            $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
+            $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
+            $inspection_data = json_decode($inspection_details->inspection_data, true);
+
+            $data = array(
+                'inspection_details' => $inspection_details,
+                'inspection_file' => $inspection_file,
+                'inspection_data' => $inspection_data,
+
+            );
+
+            return view('inspection.inspection_ohc.first_aid_inspection.approval', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
+        }
+    }
+
+    public function approvalSubmit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $status = $request->has('approved') ? 1 : 0;
+            $remarks = $request->capa_remarks;
+            $eye_wash_inspection = $this->medicine_checklist->approvalSubmit($id, $status, $remarks);
+            $inspection_details = $this->medicine_checklist->selectOne($id);
+            $signature_update = $this->signature->signatureUpload(OHC_OPD_MEDICINE_INSPECTION);
+            $ehsOfficer = [$inspection_details->created_by];
+
+            if ($status == 1) {
+                $message = 'First-Aid Medicine Inspection Checklist - APPROVED';
+                $to_status = OBSERVATION_APPROVED;
+            } else {
+                $message = 'First-Aid Medicine Inspection Checklist - REJECTED';
+                $to_status = OBSERVATION_REJECTED;
+            }
+            $web_link =   admin_url('ohc/first-aid/opd-medicine-inspection/view/' . encryptId($inspection_details->id));
+            $mailsubject = 'Monthly OHC First-Aid Medicine Inspection Checklist';
+            $notificationData = array(
+                'notification_type' => OHC_INSPECTION,
+                'module_type' => 19,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $message,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($ehsOfficer),
+                'created_by' => Auth::id(),
+            );
+            notificationSave($notificationData);
+
+            $title = 'First-Aid Medicine Inspection Checklist - Inspection Status';
+            $email_id = getUseremail($ehsOfficer);
+            $url = admin_url('ohc/first-aid/opd-medicine-inspection/view/' . encryptId($inspection_details->id));
+            $details = array(
+                'ohc_type' => 'First-Aid Medicine Inspection Checklist',
+                'email' => $email_id,
+                'mail_subject' => $mailsubject,
+                'title' => $title,
+                'url' => $url,
+                'data' => $inspection_details
+            );
+            Mail::to($email_id)->queue(new FirstAidEmail($details));
+
+            $data = [
+                'type' => OHC_OPD_MEDICINE_INSPECTION,
+                'from_status' => OBSERVATION_PENDING,
+                'to_status' => $to_status,
+                'reference_id' => $inspection_details->id,
+                'remarks' => $remarks,
+                'approved_by' => Auth::id(),
+                'created_by' => null,
+
+            ];
+
+            $this->inspection_ohc_status_log->store($data);
+
+            Session::flash('success', __('common.updated_msg'));
+            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error',  __('common.message_error'));
@@ -512,6 +629,8 @@ class FirstAidMedicineInspectionController extends Controller
             $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
             $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
             $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
+            $type  = OHC_OPD_MEDICINE_INSPECTION;
+            $status_log = $this->inspection_ohc_status_log->getStatuslog($id, $type);
 
             $property = [
                 'tempDir' => 'public/pdf/temp/',
@@ -530,6 +649,7 @@ class FirstAidMedicineInspectionController extends Controller
                 'inspection_created_by' => $inspection_created_by,
                 'inspection_updated_by' => $inspection_updated_by,
                 'document_no' => $document_no,
+                'status_log'=>$status_log,
             );
 
 
@@ -541,90 +661,7 @@ class FirstAidMedicineInspectionController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Monthly OHC First-Aid Medicine Inspection Checklist.pdf";
-            return $mpdf->Output($filename, 'D');
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
-        }
-    }
-
-    public function approval(Request $request)
-    {
-        try {
-
-            $id = decryptId($request->id);
-            $inspection_details = $this->medicine_checklist->selectOne($id);
-            $inspection_type = OHC_OPD_MEDICINE_INSPECTION;
-            $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
-            $inspection_data = json_decode($inspection_details->inspection_data, true);
-            $data = array(
-                'inspection_details' => $inspection_details,
-                'inspection_file' => $inspection_file,
-                'inspection_data' => $inspection_data,
-
-            );
-
-            return view('inspection.inspection_ohc.first_aid_inspection.approval', $data);
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
-        }
-    }
-
-    public function approvalSubmit(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $status = $request->has('approved') ? 1 : 0;
-            $remarks = $request->capa_remarks;
-            $eye_wash_inspection = $this->medicine_checklist->approvalSubmit($id, $status, $remarks);
-            $inspection_details = $this->medicine_checklist->selectOne($id);
-            $signature_update = $this->signature->signatureUpload(OHC_OPD_MEDICINE_INSPECTION);
-            $ehsOfficer = [$inspection_details->created_by];
-
-            if ($status == 1) {
-                $message = 'First-Aid Medicine Inspection Checklist - APPROVED';
-                $to_status = OBSERVATION_APPROVED;
-            } else {
-                $message = 'First-Aid Medicine Inspection Checklist - REJECTED';
-                $to_status = OBSERVATION_REJECTED;
-            }
-            $web_link =   admin_url('ohc/first-aid/opd-medicine-inspection/view/' . encryptId($inspection_details->id));
-            $mailsubject = 'Monthly OHC First-Aid Medicine Inspection Checklist';
-            $notificationData = array(
-                'notification_type' => OHC_INSPECTION,
-                'module_type' => 19,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => $message,
-                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $inspection_details->id,
-                    'module' => 1,
-                )),
-                'web_link' =>  $web_link,
-                'assigned_user' => array_to_string($ehsOfficer),
-                'created_by' => Auth::id(),
-            );
-            notificationSave($notificationData);
-
-            $title = 'First-Aid Medicine Inspection Checklist - Inspection Status';
-            $email_id = getUseremail($ehsOfficer);
-            $url = admin_url('ohc/first-aid/opd-medicine-inspection/view/' . encryptId($inspection_details->id));
-            $details = array(
-                'ohc_type' => 'First-Aid Medicine Inspection Checklist',
-                'email' => $email_id,
-                'mail_subject' => $mailsubject,
-                'title' => $title,
-                'url' => $url,
-                'data' => $inspection_details
-            );
-            Mail::to($email_id)->queue(new FirstAidEmail($details));
-
-            Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('ohc/first-aid/opd-medicine-inspection/list'));
+            return $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error',  __('common.message_error'));

@@ -220,22 +220,13 @@
 
                 <th rowspan="2"
                     style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                    Signature Of Cleaner
-                </th>
-                <th rowspan="2"
-                    style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                    Signature of Nursing Officer
+                    Name Of Cleaner
                 </th>
                 <th rowspan="2"
                     style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
                     Remarks
                 </th>
-                @isset($nursing_signature)
-                    <th rowspan="2"
-                        style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                        Nursing Officer Remarks
-                    </th>
-                @endisset
+
             </tr>
             <tr>
                 <td style="border: 1px solid black; text-align: center; padding: 12px; background-color: #ccc;">
@@ -272,36 +263,139 @@
                     </td>
                 @endif
                 <td colspan="1"
-                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    {{-- <img src="{{ admin_url($cleaner_signature) }}" alt="Checked By Signature"
-                        style="height: 50px; margin-top:2px;"> --}}
+                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+
                     <p>{{ getUsername($inspection_details->created_by) }}</p>
 
                 </td>
 
-                <td colspan="1"
-                    style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    @if ($inspection_details->updated_by != null)
-                        {{-- <img src="{{ admin_url($nursing_signature) }}" alt="Verified By Signature"
-                            style="height: 50px;"> --}}
-                        <p>{{ getUsername($inspection_details->updated_by) }}</p>
-                    @else
-                        <p>Inspection has not been Verified Yet</p>
-                    @endif
-                </td>
 
                 <td style="border: 1px solid black; text-align: center; padding: 12px;">
                     {{ $inspection_details->cleaner_remarks }}
                 </td>
-                @if ($inspection_details->updated_by)
-                    <td style="border: 1px solid black; text-align: center; padding: 12px;">
-                        {{ isset($inspection_details->nursing_officer_remarks) ? $inspection_details->nursing_officer_remarks : '-' }}
-                    </td>
-                @endif
+
             </tr>
 
         </tbody>
     </table>
+
+    @if (isset($inspection_details->updated_by))
+        <div style="width:100%; margin-top:10px;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                        {{ __('ohc_management.nursing_officer_approval') }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <table width="100%" style="width:100%;">
+
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getUserName($inspection_details->updated_by) }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ Displaydateformat($inspection_details->updated_at) }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.remarks') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $inspection_details->nursing_officer_remarks }}
+                </td>
+            </tr>
+
+        </table>
+    @endif
+
+
+
+
+    <div>
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
+                        Status Logs
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="card-body ">
+            <div class="row">
+                <div class="card-header-inner">
+                    <h4 class="text-white">Status logs</h4>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <div class="col-md-12">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>From Status</th>
+                                <th>To Status</th>
+                                <th>Approved By / Rejected By</th>
+                                <th>Created By</th>
+
+                                <th>Remarks</th>
+                                <th>Date</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if ($status_log->isEmpty())
+                                <tr>
+                                    <td class="text-center" colspan="5">No data is available</td>
+                                </tr>
+                            @else
+                                @foreach ($status_log as $status)   
+                                    <tr>
+                                        <td style="text-align: center;">
+                                            {{ getOhcHygieneCleaningStatus($status['from_status'] ?? null) }}</td>
+                                        <td style="text-align: center;">
+                                            {{ getOhcHygieneCleaningStatus($status['to_status'] ?? null) }}</td>
+                                        <td style="text-align: center;">
+                                            {{ isset($status['approved_by']) ? getUsername($status['approved_by']) : '-' }}
+                                        </td>
+                                        <td style="text-align: center;">
+                                            {{ isset($status['created_by']) ? getUsername($status['created_by']) : '-' }}
+                                        </td>
+                                        <td style="text-align: center;">
+                                            {{ trim($status['remarks'] ?? '') !== '' ? $status['remarks'] : '-' }}
+                                        </td>
+
+                                        <td style="text-align: center;">
+                                            {{ null !== Displaydateformat($status['created_at']) ? Displaydateformat($status['created_at']) : '-' }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+
+                            @endif
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+
+        </div>
+        <br>
+        <div class="page-break"></div>
+    </div>
 
 
 

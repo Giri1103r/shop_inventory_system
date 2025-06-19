@@ -118,7 +118,12 @@ return [
 
     // weekly ambulance Inspection
     'check_points' => 'Check Points',
-    'capa' => 'Whether the Inspection has been passed Without the CAPA'
+    'capa' => 'Whether the Inspection has been passed Without the CAPA',
+
+
+    // hygiene cleaning
+
+    'nursing_officer_approval' => 'Nursing Officer Approval'
 
 
 

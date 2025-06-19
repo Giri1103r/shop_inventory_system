@@ -23,6 +23,7 @@ use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Safety\ForkLiftInspection;
 use App\Models\Inspection\Safety\ForkliftInspectionDetails;
+use App\Models\Inspection\Safety\SafetyStatusLog;
 
 class ForkLiftInspectionController extends Controller
 {
@@ -32,6 +33,7 @@ class ForkLiftInspectionController extends Controller
     private $department;
     private $signature;
     private $document_reference;
+    private $statusLog;
 
 
     public function __construct()
@@ -42,6 +44,7 @@ class ForkLiftInspectionController extends Controller
         $this->department = new Department();
         $this->signature = new SignatureUpload();
         $this->document_reference = new InspectionStaticDocno();
+        $this->statusLog = new SafetyStatusLog();
     }
 
     public function Index(Request $request)
@@ -218,6 +221,15 @@ class ForkLiftInspectionController extends Controller
                 }
             }
 
+            $insert_array = [
+                'type' => FORKLIFT_INSPECTION,
+                'inspection_id' => $forklift_observation->id,
+                'from_status' => 0,
+                'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                'created_by' => Auth::id(),
+            ];
+            $this->statusLog->create($insert_array);
+
 
             Session::flash('success', 'Forklift Inspection added successfully!');
             return redirect(admin_url('safety/forklift-inspection/list'));
@@ -231,14 +243,18 @@ class ForkLiftInspectionController extends Controller
     public function View(Request $request)
     {
         try {
+
             $id = decryptId($request->id);
             $inspection_details = $this->forklift->selectOne($id);
             $inspection = $this->observation_details->GetDetails($inspection_details->id);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+            $type = FORKLIFT_INSPECTION;
+            $status_log = $this->statusLog->selectOne($id, $type);
             $data = array(
                 'inspection' => $inspection,
                 'inspection_details' => $inspection_details,
                 'document_no' => $document_no,
+                'status_log' => $status_log
             );
 
             return view('inspection.Safety.forklift_inspection.view', $data);
@@ -268,6 +284,84 @@ class ForkLiftInspectionController extends Controller
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/forklift-inspection/list'));
+        }
+    }
+
+
+
+    public function approvalSubmit(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $status = $request->has('approved') ? 1 : 0;
+            $remarks = $request->capa_remarks;
+            $eye_wash_inspection = $this->forklift->approvalSubmit($id, $status, $remarks);
+            $inspection_details = $this->forklift->selectOne($id);
+            // $signature_update = $this->signature->signatureUpload(FORKLIFT_INSPECTION, $id);
+            $created_by = [$inspection_details->created_by];
+            if ($status == 1) {
+                $message = 'FORKLIFT INSPECTION - OBSERVATION APPROVED';
+                $to_status = OBSERVATION_APPROVED;
+            } else {
+                $message = 'FORKLIFT INSPECTION - OBSERVATION REJECTED';
+                $to_status = OBSERVATION_REJECTED;
+            }
+            $web_link =   admin_url('safety/forklift-inspection/view/' . encryptId($inspection_details->id));
+            $mailsubject = 'FORKLIFT INSPECTION';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 3,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $message,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($created_by),
+                'created_by' => Auth::id(),
+            );
+
+            notificationSave($notificationData);
+            $insert_array = [
+                'type' => FORKLIFT_INSPECTION,
+                'inspection_id' => $inspection_details->id,
+                'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                'to_status' => $to_status,
+                'remarks' => $remarks,
+                'approved_by' => Auth::id(),
+            ];
+            $this->statusLog->create($insert_array);
+
+            Session::flash('success', __('common.updated_msg'));
+            return redirect(admin_url('safety/forklift-inspection/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'Something Went wrong!');
+            return redirect(admin_url('safety/forklift-inspection/list'));
+        }
+    }
+
+    public function GetDepartment(Request $request)
+    {
+        try {
+            $department = $this->department->getAlldepartment();
+            return response()->json($department);
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['error' => 'Please try again after sometimes'], 406);
+        }
+    }
+    public function GetUnit(Request $request)
+    {
+        try {
+            $unit = $this->unit->getAllUnit();
+            return response()->json($unit);
+        } catch (Exception $ex) {
+            report($ex);
+            return response()->json(['error' => 'Please try again after sometimes'], 406);
         }
     }
 
@@ -555,71 +649,6 @@ class ForkLiftInspectionController extends Controller
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/forklift-inspection/list'));
-        }
-    }
-
-    public function approvalSubmit(Request $request)
-    {
-        try {
-            $id = decryptId($request->id);
-            $status = $request->has('approved') ? 1 : 0;
-            $remarks = $request->capa_remarks;
-            $eye_wash_inspection = $this->forklift->approvalSubmit($id, $status, $remarks);
-            $inspection_details = $this->forklift->selectOne($id);
-            // $signature_update = $this->signature->signatureUpload(FORKLIFT_INSPECTION, $id);
-            $created_by = [$inspection_details->created_by];
-            if ($status == 1) {
-                $message = 'FORKLIFT INSPECTION - OBSERVATION APPROVED';
-                $to_status = OBSERVATION_APPROVED;
-            } else {
-                $message = 'FORKLIFT INSPECTION - OBSERVATION REJECTED';
-                $to_status = OBSERVATION_REJECTED;
-            }
-            $web_link =   admin_url('safety/forklift-inspection/view/' . encryptId($inspection_details->id));
-            $mailsubject = 'FORKLIFT INSPECTION';
-            $notificationData = array(
-                'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 3,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => $message,
-                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $inspection_details->id,
-                    'module' => 1,
-                )),
-                'web_link' =>  $web_link,
-                'assigned_user' => array_to_string($created_by),
-                'created_by' => Auth::id(),
-            );
-            notificationSave($notificationData);
-            Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('safety/forklift-inspection/list'));
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something Went wrong!');
-            return redirect(admin_url('safety/forklift-inspection/list'));
-        }
-    }
-
-    public function GetDepartment(Request $request)
-    {
-        try {
-            $department = $this->department->getAlldepartment();
-            return response()->json($department);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['error' => 'Please try again after sometimes'], 406);
-        }
-    }
-    public function GetUnit(Request $request)
-    {
-        try {
-            $unit = $this->unit->getAllUnit();
-            return response()->json($unit);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['error' => 'Please try again after sometimes'], 406);
         }
     }
     public function generalExcel(Request $request)

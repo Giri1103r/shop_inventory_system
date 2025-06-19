@@ -371,7 +371,7 @@
                                 required: true,
                             },
                             "remarks[1]": {
-                        
+
                                 minlength: 3,
                                 maxlength: 600,
                             },
@@ -586,8 +586,8 @@
                                                         <select name="observation_status[${form_set_count}]" id="observation_status[${form_set_count}]"
                                                             class=" form-control single-select observation_status" style="width: 100%">
                                                             <option value="">Select Observation Status</option>
-                                                            <option value="{{ encryptId(1) }}">OPEN</option>
-                                                            <option value="{{ encryptId(0) }}">CLOSED</option>
+                                                            <option value="{{ encryptId(1) }}">Open</option>
+                                                            <option value="{{ encryptId(0) }}">Closed</option>
                                                         </select>
                                                     </div>
                                                 </div>

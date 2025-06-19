@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Inspection\Ohc;
 use Exception;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Mail\Inspection\Ohc\FirstAidEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
@@ -15,6 +14,7 @@ use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Mail\Inspection\Ohc\FirstAidEmail;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use App\Models\Inspection\Ohc\OhcSignature;
 use App\Models\OhcManagement\Master\Medicine;
@@ -23,6 +23,7 @@ use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\Ohc\MonthlyMedicineStore;
+use App\Models\Inspection\Ohc\InspectionOhcStatuslog;
 use App\Mail\Inspection\Ohc\FloorStretcher as OhcFloorStretcher;
 
 class MonthlyMedicineStoreController extends Controller
@@ -30,6 +31,8 @@ class MonthlyMedicineStoreController extends Controller
     private $medicine_checklist;
     private $medicine;
     private $signature;
+    private $inspection_ohc_status_log;
+
 
 
     public function __construct()
@@ -37,6 +40,7 @@ class MonthlyMedicineStoreController extends Controller
         $this->medicine_checklist = new MonthlyMedicineStore();
         $this->medicine = new Medicine();
         $this->signature = new OhcSignature();
+        $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
     }
 
     public function Index(Request $request)
@@ -202,6 +206,19 @@ class MonthlyMedicineStoreController extends Controller
                 }
             }
 
+            $data = [
+                'type' => OHC_TYPE_MONTHLY_MEDICINE_STORE,
+                'from_status' => 0,
+                'to_status' => OBSERVATION_PENDING,
+                'reference_id' => $inspection_details->id,
+                'remarks' => "",
+                'approved_by' => null,
+                'created_by' => Auth::id(),
+
+            ];
+
+            $this->inspection_ohc_status_log->store($data);
+
             Session::flash('success', __('common.created_msg'));
             return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
         } catch (Exception $ex) {
@@ -218,111 +235,21 @@ class MonthlyMedicineStoreController extends Controller
 
             $id = decryptId($request->id);
             $inspection_details = $this->medicine_checklist->selectOne($id);
-            $inspection_type = OHC_TYPE_MONTHLY_MEDICINE_STORE;
+            $type = OHC_TYPE_MONTHLY_MEDICINE_STORE;
             $inspection_data = json_decode($inspection_details->inspection_data, true);
             // $inspection_file = GetOHCSignature($inspection_details->created_by, $inspection_details->id, $inspection_type);
             // $verified_by = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, $inspection_type);
+            $status_log = $this->inspection_ohc_status_log->getStatuslog($id,$type);
 
             $data = array(
                 'inspection_details' => $inspection_details,
                 // 'inspection_file' => $inspection_file,
                 'inspection_data' => $inspection_data,
-                // 'verified_by' => $verified_by,
+                'status_log' => $status_log,
             );
 
 
             return view('inspection.inspection_ohc.monthly_medicine_store.view', $data);
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
-        }
-    }
-
-    public function ExportPDF()
-    {
-        try {
-            $allData = $this->medicine_checklist->exportdata();
-
-            if ($allData->isEmpty()) {
-                return redirect()->back()->with('error', 'No data found');
-            } elseif (count($allData) > 20) {
-                return redirect()->back()->with('error',   __('inspection.excess_error'));
-            }
-
-
-
-            $data = array(
-                'content' => $allData,
-                'pagetitle' => "Monthly Medicine Store Inspection",
-            );
-
-            $property = [
-                'tempDir' => 'public/pdf/temp/',
-                'mode' => 'c',
-                'margin_left' => 10,
-                'margin_right' => 10,
-                'margin_top' => 10,
-
-            ];
-
-            $mpdf = new \Mpdf\Mpdf($property);
-            $mpdf->setAutoTopMargin = 'stretch';
-
-            $view = view('inspection.inspection_ohc.monthly_medicine_store.pdf', $data);
-            $html = $view->render();
-
-            $mpdf->WriteHTML($html);
-
-            $filename = "Monthly Medicine Store Inspection.pdf";
-            $mpdf->Output($filename, 'D');
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error',  __('common.message_error'));
-            return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
-        }
-    }
-
-    public function ExportViewPDF(Request $request)
-    {
-        try {
-
-            $id = decryptId($request->id);
-            $inspection_detail = $this->medicine_checklist->selectOne($id);
-            $inspection_type = OHC_TYPE_MONTHLY_MEDICINE_STORE;
-            $inspection_file = $this->signature->getFiles($id, $inspection_type);
-            $inspection_data = json_decode($inspection_detail->inspection_data, true);
-            // $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
-            // $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
-
-            $property = [
-                'tempDir' => 'public/pdf/temp/',
-                'mode' => 'c',
-                'margin_left' => 10,
-                'margin_right' => 10,
-                'margin_top' => 10,
-
-            ];
-
-            $data = array(
-                'inspection_detail' => $inspection_detail,
-                'inspection_file' => $inspection_file,
-                'pagetitle' => "Monthly Medicine Store Inspection",
-                'inspection_data' => $inspection_data,
-                // 'inspection_created_by' => $inspection_created_by,
-                // 'inspection_updated_by' => $inspection_updated_by,
-            );
-
-
-            $mpdf = new \Mpdf\Mpdf($property);
-            $mpdf->setAutoTopMargin = 'stretch';
-
-            $html = view('inspection.inspection_ohc.monthly_medicine_store.viewpdf', $data);
-            $view = $html->render();
-            $mpdf->WriteHTML($view);
-
-            $filename = "Monthly Medicine Store Inspection.pdf";
-            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error',  __('common.message_error'));
@@ -403,6 +330,18 @@ class MonthlyMedicineStoreController extends Controller
                 'data' => $inspection_details
             );
             Mail::to($email_id)->queue(new FirstAidEmail($details));
+
+            $data = [
+                'type' => OHC_TYPE_MONTHLY_MEDICINE_STORE,
+                'from_status' => OBSERVATION_PENDING,
+                'to_status' => $to_status,
+                'reference_id' => $inspection_details->id,
+                'remarks' => $remarks,
+                'created_by' => null,
+                'approved_by'=> Auth::id(),
+            ];
+
+            $this->inspection_ohc_status_log->store($data);
 
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
@@ -792,6 +731,98 @@ class MonthlyMedicineStoreController extends Controller
         } catch (\Exception $e) {
             report($e);
             return back()->with('error', $e->getMessage());
+        }
+    }
+
+    public function ExportPDF()
+    {
+        try {
+            $allData = $this->medicine_checklist->exportdata();
+
+            if ($allData->isEmpty()) {
+                return redirect()->back()->with('error', 'No data found');
+            } elseif (count($allData) > 20) {
+                return redirect()->back()->with('error',   __('inspection.excess_error'));
+            }
+
+
+
+            $data = array(
+                'content' => $allData,
+                'pagetitle' => "Monthly Medicine Store Inspection",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('inspection.inspection_ohc.monthly_medicine_store.pdf', $data);
+            $html = $view->render();
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Monthly Medicine Store Inspection.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
+        }
+    }
+
+    public function ExportViewPDF(Request $request)
+    {
+        try {
+
+            $id = decryptId($request->id);
+            $inspection_detail = $this->medicine_checklist->selectOne($id);
+            $inspection_type = OHC_TYPE_MONTHLY_MEDICINE_STORE;
+            $inspection_file = $this->signature->getFiles($id, $inspection_type);
+            $inspection_data = json_decode($inspection_detail->inspection_data, true);
+            // $inspection_updated_by = GetOHCSignature($inspection_detail->updated_by, $inspection_detail->id, $inspection_type);
+            // $inspection_created_by = GetOHCSignature($inspection_detail->created_by, $inspection_detail->id, $inspection_type);
+            $status_log = $this->inspection_ohc_status_log->getStatuslog($id,$inspection_type);
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $data = array(
+                'inspection_detail' => $inspection_detail,
+                'inspection_file' => $inspection_file,
+                'pagetitle' => "Monthly Medicine Store Inspection",
+                'inspection_data' => $inspection_data,
+                'status_log' => $status_log,
+                // 'inspection_updated_by' => $inspection_updated_by,
+            );
+
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $html = view('inspection.inspection_ohc.monthly_medicine_store.viewpdf', $data);
+            $view = $html->render();
+            $mpdf->WriteHTML($view);
+
+            $filename = "Monthly Medicine Store Inspection.pdf";
+            return $mpdf->Output($filename, 'i');
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/monthly-medicine-store/inspection/list'));
         }
     }
 }

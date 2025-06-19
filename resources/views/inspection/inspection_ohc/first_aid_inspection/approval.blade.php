@@ -46,7 +46,7 @@
                                         </div>
                                     </div>
 
-                                    <table class="table table-bordered table-striped">
+                                    <table class="table table-bordered table-striped mt-4">
                                         <thead class="table-secondary">
                                             <tr>
                                                 <th class="text-center">Sr. No.</th>
@@ -79,7 +79,7 @@
                                     </div> --}}
                                 </div>
 
-                                <div class="row ">
+                                <div class="row mt-4 ">
                                     <div class="card-header-inner">
                                         <h4 class="text-white">EHS Officer Approval</h4>
                                     </div>

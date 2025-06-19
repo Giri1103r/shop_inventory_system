@@ -302,7 +302,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{ __('inspection.approval') }}
+                        {{__('inspection.ehs_head_approval')}}
                     </td>
                 </tr>
             </table>

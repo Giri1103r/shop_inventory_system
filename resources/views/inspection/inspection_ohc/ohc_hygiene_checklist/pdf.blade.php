@@ -189,24 +189,15 @@
                         Cleaning and Sanitization
                     </th>
 
-                    {{-- <th rowspan="2"
-                        style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                        Signature Of Cleaner
-                    </th>
                     <th rowspan="2"
                         style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                        Signature of Nursing Officer
-                    </th> --}}
+                        Name Of Cleaner
+                    </th>
                     <th rowspan="2"
                         style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
                         Remarks
                     </th>
-                    @if ($details->verified_by != null)
-                        <th rowspan="2"
-                            style="border: 1px solid black; padding: 12px; background-color: #ccc; text-align: center;">
-                            Nursing Officer Remarks
-                        </th>
-                    @endif
+
                 </tr>
                 <tr>
                     <td style="border: 1px solid black; text-align: center; padding: 12px; background-color: #ccc;">
@@ -242,34 +233,62 @@
                             <span style="color: red;">X</span>
                         </td>
                     @endif
-
                     <td colspan="1"
-                        style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                        <p>{{ getUsername($details->created_by) }}</p>
+                        style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+
+                        <p>{{ getUsername($details->checked_by) }}</p>
 
                     </td>
 
-                    <td colspan="1"
-                        style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                        @if ($details->verified_by != null)
-                            <p>{{ getUsername($details->updated_by) }}</p>
-                        @else
-                            <p>Inspection has not been Verified Yet</p>
-                        @endif
-                    </td>
 
                     <td style="border: 1px solid black; text-align: center; padding: 12px;">
                         {{ $details->cleaner_remarks }}
                     </td>
-                    @if ($details->verified_by)
-                        <td style="border: 1px solid black; text-align: center; padding: 12px;">
-                            {{ isset($details->nursing_officer_remarks) ? $details->nursing_officer_remarks : '-' }}
-                        </td>
-                    @endif
+
                 </tr>
 
             </tbody>
         </table>
+
+
+        @if (isset($details->verified_by))
+            <div style="width:100%; margin-top:10px;">
+                <table style="width:100%;">
+                    <tr>
+                        <td
+                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                            {{ __('ohc_management.nursing_officer_approval') }}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <table width="100%" style="width:100%;">
+
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ getUserName($details->verified_by) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ Displaydateformat($details->updated_at) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.remarks') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $details->nursing_officer_remarks }}
+                    </td>
+                </tr>
+
+            </table>
+        @endif
         <div class="page-break"></div>
     @endforeach
     <br>

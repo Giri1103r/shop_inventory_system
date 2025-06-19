@@ -186,7 +186,7 @@
                                         @endforeach
                                         @if (isset($inspection_details->approval_remarks))
                                             <div class="card-header-inner p-2">
-                                                <h4 class="text-white">Approval</h4>
+                                                <h4 class="text-white">{{__('inspection.ehs_head_approval')}}</h4>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-4 mb-2">
@@ -231,6 +231,55 @@
                                                 </div>
                                             </div>
                                         @endif
+
+
+                                        <div class="row mt-4">
+                                            <div class="card-header-inner">
+                                                <h4 class="text-white">{{ __('inspection.status_log') }}</h4>
+
+                                            </div>
+                                            <div class="card">
+                                                @if (isset($status_log) && $status_log->isNotEmpty())
+                                                    <div class="card-body">
+                                                        <table class="table table-bordered">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>S.NO</th>
+                                                                    <th>From Status</th>
+                                                                    <th>To Status</th>
+                                                                    <th>Remarks</th>
+                                                                    <th>Approved By</th>
+                                                                    <th>Created By</th>
+                                                                    <th>Created At</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                @foreach ($status_log as $log)
+                                                                    <tr>
+                                                                        <td>{{ $loop->iteration }}</td>
+                                                                        <td>{{ getForkLiftInspectionStatus($log->from_status) }}
+                                                                        </td>
+                                                                        <td>{{ getForkLiftInspectionStatus($log->to_status) }}
+                                                                        </td>
+                                                                        <td>{{ $log->remarks ?? 'N/A' }}</td>
+                                                                        <td>{{ getUserName($log->approved_by) ? getUserName($log->approved_by) : '-' }}
+                                                                        </td>
+                                                                        <td>{{ getUserName($log->created_by) ? getUserName($log->created_by) : '-' }}
+                                                                        </td>
+                                                                        <td>{{ displaydateformat($log->created_at) }}</td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                @else
+                                                    <div class="card-body">
+                                                        <p class="text-white">No status logs available.</p>
+                                                    </div>
+                                                @endif
+                                            </div>
+
+                                        </div>
                                     </div>
                                 </div>
                             </div>

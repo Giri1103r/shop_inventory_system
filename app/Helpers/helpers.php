@@ -2437,6 +2437,64 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getForkLiftInspectionStatus')) {
+        function getForkLiftInspectionStatus($id)
+        {
+            if ($id == 1) {
+                return "Waiting For EHS Head Verification";
+            } else if ($id == 2) {
+                return "Observation Rejected";
+            } else if ($id == 3) {
+                return "Observation Approved";
+            } else {
+                return "Inspection Creation";
+            }
+        }
+    }
+
+    if (!function_exists('getOhcHygieneCleaningStatus')) {
+        function getOhcHygieneCleaningStatus($id)
+        {
+            if ($id == 1) {
+                return "Waiting For Nursing Officer Approval";
+            } else if ($id == 2) {
+                return "Inspection Approved";
+            } else if ($id == 3) {
+                return "Inspection Rejected";
+            } else {
+                return "Inspection Creation";
+            }
+        }
+    }
+
+    if(!function_exists('getFirstAidOpdStatus')){
+        function getFirstAidOpdStatus($id){
+            if($id == 1){
+                return "Waiting For EHS Officer Verification";
+            }else if($id == 2){
+                return "Observation Rejected";
+            }else if($id == 3){
+                return "Observation Approved";
+            }else{
+                return "Inspection Creation";
+            }
+        }
+    }
+
+    if(!function_exists('getMonthlyMedicineStatus')){
+        function getMonthlyMedicineStatus($id){
+            if($id == 1){
+                return "Waiting For EHS Officer Verification";
+            }else if($id == 2){
+                return "Observation Rejected";
+            }else if($id == 3){
+                return "Observation Approved";
+            }else{
+                return "Inspection Creation";
+            }
+        }
+    }
+
     if (!function_exists('getInspectionStatus')) {
         function getInspectionStatus($id)
         {

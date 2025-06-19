@@ -301,33 +301,33 @@
                         "equipment_name[1]": {
                             required: true,
                             uniqueEquipmentName: true,
-                            remote: {
-                                url: '{{ admin_url('safety/fire-safety-equipment/Equipmentunique') }}',
-                                type: "post",
-                                data: {
-                                    equipment_name: function() {
-                                        return $('#equipment_name').val();
-                                    },
-                                }
-                            }
+                            // remote: {
+                            //     url: '{{ admin_url('safety/fire-safety-equipment/Equipmentunique') }}',
+                            //     type: "post",
+                            //     data: {
+                            //         equipment_name: function() {
+                            //             return $('#equipment_name').val();
+                            //         },
+                            //     }
+                            // }
                         },
                         "item_code[1]": {
                             required: true,
                             uniqueItemCode: true,
                             minlength: 3,
                             maxlength: 30,
-                            remote: {
-                                url: '{{ admin_url('safety/fire-safety-equipment/unique') }}',
-                                type: "post",
-                                data: {
-                                    equipment_name: function() {
-                                        return $('#equipment_name').val();
-                                    },
-                                    item_code: function() {
-                                        return $('#item_code').val();
-                                    }
-                                }
-                            }
+                            // remote: {
+                            //     url: '{{ admin_url('safety/fire-safety-equipment/unique') }}',
+                            //     type: "post",
+                            //     data: {
+                            //         equipment_name: function() {
+                            //             return $('#equipment_name').val();
+                            //         },
+                            //         item_code: function() {
+                            //             return $('#item_code').val();
+                            //         }
+                            //     }
+                            // }
                         },
                         "standard_norms[1]": {
                             required: true,
@@ -372,11 +372,11 @@
                         },
                         "equipment_name[1]": {
                             required: "Please Enter the Equipment Name",
-                            remote: "This Equipment Name is already Exists"
+                            // remote: "This Equipment Name is already Exists"
                         },
                         "item_code[1]": {
                             required: "Please Enter the Item Code",
-                            uniqueItemCode: 'Item Code Must be Unique',
+                            // uniqueItemCode: 'Item Code Must be Unique',
                             minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 30",
                         },
@@ -514,7 +514,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.equipment_category') }}</label>
-                                                        <input type="text" name="equipment_category[${form_set_count}]" id = "equipment_category"
+                                                        <input type="text" name="equipment_category[${form_set_count}]" id = "equipment_category[${form_set_count}]"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -522,7 +522,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.unit_of_measurement') }}</label>
-                                                        <input type="text" name="unit_of_measurement[${form_set_count}]" id = "unit_of_measurement"
+                                                        <input type="text" name="unit_of_measurement[${form_set_count}]" id = "unit_of_measurement[${form_set_count}]"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -530,7 +530,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.minimum_order_value') }}</label>
-                                                        <input type="number" min="1" name="minimum_order_value[${form_set_count}]" id = "minimum_order_value"
+                                                        <input type="number" min="1" name="minimum_order_value[${form_set_count}]" id = "minimum_order_value[${form_set_count}]"
                                                             class="form-control">
                                                     </div>
                                                 </div>
@@ -539,7 +539,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.economic_order_quantity') }}</label>
                                                         <input type="number" min="1" name="economic_order_quantity[${form_set_count}]"
-                                                            id = "economic_order_quantity" class="form-control">
+                                                            id = "economic_order_quantity[${form_set_count}]" class="form-control">
                                                     </div>
                                                 </div>
 
@@ -559,7 +559,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
-                                                        <textarea name="remarks[${form_set_count}]" id="remarks" class="form-control" style="resize: none;"></textarea>
+                                                        <textarea name="remarks[${form_set_count}]" id="remarks[${form_set_count}]" class="form-control" style="resize: none;"></textarea>
 
                                                     </div>
                                                 </div>
@@ -576,18 +576,18 @@
                     $("select[name='equipment_name[" + form_set_count + "]']").rules('add', {
                         required: true,
                         uniqueEquipmentName: true,
-                        remote: {
-                            url: '{{ admin_url('safety/fire-safety-equipment/Equipmentunique') }}',
-                            type: "post",
-                            data: {
-                                equipment_name: function() {
-                                    return $('#equipment_name_' + form_set_count).val();
-                                },
-                            }
-                        },
+                        // remote: {
+                        //     url: '{{ admin_url('safety/fire-safety-equipment/Equipmentunique') }}',
+                        //     type: "post",
+                        //     data: {
+                        //         equipment_name: function() {
+                        //             return $('#equipment_name_' + form_set_count).val();
+                        //         },
+                        //     }
+                        // },
                         messages: {
                             required: 'Please select the Equipment',
-                            remote: 'Equipment already exists',
+                            // remote: 'Equipment already exists',
                         }
                     });
 
@@ -596,22 +596,22 @@
                         uniqueItemCode: true,
                         minlength: 3,
                         maxlength: 30,
-                        remote: {
-                            url: '{{ admin_url('safety/fire-safety-equipment/unique') }}',
-                            type: "post",
-                            data: {
-                                equipment_name: function() {
-                                    return $('#equipment_name_' + form_set_count).val();
-                                },
-                                item_code: function() {
-                                    return $('#item_code_' + form_set_count).val();
-                                }
-                            }
-                        },
+                        // remote: {
+                        //     url: '{{ admin_url('safety/fire-safety-equipment/unique') }}',
+                        //     type: "post",
+                        //     data: {
+                        //         equipment_name: function() {
+                        //             return $('#equipment_name_' + form_set_count).val();
+                        //         },
+                        //         item_code: function() {
+                        //             return $('#item_code_' + form_set_count).val();
+                        //         }
+                        //     }
+                        // },
                         messages: {
                             required: 'Please add the Item code',
                             uniqueItemCode: 'Equipment name and Item Code Already Exists',
-                            remote: 'Equipment name and Item Code Already Exists',
+                            // remote: 'Equipment name and Item Code Already Exists',
                             minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 30",
                         }

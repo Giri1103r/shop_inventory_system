@@ -145,7 +145,7 @@ class FireSafetyEquipmentController extends Controller
                 'economic_order_quantity.*' => 'required',
                 'observation_status.*' => 'required',
                 'remarks.*' => 'required',
-               
+
             ];
 
             $messages = [

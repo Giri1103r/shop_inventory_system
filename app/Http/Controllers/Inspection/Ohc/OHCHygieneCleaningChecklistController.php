@@ -3,10 +3,11 @@
 namespace App\Http\Controllers\Inspection\Ohc;
 
 use Exception;
+use Mpdf\Tag\Dd;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Mail\Inspection\Safety\SafetyInspection;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Session;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
@@ -20,10 +21,10 @@ use App\Models\Inspection\Ohc\OhcSignature;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\InspectionStaticDocno;
+use App\Models\Inspection\Ohc\InspectionOhcStatuslog;
 use App\Models\Inspection\Ohc\OHCHygieneCleaningChecklist;
-use Illuminate\Support\Facades\Mail;
-use Mpdf\Tag\Dd;
 
 class OHCHygieneCleaningChecklistController extends Controller
 {
@@ -31,6 +32,8 @@ class OHCHygieneCleaningChecklistController extends Controller
     private $shift;
     private $signature;
     private $document_reference;
+    private $inspection_ohc_status_log;
+
 
 
     public function __construct()
@@ -39,6 +42,7 @@ class OHCHygieneCleaningChecklistController extends Controller
         $this->shift = new Shift();
         $this->signature = new OhcSignature();
         $this->document_reference = new InspectionStaticDocno();
+        $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
     }
 
     public function Index(Request $request)
@@ -209,6 +213,20 @@ class OHCHygieneCleaningChecklistController extends Controller
                     Mail::to($email_id)->queue(new SafetyInspection($details));
                 }
             }
+
+            $data = [
+                'type' => DAILY_OHC_HYGIENE_CLEANING_CHECKLIST,
+                'from_status' => 0,
+                'to_status' => CLEANER_SUBMITTED_THE_CHECKLIST,
+                'reference_id' => $inspection_details->id,
+                'remarks' => "",
+                'approved_by' => null,
+                'created_by' => Auth::id(),
+
+            ];
+
+            $this->inspection_ohc_status_log->store($data);
+
             Session::flash('success', __('common.created_msg'));
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
         } catch (Exception $ex) {
@@ -226,14 +244,18 @@ class OHCHygieneCleaningChecklistController extends Controller
             // $cleaner_signature = GetOHCSignature($inspection_details->created_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
             $nursing_signature = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+            $type = DAILY_OHC_HYGIENE_CLEANING_CHECKLIST;
+            $status_log = $this->inspection_ohc_status_log->getStatuslog($id, $type);
 
             $data = [
                 'inspection_details' => $inspection_details,
                 // 'cleaner_signature' => $cleaner_signature,
                 'nursing_signature' => $nursing_signature,
                 'document_no' => $document_no,
+                'status_log' => $status_log,
 
             ];
+
             return view('inspection.inspection_ohc.ohc_hygiene_checklist.view', $data);
         } catch (Exception $ex) {
             report($ex);
@@ -241,6 +263,7 @@ class OHCHygieneCleaningChecklistController extends Controller
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
         }
     }
+
     public function approval(Request $request)
     {
         try {
@@ -270,7 +293,6 @@ class OHCHygieneCleaningChecklistController extends Controller
         try {
 
             $id = decryptId($request->id);
-            // dd($id);
             $status = $request->has('approved') ? 1 : 0;
             $remarks = $request->capa_remarks;
             // $signature_update = $this->signature->signatureUpload(DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
@@ -317,6 +339,21 @@ class OHCHygieneCleaningChecklistController extends Controller
                 'data' => $inspection_details
             );
             Mail::to($email_id)->queue(new SafetyInspection($details));
+
+            $data = [
+                'type' => DAILY_OHC_HYGIENE_CLEANING_CHECKLIST,
+                'from_status' => CLEANER_SUBMITTED_THE_CHECKLIST,
+                'to_status' => $to_status,
+                'reference_id' => $inspection_details->id,
+                'remarks' => $remarks,
+                'approved_by' => Auth::id(),
+                'created_by' => null,
+
+            ];
+
+            $this->inspection_ohc_status_log->store($data);
+
+
             Session::flash('success', __('common.updated_msg'));
             return redirect(admin_url('ohc/ohc-hygiene-cleaning-checklist/list'));
         } catch (Exception $ex) {
@@ -389,8 +426,8 @@ class OHCHygieneCleaningChecklistController extends Controller
             $sheet->mergeCells("K4:L4")->setCellValue("K4", "CLEANING AND SANITIZATION");
             $sheet->setCellValue("K5", "YES");
             $sheet->setCellValue("L5", "NO");
-            $sheet->mergeCells("M4:N5")->setCellValue("M4", "SIGNATURE OF CLEANER");
-            $sheet->mergeCells("O4:P5")->setCellValue("O4", "SIGNATURE OF NURSING OFFICER");
+            $sheet->mergeCells("M4:N5")->setCellValue("M4", "NAME OF CLEANER");
+            $sheet->mergeCells("O4:P5")->setCellValue("O4", "NAME OF NURSING OFFICER");
             $sheet->mergeCells("Q4:R5")->setCellValue("Q4", "REMARKS");
             $sheet->mergeCells("S4:T5")->setCellValue("S4", "NURSING OFFICER REMARKS");
 
@@ -514,8 +551,8 @@ class OHCHygieneCleaningChecklistController extends Controller
             $sheet->mergeCells("K4:L4")->setCellValue("K4", "CLEANING AND SANITIZATION");
             $sheet->setCellValue("K5", "YES");
             $sheet->setCellValue("L5", "NO");
-            $sheet->mergeCells("M4:N5")->setCellValue("M4", "SIGNATURE OF CLEANER");
-            $sheet->mergeCells("O4:P5")->setCellValue("O4", "SIGNATURE OF NURSING OFFICER");
+            $sheet->mergeCells("M4:N5")->setCellValue("M4", "NAME OF CLEANER");
+            $sheet->mergeCells("O4:P5")->setCellValue("O4", "NAME OF NURSING OFFICER");
             $sheet->mergeCells("Q4:R5")->setCellValue("Q4", "REMARKS");
             $sheet->mergeCells("S4:T5")->setCellValue("S4", "NURSING OFFICER REMARKS");
 
@@ -595,9 +632,6 @@ class OHCHygieneCleaningChecklistController extends Controller
         }
     }
 
-
-
-
     public function ExportPdf(Request $request)
     {
 
@@ -635,8 +669,6 @@ class OHCHygieneCleaningChecklistController extends Controller
             $view = view('inspection.inspection_ohc.ohc_hygiene_checklist.pdf', $data);
             $html = $view->render();
 
-
-
             $mpdf->WriteHTML($html);
 
             $filename = "OHC HYGIENE CLEANING CHECKLIST.pdf";
@@ -658,12 +690,16 @@ class OHCHygieneCleaningChecklistController extends Controller
                 $nursing_signature = GetOHCSignature($inspection_details->updated_by, $inspection_details->id, DAILY_OHC_HYGIENE_CLEANING_CHECKLIST);
                 $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
+                $type = DAILY_OHC_HYGIENE_CLEANING_CHECKLIST;
+                $status_log = $this->inspection_ohc_status_log->getStatuslog($id, $type);
+
                 $data = [
                     'cleaner_signature' => $cleaner_signature,
                     'nursing_signature' => $nursing_signature,
                     'inspection_details' => $inspection_details,
                     'pagetitle' => "OHC Hygiene Inspection Checklist",
                     'document_no' => $document_no,
+                    'status_log'=>$status_log
                 ];
             }
             $property = [
@@ -684,7 +720,6 @@ class OHCHygieneCleaningChecklistController extends Controller
             $filename = "OHC Hygiene Inspection Checklist.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            report($ex);
             report($ex);
             return redirect()->back()->withErrors(['error' => 'An error occurred while generating the PDF.']);
         }

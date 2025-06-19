@@ -34,7 +34,7 @@ class InspectionOhcStatuslog extends Model
             'to_status' =>$data['to_status'],
             'type' =>$data['type'],
             'remarks' =>$data['remarks'],
-            'created_by' => $data['created_by'],
+            'created_by' => $data['created_by'] ?? null,
             'approved_by' => $data['approved_by'] ?? null ,
 
         ];
@@ -45,7 +45,7 @@ class InspectionOhcStatuslog extends Model
         return $this->where('reference_id',$id)->where('type',$type)->where('from_status',$floortype)->first();
     }
     public function safetyofficer($id ,$safetytype,$type){
-    
+
         return $this->where('reference_id',$id)->where('type',$type)->where('from_status',$safetytype)->first();
     }
     public function  getStatuslog($id, $type){
