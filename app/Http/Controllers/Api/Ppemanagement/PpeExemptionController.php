@@ -84,7 +84,10 @@ class PpeExemptionController extends BaseController
                 });
             }
 
-            $ppe_exemption_array = $ppe_exemption_array->orderBy('ppe_ppeexemption.id', 'DESC')->paginate($request->input('per_page', 10));
+            $ppes = $ppe_exemption_array->orderBy('ppe_ppeexemption.id', 'DESC')->paginate($request->input('per_page', 10));
+            if ($ppes->isEmpty()) {
+                return $this->sendError('No records found.', [], 404);
+            }
 
             $ppe_request_list = $ppe_exemption_array->toArray();
 
@@ -120,12 +123,12 @@ class PpeExemptionController extends BaseController
             }
 
             $ppe_exemption_details = [
-                'per_page' => $ppe_request_list['per_page'],
-                'current_page' => $ppe_request_list['current_page'],
-                'from' => $ppe_request_list['from'],
-                'to' => $ppe_request_list['to'],
-                'total' => $ppe_request_list['total'],
-                'total_page' => $ppe_request_list['last_page'],
+                'per_page' => $ppes->perPage(),
+                'current_page' => $ppes->currentPage(),
+                'from' => $ppes->firstItem(),
+                'to' => $ppes->lastItem(),
+                'total' => $ppes->total(),
+                'total_page' => $ppes->lastPage(),
                 'list' => $data_array,
             ];
 
