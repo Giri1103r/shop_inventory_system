@@ -70,7 +70,7 @@ class PperequestController extends BaseController
                 )
                 ->join('company_management', 'ppe_pperequest.company_id', '=', 'company_management.id')
                 ->join('masters_location', 'ppe_pperequest.location_id', '=', 'masters_location.id')
-                ->join('masters_unit', 'ppe_pperequest.unit_id', '=', 'masters_unit.id');
+                ->join('masters_unit', 'ppe_pperequest.unit_id', '=', 'masters_unit.id')
                 ->join('masters_department', 'ppe_pperequest.department', '=', 'masters_department.id');
 
             if (in_array(ROLE_EHS_HEAD, $userRole)) {
