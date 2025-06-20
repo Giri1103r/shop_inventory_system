@@ -57,14 +57,21 @@ class PperequestController extends BaseController
                 }
             }
             $perPage = $request->input('per_page', 10);
-            $ppe_request_array = $this->pperequest->select('ppe_pperequest.*', 'ppe_pperequest.created_at as ppe_created_at', 'masters_department.department_name',  'inventory2.*', 'ppe_pperequest.id As ppe_request_id', 'company_management.company_name', 'masters_unit.unit_name', 'masters_location.location_name')
+            $ppe_request_array = $this->pperequest
+                ->select(
+                    'ppe_pperequest.*',
+                      'masters_department.department_name',
+                     'masters_unit.unit_name',
+                    'company_management.company_name',
+                    'masters_location.location_name',
+
+
+
+                )
                 ->join('company_management', 'ppe_pperequest.company_id', '=', 'company_management.id')
                 ->join('masters_location', 'ppe_pperequest.location_id', '=', 'masters_location.id')
                 ->join('masters_unit', 'ppe_pperequest.unit_id', '=', 'masters_unit.id')
-                ->join('masters_department', 'ppe_pperequest.department', '=', 'masters_department.id')
-                ->join('ppe_stock_inventory as inventory2', 'ppe_pperequest.item_code', '=', 'inventory2.id')
-                ->where('ppe_pperequest.trash', 'NO');
-
+                ->join('masters_department', 'ppe_pperequest.department', '=', 'masters_department.id');
 
             if (in_array(ROLE_EHS_HEAD, $userRole)) {
                 $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
@@ -118,9 +125,10 @@ class PperequestController extends BaseController
                 return $this->sendError('No records found.', [], 404);
             }
 
-            $ppe_request_array = $ppe_request_array->orderBy('ppe_request_id', 'DESC')->paginate($request->input('per_page', 10));
+            $ppe_request_array = $ppe_request_array->orderBy('id', 'DESC')->paginate($request->input('per_page', 10));
 
             $ppe_request_list = $ppe_request_array->toArray();
+
 
 
             $data_array = [];
@@ -149,15 +157,15 @@ class PperequestController extends BaseController
                 }
                 $data = [];
 
-                $data['id'] = $listdata->ppe_request_id;
+                $data['id'] = $listdata->id;
                 $data['emp_id'] = $listdata->emp_id;
                 $data['emp_name'] = $listdata->emp_name;
-                $data['item_code'] = $listdata->item_code;
+                $data['item_code'] = getItemCode($listdata->item_code);
                 $data['ppe_name'] = $listdata->ppe_name;
                 $data['company_id'] = getCompanyname($listdata->company_id);
                 $data['location_id'] = getLocationname($listdata->location_id);
                 $data['unit_id'] = getUnitname($listdata->unit_id);
-                $data['department'] = $listdata->department_name;
+                $data['department'] = getDepartment($listdata->department);
                 $data['approve_status'] = $text;
                 $data['created_by'] = getUsername($listdata->created_by);
                 $data['created_at'] = Displaydateformat($listdata->created_at);
@@ -166,7 +174,7 @@ class PperequestController extends BaseController
             }
 
             $ppe_request_details = [
-               'per_page' => $ppes->perPage(),
+                'per_page' => $ppes->perPage(),
                 'current_page' => $ppes->currentPage(),
                 'from' => $ppes->firstItem(),
                 'to' => $ppes->lastItem(),
@@ -182,6 +190,7 @@ class PperequestController extends BaseController
 
             return $this->sendResponse($success, 'PPE Request Details');
         } else {
+
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
@@ -267,6 +276,7 @@ class PperequestController extends BaseController
                     'department' => $department,
                     'unit_id' => $unit,
                     'company_id' => $company_id,
+                    'location_id' => $location_id,
                     'request_for' => $request->request_for,
                     'item_code' => $request->item_code,
                     'ppe_type' => $request->ppe_type_id,
@@ -418,7 +428,7 @@ class PperequestController extends BaseController
                     'emp_id' => $details->emp_id,
                     'emp_name' => $details->emp_name,
                     'company' => getCompanyname($details->company_id),
-                    'location_id' => getLocationname($details->location_id),
+                    'location' => getLocationname($details->location_id),
                     'unit' => getUnitname($details->unit_id),
                     'department' => getDepartment($details->department),
                     'item_code' => getItemCode($details->item_code),
