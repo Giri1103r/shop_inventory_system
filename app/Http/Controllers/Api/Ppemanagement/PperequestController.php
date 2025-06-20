@@ -276,6 +276,7 @@ class PperequestController extends BaseController
                     'department' => $department,
                     'unit_id' => $unit,
                     'company_id' => $company_id,
+                    'location_id' => $location_id,
                     'request_for' => $request->request_for,
                     'item_code' => $request->item_code,
                     'ppe_type' => $request->ppe_type_id,
