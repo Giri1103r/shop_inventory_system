@@ -86,7 +86,7 @@ class SafetyPermitController extends BaseController
                 $data = [];
                 $data['id'] = $listdata['id'] ?? '';
                 $data['permit_id'] = $listdata['permit_id'] ?? '';
-                $data['unit_id'] = $listdata['unit_id'] ?? '';
+                $data['unit_id'] =getUnitname( $listdata['unit_id'] ?? '');
                 $data['date'] = $listdata['date'] ?? '';
                 $data['exact_location_job'] = $listdata['exact_location_job'] ?? '';
                 $data['status_name'] = $listdata['status_name'] ?? '';

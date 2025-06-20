@@ -428,7 +428,7 @@ class PperequestController extends BaseController
                     'emp_id' => $details->emp_id,
                     'emp_name' => $details->emp_name,
                     'company' => getCompanyname($details->company_id),
-                    'location_id' => getLocationname($details->location_id),
+                    'location' => getLocationname($details->location_id),
                     'unit' => getUnitname($details->unit_id),
                     'department' => getDepartment($details->department),
                     'item_code' => getItemCode($details->item_code),
