@@ -95,7 +95,7 @@ class PpeExemptionController extends BaseController
 
 
             $data_array = [];
-            foreach ($ppe_exemption_array as $listdata) {
+            foreach ($ppes as $listdata) {
 
 
                 if (isset($listdata->approve_status) && $listdata->approve_status == 4) {
