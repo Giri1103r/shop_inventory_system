@@ -114,10 +114,10 @@ class MasterController extends BaseController
                     'masters_department.id as department_id',
                     'masters_department.department_name',
                 )
-                    ->join('company_management', 'masters_employee.company', '=', 'company_management.id')
-                    ->join('masters_location', 'masters_employee.location', '=', 'masters_location.id')
-                    ->join('masters_unit', 'masters_employee.unit', '=', 'masters_unit.id')
-                    ->join('masters_department', 'masters_employee.department', '=', 'masters_department.id')
+                    ->join('company_management', 'masters_work.company', '=', 'company_management.id')
+                    ->join('masters_location', 'masters_work.location', '=', 'masters_location.id')
+                    ->join('masters_unit', 'masters_work.unit', '=', 'masters_unit.id')
+                    ->join('masters_department', 'masters_work.department', '=', 'masters_department.id')
                     ->where('masters_work.status', 1)
                     ->get()
                     ->map(function ($workList) {
