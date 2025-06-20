@@ -345,7 +345,7 @@ class PpeExemptionController extends BaseController
 
                 $success = [
                     'id' => $details->id,
-                    'emp_id ' => $details->emp_id,
+                    'emp_id' => $details->emp_id,
                     'emp_name' => $details->emp_name,
                     'company' => getCompanyname($details->company),
                     'location' => getLocationname($details->location_id),
