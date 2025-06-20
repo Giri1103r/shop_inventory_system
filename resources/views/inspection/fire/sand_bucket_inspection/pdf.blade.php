@@ -284,7 +284,7 @@
                     <span style="color: gray; font-weight: bold;">N/A</span>
                 @endif
             </td>
-            <td style="border: 1px solid black; padding: 8px;">{{ $details->sand_quantity }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ $details->sand_quantity == 1 ? 'ADEQUATE' : 'IN ADEQUATE' }}</td>
             <td style="border: 1px solid black; padding: 8px;">{{ $details->approach }}</td>
             <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
 

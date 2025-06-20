@@ -619,12 +619,15 @@ class ForkLiftInspectionController extends Controller
                 $inspection_details = $this->forklift->selectOne($id);
                 $current_month_inspection = $this->observation_details->GetDetails($inspection_details->id);
                 $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+                $type = FORKLIFT_INSPECTION;
+                $status_log = $this->statusLog->selectOne($id, $type);
 
                 $data = [
                     'inspection_details' => $inspection_details,
                     'inspection' => $current_month_inspection,
                     'pagetitle' => "Forklift Inspection",
                     'document_no' => $document_no,
+                    'status_log' => $status_log,
                 ];
             }
             $property = [

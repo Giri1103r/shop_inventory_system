@@ -244,7 +244,7 @@
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->observation }}</td>
 
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->correction_preventive_action }}</td>
-                    <td style="border: 2px solid black; padding: 8px;">{{ getUsername($detail->responsibility )}}
+                    <td style="border: 2px solid black; padding: 8px;">{{ getUsername($detail->responsibility) }}
                     </td>
                     <td style="border: 2px solid black; padding: 8px;">
                         {{ Displaydateformat($detail->date_of_compliance) }}</td>
@@ -282,7 +282,6 @@
                 <td colspan="5"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     @if ($inspection_details->updated_by != null)
-
                         <div>Verified By: {{ getUsername($inspection_details->updated_by) }}</div>
                     @else
                         <p>Inspection has not been Verified Yet</p>
@@ -302,7 +301,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{__('inspection.ehs_head_approval')}}
+                        {{ __('inspection.ehs_head_approval') }}
                     </td>
                 </tr>
             </table>
@@ -331,6 +330,77 @@
         </table>
         <br>
     @endif
+
+
+    <div>
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
+                        Status Logs
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="card-body ">
+
+            <div class="table-responsive">
+                <div class="col-md-12">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>From Status</th>
+                                <th>To Status</th>
+                                <th>Approved By / Rejected By</th>
+                                <th>Created By</th>
+                                <th>Remarks</th>
+                                <th>Date</th>
+
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            @if ($status_log->isEmpty())
+                                <tr>
+                                    <td class="text-center" colspan="5">No data is available</td>
+                                </tr>
+                            @else
+                                @foreach ($status_log as $status)
+                                    <tr>
+                                        <td style="text-align: center;">
+                                            {{ getForkLiftInspectionStatus($status['from_status'] ?? null) }}</td>
+                                        <td style="text-align: center;">
+                                            {{ getForkLiftInspectionStatus($status['to_status'] ?? null) }}</td>
+                                        <td style="text-align: center;">
+                                            {{ isset($status['approved_by']) ? getUsername($status['approved_by']) : '-' }}
+                                        </td>
+                                        <td style="text-align: center;">
+                                            {{ isset($status['created_by']) ? getUsername($status['created_by']) : '-' }}
+                                        </td>
+                                        <td style="text-align: center;">
+                                            {{ trim($status['remarks'] ?? '') !== '' ? $status['remarks'] : '-' }}
+                                        </td>
+
+                                        <td style="text-align: center;">
+                                            {{ null !== Displaydateformat($status['created_at']) ? Displaydateformat($status['created_at']) : '-' }}
+                                        </td>
+                                    </tr>
+                                @endforeach
+
+                            @endif
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+
+        </div>
+        <br>
+        <div class="page-break"></div>
+    </div>
     <br>
 
 </body>

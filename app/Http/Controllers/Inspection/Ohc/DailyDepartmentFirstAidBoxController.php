@@ -929,7 +929,7 @@ class DailyDepartmentFirstAidBoxController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Daily Department First Aid Box.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);

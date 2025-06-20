@@ -257,7 +257,7 @@
                                                         <label
                                                             class="form-label ">{{ __('inspection.qualtiy_quantity_sand') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->qualtiy_quantity_sand == '1' ? 'ADEQUATE' : 'IN ADEQUATE' }}
+                                                            {{ $details->sand_quantity == '1' ? 'ADEQUATE' : 'IN ADEQUATE' }}
                                                         </div>
                                                     </div>
                                                 </div>

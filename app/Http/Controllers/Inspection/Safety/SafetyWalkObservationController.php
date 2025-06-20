@@ -371,7 +371,7 @@ class SafetyWalkObservationController extends Controller
                 'inspection_id' => $inspection_details->id,
                 'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
                 'to_status' => $to_status,
-                'remarks' =>$remarks,
+                'remarks' => $remarks,
                 'approved_by' => Auth::id(),
             ];
             $this->statusLog->create($insert_array);
@@ -709,6 +709,8 @@ class SafetyWalkObservationController extends Controller
                 $last_month_inspection = $this->safety_walk->GetLastMonthObservation($id);
                 $last_month_observation_details = $this->observation_details->GetLastMonthDetails($last_month_inspection);
                 $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
+                $type =  SAFETY_WALK_OBSERVATION;
+                $status_log = $this->statusLog->selectOne($id, $type);
 
                 $data = [
                     'inspection_details' => $inspection_details,
@@ -716,6 +718,7 @@ class SafetyWalkObservationController extends Controller
                     'last_month_observation_details' => $last_month_observation_details,
                     'pagetitle' => "Safety Walk Observation",
                     'document_no' => $document_no,
+                    'status_log'=>$status_log
                 ];
             }
             $property = [

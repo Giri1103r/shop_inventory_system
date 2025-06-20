@@ -661,7 +661,7 @@ class FirstAidMedicineInspectionController extends Controller
             $mpdf->WriteHTML($view);
 
             $filename = "Monthly OHC First-Aid Medicine Inspection Checklist.pdf";
-            return $mpdf->Output($filename, 'i');
+            return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error',  __('common.message_error'));

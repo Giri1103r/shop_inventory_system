@@ -881,7 +881,7 @@ class SandBucketInspectionController extends Controller
                     $sheet->setCellValue("E{$row}", $statusMap[$detail['fire_bucket_condition']] ?? ($detail['fire_bucket_condition'] ?? ''));
                     $sheet->setCellValue("F{$row}", $statusMap[$detail['condition']] ?? ($detail['condition'] ?? ''));
                     $sheet->setCellValue("G{$row}", $statusMap[$detail['paint_condition']] ?? ($detail['paint_condition'] ?? ''));
-                    $sheet->setCellValue("H{$row}", $statusMap[$detail['sand_quantity']] ?? ($detail['sand_quantity'] ?? ''));
+                    $sheet->setCellValue("H{$row}", $detail['sand_quantity'] == 1 ? 'ADEQUATE' : 'IN ADEQUATE');
                     $sheet->setCellValue("I{$row}", $detail['approach'] ?? '');
                     $sheet->mergeCells("J{$row}:K{$row}")->setCellValue("J{$row}", $detail['remarks'] ?? '');
 
@@ -982,7 +982,7 @@ class SandBucketInspectionController extends Controller
             $filename = "Sand Bucket Inspection.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
         }
@@ -1167,7 +1167,8 @@ class SandBucketInspectionController extends Controller
                 $sheet->setCellValue("E$row", $statusMap[$fireBucket] ?? $fireBucket);
                 $sheet->setCellValue("F$row", $statusMap[$fire_bucket_stand] ?? $fire_bucket_stand);
                 $sheet->setCellValue("G$row", $statusMap[$paintCondition] ?? $paintCondition);
-                $sheet->setCellValue("H$row", $statusMap[$sandQuantity] ?? $sandQuantity);
+                $sheet->setCellValue("H$row", $sandQuantity == 1 ? 'ADEQUATE' : 'IN ADEQUATE');
+
                 $sheet->setCellValue("I$row", $approach);
                 $sheet->mergeCells("J$row:K$row")->setCellValue("J$row", $remark);
 

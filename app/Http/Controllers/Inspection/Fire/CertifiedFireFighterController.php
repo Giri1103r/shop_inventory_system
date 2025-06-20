@@ -425,7 +425,7 @@ class CertifiedFireFighterController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Certified Fire Fighter.pdf";
-            $mpdf->Output($filename, 'I');
+            $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');

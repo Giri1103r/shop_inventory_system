@@ -179,7 +179,7 @@
                                                         accept="image/*">
                                                 </div>
                                             </div>
-                                          
+
                                             <input type="hidden" name="document_reference_id"
                                                 value="{{ encryptId($document_no->id) }}">
                                         </div>
@@ -314,10 +314,10 @@
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Quantity and Quality of Sand
                                                             </option>
-                                                            <option value="{{ encryptId(GOOD) }}"
+                                                            <option value="{{ encryptId(ADEQUATE) }}"
                                                                 {{ old('qualtiy_quantity_sand.1') == encryptId(ADEQUATE) ? 'selected' : '' }}>
                                                                 Adequate</option>
-                                                            <option value="{{ encryptId(FAIR) }}"
+                                                            <option value="{{ encryptId(INADEQUATE) }}"
                                                                 {{ old('qualtiy_quantity_sand.1') == encryptId(INADEQUATE) ? 'selected' : '' }}>
                                                                 Inadequate</option>
 
@@ -801,10 +801,10 @@
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Quantity and Quality of Sand
                                                             </option>
-                                                            <option value="{{ encryptId(GOOD) }}"
+                                                            <option value="{{ encryptId(ADEQUATE) }}"
                                                               >
                                                                 Adequate</option>
-                                                            <option value="{{ encryptId(FAIR) }}"
+                                                            <option value="{{ encryptId(INADEQUATE) }}"
                                                                >
                                                                 Inadequate</option>
 
