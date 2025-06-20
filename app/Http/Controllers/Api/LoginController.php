@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\BaseController;
+use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\Location;
 use App\Models\Master\Unit;
@@ -53,7 +54,7 @@ class LoginController extends BaseController
                 $success['token'] =  $user->createToken('karam')->accessToken;
                 $success['name'] =  $user->name;
 
-                $company = Department::where('id', $user->company_id)->first();
+                $company = Company::where('id', $user->company_id)->first();
                 $location = Location::where('id', $user->location_id)->first();
                 $unit = Unit::where('id', $user->unit_id)->first();
                 $department = Department::where('id', $user->department_id)->first();
