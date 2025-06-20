@@ -237,15 +237,15 @@ class PperequestController extends BaseController
                     }
 
                     if ($sign) {
-                        $upload_path = 'uploads/ppe_files';
+                        $upload_path = 'public/uploads/ppe_files';
 
                         if (!File::exists(public_path($upload_path))) {
                             File::makeDirectory(public_path($upload_path), 0777, true, true);
                         }
 
                         $file_name = time() . Str::random(10) . '.' . $fileExt;
-                        $file_path = $upload_path . '/' . $file_name;
-                        $full_path = public_path($file_path);
+                        $file_path =  $upload_path . '/' . $file_name;
+                        $full_path = ($file_path);
 
                         $image_data = base64_decode($sign, true);
                         if ($image_data !== false) {
@@ -359,7 +359,7 @@ class PperequestController extends BaseController
                 return $this->sendResponse($success, 'PPE Request Created successfully');
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
