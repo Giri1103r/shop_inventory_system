@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 use App\Models\Master\PpeStockinventory;
 use App\Models\Master\Work;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class PperequestController extends BaseController
@@ -60,8 +61,8 @@ class PperequestController extends BaseController
             $ppe_request_array = $this->pperequest
                 ->select(
                     'ppe_pperequest.*',
-                      'masters_department.department_name',
-                     'masters_unit.unit_name',
+                    'masters_department.department_name',
+                    'masters_unit.unit_name',
                     'company_management.company_name',
                     'masters_location.location_name',
 
@@ -229,22 +230,32 @@ class PperequestController extends BaseController
 
                 if ($request->has('ppe_image')) {
                     $sign = $request->ppe_image;
-                    $fileExt = $request->ppe_file_extension  ?? 'png';
+                    $fileExt = $request->ppe_file_extension ?? 'png';
+
+                    if (Str::contains($sign, 'base64,')) {
+                        $sign = explode('base64,', $sign)[1];
+                    }
 
                     if ($sign) {
-                        $upload_path =  'uploads/ppe_files';
+                        $upload_path = 'uploads/ppe_files';
 
                         if (!File::exists(public_path($upload_path))) {
                             File::makeDirectory(public_path($upload_path), 0777, true, true);
                         }
 
                         $file_name = time() . Str::random(10) . '.' . $fileExt;
-                        $file_path = 'public/' . $upload_path . '/' . $file_name;
+                        $file_path = $upload_path . '/' . $file_name;
+                        $full_path = public_path($file_path);
 
-                        $image_data = base64_decode($sign);
-                        file_put_contents(($file_path), $image_data);
+                        $image_data = base64_decode($sign, true);
+                        if ($image_data !== false) {
+                            file_put_contents($full_path, $image_data);
+                        } else {
+                            Log::error('Invalid base64 image data');
+                        }
                     }
                 }
+
                 if ($request->request_for == 1) {
 
                     $employee = User::where('employee_id', $request->emp_id)
