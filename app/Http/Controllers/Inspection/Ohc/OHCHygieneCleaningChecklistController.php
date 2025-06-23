@@ -347,7 +347,7 @@ class OHCHygieneCleaningChecklistController extends Controller
                 'reference_id' => $inspection_details->id,
                 'remarks' => $remarks,
                 'approved_by' => Auth::id(),
-                'created_by' => null,
+                'created_by' => $inspection_details->created_by,
 
             ];
 
