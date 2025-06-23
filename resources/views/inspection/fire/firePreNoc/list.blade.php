@@ -82,10 +82,10 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Inspection Id</th>
-                                        <th>Doc No.</th>
-                                        <th>Issue Date</th>
-                                        <th>Rev. Date </th>
+                                        <th>Block Based statement</th>
+                                        <th>Block</th>
                                         <th>{{ __('common.status') }}</th>
+                                        <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -181,22 +181,21 @@
                             name: 'inspection_id'
                         },
                         {
-                            data: 'document_no',
-                            name: 'document_no'
+                            data: 'block_based_statement',
+                            name: 'block_based_statement'
                         },
                         {
-                            data: 'issuedate',
-                            name: 'issuedate'
-                        },
-
-                        {
-                            data: 'rev_date',
-                            name: 'rev_date'
+                            data: 'block',
+                            name: 'block'
                         },
 
                         {
                             data: 'status',
                             name: 'status'
+                        },
+                         {
+                            data: 'inspection_created_at',
+                            name: 'inspection_created_at'
                         },
                         {
                             data: 'action',

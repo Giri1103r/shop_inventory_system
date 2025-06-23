@@ -37,18 +37,20 @@ class FirePreNocInspection extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_fire_pre_noc_checklist.*','inspection_static_docno.doc_no as document_no','inspection_static_docno.issue_date as issuedate','inspection_static_docno.rev_dt as rev_date')->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_fire_pre_noc_checklist.document_reference_id');
-        $org_total =  $query;
-        $org_total_counts = $org_total->count();
+        $query = $this->select('inspection_fire_pre_noc_checklist.*', 'inspection_static_docno.doc_no as document_no', 'inspection_static_docno.issue_date as issuedate', 'inspection_static_docno.rev_dt as rev_date', 'inspection_fire_pre_noc_checklist.created_at as inspection_created_at')->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_fire_pre_noc_checklist.document_reference_id');
 
-        if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
+
+        if (isset($request->search['value']) && $request->search['value'] !== '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
-                $query->orWhereRaw('doc_no LIKE "%' . $search . '%"');
-                $query->orWhereRaw('issue_date LIKE "%' . $search . '%"');
-                $query->orWhereRaw('rev.dt LIKE "%' . $search . '%"');
+                $query->
+                    orWhere('inspection_fire_pre_noc_checklist.inspection_id', 'like', "%$search%")
+                    ->orWhere('inspection_fire_pre_noc_checklist.block', 'like', "%$search%")
+                    ->orWhere('inspection_fire_pre_noc_checklist.block_based_statement', 'like', "%$search%");
+
             });
         }
+
 
 
         if (isset($request->inspection_id) && $request->inspection_id) {
@@ -57,7 +59,7 @@ class FirePreNocInspection extends Model
         if (isset($request->status) && $request->status) {
             $query = $query->where('inspection_fire_pre_noc_checklist.status', decryptId($request->status));
         }
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_fire_pre_noc_checklist.created_at', '>=', $startDate);
@@ -74,7 +76,8 @@ class FirePreNocInspection extends Model
         $query->orderBy('id', 'desc');
         $data_count = $query;
         $total_records = $data_count->count();
-
+        $org_total =  $query;
+        $org_total_counts = $org_total->count();
         if (isset($request->length) && $request->length != -1) {
             $query->offset($request->start)->limit($request->length);
         }
@@ -122,7 +125,7 @@ class FirePreNocInspection extends Model
 
     public function selectOne($id)
     {
-        $data =   $this->select('inspection_fire_pre_noc_checklist.*','inspection_static_docno.doc_no as document_no','inspection_static_docno.issue_date as issuedate','inspection_static_docno.rev_dt as rev_date')->where('inspection_fire_pre_noc_checklist.id', $id)
+        $data =   $this->select('inspection_fire_pre_noc_checklist.*', 'inspection_static_docno.doc_no as document_no', 'inspection_static_docno.issue_date as issuedate', 'inspection_static_docno.rev_dt as rev_date')->where('inspection_fire_pre_noc_checklist.id', $id)
             ->leftjoin('inspection_static_docno', 'inspection_static_docno.id', '=', 'inspection_fire_pre_noc_checklist.document_reference_id')
             ->first();
         return $data;
@@ -154,7 +157,7 @@ class FirePreNocInspection extends Model
         if (isset($request->inspection_status) && $request->inspection_status) {
             $query = $query->where('inspection_fire_pre_noc_checklist.inspection_status', decryptId($request->inspection_status));
         }
-         if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_fire_pre_noc_checklist.created_at', '>=', $startDate);

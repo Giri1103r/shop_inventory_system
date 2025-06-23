@@ -310,35 +310,34 @@
         <tr>
             <th colspan="18"
                 style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                ब्लाक आधारित विवरण (Block based statement): {{ $fireNoc->block_based_statement ?? 'N/A' }}
+                Block based statement: {{ $fireNoc->block_based_statement ?? 'N/A' }}
             </th>
 
         </tr>
         <tr>
             <th colspan="18"
                 style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                ब्लाक(Block) :- {{ $fireNoc->block ?? 'N/A' }}
+                Block :- {{ $fireNoc->block ?? 'N/A' }}
             </th>
 
         </tr>
 
         <tr>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="2">SR. NO</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">CHECK POINTS
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">CHECK POINTS
             </th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">PUMP NO
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="8">DETAIL
             </th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">STATUS
-            </th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" colspan="4">REMARK
-            </th>
+
 
         </tr>
         @php
             $srNo = 1;
             $displayedSections = [];
         @endphp
-
+        @php
+            $user_response = json_decode($fireNoc->checklist, true);
+        @endphp
         @foreach ($user_response as $checklistId => $data)
             @php
                 $sectionName = GetSubChecklistTypeName($data['sub_type_id']);
@@ -346,7 +345,7 @@
 
             <tr>
                 @if (!in_array($sectionName, $displayedSections))
-                    <td colspan="5"
+                    <td colspan="18"
                         style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold; text-align: center;">
                         {{ $sectionName }}
                     </td>
@@ -355,15 +354,15 @@
             </tr>
 
             <tr>
-                <td style="border: 1px solid black; padding: 8px; font-weight: bold; text-align: center;">
+                <td colspan="2" style="border: 1px solid black; padding: 8px; font-weight: bold; text-align: center;">
                     {{ $srNo }}
                 </td>
 
-                <td colspan="2" style="border: 1px solid black; padding: 8px;">
+                <td colspan="8" style="border: 1px solid black; padding: 8px;">
                     {{ GetChecklistTypeDate($checklistId) }}
                 </td>
 
-                <td style="border: 1px solid black; padding: 8px; text-align: center;">
+                <td  colspan="8" style="border: 1px solid black; padding: 8px; text-align: center;">
                     {{ $data['remarks'] ?? '-' }}
                 </td>
             </tr>
