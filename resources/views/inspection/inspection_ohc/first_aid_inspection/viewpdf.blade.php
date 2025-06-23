@@ -281,6 +281,12 @@
                 </td>
             </tr>
             <tr>
+                <td width="50%" style="padding:5px;"><b>{{__('inspection.status')}}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> {{ $inspection_detail->inspection_status == 3 ? 'Approved' : 'Rejected' }}
+                </td>
+            </tr>
+            <tr>
                 <td width="50%" style="padding:5px;"><b>Remarks</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;"> {{ $inspection_detail->approval_remarks }}
@@ -329,7 +335,7 @@
                         <tbody>
                             @if ($status_log->isEmpty())
                                 <tr>
-                                    <td class="text-center" colspan="5">No data is available</td>
+                                    <td class="text-center" colspan="6">No data is available</td>
                                 </tr>
                             @else
                                 @foreach ($status_log as $status)

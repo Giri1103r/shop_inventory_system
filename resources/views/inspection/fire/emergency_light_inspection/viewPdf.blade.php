@@ -111,6 +111,10 @@
         .table-container {
             padding: 20px;
         }
+
+        .page-break {
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -310,6 +314,8 @@
             </td>
         </tr>
     </table>
+
+    <div class="page-break"></div>
 
     <br>
 
@@ -651,7 +657,7 @@
         </table>
         <br>
     @endif
-
+    <div class="page-break"></div>
 
     <div>
         <div style="width:100%;">
@@ -670,7 +676,7 @@
                     <table class="table table-bordered table-hover tblborder">
                         <thead>
                             <tr>
-                               <th>{{ __('common.sno') }}</th>
+                                <th>{{ __('common.sno') }}</th>
                                 <th>{{ __('common.from_status') }}</th>
                                 <th>{{ __('common.to_status') }}</th>
                                 <th>{{ __('common.remarks') }}</th>
@@ -704,6 +710,8 @@
         <br>
     </div>
     <br>
+
+    <div class="page-break"></div>
 
 </body>
 

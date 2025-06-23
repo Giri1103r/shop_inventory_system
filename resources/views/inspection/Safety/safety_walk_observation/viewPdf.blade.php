@@ -409,6 +409,12 @@
                 </td>
             </tr>
             <tr>
+                <td width="50%" style="padding:5px;"><b>{{__('inspection.status')}}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> {{ ($inspection_details->observation_status == 3 ? 'Approved' : 'Rejected') }}
+                </td>
+            </tr>
+            <tr>
                 <td width="50%" style="padding:5px;"><b>Remarks</b></td>
                 <td width="2%" style="padding:5px;">:</td>
                 <td width="48%" style="padding:5px;"> {{ $inspection_details->approval_remarks }}
@@ -418,7 +424,7 @@
     @endif
 
 
-    <div >
+    <div>
         <div style="width:100%; margin-top:10px;">
             <table style="width:100%;">
                 <tr>

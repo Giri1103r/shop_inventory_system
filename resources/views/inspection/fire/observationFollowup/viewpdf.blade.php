@@ -111,6 +111,10 @@
         .table-container {
             padding: 20px;
         }
+
+        .page-break {
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -311,34 +315,106 @@
             </tr>
         </table>
 
-        @if (isset($observation->capa_remarks))
-            <div style="width:100%;">
-                <table style="width:100%;">
-                    <tr>
-                        <td
-                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                            {{ __('inspection.fire_associate_action') }}
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <table width="100%" style="width:100%;">
+    </div>
+
+    <div class="page-break"></div>
+
+    @if (isset($observation->capa_remarks))
+        <div style="width:100%;">
+            <table style="width:100%;">
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.name') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ getUsername($observation->responsible_person_id) }}
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                        {{ __('inspection.fire_associate_action') }}
                     </td>
                 </tr>
+            </table>
+        </div>
+        <table width="100%" style="width:100%;">
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.name') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> {{ getUsername($observation->responsible_person_id) }}
+                </td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->created_at) }}
+                </td>
+            </tr>
+            @php
+                $signature = GetSignature($observation->approved_by, $observation->id, OBSERVATION_FOLLOWUP);
+            @endphp
+            {{-- @if (isset($signature))
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+
+
+                        <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                style="width: 150px; margin-top: -10px;" /></td>
+
+                    </tr>
+                @endif --}}
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_action_remarks') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $observation->capa_remarks }}
+                </td>
+            </tr>
+            @if (isset($observation->closed_date))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.closed_date') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->closed_date) }}
+                    </td>
+                </tr>
+            @endif
+
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('common.status') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getObservationCAPAStatus($observation->capa_status) }}
+                </td>
+            </tr>
+
+        </table>
+        <br>
+    @endif
+    @if ($observation->approve_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
+        <div style="width:100%;">
+            <table style="width:100%;">
+                <tr>
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                        {{ __('inspection.ehs_officer_verify') }}
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <table width="100%" style="width:100%;">
+            @if (isset($observation->ehs_verify_by))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;"> {{ getUserName($observation->ehs_verify_by) }}</td>
+                </tr>
+            @endif
+            @php
+                $signature = GetSignature($observation->verified_by, $observation->id, OBSERVATION_FOLLOWUP);
+            @endphp
+            @if (isset($observation->created_at))
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>
                     <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->created_at) }}
                     </td>
                 </tr>
-                @php
-                    $signature = GetSignature($observation->approved_by, $observation->id, OBSERVATION_FOLLOWUP);
-                @endphp
-                {{-- @if (isset($signature))
+            @endif
+            {{-- @if (isset($signature))
                     <tr>
                         <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                         <td width="2%" style="padding:5px;">:</td>
@@ -349,147 +425,80 @@
 
                     </tr>
                 @endif --}}
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_action_remarks') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $observation->capa_remarks }}
-                    </td>
-                </tr>
-                @if (isset($observation->closed_date))
+            @php
+                $signature = GetSignature($observation->approved_by, $observation->id, OBSERVATION_FOLLOWUP);
+            @endphp
+            @if (isset($observation->approved_by))
+                @if ($observation->verified_by == $observation->approved_by)
                     <tr>
-                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.closed_date') }}</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->closed_date) }}
-                        </td>
-                    </tr>
-                @endif
-
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('common.status') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ getObservationCAPAStatus($observation->capa_status) }}
-                    </td>
-                </tr>
-
-            </table>
-            <br>
-        @endif
-        @if ($observation->approve_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
-            <div style="width:100%;">
-                <table style="width:100%;">
-                    <tr>
-                        <td
-                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                            {{ __('inspection.ehs_officer_verify') }}
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <table width="100%" style="width:100%;">
-                @if (isset($observation->ehs_verify_by))
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;"> {{ getUserName($observation->ehs_verify_by) }}</td>
-                    </tr>
-                @endif
-                @php
-                    $signature = GetSignature($observation->verified_by, $observation->id, OBSERVATION_FOLLOWUP);
-                @endphp
-                @if (isset($observation->created_at))
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->created_at) }}
-                        </td>
-                    </tr>
-                @endif
-                {{-- @if (isset($signature))
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-
-
-                        <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                style="width: 150px; margin-top: -10px;" /></td>
-
-                    </tr>
-                @endif --}}
-                @php
-                    $signature = GetSignature($observation->approved_by, $observation->id, OBSERVATION_FOLLOWUP);
-                @endphp
-                @if (isset($observation->approved_by))
-                    @if ($observation->verified_by == $observation->approved_by)
-                        <tr>
-                            <td width="50%" style="padding:5px;"><b>{{ __('inspection.approved_by') }}</b></td>
-                            <td width="2%" style="padding:5px;">:</td>
-                            <td width="48%" style="padding:5px;">
-                                {{ getUsername($observation->approved_by) }}
-                            </td>
-                        </tr>
-                    @endif
-                @endif
-                {{-- @if (isset($signature))
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-
-
-                        <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                style="width: 150px; margin-top: -10px;" /></td>
-
-                    </tr>
-                @endif --}}
-                @if (isset($observation->ehs_capa_remarks))
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_recomendation') }}</b></td>
+                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.approved_by') }}</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
-                            {{ $observation->ehs_capa_remarks }}
+                            {{ getUsername($observation->approved_by) }}
                         </td>
                     </tr>
-                    {{-- @else
+                @endif
+            @endif
+            {{-- @if (isset($signature))
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+
+
+                        <td> <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                                style="width: 150px; margin-top: -10px;" /></td>
+
+                    </tr>
+                @endif --}}
+            @if (isset($observation->ehs_capa_remarks))
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_recomendation') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $observation->ehs_capa_remarks }}
+                    </td>
+                </tr>
+                {{-- @else
                     <tr>
                         <td width="50%" style="padding:5px;"><b>{{ __('inspection.remarks') }}</b></td>
                         <td width="2%" style="padding:5px;">:</td>
                         <td width="48%" style="padding:5px;">
                             {{ $observation->capa_remarks }}
                     </tr> --}}
-                @endif
-            </table>
-            <br>
-        @endif
+            @endif
+        </table>
+        <br>
+    @endif
 
 
 
-        @if ($observation->capa_ehs_remarks)
-            <div style="width:100%;">
-                <table style="width:100%;">
-                    <tr>
-                        <td
-                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                            {{ __('inspection.ehs_officer_reverification') }}
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <table width="100%" style="width:100%;">
+    @if ($observation->capa_ehs_remarks)
+        <div style="width:100%;">
+            <table style="width:100%;">
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ getUserName($observation->verified_by) }}</td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->created_at) }}
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                        {{ __('inspection.ehs_officer_reverification') }}
                     </td>
                 </tr>
-                @php
-                    $signature = GetSignature($observation->verified_by, $observation->id, OBSERVATION_FOLLOWUP);
-                @endphp
-                {{-- @if (isset($signature))
+            </table>
+        </div>
+        <table width="100%" style="width:100%;">
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> {{ getUserName($observation->verified_by) }}</td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->created_at) }}
+                </td>
+            </tr>
+            @php
+                $signature = GetSignature($observation->verified_by, $observation->id, OBSERVATION_FOLLOWUP);
+            @endphp
+            {{-- @if (isset($signature))
                     <tr>
                         <td width="50%" style="padding:5px;"><b>{{ __('inspection.signature') }}</b></td>
                         <td width="2%" style="padding:5px;">:</td>
@@ -500,44 +509,44 @@
 
                     </tr>
                 @endif --}}
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_reverifcation_remarks') }}</b>
+                </td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $observation->capa_ehs_remarks }}
+                </td>
+            </tr>
+        </table>
+        <br>
+    @endif
+
+
+    @if (isset($observation->level_one_manager_remarks))
+        <div style="width:100%;">
+            <table style="width:100%;">
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_reverifcation_remarks') }}</b>
-                    </td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $observation->capa_ehs_remarks }}
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                        {{ __('inspection.level_one_manager_action') }}
                     </td>
                 </tr>
             </table>
-            <br>
-        @endif
-
-
-        @if (isset($observation->level_one_manager_remarks))
-            <div style="width:100%;">
-                <table style="width:100%;">
-                    <tr>
-                        <td
-                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                            {{ __('inspection.level_one_manager_action') }}
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <table width="100%" style="width:100%;">
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ getUserName($observation->l1_manager_verified_by) }}</td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->created_at) }}
-                    </td>
-                </tr>
-                {{-- @php
+        </div>
+        <table width="100%" style="width:100%;">
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getUserName($observation->l1_manager_verified_by) }}</td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->created_at) }}
+                </td>
+            </tr>
+            {{-- @php
                     $signature = GetSignature(
                         $observation->l1_manager_verified_by,
                         $observation->id,
@@ -555,43 +564,43 @@
 
                     </tr>
                 @endif --}}
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b>
+                </td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $observation->level_one_manager_remarks }}
+                </td>
+            </tr>
+        </table>
+        <br>
+    @endif
+
+    @if (isset($observation->level_two_manager_remarks))
+        <div style="width:100%;">
+            <table style="width:100%;">
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b>
-                    </td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $observation->level_one_manager_remarks }}
+                    <td
+                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
+                        {{ __('inspection.level_two_manager_action') }}
                     </td>
                 </tr>
             </table>
-            <br>
-        @endif
-
-        @if (isset($observation->level_two_manager_remarks))
-            <div style="width:100%;">
-                <table style="width:100%;">
-                    <tr>
-                        <td
-                            style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                            {{ __('inspection.level_two_manager_action') }}
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <table width="100%" style="width:100%;">
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ getUserName($observation->l2_manager_verified_by) }}</td>
-                </tr>
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->created_at) }}
-                    </td>
-                </tr>
-                {{-- @php
+        </div>
+        <table width="100%" style="width:100%;">
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ getUserName($observation->l2_manager_verified_by) }}</td>
+            </tr>
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;"> {{ Displaydateformat($observation->created_at) }}
+                </td>
+            </tr>
+            {{-- @php
                     $signature = GetSignature(
                         $observation->l2_manager_verified_by,
                         $observation->id,
@@ -610,70 +619,72 @@
                     </tr>
                 @endif --}}
 
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager_remarks') }}</b>
+                </td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $observation->level_two_manager_remarks }}
+                </td>
+            </tr>
+        </table>
+        <br>
+    @endif
+
+    <div class="page-break"></div>
+    <div>
+        <div style="width:100%;">
+            <table style="width:100%;">
                 <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager_remarks') }}</b>
-                    </td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $observation->level_two_manager_remarks }}
+                    <td
+                        style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
+                        Status Logs
                     </td>
                 </tr>
             </table>
-            <br>
-        @endif
-
-
-        <div>
-            <div style="width:100%;">
-                <table style="width:100%;">
-                    <tr>
-                        <td
-                            style="width:100%; background-color: #ce0f1f; color:#ffffff; padding: 10px 10px 10px; font-weight:bold;">
-                            Status Logs
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            <div class="table-responsive">
-                <div class="col-md-12">
-                    @if (isset($status_log) && $status_log->isNotEmpty())
-                        <table class="table table-bordered table-hover tblborder">
-                            <thead>
-                                <tr>
-                                    <th>S.NO</th>
-                                    <th>From Status</th>
-                                    <th>To Status</th>
-                                    <th>Remarks</th>
-                                    <th>Approved By</th>
-                                    <th>Created By</th>
-                                    <th>Created At</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach ($status_log as $log)
-                                    <tr>
-                                        <td>{{ $loop->iteration }}</td>
-                                        <td>{{ getInspectionStatus($log->from_status) }}</td>
-                                        <td>{{ getInspectionStatus($log->to_status) }}</td>
-                                        <td>{{ $log->remarks ?? 'N/A' }}</td>
-                                        <td>{{ getUserName($log->approved_by) ? getUserName($log->approved_by) : '-' }}
-                                        </td>
-                                        <td>{{ getUserName($log->created_by) ? getUserName($log->created_by) : '-' }}
-                                        </td>
-                                        <td>{{ displaydateformat($log->created_at) }}</td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @else
-                        <div class="card-body">
-                            <p class="text-dark">{{ __('No status logs available.') }}</p>
-                        </div>
-                    @endif
-                </div>
-            </div>
-            <br>
         </div>
+        <div class="table-responsive">
+            <div class="col-md-12">
+                @if (isset($status_log) && $status_log->isNotEmpty())
+                    <table class="table table-bordered table-hover tblborder">
+                        <thead>
+                            <tr>
+                                <th>S.NO</th>
+                                <th>From Status</th>
+                                <th>To Status</th>
+                                <th>Remarks</th>
+                                <th>Approved By</th>
+                                <th>Created By</th>
+                                <th>Created At</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($status_log as $log)
+                                <tr>
+                                    <td>{{ $loop->iteration }}</td>
+                                    <td>{{ getInspectionStatus($log->from_status) }}</td>
+                                    <td>{{ getInspectionStatus($log->to_status) }}</td>
+                                    <td>{{ $log->remarks ?? 'N/A' }}</td>
+                                    <td>{{ getUserName($log->approved_by) ? getUserName($log->approved_by) : '-' }}
+                                    </td>
+                                    <td>{{ getUserName($log->created_by) ? getUserName($log->created_by) : '-' }}
+                                    </td>
+                                    <td>{{ displaydateformat($log->created_at) }}</td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                @else
+                    <div class="card-body">
+                        <p class="text-dark">{{ __('No status logs available.') }}</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+        <br>
+    </div>
+
+    <div class="page-break"></div>
 
 
 

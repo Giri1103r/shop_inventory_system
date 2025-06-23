@@ -111,6 +111,10 @@
         .table-container {
             padding: 20px;
         }
+
+        .page-break {
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -435,29 +439,8 @@
         </tr>
     </table>
 
-
-
-    <div style="width:100%;">
-        <table style="width:100%;">
-            <tr>
-                <td
-                    style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    {{ __('inspection.observation') }}
-                </td>
-            </tr>
-        </table>
-    </div>
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>{{ __('inspection.observation') }} :</b>
-                {{ $hydrant_details->observation_needed == '1' ? 'YES' : 'NO' }}
-            </td>
-
-        </tr>
-    </table>
+    <div class="page-break"></div>
     <br>
-
-
 
     @if ($hydrant_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
         <div style="width:100%;">
@@ -673,10 +656,7 @@
         <br>
     @endif
 
-
-
-
-
+    <div class="page-break"></div>
 
     <div>
         <div style="width:100%;">
@@ -729,6 +709,7 @@
         <br>
     </div>
     <br>
+    <div class="page-break"></div>
 
 </body>
 

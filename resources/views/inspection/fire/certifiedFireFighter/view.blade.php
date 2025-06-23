@@ -41,21 +41,21 @@
                                         </div>
                                         <div class="row">
 
-                                            <div class="col-md-4 form-input">
+                                            <div class="col-md-4 mb-2 form-input">
                                                 <label class="form-label">Certified Fire Fighter No</label>
                                                 <div class="view_data">
                                                     {{ isset($fireData->fire_no) ? $fireData->fire_no : '' }}
                                                 </div>
 
                                             </div>
-                                            <div class="col-md-4 form-input">
+                                            <div class="col-md-4 mb-2 form-input">
                                                 <label class="form-label">Doc. No</label>
                                                 <div class="view_data">
                                                     {{ isset($staticDocno->doc_no) ? $staticDocno->doc_no : '' }}
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4 form-input">
+                                            <div class="col-md-4 mb-2 form-input">
                                                 <label class="form-label">Issue Dt.</label>
                                                 <div class="view_data">
                                                     {{ Displaydateformat($staticDocno->issue_date) }}
@@ -63,7 +63,7 @@
 
                                             </div>
 
-                                            <div class="col-md-4 form-input mt-2">
+                                            <div class="col-md-4 form-input mb-2">
                                                 <label class="form-label">Rev. & Dt.</label>
                                                 <div class="view_data">
                                                     {{ isset($staticDocno->rev_dt) ? $staticDocno->rev_dt : '' }}

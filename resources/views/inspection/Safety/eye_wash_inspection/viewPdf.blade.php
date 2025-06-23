@@ -111,6 +111,9 @@
         .table-container {
             padding: 20px;
         }
+        .page-break{
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -312,6 +315,9 @@
     </table>
 
 
+    <div class="page-break"></div>
+
+
     <br>
 
 
@@ -444,7 +450,7 @@
 
 
     @if (isset($inspection_details->level_one_manager_remarks))
-        <div style="width:100%; margin-top:10%" >
+        <div style="width:100%;" >
             <table style="width:100%;">
                 <tr>
                     <td
@@ -520,6 +526,7 @@
         <br>
     @endif
 
+    <div class="page-break"></div>
 
     <div>
         <div style="width:100%;">
@@ -572,6 +579,8 @@
         <br>
     </div>
     <br>
+
+    <div class="page-break"></div>
 
 </body>
 

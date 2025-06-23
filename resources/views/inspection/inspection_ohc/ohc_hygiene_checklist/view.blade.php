@@ -193,6 +193,17 @@
                                                 </div>
                                             </div>
 
+                                            @if (isset($inspection_details->checklist_status))
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">{{__('ohc_management.checklist_status')}}</label>
+                                                        <div class="view_data">
+                                                            {{ $inspection_details->checklist_status == 2 ? 'Approved' : 'Rejected' }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @endif
+
                                             <div class="form-group form-input">
                                                 <label class="form-label ">{{ __('inspection.remarks') }}</label>
                                                 <div class="view_data">

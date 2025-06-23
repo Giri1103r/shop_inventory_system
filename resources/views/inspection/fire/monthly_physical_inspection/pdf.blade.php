@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Fire Equipment Monthly Phsyical Inspection | KARAM</title>
+    <title>Fire Equipment Monthly Physical Inspection | KARAM</title>
 
     <style>
         .badge {
@@ -148,7 +148,7 @@
                 <tr>
                     <td
                         style="width:100%; background-color: #ce0f1f; color: #ffffff; padding: 10px; font-weight: bold;">
-                        Fire Equipment Monthly Phsyical Inspection
+                        Fire Equipment Monthly Physical Inspection
                     </td>
                 </tr>
             </table>
@@ -162,7 +162,7 @@
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px; height:50px;">
                 </th>
                 <th colspan="6" style="border:1px solid black; text-align: center;">
-                    <h3>Fire Equipment Monthly Phsyical Inspection</h3>
+                    <h3>Fire Equipment Monthly Physical Inspection</h3>
                 </th>
                 <th colspan="3" style="border:1px solid black;">
                     <table style="width:100%; border-collapse: collapse;">

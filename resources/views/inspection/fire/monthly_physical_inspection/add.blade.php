@@ -1,5 +1,5 @@
     @extends('admin.layouts.admin')
-    @section('title', 'Fire Equipment Monthly Phsyical Inspection')
+    @section('title', 'Fire Equipment Monthly Physical Inspection')
     @section('pageurl', admin_url('fire/equipment-monthly-physical-inspection/list'))
     @section('content')
         <div class="clearfix"></div>

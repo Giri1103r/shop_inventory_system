@@ -186,7 +186,7 @@
                                         @endforeach
                                         @if (isset($inspection_details->approval_remarks))
                                             <div class="card-header-inner p-2">
-                                                <h4 class="text-white">{{__('inspection.ehs_head_approval')}}</h4>
+                                                <h4 class="text-white">{{ __('inspection.ehs_head_approval') }}</h4>
                                             </div>
                                             <div class="row">
                                                 <div class="col-md-4 mb-2">
@@ -223,6 +223,17 @@
                                                         </div>
                                                     </div>
                                                 @endif --}}
+                                                @if ($inspection_details->observation_status)
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label ">{{ __('inspection.status') }}</label>
+                                                            <div class="view_data">
+                                                                {{ $inspection_details->observation_status == 3 ? 'Approved' : 'Rejeceted' }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.remarks') }}</label>
                                                     <div class="view_data">

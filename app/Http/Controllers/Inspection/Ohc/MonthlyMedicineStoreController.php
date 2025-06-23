@@ -55,13 +55,13 @@ class MonthlyMedicineStoreController extends Controller
                             $text = '';
                             switch ($row->inspection_status) {
                                 case OBSERVATION_PENDING:
-                                    $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>OBSERVATION PENDING</span>";
+                                    $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>WAITING FOR EHS OFFICER VERIFICATION</span>";
                                     break;
                                 case OBSERVATION_APPROVED:
-                                    $text = "<span class='badge bg-success' style='font-size: 1.0em;'>OBSERVATION APPROVED</span>";
+                                    $text = "<span class='badge bg-success' style='font-size: 1.0em;'>Approved By EHS Officer</span>";
                                     break;
                                 case OBSERVATION_REJECTED:
-                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>OBSERVATION REJECTED</span>";
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>Rejected By EHS Officer</span>";
                                     break;
                                 default:
                                     $text = "<span class='badge rounded-pill text-bg-warning'>Unknown</span>";

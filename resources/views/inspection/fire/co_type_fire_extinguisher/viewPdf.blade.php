@@ -111,6 +111,10 @@
         .table-container {
             padding: 20px;
         }
+
+        .page-break {
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -352,7 +356,7 @@
 
     </table>
 
-
+    <div class="page-break"></div>
 
     @if ($forklift_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
         <div style="width:100%;">
@@ -573,6 +577,10 @@
     @endif
 
 
+    <div class="page-break"></div>
+
+
+
     <div>
         <div style="width:100%;">
             <table style="width:100%;">
@@ -623,6 +631,10 @@
         </div>
         <br>
     </div>
+
+
+    <div class="page-break"></div>
+
     <br>
 
 </body>

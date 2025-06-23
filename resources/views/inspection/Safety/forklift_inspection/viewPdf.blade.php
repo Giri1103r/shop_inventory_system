@@ -319,6 +319,15 @@
                 <td width="48%" style="padding:5px;"> {{ Displaydateformat($inspection_details->updated_at) }}
                 </td>
             </tr>
+            @if ($inspection_details->observation_status)
+                <tr>
+                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
+                    <td width="2%" style="padding:5px;">:</td>
+                    <td width="48%" style="padding:5px;">
+                        {{ $inspection_details->observation_status == 3 ? 'Approved' : 'Rejected' }}
+                    </td>
+                </tr>
+            @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Fire Equipment Monthly Phsyical Inspection| KARAM</title>
+    <title>Fire Equipment Monthly Physical Inspection| KARAM</title>
 
     <style>
         .badge {
@@ -111,6 +111,9 @@
         .table-container {
             padding: 20px;
         }
+        .page-break{
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -123,7 +126,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Fire Equipment Monthly Phsyical Inspection</td>
+                    Fire Equipment Monthly Physical Inspection</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +152,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Fire Equipment Monthly Phsyical Inspection
+                    Fire Equipment Monthly Physical Inspection
                 </td>
             </tr>
         </table>
@@ -200,7 +203,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Fire Equipment Monthly Phsyical Inspection
+                    Fire Equipment Monthly Physical Inspection
                 </td>
             </tr>
         </table>
@@ -270,6 +273,8 @@
         </table>
         <br>
     @endforeach
+
+    <div class="page-break"></div>
 </body>
 
 </html>

@@ -111,6 +111,10 @@
         .table-container {
             padding: 20px;
         }
+
+        .page-break {
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -210,6 +214,7 @@
         </tr>
 
     </table>
+
     <div style="width:100%;">
         <table style="width:100%;">
             <tr>
@@ -357,6 +362,8 @@
             </td>
         </tr>
     </table>
+
+    <div class="page-break"></div>
 
     <br>
 
@@ -628,7 +635,7 @@
     @endif
 
 
-
+    <div class="page-break"></div>
 
 
 
@@ -683,6 +690,8 @@
         <br>
     </div>
     <br>
+
+    <div class="page-break"></div>
 
 </body>
 

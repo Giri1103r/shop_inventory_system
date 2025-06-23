@@ -279,6 +279,15 @@
                         {{ Displaydateformat($details->updated_at) }}
                     </td>
                 </tr>
+                @if ($details->checklist_status)
+                    <tr>
+                        <td width="50%" style="padding:5px;"><b>{{ __('ohc_management.checklist_status') }}</b></td>
+                        <td width="2%" style="padding:5px;">:</td>
+                        <td width="48%" style="padding:5px;">
+                            {{ $details->checklist_status == 2 ? 'Approved' : 'Rejected' }}
+                        </td>
+                    </tr>
+                @endif
                 <tr>
                     <td width="50%" style="padding:5px;"><b>{{ __('inspection.remarks') }}</b></td>
                     <td width="2%" style="padding:5px;">:</td>

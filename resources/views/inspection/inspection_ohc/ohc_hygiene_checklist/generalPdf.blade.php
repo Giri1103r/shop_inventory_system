@@ -307,6 +307,16 @@
                     {{ Displaydateformat($inspection_details->updated_at) }}
                 </td>
             </tr>
+            @if ($inspection_details->checklist_status)
+
+            <tr>
+                <td width="50%" style="padding:5px;"><b>{{__('ohc_management.checklist_status')}}</b></td>
+                <td width="2%" style="padding:5px;">:</td>
+                <td width="48%" style="padding:5px;">
+                    {{ $inspection_details->checklist_status == 2 ? 'Approved' : 'Rejected' }}
+                </td>
+            </tr>
+            @endif
             <tr>
                 <td width="50%" style="padding:5px;"><b>{{ __('inspection.remarks') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
@@ -362,7 +372,7 @@
                                     <td class="text-center" colspan="5">No data is available</td>
                                 </tr>
                             @else
-                                @foreach ($status_log as $status)   
+                                @foreach ($status_log as $status)
                                     <tr>
                                         <td style="text-align: center;">
                                             {{ getOhcHygieneCleaningStatus($status['from_status'] ?? null) }}</td>

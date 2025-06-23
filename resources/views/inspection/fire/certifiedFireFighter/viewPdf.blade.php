@@ -111,6 +111,10 @@
         .table-container {
             padding: 20px;
         }
+
+        .page-break {
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -156,11 +160,11 @@
     </div>
 
     @php
-        $data = $certified_fire_fighter->first()
+        $data = $certified_fire_fighter->first();
     @endphp
 
     <table width="100%" style="width:100%;">
-         <tr>
+        <tr>
             <td width="50%" style="padding:5px;"><b>Certified Fire Fighter No</b></td>
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
@@ -219,11 +223,14 @@
             @foreach ($certified_fire_fighter as $details)
                 <tr>
                     <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->sr_no }}</td>
-                    <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ GetUnitname($details->unit_id) }}
+                    <td colspan="2" style="border: 1px solid black; padding: 8px;">
+                        {{ GetUnitname($details->unit_id) }}
                     </td>
-                    <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ GetDeptName($details->department_id) }}
+                    <td colspan="2" style="border: 1px solid black; padding: 8px;">
+                        {{ GetDeptName($details->department_id) }}
                     </td>
-                    <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ getEmployeename($details->emp_name) }}</td>
+                    <td colspan="2" style="border: 1px solid black; padding: 8px;">
+                        {{ getEmployeename($details->emp_name) }}</td>
                     <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->emp_code }}</td>
                     <td colspan="2" style="border: 1px solid black; padding: 8px;">{{ $details->emp_phone }}</td>
                     <td colspan="2" style="border: 1px solid black; padding: 8px;">
@@ -237,8 +244,11 @@
             @endforeach
         </tbody>
     </table>
+    <div class="page-break"></div>
+
 
     <br>
 
 </body>
+
 </html>

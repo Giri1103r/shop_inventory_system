@@ -238,6 +238,15 @@
                                                     </div>
                                                 </div>
                                             </div>
+
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.status') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection_details->observation_status == 3 ? 'Approved' : 'Rejected' }}
+                                                    </div>
+                                                </div>
+                                            </div>
                                             {{-- @php
                                                 $signature = GetSafetySignature(
                                                     $inspection_details->updated_by,

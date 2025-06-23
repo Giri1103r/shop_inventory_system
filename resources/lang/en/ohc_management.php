@@ -123,7 +123,8 @@ return [
 
     // hygiene cleaning
 
-    'nursing_officer_approval' => 'Nursing Officer Approval'
+    'nursing_officer_approval' => 'Nursing Officer Approval',
+    'checklist_status' => 'Checklist Status',
 
 
 

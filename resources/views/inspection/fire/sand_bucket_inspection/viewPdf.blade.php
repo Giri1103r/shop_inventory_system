@@ -111,6 +111,10 @@
         .table-container {
             padding: 20px;
         }
+
+        .page-break {
+            page-break-before: always;
+        }
     </style>
 </head>
 
@@ -317,7 +321,8 @@
                         <span style="color: gray; font-weight: bold;">N/A</span>
                     @endif
                 </td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->sand_quantity == 1 ? 'ADEQUATE' : 'IN ADEQUATE' }}</td>
+                <td style="border: 1px solid black; padding: 8px;">
+                    {{ $details->sand_quantity == 1 ? 'ADEQUATE' : 'IN ADEQUATE' }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->approach }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
 
@@ -362,7 +367,7 @@
         @endforeach
     </table>
 
-
+    <div class="page-break"></div>
 
     <br>
 
@@ -631,7 +636,7 @@
     @endif
 
 
-
+    <div class="page-break"></div>
 
 
 
@@ -686,7 +691,7 @@
         <br>
     </div>
     <br>
-
+    <div class="page-break"></div>
 </body>
 
 </html>
