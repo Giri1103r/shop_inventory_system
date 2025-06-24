@@ -297,6 +297,14 @@
                 </th>
             </tr>
 
+            <tr>
+                <th colspan="18" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">
+                    {{-- <img src="{{ admin_url($signature) }}" alt="Signature Upload"
+                        style="width: 150px; margin-top: -10px;" /> --}}
+                    <div style="margin-top: 5px;">Notes :- {{$details->note}}</div>
+                </th>
+            </tr>
+
 
         </table>
         <div class="page-break"></div>

@@ -169,12 +169,12 @@ class FirePumpHouseController extends Controller
     public function store(Request $request)
     {
         try {
-                $inspection = $this->dailyFire->store();
-                // $inspection_type = DAILY_FIRE_PUMP;
-                // $id = $inspection->id;
-                // $inspection_file = $this->signature->dailyFirePump($inspection_type, $id);
+            $inspection = $this->dailyFire->store();
+            // $inspection_type = DAILY_FIRE_PUMP;
+            // $id = $inspection->id;
+            // $inspection_file = $this->signature->dailyFirePump($inspection_type, $id);
 
-                Session::flash('success', __('Your data has been created successfully'));
+            Session::flash('success', __('Your data has been created successfully'));
 
             return redirect(admin_url('fire/daily-fire-pump-house-inspection/list'));
         } catch (Exception $ex) {
@@ -354,7 +354,7 @@ class FirePumpHouseController extends Controller
 
                         $sheet->getStyle("D$row:S$row")->applyFromArray([
                             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                            'alignment' => ['vertical' => Alignment::VERTICAL_CENTER,'horizontal' => Alignment::HORIZONTAL_CENTER],
+                            'alignment' => ['vertical' => Alignment::VERTICAL_CENTER, 'horizontal' => Alignment::HORIZONTAL_CENTER],
                         ]);
 
                         $row++;
@@ -384,13 +384,13 @@ class FirePumpHouseController extends Controller
                         ],
                     ]);
 
-                    $textRow = $signatureStartRow ;
+                    $textRow = $signatureStartRow;
                     $sheet->mergeCells("A$textRow:S$textRow");
                     $sheet->setCellValue("A$textRow", "Requestor Name : " . getUserName($details->created_by));
 
                     $sheet->getStyle("A$textRow:S$textRow")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                            'alignment' => [
+                        'alignment' => [
                             'horizontal' => Alignment::HORIZONTAL_CENTER,
                             'vertical' => Alignment::VERTICAL_CENTER,
                             'wrapText' => true,
@@ -400,7 +400,23 @@ class FirePumpHouseController extends Controller
                     $sheet->getRowDimension($textRow)->setRowHeight(25);
                 }
 
-                $row = $signatureStartRow + 6;
+                $noteRow = $textRow + 1;
+                $note = $details->note;
+                $sheet->mergeCells("A{$noteRow}:S{$noteRow}");
+                $sheet->setCellValue("A{$noteRow}", "Note :- . $note");
+                $sheet->getStyle("A{$noteRow}:S{$noteRow}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        'vertical' => Alignment::VERTICAL_CENTER,
+                        'wrapText' => true,
+                    ],
+                    'font' => ['bold' => true],
+                ]);
+                $sheet->getRowDimension($textRow)->setRowHeight(25);
+
+
+                $row = $noteRow + 6;
             }
 
             $fileName = 'Daily Fire Pump House Inspection.xlsx';
@@ -660,9 +676,10 @@ class FirePumpHouseController extends Controller
 
                     $sheet->getStyle("D$row:S$row")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                        'alignment' => ['vertical' => Alignment::VERTICAL_CENTER,
-                                          'horizontal' =>Alignment::HORIZONTAL_CENTER,
-                                        ],
+                        'alignment' => [
+                            'vertical' => Alignment::VERTICAL_CENTER,
+                            'horizontal' => Alignment::HORIZONTAL_CENTER,
+                        ],
                     ]);
 
                     $row++;
@@ -694,7 +711,7 @@ class FirePumpHouseController extends Controller
                     ],
                 ]);
 
-                $textRow = $signatureStartRow ;
+                $textRow = $signatureStartRow;
                 $sheet->mergeCells("A$textRow:S$textRow");
 
                 $sheet->setCellValue("A$textRow", "Requestor Name : " . getUserName($dailyFire->created_by));
@@ -711,6 +728,26 @@ class FirePumpHouseController extends Controller
 
                 $sheet->getRowDimension($textRow)->setRowHeight(25);
             }
+
+            $noteRow = $signatureStartRow + 1;
+            $note = $dailyFire->note;
+
+            $sheet->mergeCells("A$noteRow:S$noteRow");
+            $sheet->setCellValue("A$noteRow", "Note :-" . $note);
+
+            $sheet->getStyle("A$noteRow:S$noteRow")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER,
+                    'wrapText' => true,
+                ],
+                'font' => ['bold' => true],
+            ]);
+
+            $sheet->getRowDimension($noteRow)->setRowHeight(22);
+
+
 
             $fileName = 'Daily Fire Pump House Inspection.xlsx';
             $writer = new Xlsx($spreadsheet);
