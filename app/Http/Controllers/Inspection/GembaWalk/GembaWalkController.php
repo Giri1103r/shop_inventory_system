@@ -102,8 +102,8 @@ class GembaWalkController extends Controller
                             ->addColumn('shift', function ($row) {
                                 return getShift($row->shift_id);
                             })
-                            ->addColumn('created_at', function ($row) {
-                                return Displaydateformat($row->created_at);
+                            ->addColumn('inspection_created_date', function ($row) {
+                                return Displaydateformat($row->inspection_created_date);
                             })
                             ->addColumn('created_by', function ($row) {
                                 return getUsername($row->created_by);

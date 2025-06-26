@@ -286,8 +286,8 @@
                             name: 'created_by'
                         },
                         {
-                            data: 'created_at',
-                            name: 'created_at'
+                            data: 'inspection_created_date',
+                            name: 'inspection_created_date'
                         },
                         {
                             data: 'action',
