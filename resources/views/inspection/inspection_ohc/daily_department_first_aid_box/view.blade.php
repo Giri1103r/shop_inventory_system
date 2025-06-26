@@ -161,7 +161,7 @@
                                                 <th style="text-align: center">{{ __('common.sno') }}</th>
                                                 <th style="text-align: center">{{ __('ohc_management.medicine_name') }}
                                                 </th>
-                                                <th style="text-align: center">{{ __('ohc_management.availble_quantity') }}
+                                                <th style="text-align: center">{{ __('ohc_management.available_quantity') }}
                                                 </th>
                                                 <th style="text-align: center">{{ __('ohc_management.expiry_date') }}</th>
                                                 <th style="text-align: center">{{ __('ohc_management.remarks') }}</th>
