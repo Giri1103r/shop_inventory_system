@@ -519,7 +519,7 @@ class MedicineIssuanceController extends Controller
                             $this->inventory
                                 ->where('medicine_id', $medicine_id)
                                 ->where('unit_id', 1)
-                                ->decrement('balance', $difference);
+                                ->increament('balance', $difference);
                         } elseif ($oldquantity < $newquantity) {
                             $difference = $newquantity - $oldquantity;
 
@@ -540,7 +540,7 @@ class MedicineIssuanceController extends Controller
                             $this->inventory
                                 ->where('medicine_id', $medicine_id)
                                 ->where('unit_id', 1)
-                                ->increment('balance', $difference);
+                                ->decrement('balance', $difference);
                         }
                     } else {
                         foreach ($request->medicine_id as $index =>  $encrypt_medicine_id) {
