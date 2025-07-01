@@ -53,8 +53,8 @@ class DailyVitalEquipmentController extends Controller
                         ->addColumn('inspected_created_at', function ($row) {
                             return Displaydateformat($row->inspected_created_at);
                         })
-                        ->addColumn('date_of_inspection', function ($row) {
-                            return Displaydateformat($row->date_of_inspection);
+                        ->addColumn('inspection_date_of_inspection', function ($row) {
+                            return Displaydateformat($row->inspection_date_of_inspection);
                         })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
@@ -70,7 +70,7 @@ class DailyVitalEquipmentController extends Controller
                                     </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'date_of_inspection'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'inspection_date_of_inspection'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -606,7 +606,7 @@ class DailyVitalEquipmentController extends Controller
 
                     $statusSymbol = '-';
                     $responseText = $answer['response'] ?? '';
-                   
+
                     if ($responseText === 'YES') {
                         $statusSymbol = 'YES';
                         $statusColor = '008000';

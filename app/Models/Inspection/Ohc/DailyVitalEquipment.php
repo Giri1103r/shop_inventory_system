@@ -38,7 +38,7 @@ class DailyVitalEquipment extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_ohc_daily_vital_equipment_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_ohc_daily_vital_equipment_checklist.created_by as checked_by' , 'inspection_ohc_daily_vital_equipment_checklist.created_at as inspected_created_at')
+        $query = $this->select('inspection_ohc_daily_vital_equipment_checklist.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_ohc_daily_vital_equipment_checklist.created_by as checked_by' , 'inspection_ohc_daily_vital_equipment_checklist.created_at as inspected_created_at','inspection_ohc_daily_vital_equipment_checklist.date_of_inspection as inspection_date_of_inspection' )
             ->leftJoin('inspection_shift_option', 'inspection_ohc_daily_vital_equipment_checklist.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_ohc_daily_vital_equipment_checklist.unit', '=', 'masters_unit.id');
 

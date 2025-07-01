@@ -197,8 +197,8 @@
                         },
 
                         {
-                            data: 'date_of_inspection',
-                            name: 'date_of_inspection',
+                            data: 'inspection_date_of_inspection',
+                            name: 'inspection_date_of_inspection',
                         },
                         {
                             data: 'shift',
