@@ -61,11 +61,11 @@ class DailyVitalEquipmentController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            $btn = '<a href="' . admin_url('ohc/daily-vital-equipment/view/' . encryptId($row->id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
-                            $btn .= '<a href="' . admin_url('ohc/daily-vital-equipment/exportViewPdf/' . encryptId($row->id)) . '" class=" me-1" title="PDF">
+                            $btn = '<a href="' . admin_url('ohc/daily-vital-equipment/view/' . encryptId($row->inspection_id)) . '"   class="view-icon me-1" title="' . __('common.view') . '"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn .= '<a href="' . admin_url('ohc/daily-vital-equipment/exportViewPdf/' . encryptId($row->inspection_id)) . '" class=" me-1" title="PDF">
                                         <i class="fas fa-file-pdf"  style="color: #e67265;" aria-hidden="true"></i>
                                     </a>';
-                            $btn .= '<a href="' . admin_url('ohc/daily-vital-equipment/generalexcel/' . encryptId($row->id)) . '" class=" me-1" title="PDF">
+                            $btn .= '<a href="' . admin_url('ohc/daily-vital-equipment/generalexcel/' . encryptId($row->inspection_id)) . '" class=" me-1" title="PDF">
                                         <i class="fas fa-file-excel" style="color: #1D6F42;" aria-hidden="true"></i>
                                     </a>';
                             return $btn;
