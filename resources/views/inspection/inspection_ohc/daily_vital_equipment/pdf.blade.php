@@ -151,7 +151,7 @@
                 <tr>
                     <td
                         style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{ __('title.daily_vital_equipment') }}
+                     DAILY VITAL EQUIPMENT INSPECTION CHECKLIST
                     </td>
                 </tr>
             </table>
@@ -165,7 +165,7 @@
                 </th>
                 <th colspan="6" style="border:1px solid black;">
                     <h3>
-                        <span><b> {{ __('title.daily_vital_equipment') }}</b></span>
+                        <span><b> DAILY VITAL EQUIPMENT INSPECTION CHECKLIST</b></span>
                         <br>
                     </h3>
                 </th>
