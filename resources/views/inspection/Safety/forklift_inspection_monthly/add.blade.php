@@ -390,7 +390,7 @@
                         }
                     }
                 });
-                
+
                 $('.floor_executive').select2({
                     ajax: {
                         url: "{{ admin_url('safety/forklift-inspection/monthly/employeeName') }}",
@@ -511,7 +511,7 @@
                                 maxlength: "Maximum Characters should not exceed 100",
                             },
                             forklift_type: {
-                                required: "Floor Executive on Duty is required",
+                                required: "Forklift type is required",
                             },
                             capacity: {
                                 required: "{{ __('Capacity is Required') }}",
