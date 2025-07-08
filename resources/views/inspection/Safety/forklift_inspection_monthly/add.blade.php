@@ -511,7 +511,7 @@
                                 maxlength: "Maximum Characters should not exceed 100",
                             },
                             forklift_type: {
-                                required: "Forklift type is required",
+                                required: "Please Select Forklift Type",
                             },
                             capacity: {
                                 required: "{{ __('Capacity is Required') }}",
