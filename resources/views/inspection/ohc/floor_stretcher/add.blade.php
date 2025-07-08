@@ -27,7 +27,7 @@
                             <div class="card-body">
 
                                 <div class="basic-form mx-3">
-                                    <form method="POST" id="safetygalleryAdd"
+                                    <form method="POST" id="floorchecklist"
                                         action="{{ admin_url('ohc/floor_stretcher/checklist/add/submit') }}"
                                         autocomplete="off" enctype="multipart/form-data">
                                         @csrf
@@ -147,7 +147,7 @@
                                                                     style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold; text-align: center;">
                                                                     {{ $loop->iteration }}
                                                                 </td>
-                                                                <td
+                                                                <td class="form-input"
                                                                     style="border: 1px solid black; padding: 8px; background-color: #f5f5f5; font-weight: bold; text-align: center;">
                                                                     <input type="text"
                                                                         name="resource_code[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}]"
@@ -164,14 +164,12 @@
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_first]"
-                                                                                value="YES"
-                                                                                class=""> Yes
+                                                                                value="YES" class=""> Yes
                                                                         </label>
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_first]"
-                                                                                value="NO"
-                                                                                class=""> No
+                                                                                value="NO" class=""> No
                                                                         </label>
                                                                     </div>
                                                                 </td>
@@ -182,14 +180,12 @@
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_second]"
-                                                                                value="YES"
-                                                                                class=""> Yes
+                                                                                value="YES" class=""> Yes
                                                                         </label>
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_second]"
-                                                                                value="NO"
-                                                                                class=""> No
+                                                                                value="NO" class=""> No
                                                                         </label>
                                                                     </div>
                                                                 </td>
@@ -200,14 +196,12 @@
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_third]"
-                                                                                value="YES"
-                                                                                class=""> Yes
+                                                                                value="YES" class=""> Yes
                                                                         </label>
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_third]"
-                                                                                value="NO"
-                                                                                class=""> No
+                                                                                value="NO" class=""> No
                                                                         </label>
                                                                     </div>
                                                                 </td>
@@ -218,14 +212,12 @@
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_fourth]"
-                                                                                value="YES"
-                                                                                class=""> Yes
+                                                                                value="YES" class=""> Yes
                                                                         </label>
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_fourth]"
-                                                                                value="NO"
-                                                                                class=""> No
+                                                                                value="NO" class=""> No
                                                                         </label>
                                                                     </div>
                                                                 </td>
@@ -236,14 +228,12 @@
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_fifth]"
-                                                                                value="YES"
-                                                                                class=""> Yes
+                                                                                value="YES" class=""> Yes
                                                                         </label>
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_fifth]"
-                                                                                value="NO"
-                                                                                class=""> No
+                                                                                value="NO" class=""> No
                                                                         </label>
                                                                     </div>
                                                                 </td>
@@ -254,14 +244,12 @@
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_sixth]"
-                                                                                value="YES"
-                                                                                class=""> Yes
+                                                                                value="YES" class=""> Yes
                                                                         </label>
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_sixth]"
-                                                                                value="NO"
-                                                                                class=""> No
+                                                                                value="NO" class=""> No
                                                                         </label>
                                                                     </div>
                                                                 </td>
@@ -336,10 +324,8 @@
             });
             $(function() {
 
-
-                $('#safetygalleryAdd').validate({
+                $('#floorchecklist').validate({
                     rules: {
-
                         issue_date: {
                             required: true,
                         },
@@ -352,32 +338,17 @@
                         unit_id: {
                             required: true,
                         },
-                        resource_code: {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 30,
-                        },
                         frequency_id: {
                             required: true,
-                        },
-                        "remarks[*][*]": {
-
-                            minlength: 3,
-                            maxlength: 600,
-                        },
-                        // signature_image:{
-                        //     required: true,
-                        //     filesize: 15728640,
-                        // }
+                        }
 
                     },
                     messages: {
-
                         issue_date: {
                             required: "Date Of Audit is required",
                         },
                         inspection_date: {
-                            required: "Inspeciton Date is required",
+                            required: "Inspection Date is required",
                         },
                         shift: {
                             required: "Shift is required",
@@ -387,27 +358,14 @@
                         },
                         frequency_id: {
                             required: "Frequency is required",
-                        },
-                        // signature_image:{
-                        //     required: "Signature Image is required",
-                        //     filesize: "File size should not exceed 15 MB",
-                        // }
-                        resource_code: {
-                            required: 'Recource Code is requried',
-                            minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 30",
-                        },
-                        "remarks[*][*]": {
-
-                            minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 600",
                         }
 
                     },
                     errorElement: 'span',
                     errorPlacement: function(error, element) {
                         error.addClass('invalid-feedback');
-                        element.closest('.form-input').append(error);
+                        element.closest('.form-input').append(
+                        error);
                     },
                     highlight: function(element, errorClass, validClass) {
                         $(element).addClass('is-invalid');
@@ -416,33 +374,44 @@
                         $(element).removeClass('is-invalid');
                     },
                     submitHandler: function(form) {
-
                         form.submit();
-
                     },
                     invalidHandler: function(event, validator) {
                         var errors = validator.numberOfInvalids();
                         console.log(errors + " field(s) are invalid");
                         validator.errorList.forEach(function(error) {
-                            console.log("Field: " + error.element.name + ", Error: " +
-                                error
+                            console.log("Field: " + error.element.name + ", Error: " + error
                                 .message);
                         });
                     }
                 });
 
+
+                $('input[name^="resource_code"]').each(function() {
+                    $(this).rules("add", {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 30,
+                        messages: {
+                            required: "Resource Code is required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 30",
+                        }
+                    });
+                });
+
+             
                 $('textarea[name^="remarks"]').each(function() {
                     $(this).rules("add", {
-
                         minlength: 3,
                         maxlength: 600,
                         messages: {
-                        
                             minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 600",
                         }
                     });
                 });
+
             });
         </script>
     @endpush
