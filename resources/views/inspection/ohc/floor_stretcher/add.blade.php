@@ -165,13 +165,13 @@
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_first]"
                                                                                 value="YES"
-                                                                                class="validate-radio-required"> Yes
+                                                                                class=""> Yes
                                                                         </label>
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_first]"
                                                                                 value="NO"
-                                                                                class="validate-radio-required"> No
+                                                                                class=""> No
                                                                         </label>
                                                                     </div>
                                                                 </td>
@@ -183,13 +183,13 @@
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_second]"
                                                                                 value="YES"
-                                                                                class="validate-radio-required"> Yes
+                                                                                class=""> Yes
                                                                         </label>
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_second]"
                                                                                 value="NO"
-                                                                                class="validate-radio-required"> No
+                                                                                class=""> No
                                                                         </label>
                                                                     </div>
                                                                 </td>
@@ -201,13 +201,13 @@
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_third]"
                                                                                 value="YES"
-                                                                                class="validate-radio-required"> Yes
+                                                                                class=""> Yes
                                                                         </label>
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_third]"
                                                                                 value="NO"
-                                                                                class="validate-radio-required"> No
+                                                                                class=""> No
                                                                         </label>
                                                                     </div>
                                                                 </td>
@@ -219,13 +219,13 @@
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_fourth]"
                                                                                 value="YES"
-                                                                                class="validate-radio-required"> Yes
+                                                                                class=""> Yes
                                                                         </label>
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_fourth]"
                                                                                 value="NO"
-                                                                                class="validate-radio-required"> No
+                                                                                class=""> No
                                                                         </label>
                                                                     </div>
                                                                 </td>
@@ -237,13 +237,13 @@
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_fifth]"
                                                                                 value="YES"
-                                                                                class="validate-radio-required"> Yes
+                                                                                class=""> Yes
                                                                         </label>
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_fifth]"
                                                                                 value="NO"
-                                                                                class="validate-radio-required"> No
+                                                                                class=""> No
                                                                         </label>
                                                                     </div>
                                                                 </td>
@@ -255,13 +255,13 @@
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_sixth]"
                                                                                 value="YES"
-                                                                                class="validate-radio-required"> Yes
+                                                                                class=""> Yes
                                                                         </label>
                                                                         <label>
                                                                             <input type="radio"
                                                                                 name="response[{{ $checklist->sub_type_id }}][{{ $checklist->checklist_id }}][fs_sixth]"
                                                                                 value="NO"
-                                                                                class="validate-radio-required"> No
+                                                                                class=""> No
                                                                         </label>
                                                                     </div>
                                                                 </td>
@@ -361,9 +361,9 @@
                             required: true,
                         },
                         "remarks[*][*]": {
-                            required: true,
+
                             minlength: 3,
-                            maxlength: 300,
+                            maxlength: 600,
                         },
                         // signature_image:{
                         //     required: true,
@@ -398,9 +398,9 @@
                             maxlength: "Maximum Characters should not exceed 30",
                         },
                         "remarks[*][*]": {
-                            required: "Remarks is required",
+
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 300",
+                            maxlength: "Maximum Characters should not exceed 600",
                         }
 
                     },
@@ -433,13 +433,13 @@
 
                 $('textarea[name^="remarks"]').each(function() {
                     $(this).rules("add", {
-                        required: true,
+
                         minlength: 3,
-                        maxlength: 255,
+                        maxlength: 600,
                         messages: {
-                            required: "Remarks is required",
+                        
                             minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 255",
+                            maxlength: "Maximum Characters should not exceed 600",
                         }
                     });
                 });
