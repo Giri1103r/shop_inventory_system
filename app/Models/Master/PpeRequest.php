@@ -62,8 +62,7 @@ class PpeRequest extends Model
                     foreach ($reportingEmployees as $emp) {
                         $q->orWhere(function ($subQ) use ($emp) {
                             $subQ
-                                ->where('ppe_pperequest.company_id', $emp->company)
-                                ->where('ppe_pperequest.department', $emp->department);
+                                ->where('ppe_pperequest.company_id', $emp->company);
                         });
                     }
                 });
