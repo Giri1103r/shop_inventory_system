@@ -157,10 +157,7 @@ class InitialIncidentController extends BaseController
                     'sr_no' => $incident->sr_no,
                     'unit' => $incident->unit_name,
                     'shift' => $incident->shift,
-                    'approve_status' => [
-                        'status_id' => $incident->status_id,
-                        'approve_status' => $incident->status_name,
-                    ],
+                    'approve_status' => $incident->status_name,
                     'status' => $incident->status == 1 ? 'Active' : 'In-Active',
                     'created_by' => getUsername($incident->created_by),
                     'created_at' => Displaydateformat($incident->created_at),
@@ -235,11 +232,11 @@ class InitialIncidentController extends BaseController
             }
             $randomID = getsequence('IncidentRandomID');
             $initialincident = $this->initialincident->incidentStore_api($randomID);
-            
+
             // Store evidences
             $this->initialincidentevidence->evidenceStore_api($initialincident->id);
 
-           // Store injury details if needed
+            // Store injury details if needed
             if ($initialincident->anyone_injured == 1) {
                 $this->injury_details->storeinjuryApi($initialincident->id, $initialincident->random_id);
             }
@@ -620,10 +617,7 @@ class InitialIncidentController extends BaseController
                     'sr_no' => $incident->sr_no,
                     'unit' => $incident->unit_name,
                     'shift' => $incident->shift,
-                    'approve_status' => [
-                        'status_id' => $incident->status_id,
-                        'approve_status' => $incident->status_name,
-                    ],
+                    'approve_status' => $incident->status_name,
                     'status' => $incident->status == 1 ? 'Active' : 'In-Active',
                     'created_by' => getUsername($incident->created_by),
                     'created_at' => Displaydateformat($incident->created_at),
@@ -955,10 +949,7 @@ class InitialIncidentController extends BaseController
                     'rcpa_id' => $incident->rcpa_id,
                     'unit' => $incident->unit_name,
                     'shift' => $incident->shift,
-                    'approve_status' => [
-                        'status_id' => $incident->status_id,
-                        'approve_status' => $incident->status_name,
-                    ],
+                    'approve_status' => $incident->status_name,
                     'status' => $incident->status == 1 ? 'Active' : 'In-Active',
                     'created_by' => getUsername($incident->created_by),
                     'created_at' => Displaydateformat($incident->created_at),
@@ -1233,13 +1224,12 @@ class InitialIncidentController extends BaseController
     public function generate()
     {
         $count = IncidentBodyParts::withoutGlobalScopes()->count() + 1;
-    
+
         $randomId = 'INCIDENTBODY-' . getautogen($count);
-    
+
         return response()->json([
             'status' => true,
             'randomId' => $randomId
         ]);
     }
-    
 }
