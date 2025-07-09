@@ -60,10 +60,11 @@
                                                 </option>
                                                 <option value="{{ encryptId('3') }}">Waiting for EHS Officer Verification
                                                 </option>
-                                                <option value="{{ encryptId('4') }}">Closed</option>
-                                                <option value="{{ encryptId('5') }}">EHS Officer Rejected - Resubmit to
+                                                <option value="{{ encryptId('4') }}">EHS Officer Rejected - Resubmit to
                                                     Floor Manager Verification
                                                 </option>
+                                                <option value="{{ encryptId('5') }}">Closed</option>
+
 
 
                                             </select>
