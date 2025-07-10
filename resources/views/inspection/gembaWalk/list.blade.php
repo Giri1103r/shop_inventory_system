@@ -283,8 +283,8 @@
                             name: 'gemba_walk_status'
                         },
                         {
-                            data: 'created_by',
-                            name: 'created_by'
+                            data: 'inspection_created_by',
+                            name: 'inspection_created_by'
                         },
                         {
                             data: 'inspection_created_date',
