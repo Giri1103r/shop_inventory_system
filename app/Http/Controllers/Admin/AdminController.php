@@ -253,19 +253,19 @@ class AdminController extends Controller
                         [
                             // 'link' => 'audit/inter-unit-audit/checklist/list',
                             'name' => 'No of Fire Inspection',
-                            'count' => GetInspectionCount('Fire')['Fire'] ,
+                            'count' => GetInspectionCount('Fire')['Fire'],
                             'icon' => 'bx bx-message-square-detail',
                             'icon_color' => 'text-primary',
                         ],
                         [
                             'link' => 'inspection/gemba-walk/list',
                             'name' => 'No of 6s Observation',
-                            'count' =>GetInspectionCount('GembaWalk')['GembaWalk'] ,
+                            'count' => GetInspectionCount('GembaWalk')['GembaWalk'],
                             'icon' => 'bx bx-message-square-detail',
                             'icon_color' => 'text-primary',
                         ],
                         [
-                           'link' => 'incident/initial-incident/list/' . $fire_Incidence . '/' . $type4,
+                            'link' => 'incident/initial-incident/list/' . $fire_Incidence . '/' . $type4,
                             'name' => 'No of Fire Call',
                             'count' => gettotalCount('fire_incidence'),
                             'icon' => 'bx bx-message-square-detail',
@@ -274,14 +274,14 @@ class AdminController extends Controller
                         [
                             // 'link' => 'audit/inter-unit-audit/checklist/list',
                             'name' => 'No of Safety Inspection',
-                            'count' =>GetInspectionCount('Safety')['Safety'] ,
+                            'count' => GetInspectionCount('Safety')['Safety'],
                             'icon' => 'bx bx-message-square-detail',
                             'icon_color' => 'text-primary',
                         ],
-                         [
+                        [
 
                             'name' => 'No of OHC Inspection',
-                            'count' => GetInspectionCount('Ohc')['Ohc'] ,
+                            'count' => GetInspectionCount('Ohc')['Ohc'],
                             'icon' => 'bx bx-message-square-detail',
                             'icon_color' => 'text-primary',
                         ],
@@ -295,7 +295,14 @@ class AdminController extends Controller
                         'type1' => $type1,
                     ];
                 }
-                if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
+                $allowedIds = [11, 27, 16, 9, 10, 37, 34]; 
+
+                if (
+                    CheckUserRole(ROLE_SUPERADMIN) ||
+                    CheckUserRole(ROLE_ADMIN) ||
+                    CheckUserRole(ROLE_EHS_HEAD) ||
+                    in_array(auth()->id(), $allowedIds)
+                ) {
                     return view('admin.dashboard', $data);
                 } else {
                     return view('admin.userdashboard', $data);
@@ -453,7 +460,7 @@ class AdminController extends Controller
             $incidentTypeIds = [];
             $unitIds = [];
             $lookup = [];
-            
+
             foreach ($chartData as $row) {
                 // dd($row);
                 $unitName = $row->unit_name;
@@ -683,43 +690,43 @@ class AdminController extends Controller
         }
     }
 
- public function TrainingHoursSafetyDepartmentWise(Request $request)
-{
-    try {
-        $dates = [
-            'from_date' => $request->input('FromDate'),
-            'to_date' => $request->input('ToDate')
-        ];
+    public function TrainingHoursSafetyDepartmentWise(Request $request)
+    {
+        try {
+            $dates = [
+                'from_date' => $request->input('FromDate'),
+                'to_date' => $request->input('ToDate')
+            ];
 
-        $training_data = $this->training_schedule->GetTrainingHoursDepartmentData($request);
+            $training_data = $this->training_schedule->GetTrainingHoursDepartmentData($request);
 
-        if ($training_data->isEmpty()) {
-            return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            if ($training_data->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
+            $chartData = [
+                'labels' => [],
+                'series' => [],
+                'departments' => [],
+                'department_ids' => [] // ➕ include department IDs
+            ];
+
+            foreach ($training_data as $item) {
+                $chartData['labels'][] = $item->topic_name;
+                $chartData['series'][] = (float) $item->total_hours;
+                $chartData['departments'][] = $item->department_name;
+                $chartData['department_ids'][] = $item->department_id;
+            }
+
+            return view('admin.dashboard.training_hour_department_wise', [
+                'training_data' => $training_data,
+                'chartData' => $chartData,
+                'getdashdata' => (object) $dates
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
         }
-
-        $chartData = [
-            'labels' => [],
-            'series' => [],
-            'departments' => [],
-            'department_ids' => [] // ➕ include department IDs
-        ];
-
-        foreach ($training_data as $item) {
-            $chartData['labels'][] = $item->topic_name;
-            $chartData['series'][] = (float) $item->total_hours;
-            $chartData['departments'][] = $item->department_name;
-            $chartData['department_ids'][] = $item->department_id;
-        }
-
-        return view('admin.dashboard.training_hour_department_wise', [
-            'training_data' => $training_data,
-            'chartData' => $chartData,
-            'getdashdata' => (object) $dates
-        ]);
-    } catch (\Exception $ex) {
-        report($ex);
     }
-}
 
 
     public function ptwholdviolation(Request $request)
