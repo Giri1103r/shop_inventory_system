@@ -64,7 +64,8 @@ class AdminController extends Controller
             if (Auth::check()) {
                 $user = Auth::user();
                 $data = [];
-                if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
+                 $allowedIds = [11, 27, 16, 9, 10, 37, 34];
+                if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD) ||  in_array(auth()->id(), $allowedIds)) {
                     $masterLink = [
                         [
                             'link' => 'company/list',
@@ -295,7 +296,7 @@ class AdminController extends Controller
                         'type1' => $type1,
                     ];
                 }
-                $allowedIds = [11, 27, 16, 9, 10, 37, 34]; 
+                $allowedIds = [11, 27, 16, 9, 10, 37, 34];
 
                 if (
                     CheckUserRole(ROLE_SUPERADMIN) ||
