@@ -1524,7 +1524,7 @@
             loadfmonthwisetraining(CompanyId, Fromdate, Todate);
             LoadmonthewisePTWData(CompanyId, Fromdate, Todate);
             loadunitwisecount(CompanyId, Fromdate, Todate);
-            loadtraining_count_status(CompanyId, Fromdate, Todate);
+            // loadtraining_count_status(CompanyId, Fromdate, Todate);
             // dailyObservation(Fromdate, Todate);
         }
 

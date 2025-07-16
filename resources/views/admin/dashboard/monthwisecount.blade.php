@@ -22,15 +22,12 @@
             toolbar: {
                 show: false
             },
-            events: {
-                dataPointSelection: function(event, chartContext, config) {
-                    var dataPointIndex = config.dataPointIndex;
-                    var monthName = chartContext.w.config.xaxis.categories[dataPointIndex];
-                    var month = new Date(Date.parse(monthName + " 1, 2000")).getMonth() + 1;
-                    redirectToPTW('', '', month, '', '', '');
-                }
-            }
+            zoom: {
+                enabled: false
+            },
+
         },
+
         colors: ['#008FFB'],
         dataLabels: {
             enabled: true
@@ -68,11 +65,9 @@
         }
     };
 
-    // Render the chart
     var chart = new ApexCharts(document.querySelector("#monthwiseptw"), options);
     chart.render();
 
-    // Function to download chart as PNG
     document.getElementById('monthwiseptw_download').addEventListener('click', function() {
         chart.dataURI().then(function(uri) {
             var link = document.createElement('a');

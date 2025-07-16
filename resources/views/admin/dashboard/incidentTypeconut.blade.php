@@ -1,3 +1,13 @@
+
+<style>
+    #IncidentTypeChart {
+        width: 100%;
+        height: 350px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
 <div id="IncidentTypeChart"></div>
 
 @php
