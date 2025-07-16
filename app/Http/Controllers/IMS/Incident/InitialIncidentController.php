@@ -444,7 +444,7 @@ class InitialIncidentController extends Controller
         $data = array(
             'unitList' => $unitList,
             'status' => $status,
-             'dashboard_search' => $request,
+            'dashboard_search' => $request,
         );
 
         return view('ims.initial.incident.calist', $data);
@@ -2004,7 +2004,7 @@ class InitialIncidentController extends Controller
     public function empBodyPartUrl($randomId = '', $rowId = '', $injury_person_type = ' ', $injured_person_id = '')
     {
         try {
-            $body_parts = $this->incident_body_parts->delete_temprow();
+            $body_parts = $this->incident_body_parts->delete_temprow($randomId, $injury_person_type, $injured_person_id);
 
             $data = [
                 'randomID' => $randomId,

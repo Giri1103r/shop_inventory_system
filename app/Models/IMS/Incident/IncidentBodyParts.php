@@ -380,9 +380,23 @@ class IncidentBodyParts extends Model
 
         echo json_encode($data);
     }
-    public function delete_temprow()
+    // public function delete_temprow()
+    // {
+    //     $this->where('status', 'T')->delete();
+    // }
+    public function delete_temprow($random_id, $injured_person_type, $injured_person_id)
     {
-        $this->where('status', 'T')->delete();
+        return $this->where('status', 'T')
+            ->where('random_id', $random_id)
+            ->where('injured_person_type', $injured_person_type)
+            ->where(function ($q) use ($injured_person_type, $injured_person_id) {
+                if ($injured_person_type == 3) {
+                    $q->where('injury_person_name', $injured_person_id);
+                } else {
+                    $q->where('injury_person_id', $injured_person_id);
+                }
+            })
+            ->delete();
     }
 
 
