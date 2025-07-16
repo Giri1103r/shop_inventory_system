@@ -382,10 +382,10 @@ class IncidentBodyParts extends Model
 
         echo json_encode($data);
     }
-    // public function delete_temprow()
-    // {
-    //     $this->where('status', 'T')->delete();
-    // }
+    public function delete_webtemprow()
+    {
+        $this->where('status', 'T')->delete();
+    }
     public function delete_temprow($random_id, $injured_person_type, $injured_person_id)
     {
         return $this->where('status', 'T')
