@@ -368,12 +368,20 @@ if (!function_exists('getsequence')) {
                 $count = $count + 1;
                 $sequence = 'HEALTH-' . getautogen($count);
                 break;
-
             case 'IncidentRandomID':
-                $count = IncidentBodyParts::withoutGlobalScopes()->count();
-                $count = $count + 1;
-                $sequence = 'INCIDENTBODY-' . getautogen($count);
+                $maxNumber = IncidentBodyParts::withoutGlobalScopes()
+                    ->selectRaw("MAX(CAST(SUBSTRING_INDEX(random_id, '-', -1) AS UNSIGNED)) as max_number")
+                    ->value('max_number');
+
+                $nextNumber = $maxNumber ? ($maxNumber + 1) : 1;
+
+                $sequence = 'INCIDENTBODY-' . getautogen($nextNumber);
                 break;
+            // case 'IncidentRandomID':
+            //     $count = IncidentBodyParts::withoutGlobalScopes()->count();
+            //     $count = $count + 1;
+            //     $sequence = 'INCIDENTBODY-' . getautogen($count);
+            //     break;
             default:
                 $sequence = Str::random(5);
                 break;
@@ -512,7 +520,7 @@ if (!function_exists('GetInspectionCount')) {
                 ];
                 break;
 
-             case 'Fire':
+            case 'Fire':
                 $group_wise_models['Fire'] = [
                     \App\Models\Inspection\Fire\CartridgeTypeFireExtinguisher::class,
                     \App\Models\Inspection\Fire\CoTypeFireExtinguisher::class,
@@ -661,8 +669,7 @@ if (!function_exists('getohctotalCount')) {
             case 'certifiedFirstAider':
 
 
-                $count = CertifiedFirstAider::
-                    where('status', 1);
+                $count = CertifiedFirstAider::where('status', 1);
 
                 break;
             default:

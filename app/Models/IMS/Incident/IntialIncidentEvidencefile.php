@@ -144,7 +144,7 @@ class IntialIncidentEvidencefile extends Model
 
                 // Set folder and file path
                 $folderPath = public_path('uploads/initial/incident/' . $incidentId);
-                $relativePath = 'uploads/initial/incident/' . $incidentId;
+                $relativePath = 'public/uploads/initial/incident/' . $incidentId;
 
                 if (!File::exists($folderPath)) {
                     File::makeDirectory($folderPath, 0755, true);

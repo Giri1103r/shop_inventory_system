@@ -408,18 +408,22 @@
                     <!-- invetigation form start-->
 
 
+
                     <form id="injuryform" autocomplete="off" enctype="multipart/form-data">
                         <input type="hidden" name="humanbodyinjury" id="humanbodyinjury1">
                         <input type="hidden" name="humanbodyinjurylabel" id="humanbodyinjurylabel1">
                         <input type="hidden" name="body_prim_id" id="body_prim_id" value="">
                         <input type="hidden" name="bodypartimage" id="bodypartimage">
                         <input type="hidden" name="injury_id" id="injury_id" value="{{ $injury_id }}">
-                        <input type="hidden" id="injury_person_type" value="{{ $injuryPersonType }}">
                         <input type="hidden" id="bobypart_id" value="{{ $bobypart_id }}">
-                        <input type="hidden" id="rowId" value="{{ $rowId }}">
-                        <input type="hidden" id="randomID" value="{{ $randomID }}">
                         <input type="hidden" name="incident_id" id="incident_id"
                             value="{{ $getbodyParts->incident_id }}">
+                        <input type="hidden" name="row_id" id="rowId" value="{{ $rowId }}">
+                        <input type="hidden" name="random_id" id="randomID" value="{{ $randomID }}">
+                        <input type="hidden" name="injury_person_type" id="injury_person_type"
+                            value="{{ $injuryPersonType }}">
+                        <input type="hidden" name="injuredPerson" id="injuredPerson" value="{{ $injuredPerson }}">
+
                         <div class="box-body1 box-group">
                             <div class="box">
 
@@ -439,6 +443,7 @@
 
 
                                                     </div>
+
                                                     <!--Male total parts-->
                                                     <script type="text/template" id="tmp-male">
 
@@ -786,7 +791,8 @@
                                                                 <img src="{{ admin_url('public/assets/images/human_body_parts/male/front/Right-Foot.png') }}"
                                                                     usemap='#imgmap_css_container_imgmap201293016112'
                                                                     class='imgmap_css_container'
-                                                                    title='imgmap201293016112' alt='imgmap201293016112'
+                                                                    title='imgmap201293016112'
+                                                                    alt='imgmap201293016112'
                                                                     id='img-imgmap201293016112' />
                                                                 <map id='imgmap201293016112' data-map="foot-right"
                                                                     name='imgmap_css_container_imgmap201293016112'>
@@ -1208,8 +1214,6 @@
                                 </div>
                                 <!-- /.box-body -->
                             </div>
-                            <input type="hidden" name="injury_person_type" id="injury_person_type" value="">
-                            <input type="hidden" name="injuredPerson" id="injuredPerson" value="">
 
                             @if ($is_ready_only != 1)
                                 <div class="savesubmit text-center">
@@ -1268,15 +1272,14 @@
             $("#injury_model [name='injperson']").val(injuredPerson);
             $("#injury_model").modal("show");
 
-            if (bobypart_id && randomID && rowId && injury_id && injuredPerson_type) {
-                get_emp_details_by_id(bobypart_id, randomID, rowId, acc_prim_add, injury_id, injuredPerson_type);
+            if ((bobypart_id && randomID && rowId && injuredPerson_type) || injury_id) {
+                get_emp_details_by_id(bobypart_id, randomID, rowId, acc_prim_add, injuredPerson_type, injury_id =
+                    null);
             }
 
 
-
-            function get_emp_details_by_id(bobypart_id, random_id, rowId, acc_prim_add, injury_id,
-                injuredPerson_type) {
-
+            function get_emp_details_by_id(bobypart_id, randomID, rowId, acc_prim_add, injuredPerson_type,
+                injury_id) {
                 var url = "{{ admin_url('incident/initial-incident/api/getbodyEmpdetails') }}";
 
                 $.ajax({
@@ -1284,29 +1287,50 @@
                     url: url,
                     data: {
                         partyname: bobypart_id,
-                        random_id: random_id,
+                        randomID: randomID,
                         rowId: rowId,
                         acc_prim_add: acc_prim_add,
+                        injuredPerson_type: injuredPerson_type,
                         injury_id: injury_id,
-                        injuredPerson_type: injuredPerson_type
                     },
                     success: function(data) {
-                        console.log(data['empdata']);
+                        console.log('API Response:', data);
                         if (data['empdata'] && data['empdata'].length > 0) {
-                            $.each(data['empdata'], function(i, emp) {
-                                $("#imgMapdata1").val(emp['imgMapdata']);
-                                $("#body_prim_id").val(emp['id']);
-                                $("#incident_id").val(0);
-                                $("#injury_id").val(injury_id);
-                            });
+                            var emp = data['empdata'][0]; // Get first record
+
+                            // Set form values
+                            $("#imgMapdata1").val(emp['imgMapdata']);
+                            $("#body_prim_id").val(emp['id']);
+                            $("#incident_id").val(emp['incident_id'] || 0);
+                            $("#injury_id").val(emp['injury_id'] || injury_id);
+
+                            // 1. Set body part image in hidden field
+                            $("#bodypartimage").val(emp['body_part_image']);
+
+                            // 2. Load and display the body part image
+                            if (emp['body_part_image']) {
+                                var imageUrl = "{{ asset('public/storage/uploads') }}/" + emp[
+                                    'body_part_image'];
+                                $('#img-imgmap1').attr('src', imageUrl);
+
+                                // Reinitialize canvas after image loads
+                                $('#img-imgmap1').on('load', function() {
+                                    $('div.img-content div.img-map img[usemap]').rwdImageMaps();
+                                    myInit1($("div.img-content div.img-map img"), 1);
+                                    triggerMapClick1();
+                                    editInjuryDetails();
+                                });
+                            }
                         } else {
                             $("#body_prim_id").val(0);
                             $("#incident_id").val(0);
                             $("#injury_id").val(injury_id);
+                            $("#bodypartimage").val('');
                         }
                     },
                     error: function(xhr, status, error) {
                         console.error("Error:", error);
+                        Swal.fire('Error', 'Failed to fetch body part details', 'error');
                     }
                 });
             }
@@ -2124,7 +2148,7 @@
                             $("#bodypartimage").val(combinedImageUrl);
                             console.log(combinedImageUrl);
 
-                            var random_id = $("#random_id").val();
+                            var random_id = $("#randomID").val();
                             var formDatas = new URLSearchParams($('#injuryform')
                                 .serialize());
                             formDatas.append('random_id',

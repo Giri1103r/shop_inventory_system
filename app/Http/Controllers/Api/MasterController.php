@@ -104,6 +104,7 @@ class MasterController extends BaseController
                 $workList = Work::select(
                     'masters_work.id',
                     'masters_work.emp_name',
+                    'masters_work.designation',
                     'masters_work.emp_id',
                     'company_management.id as company_id',
                     'company_management.company_name',
@@ -125,6 +126,7 @@ class MasterController extends BaseController
                             'id' => $workList->id,
                             'emp_name' => $workList->emp_name,
                             'emp_id' => $workList->emp_id,
+                            'designation' => $workList->designation,
                             'company' => [
                                 'id' => $workList->company_id,
                                 'company_name' => $workList->company_name
