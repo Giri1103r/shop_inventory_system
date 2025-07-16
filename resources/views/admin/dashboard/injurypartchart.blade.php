@@ -603,7 +603,7 @@
                 //alert(alt);
                 $.ajax({
                     type: 'post',
-                    url: "{{ admin_url('incident-management/incident-investigation/getEmpdetails') }}",
+                    url: "{{ admin_url('incident/initial-incident/getEmpdetails') }}",
                     method: 'POST',
                     data: {
                         injury_id: inval,
@@ -630,7 +630,7 @@
                 //alert(inval);
                 $.ajax({
                     type: 'post',
-                    url: "{{ admin_url('incident-management/incident-investigation/getEmpdetails') }}",
+                    url: "{{ admin_url('incident/initial-incident/getEmpdetails') }}",
                     method: 'POST',
                     data: {
                         injury_id: inval,
@@ -680,7 +680,7 @@
 
                 var accuniqueId = document.getElementById('accuniqueId').value;
 
-                var url = "{{ admin_url('incident-management/incident-investigation/getEmpdetails') }}";
+                var url = "{{ admin_url('incident/initial-incident/getEmpdetails') }}";
                 var data = {
                     partyname: injuredPerson,
                     acc_prim_id: acc_prim_id,
@@ -726,7 +726,7 @@
                     //alert(bpid);
                     $.ajax({
                         type: 'post',
-                        url: "{{ admin_url('incident-management/incident-investigation/deletebodayparts') }}",
+                        url: "{{ admin_url('incident/initial-incident/deletebodayparts') }}",
                         method: 'POST',
                         data: {
                             bid: bpid,
@@ -983,7 +983,7 @@
                 $('#imgMapdata1').val(data1);
                 $('#humanbodyinjury1').val(commaSeparatedText);
                 $('#humanbodyinjurylabel1').val(commaSeparatedText1);
-                var url = "{{ admin_url('incident-management/incident-investigation/addInjury') }}";
+                var url = "{{ admin_url('incident/initial-incident/addInjury') }}";
                 var formDatas = $('#injuryform').serialize();
 
                 var allFilleddesc = true;
@@ -1052,7 +1052,7 @@
                 /**/
 
 
-                var url = "{{ admin_url('incident-management/incident-investigation/addInjury') }}";
+                var url = "{{ admin_url('incident/initial-incident/addInjury') }}";
                 var formDatas = $('#injuryform').serialize();
 
                 var allFilleddesc = true;
