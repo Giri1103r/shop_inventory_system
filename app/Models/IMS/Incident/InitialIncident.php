@@ -300,7 +300,6 @@ class InitialIncident extends Model
             $reporting_media = decryptId($request->reporting_media);
         }
         $insert_array = array(
-            'random_id' => $request->random_id,
             'incident_date_time' => DBdatetimeformat($request->incident_date_time),
             'unit_id' => decryptId($request->unit_id),
             'company_id' => decryptId($request->company_id),
@@ -321,6 +320,10 @@ class InitialIncident extends Model
             'incident_status' => STATUS_INCIDENT_REPORT,
             'created_by' => Auth::id()
         );
+
+        if ($request->anyone_injured == 1) {
+            $insert_array['random_id'] = $request->random_id;
+        }
         return $this->create($insert_array);
     }
 
@@ -335,8 +338,9 @@ class InitialIncident extends Model
 
             $reporting_media = decryptId($request->reporting_media);
         }
+
+
         $insert_array = array(
-            'random_id' => $randomID,
             'sr_no' => getsequence('incident'),
             'incident_date_time' => DBdatetimeformat($request->incident_date_time),
             'unit_id' => $request->unit_id,
@@ -358,6 +362,11 @@ class InitialIncident extends Model
             'incident_status' => STATUS_INCIDENT_REPORT,
             'created_by' => Auth::id()
         );
+
+        if ($request->anyone_injured == 1) {
+            $insert_array['random_id'] = $randomID;
+        }
+
         return $this->create($insert_array);
     }
 
@@ -611,7 +620,7 @@ class InitialIncident extends Model
         /**
          * Role Based list view condition start
          */
-       if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD)) {
             $query->where('ims_initial_incident.status', '1');
         } elseif (CheckUserRole(ROLE_EHS_OFFICER)) {
             $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');

@@ -180,7 +180,6 @@ class InitialIncidentController extends BaseController
         }
     }
 
-
     public function Store(Request $request)
     {
         try {
@@ -189,19 +188,20 @@ class InitialIncidentController extends BaseController
                 'company_id'               => 'required',
                 'location_id'              => 'required',
                 'unit_id'                  => 'required',
-                'shift'                    => 'required|string',
-                'exact_location'           => 'required|string',
+                'shift'                    => 'required',
+                'exact_location'           => 'required',
                 'iir_type'                 => 'required|integer',
-                'reported_name'            => 'required|string',
-                'designation'              => 'required|string',
-                'department'               => 'required|string',
-                'employee_code'            => 'required|string',
+                'reported_name'            => 'required',
+                'designation'              => 'required',
+                'department'               => 'required',
+                'employee_code'            => 'required',
                 'time_of_reporting'        => 'required',
                 'reporting_media'          => 'required|array',
-                'brief_description'        => 'required|string',
-                'immediate_action_taken'   => 'required|string',
-                'anyone_injured'           => 'required',
+                'brief_description'        => 'required',
+                'immediate_action_taken'   => 'required',
+                'anyone_injured'           => 'required|in:0,1',
                 'evidence'                 => 'required|array',
+                'injuredPerson'            => 'array',
             ];
 
             $messages = [
@@ -227,17 +227,53 @@ class InitialIncidentController extends BaseController
 
             $validator = Validator::make($request->all(), $rules, $messages);
 
+            $validator->after(function ($validator) use ($request) {
+                if ($request->anyone_injured == 1) {
+                    $injuredPersons = $request->input('injuredPerson', []);
+                    if (empty($injuredPersons) || !is_array($injuredPersons)) {
+                        $validator->errors()->add('injuredPerson', 'Please provide at least one injured person record.');
+                    } else {
+                        foreach ($injuredPersons as $index => $person) {
+                            if (empty($person['injury_person_type'])) {
+                                $validator->errors()->add("injuredPerson.$index.injury_person_type", 'Injury person type is required.');
+                            }
+                            if (empty($person['injury_person_id'])) {
+                                $validator->errors()->add("injuredPerson.$index.injury_person_id", 'Injury person ID is required.');
+                            }
+                            if (isset($person['injury_person_type']) && $person['injury_person_type'] == 3) {
+                                if (empty($person['injury_person_name'])) {
+                                    $validator->errors()->add("injuredPerson.$index.injury_person_name", 'Injury person name is required when type is 3.');
+                                }
+                            }
+                            if (empty($person['injury_person_designation'])) {
+                                $validator->errors()->add("injuredPerson.$index.injury_person_designation", 'Injury person designation is required.');
+                            }
+                            if (empty($person['injury_person_department_id'])) {
+                                $validator->errors()->add("injuredPerson.$index.injury_person_department_id", 'Injury person department ID is required.');
+                            }
+                            if (empty($person['nature_of_injury'])) {
+                                $validator->errors()->add("injuredPerson.$index.nature_of_injury", 'Nature of injury is required.');
+                            }
+                        }
+                    }
+                }
+            });
+
             if ($validator->fails()) {
                 return $this->sendError('Validation Error', $validator->errors(), 422);
             }
-            $randomID = getsequence('IncidentRandomID');
+            $getRandomID = IncidentBodyParts::select('random_id')
+                ->where('status', 'T')
+                ->orderByDesc('id')
+                ->first();
+            $randomID = $getRandomID->random_id;
             $initialincident = $this->initialincident->incidentStore_api($randomID);
 
-            // Store evidences
+
             $this->initialincidentevidence->evidenceStore_api($initialincident->id);
 
-            // Store injury details if needed
             if ($initialincident->anyone_injured == 1) {
+
                 $this->injury_details->storeinjuryApi($initialincident->id, $initialincident->random_id);
             }
 
@@ -245,7 +281,6 @@ class InitialIncidentController extends BaseController
             $user_role = ROLE_EHS_HEAD;
             $mailsubject = 'Incident has been submitted';
 
-            // Get users with role
             $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
             $userids = $users->pluck('id')->toArray();
 
@@ -261,26 +296,23 @@ class InitialIncidentController extends BaseController
                 }
             }
 
-            // Save notification
             $notificationData = [
-                'notification_type'   => 5,
-                'module_type'         => 1,
+                'notification_type'    => 5,
+                'module_type'          => 1,
                 'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode([
+                'mobile_notification'  => json_encode([
                     'title'   => $mailsubject,
                     'message' => 'Incident ' . $initialincident->sr_no . ' submitted by ' . getUsername($initialincident->created_by),
                     'icon'    => admin_url('public/assets/icons/incident.png'),
                     'id'      => $initialincident->id,
                     'module'  => 5,
                 ]),
-                'web_link'            => admin_url('incident/initial-incident/review/' . encryptId($initialincident->id)),
-                'assigned_user'       => array_to_string($userids),
-                'created_by'          => Auth::id(),
+                'web_link'             => admin_url('incident/initial-incident/review/' . encryptId($initialincident->id)),
+                'assigned_user'        => array_to_string($userids),
+                'created_by'           => Auth::id(),
             ];
-
             notificationSave($notificationData);
 
-            // Save status log
             $insert_array = [
                 'ims_type'   => 1,
                 'ims_id'     => $initialincident->id,
@@ -290,17 +322,15 @@ class InitialIncidentController extends BaseController
                 'remarks'    => null,
                 'approved_by' => Auth::id(),
             ];
-
             $this->Statuslog->create($insert_array);
 
-            // Final response
             $success = [
                 'incident_id' => $initialincident->id,
             ];
 
             return $this->sendResponse($success, 'Your data has been created successfully');
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             return $this->sendError('Server Error', ['error' => $ex->getMessage()], 500);
         }
     }
@@ -1221,15 +1251,29 @@ class InitialIncidentController extends BaseController
         }
     }
 
+    // public function generate()
+    // {
+    //     $count = IncidentBodyParts::withoutGlobalScopes()->count() + 1;
+
+    //     $randomId = 'INCIDENTBODY-' . getautogen($count);
+
+    //     return response()->json([
+    //         'status' => true,
+    //         'randomId' => $randomId
+    //     ]);
+    // }
     public function generate()
     {
-        $count = IncidentBodyParts::withoutGlobalScopes()->count() + 1;
+        $randomID = getsequence('IncidentRandomID');
 
-        $randomId = 'INCIDENTBODY-' . getautogen($count);
+        $maxRowId = IncidentBodyParts::withoutGlobalScopes()->max('row_id');
+        $nextRowId = $maxRowId ? ($maxRowId + 1) : 1;
 
         return response()->json([
-            'status' => true,
-            'randomId' => $randomId
+            'status'    => true,
+            'randomId'  => $randomID,
+            'rowId'     => $nextRowId,
+            'message'   => 'New random id generated.'
         ]);
     }
 }

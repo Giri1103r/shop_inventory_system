@@ -109,11 +109,12 @@ class IncidentBodyParts extends Model
 
         return response()->json($response);
     }
+
     public function apigetEmpdetails()
     {
         $request = request();
         $partyname = $request->input('partyname');
-        $random_id = $request->input('random_id');
+        $random_id = $request->input('randomID');
         $rowId = $request->input('rowId');
         $acc_prim_add = $request->input('acc_prim_add');
         $injury_id = $request->input('injury_id');
@@ -121,37 +122,34 @@ class IncidentBodyParts extends Model
         // $incident_id = $request->input('incident_id');
 
 
-
-        $query = $this->select('ims_incident_body_parts.*');
+        $query = IncidentBodyParts::query();
 
         if ($acc_prim_add == "acc_prim_add") {
             $query->where('random_id', $random_id)
                 ->where('id', $partyname)
                 ->where('row_id', $rowId)
-                ->where('injury_id', $injury_id)
                 ->where('injured_person_type', $injuredPerson_type)
-                ->where(function ($q) {
-                    $q->where('status', 'Y')
-                        ->orWhere('status', 'N')
-                        ->orWhere('status', 'T');
+                ->where(function ($q) use ($injury_id) {
+                    $q->where('injury_id', $injury_id)
+                        ->orWhereNull('injury_id');
                 })
+                ->whereIn('status', ['Y', 'N', 'T'])
                 ->where('trash', 'NO');
         } else {
             $query->where('random_id', $random_id)
                 ->where('id', $partyname)
                 ->where('row_id', $rowId)
-                ->where('injury_id', $injury_id)
                 ->where('injured_person_type', $injuredPerson_type)
+                ->where('injury_id', $injury_id)
                 ->where('status', 'Y')
                 ->where('trash', 'NO');
         }
 
         $get_data = $query->get();
-
         $response['empdata'] = $get_data;
+        // dd($get_data);
         return response()->json($response);
     }
-
     public function addInjury()
     {
         $request = request();
@@ -263,6 +261,7 @@ class IncidentBodyParts extends Model
     public function addInjuryApi()
     {
         $request = request();
+
         $random_id = $request->random_id;
         $folderPath = 'incident/body_parts/' . $random_id;
         Storage::makeDirectory($folderPath);
@@ -389,20 +388,43 @@ class IncidentBodyParts extends Model
     }
 
 
-    public function updateStatusForIncident($random_id, $incident_id, $injured_person_type, array $excludedEmpIds)
-    {
+    // public function updateStatusForIncident($random_id, $incident_id, $injured_person_type, array $excludedEmpIds)
+    // {
 
-        return $this->where('random_id', $random_id)
+    //     return $this->where('random_id', $random_id)
+    //         ->where('injured_person_type', $injured_person_type)
+    //         ->where(function ($query) use ($excludedEmpIds) {
+    //             $query->whereNotIn('injury_person_id', $excludedEmpIds)
+    //                 ->whereNotIn('injury_person_name', $excludedEmpIds);
+    //         })
+    //         ->update([
+    //             'incident_id' => $incident_id,
+    //             'status' => 'N'
+    //         ]);
+    // }
+
+    public function updateStatusForIncident($random_id, $incident_id, $injured_person_type, array $excludedValues)
+    {
+        $query = $this->where('random_id', $random_id)
             ->where('injured_person_type', $injured_person_type)
-            ->where(function ($query) use ($excludedEmpIds) {
-                $query->whereNotIn('injury_person_id', $excludedEmpIds)
-                    ->whereNotIn('injury_person_name', $excludedEmpIds);
-            })
-            ->update([
-                'incident_id' => $incident_id,
-                'status' => 'N'
-            ]);
+            ->where('status', 'T');
+
+        // Exclude by type
+        if ($injured_person_type == 1 || $injured_person_type == 2) {
+            // Exclude by ID
+            $query->whereNotIn('injury_person_id', $excludedValues);
+        } elseif ($injured_person_type == 3) {
+            // Exclude by Name
+            $query->whereNotIn('injury_person_name', $excludedValues);
+        }
+
+        // Update the matching rows
+        return $query->update([
+            'incident_id' => $incident_id,
+            'status'      => 'N'
+        ]);
     }
+
 
     public function updateBodyParts($random_id, $injury_person_id, $incident_id, array $injuryDetailsArray)
     {

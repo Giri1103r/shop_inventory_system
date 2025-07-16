@@ -52,7 +52,7 @@ class InjuryDetails extends Model
         if (!empty($injuryPerson) && is_array($injuryPerson)) {
             // dd($injuryPerson);
             foreach ($injuryPerson as $injuryPersonData) {
-                
+
                 if (!empty($injuryPersonData['injury_detail_id'])) {
                     $exists = $this->where('id', $injuryPersonData['injury_detail_id'])->exists();
                     // dd($exists);
@@ -118,80 +118,161 @@ class InjuryDetails extends Model
             );
         }
     }
+    // public function storeinjuryApi($incident_id, $random_id)
+    // {
+    //     $request = request();
+    //     $IncidentBodyParts = new IncidentBodyParts();
+    //     $injuryPerson = $request->input('injuredPerson');
+    //     $inj_person_arr = [];
+    //     if (!empty($injuryPerson) && is_array($injuryPerson)) {
+
+    //         foreach ($injuryPerson as $injuryPersonData) {
+
+    //             if (!empty($injuryPersonData['injury_detail_id'])) {
+    //                 $exists = $this->where('id', $injuryPersonData['injury_detail_id'])->exists();
+    //                 // dd($exists);
+    //                 if ($exists) {
+    //                     continue;
+    //                 }
+    //             }
+    //             try {
+    //                 $personType = $injuryPersonData['injury_person_type'] ?? '';
+
+    //                 $insert_array = [
+    //                     'incident_id' => $incident_id,
+    //                     'injury_person_type' => $personType,
+    //                     'injury_person_id' => ($personType == 3) ? 0 : $injuryPersonData['injury_person_id'] ?? 0,
+    //                     'injury_person_name' => $injuryPersonData['injury_person_name'] ?? '',
+    //                     'injury_person_designation' => $injuryPersonData['injury_person_designation'] ?? null,
+    //                     'injury_person_department_id' => $injuryPersonData['injury_person_department_id'] ?? null,
+    //                     'nature_of_injury' => isset($injuryPersonData['nature_of_injury']) ? $injuryPersonData['nature_of_injury'] : null,
+    //                     'created_by' => Auth::id()
+    //                 ];
+    //                 $saveinjuryData = $this->create($insert_array);
+
+    //                 // Track for updateStatusForIncident
+    //                 if ($personType == 1 || $personType == 2) {
+    //                     $inj_person_arr[] = $injuryPersonData['injury_person_id'] ?? 0;
+    //                 } elseif ($personType == 3) {
+    //                     $inj_person_arr[] = $injuryPersonData['injury_person_name'] ?? '';
+    //                 }
+
+    //                 // Update temporary records
+    //                 $injdata = [
+    //                     'incident_id' => $incident_id,
+    //                     'injury_id' => $saveinjuryData->id,
+    //                     'status' => 'Y',
+    //                 ];
+
+    //                 $updateConditions = [
+    //                     'random_id' => $random_id,
+    //                     'injured_person_type' => $personType,
+    //                     'status' => 'T'
+    //                 ];
+
+    //                 if ($personType == 1 || $personType == 2) {
+    //                     $updateConditions['injury_person_id'] = $saveinjuryData->injury_person_id;
+    //                 } else {
+    //                     $updateConditions['injury_person_name'] = $saveinjuryData->injury_person_name;
+    //                 }
+    //                 $IncidentBodyParts->where($updateConditions)->update($injdata);
+    //             } catch (\Exception $e) {
+    //                 dd($e);
+    //                 continue; // Skip if error occurs
+    //             }
+    //         }
+    //     }
+
+    //     if (!empty($inj_person_arr)) {
+    //         $IncidentBodyParts->updateStatusForIncident(
+    //             $random_id,
+    //             $incident_id,
+    //             $personType ?? null,
+    //             $inj_person_arr
+    //         );
+    //     }
+    // }
     public function storeinjuryApi($incident_id, $random_id)
     {
         $request = request();
         $IncidentBodyParts = new IncidentBodyParts();
+
         $injuryPerson = $request->input('injuredPerson');
         $inj_person_arr = [];
+
         if (!empty($injuryPerson) && is_array($injuryPerson)) {
-          
             foreach ($injuryPerson as $injuryPersonData) {
-                
-                if (!empty($injuryPersonData['injury_detail_id'])) {
-                    $exists = $this->where('id', $injuryPersonData['injury_detail_id'])->exists();
-                    // dd($exists);
-                    if ($exists) {
-                        continue;
-                    }
-                }
                 try {
-                    $personType = $injuryPersonData['injury_person_type'] ?? '';
-                  
+                    // Check for existing detail (avoid duplicate creation)
+                    if (!empty($injuryPersonData['injury_detail_id'])) {
+                        if ($this->where('id', $injuryPersonData['injury_detail_id'])->exists()) {
+                            continue;
+                        }
+                    }
+
+                    // Determine person type
+                    $personType = $injuryPersonData['injury_person_type'] ?? null;
+
+                    // Build data for insert
                     $insert_array = [
-                        'incident_id' => $incident_id,
-                        'injury_person_type' => $personType,
-                        'injury_person_id' => ($personType == 3) ? 0 : $injuryPersonData['injury_person_id'] ?? 0,
-                        'injury_person_name' => $injuryPersonData['injury_person_name'] ?? '',
-                        'injury_person_designation' => $injuryPersonData['injury_person_designation'] ?? null,
+                        'incident_id'                 => $incident_id,
+                        'injury_person_type'          => $personType,
+                        'injury_person_id'            => ($personType == 3) ? 0 : ($injuryPersonData['injury_person_id'] ?? 0),
+                        'injury_person_name'          => ($personType == 3) ? ($injuryPersonData['injury_person_name'] ?? '') : '',
+                        'injury_person_designation'   => $injuryPersonData['injury_person_designation'] ?? null,
                         'injury_person_department_id' => $injuryPersonData['injury_person_department_id'] ?? null,
-                        'nature_of_injury' => isset($injuryPersonData['nature_of_injury']) ? $injuryPersonData['nature_of_injury'] : null,
-                        'created_by' => Auth::id()
+                        'nature_of_injury'            => $injuryPersonData['nature_of_injury'] ?? null,
+                        'created_by'                  => Auth::id(),
                     ];
+
+                    // Save new Injury Person
                     $saveinjuryData = $this->create($insert_array);
 
-                    // Track for updateStatusForIncident
+                    // Track IDs or Names for exclusion in status update
                     if ($personType == 1 || $personType == 2) {
-                        $inj_person_arr[] = $injuryPersonData['injury_person_id'] ?? 0;
+                        $inj_person_arr[] = $saveinjuryData->injury_person_id;
                     } elseif ($personType == 3) {
-                        $inj_person_arr[] = $injuryPersonData['injury_person_name'] ?? '';
+                        $inj_person_arr[] = $saveinjuryData->injury_person_name;
                     }
 
-                    // Update temporary records
+                    // Update IncidentBodyParts for this person
                     $injdata = [
                         'incident_id' => $incident_id,
-                        'injury_id' => $saveinjuryData->id,
-                        'status' => 'Y',
+                        'injury_id'   => $saveinjuryData->id,
+                        'status'      => 'Y',
                     ];
 
                     $updateConditions = [
-                        'random_id' => $random_id,
+                        'random_id'           => $random_id,
                         'injured_person_type' => $personType,
-                        'status' => 'T'
+                        'status'              => 'T',
                     ];
 
                     if ($personType == 1 || $personType == 2) {
                         $updateConditions['injury_person_id'] = $saveinjuryData->injury_person_id;
-                    } else {
+                    } elseif ($personType == 3) {
                         $updateConditions['injury_person_name'] = $saveinjuryData->injury_person_name;
                     }
+                        // dd($updateConditions,$injdata);
                     $IncidentBodyParts->where($updateConditions)->update($injdata);
                 } catch (\Exception $e) {
                     dd($e);
-                    continue; // Skip if error occurs
+                    continue;
                 }
             }
-        }
 
-        if (!empty($inj_person_arr)) {
-            $IncidentBodyParts->updateStatusForIncident(
-                $random_id,
-                $incident_id,
-                $personType ?? null,
-                $inj_person_arr
-            );
+            // If we have any saved persons, mark all other TEMP rows as 'N'
+            if (!empty($inj_person_arr)) {
+                $IncidentBodyParts->updateStatusForIncident(
+                    $random_id,
+                    $incident_id,
+                    $injuryPerson[0]['injury_person_type'] ?? null,  // Use type of first
+                    $inj_person_arr
+                );
+            }
         }
     }
+
     public function deleterecord($incidentId, $injuryId)
     {
 
@@ -222,7 +303,7 @@ class InjuryDetails extends Model
             })
             ->leftJoin('ims_incident_body_parts', 'ims_injury_details.id', '=', 'ims_incident_body_parts.injury_id')
             ->where('ims_injury_details.incident_id', $id)
-            ->where('ims_injury_details.trash','NO')
+            ->where('ims_injury_details.trash', 'NO')
             ->get();
     }
 
@@ -236,7 +317,7 @@ class InjuryDetails extends Model
 
         )
             ->leftJoin('ims_incident_body_parts', 'ims_injury_details.id', '=', 'ims_incident_body_parts.injury_id')
-            ->where('ims_injury_details.incident_id', $id)->where('ims_injury_details.trash','NO')->get();
+            ->where('ims_injury_details.incident_id', $id)->where('ims_injury_details.trash', 'NO')->get();
         return $data;
     }
 }
