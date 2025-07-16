@@ -105,8 +105,8 @@ class GembaWalkController extends Controller
                             ->addColumn('inspection_created_date', function ($row) {
                                 return Displaydateformat($row->inspection_created_date);
                             })
-                            ->addColumn('created_by', function ($row) {
-                                return getUsername($row->created_by);
+                            ->addColumn('inspection_created_by', function ($row) {
+                                return getUsername($row->inspection_created_by);
                             })
                             ->addColumn('gemba_walk_status', function ($row) {
                                 return "<span class='" . $row->bg_color . "' >" . $row->status_name . "</span>";
@@ -134,7 +134,7 @@ class GembaWalkController extends Controller
 
                                 return $btn;
                             })
-                            ->rawColumns(['action', 'created_date', 'created_by', 'date', 'shift', 'gemba_walk_status'])
+                            ->rawColumns(['action', 'created_date', 'inspection_created_by', 'date', 'shift', 'gemba_walk_status'])
                             ->setFilteredRecords($data['filter_records'])
                             ->setTotalRecords($data['total_records'])
                             ->skipPaging()
