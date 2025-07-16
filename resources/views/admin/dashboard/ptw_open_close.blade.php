@@ -1,3 +1,13 @@
+<style>
+    #ptw_open_close {
+        width: 100%;
+        height: 350px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+
 @if (empty($active_close_count) || $active_close_count == null)
     <div class="border-0 pb-3" style="margin-top: 166px;">
         <h4 style="text-align: center;">No data Found.</h4>
@@ -17,11 +27,11 @@
                 type: 'pie',
                 events: {
                     dataPointSelection: function(event, chartContext, config) {
-                       var dataPointIndex = config.dataPointIndex;
+                        var dataPointIndex = config.dataPointIndex;
                         if (dataPointIndex === 0) {
-                            redirectToPTW('', '', '', '{{ $openStatusEncrypted }}','','');
+                            redirectToPTW('', '', '', '{{ $openStatusEncrypted }}', '', '');
                         } else if (dataPointIndex === 1) {
-                            redirectToPTW('', '', '', '{{ $closeStatusEncrypted }}','','');
+                            redirectToPTW('', '', '', '{{ $closeStatusEncrypted }}', '', '');
                         }
                     }
                 }

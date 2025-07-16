@@ -670,7 +670,6 @@ class AdminController extends Controller
             ];
 
             $work_wise_count = $this->ptw->GetTypeWiseCount();
-            // dd($work_wise_count);
             if (count($work_wise_count) < 0) {
                 return response()->json([
                     'html' => '<div class="border-0 pb-3" style="margin-top: 150px;"><h4 style="text-align: center;">No data Found.</h4></div>',

@@ -119,6 +119,8 @@ class IncidentBodyParts extends Model
         $acc_prim_add = $request->input('acc_prim_add');
         $injury_id = $request->input('injury_id');
         $injuredPerson_type = $request->input('injuredPerson_type');
+        // $incident_id = $request->input('incident_id');
+
 
         $query = IncidentBodyParts::query();
 
@@ -457,62 +459,56 @@ class IncidentBodyParts extends Model
 
     public function countBodyPart()
     {
-        // Incident investigation
-        $listResp = DB::table('ims_initial_incident as inc')
-            ->select([
-                'body.id as bodyids',
-                'inc.id as inveeid',
-            ])
+        // Step 1: Get all related incident body part IDs (non-trashed)
+        $bodyIds = DB::table('ims_initial_incident as inc')
             ->leftJoin('ims_incident_body_parts as body', 'body.incident_id', '=', 'inc.id')
             ->where('inc.trash', 'NO')
-            ->get();
+            ->pluck('body.id')
+            ->filter()
+            ->toArray();
 
-        // Collect body IDs
-        $bodyid = collect($listResp)->pluck('bodyids')->filter()->toArray();
-        $mergedArray = $bodyid;
-
-        // If no body IDs found, return all parts with 0 count
-        if (empty($mergedArray)) {
-            $body_parts_labels = DB::table('ims_accident_injury_parts')->pluck('part_name');
-
-            return $body_parts_labels->map(function ($part) {
-                return [
-                    'body_part' => $part,
-                    'count' => 0
-                ];
-            })->toArray();
+        // Step 2: If no body part entries found, return all with count = 0
+        if (empty($bodyIds)) {
+            return DB::table('ims_accident_injury_parts')
+                ->pluck('part_name')
+                ->map(function ($part) {
+                    return [
+                        'body_part' => $part,
+                        'count' => 0
+                    ];
+                })->toArray();
         }
 
-        // Count matched body parts
-        $body_parts = DB::table('ims_accident_injury_parts as t1')
+        // Step 3: Count matching parts using complex LIKE condition
+        $bodyParts = DB::table('ims_accident_injury_parts as t1')
             ->select('t1.part_name', DB::raw('COALESCE(COUNT(t2.body_parts_label), 0) as count'))
-            ->join('ims_incident_body_parts as t2', DB::raw("FIND_IN_SET(t1.part_name, t2.body_parts_label)"), '>', DB::raw('0'))
-            ->whereIn('t2.id', $mergedArray)
+            ->join('ims_incident_body_parts as t2', function ($join) {
+                $join->on(
+                    DB::raw("CONCAT(',', REPLACE(t2.body_parts_label, ' ', ''), ',')"),
+                    'LIKE',
+                    DB::raw("CONCAT('%,', REPLACE(t1.part_name, ' ', ''), ',%')")
+                );
+            })
+            ->whereIn('t2.id', $bodyIds)
             ->groupBy('t1.part_name')
             ->get();
 
-        // dd($body_parts);
-        foreach ($body_parts as $key => $obsvalue) {
-            $obserdata[$obsvalue->part_name] = (array) $obsvalue;
+        // Step 4: Build map of counts for easier lookup
+        $obserdata = [];
+        foreach ($bodyParts as $item) {
+            $obserdata[$item->part_name] = (array) $item;
         }
 
-        $body_parts_labels = DB::table('ims_accident_injury_parts')->pluck('part_name');
+        // Step 5: Ensure all parts are included in result, with default count = 0
+        $result = [];
+        $allParts = DB::table('ims_accident_injury_parts')->pluck('part_name');
 
-        foreach ($body_parts_labels as $value) {
-            if (isset($obserdata[$value])) {
-                $result[] = [
-                    'body_part' => $obserdata[$value]['part_name'],
-                    'count' => $obserdata[$value]['count']
-                ];
-            } else {
-                $result[] = [
-                    'body_part' => $value,
-                    'count' => 0
-                ];
-            }
+        foreach ($allParts as $part) {
+            $result[] = [
+                'body_part' => $part,
+                'count' => $obserdata[$part]['count'] ?? 0
+            ];
         }
-
-        // dd($result);
 
         return $result;
     }

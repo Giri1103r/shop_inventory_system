@@ -67,10 +67,9 @@ class InitialIncident extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('ims_initial_incident.*', 'ims_incident_status.status_name', 'ims_incident_status.bg_color', 'ims_initial_incident_investigation.risk_analysis', 'ims_injury_details.nature_of_injury');
+        $query = $this->select('ims_initial_incident.*', 'ims_incident_status.status_name', 'ims_incident_status.bg_color');
         $query = $query->leftJoin('ims_incident_status', 'ims_incident_status.id', '=', 'ims_initial_incident.incident_status');
-        $query = $query->leftJoin('ims_initial_incident_investigation', 'ims_initial_incident_investigation.incident_id', '=', 'ims_initial_incident.id');
-        $query = $query->leftJoin('ims_injury_details', 'ims_injury_details.incident_id', '=', 'ims_initial_incident.id');
+
         $org_total =  $query;
         $org_total_counts = $org_total->count();
         /**
@@ -84,29 +83,29 @@ class InitialIncident extends Model
 
             $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
         }
-        $condition =  decryptId($request->condition);
+        // $condition =  decryptId($request->condition);
         // if ($request->has('type') && $request->type) {
-        if ($condition  == 1) {
-            $type = ($request->type);
-            if ($type != ALL) {
-                $query = $query->where('ims_injury_details.nature_of_injury', decryptId($type));
-            }
-        } else if ($condition  == 2) {
-            $type = ($request->type);
-            if ($type != ALL) {
-                $query = $query->whereRaw("FIND_IN_SET(?, ims_initial_incident.ua_or_uc)", [decryptId($type)]);
-            }
-        } else if ($condition  == 3) {
-            $type = ($request->type);
-            if ($type != ALL) {
-                $query = $query->where('ims_initial_incident.iir_type', decryptId($type));
-            }
-        } else if ($condition  == 4) {
-            $type = ($request->type);
-            if ($type != ALL) {
-                $query = $query->where('ims_initial_incident.iir_type', decryptId($type));
-            }
-        }
+        // if ($condition  == 1) {
+        //     $type = ($request->type);
+        //     // if ($type != ALL) {
+        //     //     $query = $query->where('ims_injury_details.nature_of_injury', decryptId($type));
+        //     // }
+        // } else if ($condition  == 2) {
+        //     $type = ($request->type);
+        //     if ($type != ALL) {
+        //         $query = $query->whereRaw("FIND_IN_SET(?, ims_initial_incident.ua_or_uc)", [decryptId($type)]);
+        //     }
+        // } else if ($condition  == 3) {
+        //     $type = ($request->type);
+        //     if ($type != ALL) {
+        //         $query = $query->where('ims_initial_incident.iir_type', decryptId($type));
+        //     }
+        // } else if ($condition  == 4) {
+        //     $type = ($request->type);
+        //     if ($type != ALL) {
+        //         $query = $query->where('ims_initial_incident.iir_type', decryptId($type));
+        //     }
+        // }
 
 
         // }
@@ -152,9 +151,9 @@ class InitialIncident extends Model
         }
 
 
-        if ($request->has('dash_injuryType') && $request->dash_injuryType) {
-            $query = $query->where('ims_injury_details.nature_of_injury', $request->dash_injuryType);
-        }
+        // if ($request->has('dash_injuryType') && $request->dash_injuryType) {
+        //     $query = $query->where('ims_injury_details.nature_of_injury', $request->dash_injuryType);
+        // }
 
         if ($request->has('dash_month') && $request->dash_month) {
             $query = $query->whereMonth('ims_initial_incident.created_at', $request->dash_month);
@@ -176,7 +175,6 @@ class InitialIncident extends Model
         }
 
         $data = $query->get();
-
         $datas = array(
             'data' => $data,
             'total_records' => $org_total_counts,
