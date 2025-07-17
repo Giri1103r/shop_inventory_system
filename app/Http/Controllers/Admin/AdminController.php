@@ -1348,42 +1348,41 @@ class AdminController extends Controller
         }
     }
 
-
+     // department wise schedule count 
     public function getDepartment(Request $request)
     {
         try {
-            $chartData = $this->training_schedule->getDepartmentData();
-            if ($chartData->isEmpty()) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
-            $departmentDetails = $this->department->select('department_name', 'id')->get();
+        $chartData = $this->training_schedule->getDepartmentData();
 
-            // Initialize chartDataArray with all departments having count 0
-            $chartDataArray = $departmentDetails->pluck('id', 'department_name')->mapWithKeys(function ($value, $key) {
-                return [$key => 0];
-            });
-
-            // Fill chartDataArray with actual counts from the query
-            foreach ($chartData as $data) {
-                if (isset($chartDataArray[$data->department_name])) {
-                    $chartDataArray[$data->department_name] = $data->count;
-                }
-            }
-
-            $chartDataArray = $chartDataArray->filter(function ($count) {
-                return $count > 0;
-            });
-
-            $data = [
-                'getdashdata' => $request,
-                'departmentDetails' => $departmentDetails,
-                'chartDataArray' => $chartDataArray
-            ];
-
-            return view('admin.dashboard.departmentData', $data);
-        } catch (\Exception $ex) {
-            report($ex); // Debug any errors during execution
+        if ($chartData->isEmpty()) {
+            return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
         }
+
+        // Fetch department info and key by ID for easy mapping
+        $departmentDetails = $this->department->select('id', 'department_name')->get()->keyBy('id');
+
+        $chartDataArray = [];
+        foreach ($chartData as $data) {
+            $deptId = $data->department_id;
+            if (isset($departmentDetails[$deptId])) {
+                $chartDataArray[$deptId] = $data->count;
+            }
+        }
+
+        // Filter out zero-counts if needed
+        $chartDataArray = array_filter($chartDataArray, fn($count) => $count > 0);
+
+        $data = [
+            'getdashdata' => $request,
+            'departmentDetails' => $departmentDetails,
+            'chartDataArray' => $chartDataArray
+        ];
+
+        return view('admin.dashboard.departmentData', $data);
+    } catch (\Exception $ex) {
+        report($ex);
+        return response()->json('An error occurred.');
+    }
     }
 
     public function getmonthwiseTraining(Request $request)

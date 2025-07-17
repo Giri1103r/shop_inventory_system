@@ -5,7 +5,9 @@
 @php
 
     $dash_department_id =
-        isset($dashboard_search['department']) && $dashboard_search['department'] != '' ? $dashboard_search['department'] : '';
+        isset($dashboard_search['department']) && $dashboard_search['department'] != ''
+            ? $dashboard_search['department']
+            : '';
 
 @endphp
 @section('content')
@@ -32,6 +34,7 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
+                                        <input type="hidden" name="department" value="{{encryptId($departmentData)}}">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="from_date" class="form-label ">From Date</label>
                                             <input type="text" name ="from_date" id="from_date_datepicker"
@@ -102,7 +105,7 @@
 
                                         @if ($dash_department_id != '')
                                             <div class="col-md-3 mb-3 form-input">
-                                                <label for="inspectiontype" class="form-label ">Unit</label>
+                                                <label for="inspectiontype" class="form-label ">Department</label>
                                                 <select name="department_id" id="department_id"
                                                     class=" form-control single-select" style="width: 100%">
                                                     <option value="">Select Department</option>
@@ -289,16 +292,9 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.from_date = $('#from_date_datepicker').val();
-                            d.to_date = $('#to_date_datepicker').val();
-                            d.topic_id = $('#topic_id').val();
-                            d.trainer_id = $('#trainer_id').val();
-                            d.unit_id = $('#unit_id').val();
-                            d.department_id = $('#department_id').val();
-                            d.company_id = $('#company_id').val();
-                            d.status = $('#status').val();
-                            d.dashboard_openCloseStatus = dashboard_openCloseStatus;
-
+                            let formData = $('#formsearch').serialize();
+                            let params = new URLSearchParams(formData);
+                            params.forEach((value, key) => d[key] = value);
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {

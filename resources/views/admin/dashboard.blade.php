@@ -2138,5 +2138,52 @@
             // Initial load
             filterDashboard();
         });
+
+
+        // trainig schedule
+
+        function redirectcharturl(chart_type, id, url) {
+            let companyId = $('#company_id').val();
+            let Fromdate = $('#fromDate').val();
+            let todate = $('#toDate').val();
+
+            let form = $('<form>', {
+                method: 'POST',
+                action: url,
+            });
+
+            form.append($('<input>', {
+                type: 'hidden',
+                name: '_token',
+                value: "{{ csrf_token() }}"
+            }));
+
+            form.append($('<input>', {
+                type: 'hidden',
+                name: chart_type,
+                value: id
+            }));
+
+            form.append($('<input>', {
+                type: 'hidden',
+                name: 'fromDate',
+                value: Fromdate
+            }));
+
+            form.append($('<input>', {
+                type: 'hidden',
+                name: 'toDate',
+                value: Todate
+            }));
+            form.append($('<input>', {
+                type: 'hidden',
+                name: 'company_id',
+                value: company_id
+            }));
+
+
+            $('body').append(form);
+            form.submit();
+        }
     </script>
 @endpush

@@ -989,7 +989,7 @@ class InitialIncidentController extends Controller
             $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
             $incTypeList  = $this->inctype->select('id', 'incident_type_name')->where('status', '1')->get();
             $companyList = $this->company->getcompany();
-              $body_parts = $this->incident_body_parts->delete_webtemprow();
+            $body_parts = $this->incident_body_parts->delete_webtemprow();
             $data = array(
                 'unitList' => $unitList,
                 'locationList' => $locationList,
