@@ -697,6 +697,7 @@ class InitialIncidentController extends Controller
             $getEmpdetails = $this->incident_body_parts->getEmpdetails();
             return $getEmpdetails;
         } catch (Exception $ex) {
+              report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -707,7 +708,7 @@ class InitialIncidentController extends Controller
             $getEmpdetails = $this->incident_body_parts->apigetEmpdetails();
             return $getEmpdetails;
         } catch (Exception $ex) {
-            dd($ex);
+           report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -718,7 +719,7 @@ class InitialIncidentController extends Controller
             $addInjury = $this->incident_body_parts->addInjury();
             return $addInjury;
         } catch (Exception $ex) {
-            dd($ex);
+             report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -728,7 +729,7 @@ class InitialIncidentController extends Controller
             $addInjury = $this->incident_body_parts->addInjuryApi();
             return $addInjury;
         } catch (Exception $ex) {
-            dd($ex);
+           report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -988,7 +989,7 @@ class InitialIncidentController extends Controller
             $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
             $incTypeList  = $this->inctype->select('id', 'incident_type_name')->where('status', '1')->get();
             $companyList = $this->company->getcompany();
-            $body_parts = $this->incident_body_parts->delete_temprow();
+              $body_parts = $this->incident_body_parts->delete_webtemprow();
             $data = array(
                 'unitList' => $unitList,
                 'locationList' => $locationList,
@@ -2046,7 +2047,7 @@ class InitialIncidentController extends Controller
 
             return view('ims.initial.incident.api.editbodyPart_img', $data);
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try again!');
             return redirect(admin_url('incident/initial-incident/list'));
         }

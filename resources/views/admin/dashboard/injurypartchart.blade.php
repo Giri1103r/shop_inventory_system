@@ -79,132 +79,133 @@
 
 
                 </div>
-                <!--Male total parts-->
-                <script type="text/template" id="tmp-male">
-                                                                    <div class="img-wrap male">
-                                                    <div class="canvas">
-                                                    <canvas id='image1_canvas'></canvas>
-                                                    <canvas id='image1_canvas_marked'></canvas>
-                                                    </div>
-                                                    <img src="{{ admin_url('public/assets/images/human_body_parts/male/full.png') }}"  usemap='#imgmap_1' class='imgmap_1' title='imgmap1' alt='imgmap1' id='img-imgmap1' />
-                                                    <map id='imgmap1' name='imgmap_1' data-type='total' data-map="total">
-                                                    <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-face')"  title="Head" data-map="one"  shape="poly" coords="63,45,72,43,80,43,85,47,88,51,88,57,88,61,90,63,90,67,87,70,85,71,85,74,85,77,82,79,80,81,76,81,64,81,62,80,61,74,60,72,58,70,57,67,57,62,57,58,57,54,59,50,59,48" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()"  title="Neck" data-map="Two" shape="poly" coords="62,82,82,81,81,91,63,90" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Shoulder Front" data-map="three"  shape="poly" coords="62,88,73,91,72,107,28,108,34,99,42,96,49,96,57,94,59,93" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right shoulder Front" data-map="four"   shape="poly" coords="72,90,82,90,85,93,91,96,95,96,100,96,107,99,112,101,115,104,116,108,72,108" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Arm Front" data-map="five"  shape="poly" coords="28,108,48,107,46,110,43,118,43,129,41,150,26,146,27,129" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Arm Front" data-map="six"  shape="poly" coords="100,107,116,108,119,114,119,120,120,125,120,131,121,138,122,146,105,150,103,125,102,117,102,113" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Elbow Front" data-map="seven"  shape="poly" coords="26,145,40,150,40,157,39,164,22,156,24,151" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Elbow Front " data-map="eight"  shape="poly" coords="104,149,122,146,122,150,125,156,125,159,106,161" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Forearm Front" data-map="nine"  shape="poly" coords="21,155,39,163,36,172,33,179,28,192,25,195,17,190,18,181,19,174,19,167" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Forearm Front" data-map="ten"  shape="poly" coords="107,161,124,158,126,164,126,169,126,174,127,184,128,191,121,195,111,178" />
-                                                    <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-hand-right')" title="Right Hand " data-map="eleven"  shape="poly" coords="16,193,25,196,27,205,24,212,24,220,20,223,18,224,15,226,12,225,9,222,10,212,9,207,6,207,5,203,11,196" />
-                                                    <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-hand-left')" title="Left Hand" data-map="twelve"  shape="poly" coords="119,194,129,190,132,193,136,196,140,201,141,204,140,206,136,204,136,209,136,215,135,221,132,224,126,224,122,219,120,210" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Chest" data-map="thirteen"  shape="poly" coords="46,108,44,115,43,125,43,135,72,135,71,108" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Chest" data-map="fourteen"  shape="poly" coords="72,107,102,109,101,135,72,137" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Stomach" data-map="fifteen"  shape="poly" coords="43,135,102,135,101,143,99,145,98,150,98,155,97,160,97,166,73,166,49,166,48,150" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Hip" data-map="sixteen"  shape="poly" coords="48,166,72,166,72,189,45,189,48,173" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Hip" data-map="seventeen"  shape="poly" coords="72,166,97,166,97,173,101,180,101,189,72,190" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Pubis" data-map="eighteen"  shape="poly" coords="43,189,101,189,103,210,75,213,70,214,42,210,43,198" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Thigh" data-map="nineteen"  shape="poly" coords="74,214,103,210,103,226,103,237,102,243,100,248,96,257,78,259,75,239" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Thigh" data-map="twenty"  shape="poly" coords="49,259,66,259,69,253,69,247,69,239,69,230,71,215,42,211,42,235" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Knee" data-map="twentyone"  shape="poly" coords="79,258,97,258,94,268,92,274,86,276,81,276" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Knee" data-map="twentytwo"  shape="poly" coords="49,259,67,259,66,265,64,269,62,273,60,275,57,277,52,265" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Leg "  data-map="twentythree"  shape="poly" coords="81,267,87,277,91,277,93,271,96,277,99,284,99,292,96,302,93,314,90,326,81,326,77,302,77,292" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Leg " data-map="twentyfour"  shape="poly" coords="59,276,67,264,68,277,68,284,69,291,69,297,69,305,69,314,68,321,67,326,57,326,53,314,50,300,48,286,49,278,52,274,51,266,51,262" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Ankle" data-map="twentyfive"  shape="poly" coords="56,326,67,326,67,343,55,341,58,334" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Ankle" data-map="twentysix"  shape="poly" coords="80,327,89,327,92,345,80,343,78,345" />
-                                                    <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-foot-left')" title="Left foot" data-map="twentyseven"  shape="poly" coords="79,342,91,342,98,350,100,354,99,357,85,357,78,357,78,353,76,350" />
-                                                    <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-foot-right')" title="Right Foot" data-map="twentyeight"  shape="poly" coords="54,342,66,342,69,353,69,356,58,356,47,356" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Back Skull" data-map="twentynine"  shape="poly" coords="199,77,196,77,196,73,196,70,198,67,197,63,199,57,201,54,205,51,209,50,214,50,219,51,224,54,227,59,227,64,227,67,229,71,228,75,225,79,223,84,218,86,210,86,202,86" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Back Neck" data-map="thirty"  shape="poly" coords="201,85,209,87,219,87,221,97,202,97" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Shoulder Back" data-map="thirtyone"  shape="poly" coords="201,96,212,96,212,121,167,122,166,118,170,110,176,106,183,102,193,102" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Shoulder Back" data-map="thirtytwo"  shape="poly" coords="211,96,222,96,226,100,234,102,240,103,246,105,253,109,256,115,256,121,212,121" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Arm Back" data-map="thirtythree"  shape="poly" coords="167,120,184,121,182,128,184,143,179,163,163,156,168,136" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Arm back" data-map="thirtyfour"  shape="poly" coords="241,121,257,122,261,156,245,163,239,145" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Elbow back" data-map="thirtyfive"  shape="poly" coords="164,156,181,162,177,174,161,166" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Elbow back" data-map="thirtysix"  shape="poly" coords="244,161,261,155,264,162,264,166,248,171,245,168" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Arm Back " data-map="thirtyseven"  shape="poly" coords="161,164,177,174,167,198,157,194,160,185,159,174" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Arm Back" data-map="thirtyeight"  shape="poly" coords="247,170,263,164,265,185,267,192,267,195,257,198,251,182,247,174" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Upper Back " data-map="thirtynine"  shape="poly" coords="183,122,242,121,242,128,241,136,241,143,239,147,238,153,237,155,187,156,184,148,181,129" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Lower Back"   data-map="forty"  shape="poly" coords="187,154,237,154,237,175,240,188,186,187,187,176" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Buttock"  data-map="fortyone"  shape="poly" coords="185,188,211,188,213,212,209,215,208,218,181,217,183,202,184,199,184,195" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Buttock"  data-map="fortytwo" shape="poly" coords="211,213,211,188,239,188,241,194,241,198,242,202,243,208,241,215,242,218,216,219" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Arm String"  data-map="fortythree" shape="poly" coords="182,217,208,217,209,254,208,258,189,257,184,247,183,234,182,228" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Arm String"  data-map="fortyfour" shape="poly" coords="213,218,242,218,241,230,241,243,236,256,217,256" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Knee Back"  data-map="forty-five" shape="poly" coords="189,257,207,257,206,268,206,276,208,282,189,282,191,274,192,265" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Knee Back"  data-map="fortysix" shape="poly" coords="215,257,237,257,233,263,232,270,232,277,234,282,218,281,218,275,219,264" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Calf"  shape="poly" data-map="fortyseven" coords="189,282,207,282,208,288,209,295,209,304,207,312,206,325,195,326,193,316,189,301,188,293,187,286" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Calf"  shape="poly"  data-map="fortyeight" coords="217,282,235,282,237,291,235,301,232,313,228,326,218,325,215,304,215,295" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Ankle"  shape="poly"  data-map="fortynine" coords="195,324,206,323,207,336,198,336,196,335" />
-                                                    <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Ankle"  shape="poly" data-map="fifty" coords="195,324,206,323,207,336,198,336,196,335" />
-                                                    </map>
-                                                    </div></script>
+                                            <script type="text/template" id="tmp-male">
+
+                                                                <div class="img-wrap male">
+                                                <div class="canvas">
+                                                <canvas id='image1_canvas'></canvas>
+                                                <canvas id='image1_canvas_marked'></canvas>
+                                                </div>
+                                                <img src="{{ admin_url('public/assets/images/human_body_parts/male/full.png') }}"  usemap='#imgmap_1' class='imgmap_1' title='imgmap1' alt='imgmap1' id='img-imgmap1' />
+                                                <map id='imgmap1' name='imgmap_1' data-type='total' data-map="total">
+                                                <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-face')"  title="Head" data-map="one"  shape="poly" coords="63,45,72,43,80,43,85,47,88,51,88,57,88,61,90,63,90,67,87,70,85,71,85,74,85,77,82,79,80,81,76,81,64,81,62,80,61,74,60,72,58,70,57,67,57,62,57,58,57,54,59,50,59,48" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()"  title="Neck" data-map="Two" shape="poly" coords="62,82,82,81,81,91,63,90" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Shoulder Front" data-map="three"  shape="poly" coords="62,88,73,91,72,107,28,108,34,99,42,96,49,96,57,94,59,93" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left shoulder Front" data-map="four"   shape="poly" coords="72,90,82,90,85,93,91,96,95,96,100,96,107,99,112,101,115,104,116,108,72,108" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Arm Front" data-map="five"  shape="poly" coords="28,108,48,107,46,110,43,118,43,129,41,150,26,146,27,129" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Arm Front" data-map="six"  shape="poly" coords="100,107,116,108,119,114,119,120,120,125,120,131,121,138,122,146,105,150,103,125,102,117,102,113" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Elbow Front" data-map="seven"  shape="poly" coords="26,145,40,150,40,157,39,164,22,156,24,151" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Elbow Front " data-map="eight"  shape="poly" coords="104,149,122,146,122,150,125,156,125,159,106,161" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Forearm Front" data-map="nine"  shape="poly" coords="21,155,39,163,36,172,33,179,28,192,25,195,17,190,18,181,19,174,19,167" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Forearm Front" data-map="ten"  shape="poly" coords="107,161,124,158,126,164,126,169,126,174,127,184,128,191,121,195,111,178" />
+                                                <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-hand-right')" title="Right Hand " data-map="eleven"  shape="poly" coords="16,193,25,196,27,205,24,212,24,220,20,223,18,224,15,226,12,225,9,222,10,212,9,207,6,207,5,203,11,196" />
+                                                <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-hand-left')" title="Left Hand" data-map="twelve"  shape="poly" coords="119,194,129,190,132,193,136,196,140,201,141,204,140,206,136,204,136,209,136,215,135,221,132,224,126,224,122,219,120,210" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Chest" data-map="thirteen"  shape="poly" coords="46,108,44,115,43,125,43,135,72,135,71,108" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Chest" data-map="fourteen"  shape="poly" coords="72,107,102,109,101,135,72,137" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Stomach" data-map="fifteen"  shape="poly" coords="43,135,102,135,101,143,99,145,98,150,98,155,97,160,97,166,73,166,49,166,48,150" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title=" Left Hip" data-map="sixteen"  shape="poly" coords="48,166,72,166,72,189,45,189,48,173" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Hip" data-map="seventeen"  shape="poly" coords="72,166,97,166,97,173,101,180,101,189,72,190" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Pubis" data-map="eighteen"  shape="poly" coords="43,189,101,189,103,210,75,213,70,214,42,210,43,198" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Thigh" data-map="nineteen"  shape="poly" coords="74,214,103,210,103,226,103,237,102,243,100,248,96,257,78,259,75,239" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Thigh" data-map="twenty"  shape="poly" coords="49,259,66,259,69,253,69,247,69,239,69,230,71,215,42,211,42,235" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Knee" data-map="twentyone"  shape="poly" coords="79,258,97,258,94,268,92,274,86,276,81,276" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Knee" data-map="twentytwo"  shape="poly" coords="49,259,67,259,66,265,64,269,62,273,60,275,57,277,52,265" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Leg "  data-map="twentythree"  shape="poly" coords="81,267,87,277,91,277,93,271,96,277,99,284,99,292,96,302,93,314,90,326,81,326,77,302,77,292" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Leg " data-map="twentyfour"  shape="poly" coords="59,276,67,264,68,277,68,284,69,291,69,297,69,305,69,314,68,321,67,326,57,326,53,314,50,300,48,286,49,278,52,274,51,266,51,262" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Ankle" data-map="twentyfive"  shape="poly" coords="56,326,67,326,67,343,55,341,58,334" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Ankle" data-map="twentysix"  shape="poly" coords="80,327,89,327,92,345,80,343,78,345" />
+                                                <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-foot-left')" title="Left foot" data-map="twentyseven"  shape="poly" coords="79,342,91,342,98,350,100,354,99,357,85,357,78,357,78,353,76,350" />
+                                                <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-foot-right')" title="Right Foot" data-map="twentyeight"  shape="poly" coords="54,342,66,342,69,353,69,356,58,356,47,356" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Back Skull" data-map="twentynine"  shape="poly" coords="199,77,196,77,196,73,196,70,198,67,197,63,199,57,201,54,205,51,209,50,214,50,219,51,224,54,227,59,227,64,227,67,229,71,228,75,225,79,223,84,218,86,210,86,202,86" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Back Neck" data-map="thirty"  shape="poly" coords="201,85,209,87,219,87,221,97,202,97" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Shoulder Back" data-map="thirtyone"  shape="poly" coords="201,96,212,96,212,121,167,122,166,118,170,110,176,106,183,102,193,102" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Shoulder Back" data-map="thirtytwo"  shape="poly" coords="211,96,222,96,226,100,234,102,240,103,246,105,253,109,256,115,256,121,212,121" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Arm Back" data-map="thirtythree"  shape="poly" coords="167,120,184,121,182,128,184,143,179,163,163,156,168,136" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Arm back" data-map="thirtyfour"  shape="poly" coords="241,121,257,122,261,156,245,163,239,145" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Elbow back" data-map="thirtyfive"  shape="poly" coords="164,156,181,162,177,174,161,166" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Elbow back" data-map="thirtysix"  shape="poly" coords="244,161,261,155,264,162,264,166,248,171,245,168" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Arm Back " data-map="thirtyseven"  shape="poly" coords="161,164,177,174,167,198,157,194,160,185,159,174" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Forearm Back" data-map="thirtyeight"  shape="poly" coords="247,170,263,164,265,185,267,192,267,195,257,198,251,182,247,174" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Upper Back " data-map="thirtynine"  shape="poly" coords="183,122,242,121,242,128,241,136,241,143,239,147,238,153,237,155,187,156,184,148,181,129" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Lower Back"   data-map="forty"  shape="poly" coords="187,154,237,154,237,175,240,188,186,187,187,176" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Buttock"  data-map="fortyone"  shape="poly" coords="185,188,211,188,213,212,209,215,208,218,181,217,183,202,184,199,184,195" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Buttock"  data-map="fortytwo" shape="poly" coords="211,213,211,188,239,188,241,194,241,198,242,202,243,208,241,215,242,218,216,219" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Arm String"  data-map="fortythree" shape="poly" coords="182,217,208,217,209,254,208,258,189,257,184,247,183,234,182,228" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Arm String"  data-map="fortyfour" shape="poly" coords="213,218,242,218,241,230,241,243,236,256,217,256" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Knee Back"  data-map="forty-five" shape="poly" coords="189,257,207,257,206,268,206,276,208,282,189,282,191,274,192,265" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Knee Back"  data-map="fortysix" shape="poly" coords="215,257,237,257,233,263,232,270,232,277,234,282,218,281,218,275,219,264" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Calf"  shape="poly" data-map="fortyseven" coords="189,282,207,282,208,288,209,295,209,304,207,312,206,325,195,326,193,316,189,301,188,293,187,286" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Calf"  shape="poly"  data-map="fortyeight" coords="217,282,235,282,237,291,235,301,232,313,228,326,218,325,215,304,215,295" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Ankle"  shape="poly"  data-map="fortynine" coords="195,324,206,323,207,336,198,336,196,335" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Ankle"  shape="poly" data-map="fifty" coords="195,324,206,323,207,336,198,336,196,335" />
+                                                </map>
+                                                </div>
+                                            </script>
                 <!--male total parts -->
 
                 <!--female total parts -->
                 <script type="text/template" id="tmp-female">
-                                                                    <div class="img-wrap female" >
-                                                    <div class="canvas">
-                                                    <canvas id='image1_canvas'></canvas>
-                                                    <canvas id='image1_canvas_marked'></canvas>
-                                                    </div>
-                                                    <img src="{{ admin_url('public/assets/images/human_body_parts/female/full.png') }}"  usemap='#imgmap_1' class='imgmap_1' title='imgmap1' alt='imgmap1' id='img-imgmap1' />
-                                                    <map id='imgmap1' name='imgmap_1' data-type='total' data-map="total">
-                                                    <area alt="" onclick="changeImage('.female-face')" title="Head"  data-map="one" shape="poly" coords="56,43,55,32,59,25,61,23,66,21,74,21,80,23,86,30,87,34,88,41,87,45,88,47,86,53,85,55,82,60,78,64,74,68,69,69,68,70,61,65,59,57,56,54,54,50,53,46" />
-                                                    <area alt="" onclick="changeImage()" title="Neck"  data-map="two" shape="poly" coords="48,81,87,82,82,72,82,58,71,69,72,70,59,62,57,57,58,67,59,74,56,77" />
-                                                    <area alt="" onclick="changeImage()" title="Left Shoulder Front" data-map="three"  shape="poly" coords="69,83,87,81,103,86,110,92,113,103,83,104,69,102,70,102" />
-                                                    <area alt="" onclick="changeImage()" title="Right Shoulder Front" data-map="four"  shape="poly" coords="70,103,23,104,25,94,30,87,36,85,47,82,59,82,69,83" />
-                                                    <area alt="" onclick="changeImage()" title="Left Arm Front"  data-map="five" shape="poly" coords="99,103,113,104,114,113,119,140,103,149,100,130" />
-                                                    <area alt="" onclick="changeImage()" title="Right Arm Front"  data-map="six" shape="poly" coords="25,104,25,124,23,142,39,147,42,129,41,107,40,103" />
-                                                    <area alt="" onclick="changeImage()" title="Left Elbow Front"  data-map="seven" shape="poly" coords="106,163,123,157,120,142,102,150" />
-                                                    <area alt="" onclick="changeImage()" title="Right Elbow Front"  data-map="eight" shape="poly" coords="39,148,37,162,21,155,23,142" />
-                                                    <area alt="" onclick="changeImage()" title="Left Forearm Front"  data-map="nine" shape="poly" coords="107,164,123,157,125,170,125,182,125,189,127,195,127,195,118,199" />
-                                                    <area alt="" onclick="changeImage()" title="Right Forearm Front"  data-map="ten" shape="poly" coords="20,156,36,161,26,197,18,196,20,181" />
-                                                    <area alt="" onclick="changeImage('.female-hand-right')" title="Right Hand"  shape="poly" data-map="eleven" coords="18,195,25,196,26,197,27,212,26,220,23,220,25,215,23,223,22,223,21,225,22,215,21,218,18,226,17,224,17,216,15,220,13,222,13,221,16,207,15,207,13,205,12,206,9,207,7,207,7,206,7,206,6,206" />
-                                                    <area alt="" onclick="changeImage('.female-hand-left')" title="Left Hand"  shape="poly" data-map="twelve" coords="126,193,118,199,118,205,118,213,118,221,122,222,122,215,121,215,124,225,125,218,128,226,130,224,130,215,129,214,134,224,131,209,133,206,137,209,140,209,140,209,140,208" />
-                                                    <area alt="" onclick="changeImage()" title="Left Brest"  shape="poly" data-map="thirteen" coords="69,104,88,103,99,104,100,118,98,132,72,133,69,132" />
-                                                    <area alt="" onclick="changeImage()" title="Right Brest"  shape="poly" data-map="fourteen" coords="41,103,62,103,69,104,70,127,70,131,44,133" />
-                                                    <area alt="" onclick="changeImage()" title="Stomach"  shape="poly" data-map="fifteen" coords="41,134,70,133,98,133,97,145,97,155,97,158,71,159,48,158" />
-                                                    <area alt="" onclick="changeImage()" title="Left Hip"  shape="poly" data-map="sixteen" coords="73,176,107,175,103,164,99,158,77,158,73,158" />
-                                                    <area alt="" onclick="changeImage()" title="Right Hip"  shape="poly" data-map="seventeen" coords="47,159,72,159,71,175,50,175,38,175,41,165" />
-                                                    <area alt="" onclick="changeImage()" title="Pubis"  shape="poly" data-map="eighteen" coords="38,175,62,176,86,176,105,176,106,176,108,192,108,213,107,222,77,222,46,222,37,221,34,202" />
-                                                    <area alt="" onclick="changeImage()" title="Left Thigh"  shape="poly" data-map="ninteen" coords="70,224,106,223,96,270,72,266,76,242" />
-                                                    <area alt="" onclick="changeImage()" title="Right Thigh"  shape="poly" data-map="twenty" coords="38,224,71,223,69,266,46,269" />
-                                                    <area alt="" onclick="changeImage()" title="Left Knee"  shape="poly" data-map="twentyone" coords="72,267,97,272,94,287,74,284" />
-                                                    <area alt="" onclick="changeImage()" title="Right Knee"  shape="poly" data-map="twentytwo"coords="46,269,70,267,69,285,47,289" />
-                                                    <area alt="" onclick="changeImage()" title="Left Leg"  shape="poly" data-map="twentythree" coords="72,284,93,286,98,304,94,321,84,348,73,352" />
-                                                    <area alt="" onclick="changeImage()" title="Right Leg"  shape="poly" data-map="twentyfour" coords="69,284,70,309,68,329,67,339,70,354,58,351,53,328,48,308,46,294,46,288" />
-                                                    <area alt="" onclick="changeImage()" title="Left Ankle"  shape="poly" data-map="twentyfive" coords="74,352,84,350,84,361,72,362" />
-                                                    <area alt="" onclick="changeImage()" title="Right Ankle"  shape="poly" data-map="twentysix" coords="59,353,69,356,71,366,57,364" />
-                                                    <area alt="" onclick="changeImage('.female-foot-left')" title="Left Foot"  shape="poly" data-map="twentyseven" coords="72,363,79,361,84,360,89,365,94,373,93,373,91,372,91,374,92,376,89,375,87,377,83,372,84,376,82,378" />
-                                                    <area alt="" onclick="changeImage('.female-foot-right')" title="Right Foot"  shape="poly" data-map="twentyeight" coords="53,371,57,363,64,364,68,366,70,367,71,372,69,377,65,379,64,375,63,377,61,376,61,376,60,377,60,375,58,377,57,375,55,376,55,374" />
-                                                    <area alt="" onclick="changeImage()" title="Back Skull"  shape="poly" data-map="twentynine" coords="210,62,225,57,228,50,228,44,226,44,226,34,223,27,219,23,214,21,207,21,200,23,196,29,194,40,194,44,194,46,195,52,199,56,199,61,201,58" />
-                                                    <area alt="" onclick="changeImage()" title="Neck Back"  shape="poly" data-map="thirty" coords="198,57,209,62,222,59,222,65,222,72,223,75,218,75,212,75,205,75,198,75,200,68" />
-                                                    <area alt="" onclick="changeImage()" title="Left Shoulder Back"  shape="poly" data-map="thirtyone" coords="169,99,188,99,207,99,209,100,210,89,210,76,198,75,186,82,177,85,171,91" />
-                                                    <area alt="" onclick="changeImage()" title="Right Shoulder Back"  shape="poly" data-map="thirtytwo" coords="211,76,222,76,226,77,232,80,240,82,246,83,254,88,256,96,254,98,242,98,229,98,217,98,210,98" />
-                                                    <area alt="" onclick="changeImage()" title="Left Arm Back"  shape="poly" data-map="thirtythree" coords="180,111,175,98,169,98,167,110,167,124,166,135,172,139,179,143,181,144,183,126" />
-                                                    <area alt="" onclick="changeImage()" title="Right Arm Back"  shape="poly" data-map="thirtyfour" coords="242,98,247,98,255,98,256,108,257,125,258,142,250,146,244,146,241,121,244,108" />
-                                                    <area alt="" onclick="changeImage()" title="Left Elbow Back"  shape="poly" data-map="thirtyfive" coords="168,136,180,143,180,152,177,163,175,166,171,164,166,160,163,158" />
-                                                    <area alt="" onclick="changeImage()" title="Right Elbow Back"  shape="poly" data-map="thirtysix" coords="243,148,252,147,257,145,260,153,261,161,256,165,248,168" />
-                                                    <area alt="" onclick="changeImage()" title="Left Forearm Back"  shape="poly" data-map="thirtyseven" coords="164,157,175,167,168,199,161,194,161,174,161,162,161,158" />
-                                                    <area alt="" onclick="changeImage()" title="Right Forearm Back"  shape="poly" data-map="thirtyeight" coords="248,169,261,161,265,174,263,186,263,197,253,202" />
-                                                    <area alt="" onclick="changeImage()" title="Upper Back"  shape="poly" data-map="thirtynine" coords="177,99,179,108,183,121,184,127,187,145,200,145,210,145,222,144,230,145,237,145,240,131,241,122,241,113,242,101,241,99" />
-                                                    <area alt="" onclick="changeImage()" title="Lower Back"  shape="poly" data-map="fourty" coords="186,144,238,144,237,150,235,156,237,159,239,163,242,167,244,171,246,177,237,177,178,177,188,154" />
-                                                    <area alt="" onclick="changeImage()" title="Left Buttock "  shape="poly" data-map="fourtyone" coords="176,179,209,179,209,216,173,217,172,199" />
-                                                    <area alt="" onclick="changeImage()" title="Right Buttock "  shape="poly" data-map="fourtytwo" coords="209,178,246,178,248,189,249,199,249,205,248,216,235,217,220,217,209,216" />
-                                                    <area alt="" onclick="changeImage()" title="Left Hamstring"  shape="poly" data-map="fourtythree" coords="207,215,174,216,175,228,177,236,179,242,182,251,184,255,184,261,199,262,208,261,209,243,207,259,209,237" />
-                                                    <area alt="" onclick="changeImage()" title="Right Hamstring"  shape="poly" data-map="fourtyfour" coords="209,216,209,243,212,252,211,262,230,262,239,263,242,253,246,242,247,229,248,216" />
-                                                    <area alt="" onclick="changeImage()" title="Left Knee Back"  shape="poly" data-map="fourtyfive" coords="184,262,206,262,208,269,208,279,208,284,207,288,207,290,197,290,184,290" />
-                                                    <area alt="" onclick="changeImage()" title="Right Knee Back"  shape="poly" data-map="fourtysix" coords="212,264,212,262,239,262,236,272,235,277,235,282,235,287,237,290,228,290,221,290,216,289,213,289,211,282,212,274" />
-                                                    <area alt="" onclick="changeImage()" title="Left Calf"  shape="poly" data-map="fourtyseven" coords="185,291,206,291,208,301,210,307,210,321,209,333,207,340,193,340,186,323,183,304" />
-                                                    <area alt="" onclick="changeImage()" title="Right Calf"  shape="poly" data-map="fourtyeight" coords="214,291,232,291,234,292,236,300,237,305,236,311,234,321,232,332,229,339,221,339,214,339,210,320" />
-                                                    <area alt="" onclick="changeImage()" title="Left Ankle"  shape="poly" data-map="fourtynine" coords="193,340,208,338,208,348,208,354,209,360,210,365,208,368,198,356" />
-                                                    <area alt="" onclick="changeImage()" title="Right Ankle"  shape="poly" data-map="fifty" coords="213,367,226,359,227,352,229,345,231,340,223,339,219,339,215,341,215,339" />
-                                                    <area alt="" onclick="changeImage()" title="Left Toe"  shape="poly" data-map="fiftyone" coords="192,365,194,365,197,363,198,360,199,358,203,363,208,367,210,373,208,377,204,380,196,369" />
-                                                    <area alt="" onclick="changeImage()" title="Right Toe"  shape="poly" data-map="fiftytwo" coords="214,366,223,359,226,363,230,364,231,366,231,369,226,373,222,376,218,377,214,376,212,371" />
-                                                    </map>
-                                                    </div></script>
+                                                                <div class="img-wrap female" >
+                                                <div class="canvas">
+                                                <canvas id='image1_canvas'></canvas>
+                                                <canvas id='image1_canvas_marked'></canvas>
+                                                </div>
+                                                <img src="{{ admin_url('public/assets/images/human_body_parts/female/full.png') }}"  usemap='#imgmap_1' class='imgmap_1' title='imgmap1' alt='imgmap1' id='img-imgmap1' />
+                                                <map id='imgmap1' name='imgmap_1' data-type='total' data-map="total">
+                                                <area alt="" onclick="changeImage('.female-face')" title="Head"  data-map="one" shape="poly" coords="56,43,55,32,59,25,61,23,66,21,74,21,80,23,86,30,87,34,88,41,87,45,88,47,86,53,85,55,82,60,78,64,74,68,69,69,68,70,61,65,59,57,56,54,54,50,53,46" />
+                                                <area alt="" onclick="changeImage()" title="Neck"  data-map="two" shape="poly" coords="48,81,87,82,82,72,82,58,71,69,72,70,59,62,57,57,58,67,59,74,56,77" />
+                                                <area alt="" onclick="changeImage()" title="Left Shoulder Front" data-map="three"  shape="poly" coords="69,83,87,81,103,86,110,92,113,103,83,104,69,102,70,102" />
+                                                <area alt="" onclick="changeImage()" title="Right Shoulder Front" data-map="four"  shape="poly" coords="70,103,23,104,25,94,30,87,36,85,47,82,59,82,69,83" />
+                                                <area alt="" onclick="changeImage()" title="Left Arm Front"  data-map="five" shape="poly" coords="99,103,113,104,114,113,119,140,103,149,100,130" />
+                                                <area alt="" onclick="changeImage()" title="Right Arm Front"  data-map="six" shape="poly" coords="25,104,25,124,23,142,39,147,42,129,41,107,40,103" />
+                                                <area alt="" onclick="changeImage()" title="Left Elbow Front"  data-map="seven" shape="poly" coords="106,163,123,157,120,142,102,150" />
+                                                <area alt="" onclick="changeImage()" title="Right Elbow Front"  data-map="eight" shape="poly" coords="39,148,37,162,21,155,23,142" />
+                                                <area alt="" onclick="changeImage()" title="Left Forearm Front"  data-map="nine" shape="poly" coords="107,164,123,157,125,170,125,182,125,189,127,195,127,195,118,199" />
+                                                <area alt="" onclick="changeImage()" title="Right Forearm Front"  data-map="ten" shape="poly" coords="20,156,36,161,26,197,18,196,20,181" />
+                                                <area alt="" onclick="changeImage('.female-hand-right')" title="Right Hand"  shape="poly" data-map="eleven" coords="18,195,25,196,26,197,27,212,26,220,23,220,25,215,23,223,22,223,21,225,22,215,21,218,18,226,17,224,17,216,15,220,13,222,13,221,16,207,15,207,13,205,12,206,9,207,7,207,7,206,7,206,6,206" />
+                                                <area alt="" onclick="changeImage('.female-hand-left')" title="Left Hand"  shape="poly" data-map="twelve" coords="126,193,118,199,118,205,118,213,118,221,122,222,122,215,121,215,124,225,125,218,128,226,130,224,130,215,129,214,134,224,131,209,133,206,137,209,140,209,140,209,140,208" />
+                                                <area alt="" onclick="changeImage()" title="Left Brest"  shape="poly" data-map="thirteen" coords="69,104,88,103,99,104,100,118,98,132,72,133,69,132" />
+                                                <area alt="" onclick="changeImage()" title="Right Brest"  shape="poly" data-map="fourteen" coords="41,103,62,103,69,104,70,127,70,131,44,133" />
+                                                <area alt="" onclick="changeImage()" title="Stomach"  shape="poly" data-map="fifteen" coords="41,134,70,133,98,133,97,145,97,155,97,158,71,159,48,158" />
+                                                <area alt="" onclick="changeImage()" title="Left Hip"  shape="poly" data-map="sixteen" coords="73,176,107,175,103,164,99,158,77,158,73,158" />
+                                                <area alt="" onclick="changeImage()" title="Right Hip"  shape="poly" data-map="seventeen" coords="47,159,72,159,71,175,50,175,38,175,41,165" />
+                                                <area alt="" onclick="changeImage()" title="Pubis"  shape="poly" data-map="eighteen" coords="38,175,62,176,86,176,105,176,106,176,108,192,108,213,107,222,77,222,46,222,37,221,34,202" />
+                                                <area alt="" onclick="changeImage()" title="Left Thigh"  shape="poly" data-map="ninteen" coords="70,224,106,223,96,270,72,266,76,242" />
+                                                <area alt="" onclick="changeImage()" title="Right Thigh"  shape="poly" data-map="twenty" coords="38,224,71,223,69,266,46,269" />
+                                                <area alt="" onclick="changeImage()" title="Left Knee"  shape="poly" data-map="twentyone" coords="72,267,97,272,94,287,74,284" />
+                                                <area alt="" onclick="changeImage()" title="Right Knee"  shape="poly" data-map="twentytwo"coords="46,269,70,267,69,285,47,289" />
+                                                <area alt="" onclick="changeImage()" title="Left Leg"  shape="poly" data-map="twentythree" coords="72,284,93,286,98,304,94,321,84,348,73,352" />
+                                                <area alt="" onclick="changeImage()" title="Right Leg"  shape="poly" data-map="twentyfour" coords="69,284,70,309,68,329,67,339,70,354,58,351,53,328,48,308,46,294,46,288" />
+                                                <area alt="" onclick="changeImage()" title="Left Ankle"  shape="poly" data-map="twentyfive" coords="74,352,84,350,84,361,72,362" />
+                                                <area alt="" onclick="changeImage()" title="Right Ankle"  shape="poly" data-map="twentysix" coords="59,353,69,356,71,366,57,364" />
+                                                <area alt="" onclick="changeImage('.female-foot-left')" title="Left Foot"  shape="poly" data-map="twentyseven" coords="72,363,79,361,84,360,89,365,94,373,93,373,91,372,91,374,92,376,89,375,87,377,83,372,84,376,82,378" />
+                                                <area alt="" onclick="changeImage('.female-foot-right')" title="Right Foot"  shape="poly" data-map="twentyeight" coords="53,371,57,363,64,364,68,366,70,367,71,372,69,377,65,379,64,375,63,377,61,376,61,376,60,377,60,375,58,377,57,375,55,376,55,374" />
+                                                <area alt="" onclick="changeImage()" title="Back Skull"  shape="poly" data-map="twentynine" coords="210,62,225,57,228,50,228,44,226,44,226,34,223,27,219,23,214,21,207,21,200,23,196,29,194,40,194,44,194,46,195,52,199,56,199,61,201,58" />
+                                                <area alt="" onclick="changeImage()" title="Neck Back"  shape="poly" data-map="thirty" coords="198,57,209,62,222,59,222,65,222,72,223,75,218,75,212,75,205,75,198,75,200,68" />
+                                                <area alt="" onclick="changeImage()" title="Left Shoulder Back"  shape="poly" data-map="thirtyone" coords="169,99,188,99,207,99,209,100,210,89,210,76,198,75,186,82,177,85,171,91" />
+                                                <area alt="" onclick="changeImage()" title="Right Shoulder Back"  shape="poly" data-map="thirtytwo" coords="211,76,222,76,226,77,232,80,240,82,246,83,254,88,256,96,254,98,242,98,229,98,217,98,210,98" />
+                                                <area alt="" onclick="changeImage()" title="Left Arm Back"  shape="poly" data-map="thirtythree" coords="180,111,175,98,169,98,167,110,167,124,166,135,172,139,179,143,181,144,183,126" />
+                                                <area alt="" onclick="changeImage()" title="Right Arm Back"  shape="poly" data-map="thirtyfour" coords="242,98,247,98,255,98,256,108,257,125,258,142,250,146,244,146,241,121,244,108" />
+                                                <area alt="" onclick="changeImage()" title="Left Elbow Back"  shape="poly" data-map="thirtyfive" coords="168,136,180,143,180,152,177,163,175,166,171,164,166,160,163,158" />
+                                                <area alt="" onclick="changeImage()" title="Right Elbow Back"  shape="poly" data-map="thirtysix" coords="243,148,252,147,257,145,260,153,261,161,256,165,248,168" />
+                                                <area alt="" onclick="changeImage()" title="Left Forearm Back"  shape="poly" data-map="thirtyseven" coords="164,157,175,167,168,199,161,194,161,174,161,162,161,158" />
+                                                <area alt="" onclick="changeImage()" title="Right Forearm Back"  shape="poly" data-map="thirtyeight" coords="248,169,261,161,265,174,263,186,263,197,253,202" />
+                                                <area alt="" onclick="changeImage()" title="Upper Back"  shape="poly" data-map="thirtynine" coords="177,99,179,108,183,121,184,127,187,145,200,145,210,145,222,144,230,145,237,145,240,131,241,122,241,113,242,101,241,99" />
+                                                <area alt="" onclick="changeImage()" title="Lower Back"  shape="poly" data-map="fourty" coords="186,144,238,144,237,150,235,156,237,159,239,163,242,167,244,171,246,177,237,177,178,177,188,154" />
+                                                <area alt="" onclick="changeImage()" title="Left Buttock "  shape="poly" data-map="fourtyone" coords="176,179,209,179,209,216,173,217,172,199" />
+                                                <area alt="" onclick="changeImage()" title="Right Buttock "  shape="poly" data-map="fourtytwo" coords="209,178,246,178,248,189,249,199,249,205,248,216,235,217,220,217,209,216" />
+                                                <area alt="" onclick="changeImage()" title="Left Hamstring"  shape="poly" data-map="fourtythree" coords="207,215,174,216,175,228,177,236,179,242,182,251,184,255,184,261,199,262,208,261,209,243,207,259,209,237" />
+                                                <area alt="" onclick="changeImage()" title="Right Hamstring"  shape="poly" data-map="fourtyfour" coords="209,216,209,243,212,252,211,262,230,262,239,263,242,253,246,242,247,229,248,216" />
+                                                <area alt="" onclick="changeImage()" title="Left Knee Back"  shape="poly" data-map="fourtyfive" coords="184,262,206,262,208,269,208,279,208,284,207,288,207,290,197,290,184,290" />
+                                                <area alt="" onclick="changeImage()" title="Right Knee Back"  shape="poly" data-map="fourtysix" coords="212,264,212,262,239,262,236,272,235,277,235,282,235,287,237,290,228,290,221,290,216,289,213,289,211,282,212,274" />
+                                                <area alt="" onclick="changeImage()" title="Left Calf"  shape="poly" data-map="fourtyseven" coords="185,291,206,291,208,301,210,307,210,321,209,333,207,340,193,340,186,323,183,304" />
+                                                <area alt="" onclick="changeImage()" title="Right Calf"  shape="poly" data-map="fourtyeight" coords="214,291,232,291,234,292,236,300,237,305,236,311,234,321,232,332,229,339,221,339,214,339,210,320" />
+                                                <area alt="" onclick="changeImage()" title="Left Ankle"  shape="poly" data-map="fourtynine" coords="193,340,208,338,208,348,208,354,209,360,210,365,208,368,198,356" />
+                                                <area alt="" onclick="changeImage()" title="Right Ankle"  shape="poly" data-map="fifty" coords="213,367,226,359,227,352,229,345,231,340,223,339,219,339,215,341,215,339" />
+                                                <area alt="" onclick="changeImage()" title="Left Toe"  shape="poly" data-map="fiftyone" coords="192,365,194,365,197,363,198,360,199,358,203,363,208,367,210,373,208,377,204,380,196,369" />
+                                                <area alt="" onclick="changeImage()" title="Right Toe"  shape="poly" data-map="fiftytwo" coords="214,366,223,359,226,363,230,364,231,366,231,369,226,373,222,376,218,377,214,376,212,371" />
+                                                </map>
+                                                </div></script>
                 <!--female total parts -->
 
             </div>
@@ -220,20 +221,16 @@
                                 title='imgmap201293016112' alt='imgmap201293016112' id='img-imgmap201293016112' />
                             <map id='imgmap201293016112' data-map="foot-right"
                                 name='imgmap_css_container_imgmap201293016112'>
-                                <area alt="" title="Right Finger 1" data-map='foot-right-finger1'
-                                    shape="poly"
+                                <area alt="" title="Right Finger 1" data-map='foot-right-finger1' shape="poly"
                                     coords="599,779,604,796,591,823,586,844,592,868,605,883,616,890,631,897,648,898,667,895,678,886,692,878,701,861,701,845,700,814,701,789,702,764,705,747,703,737" />
-                                <area alt="" title="Right Finger 2" data-map='foot-right-finger2'
-                                    shape="poly"
+                                <area alt="" title="Right Finger 2" data-map='foot-right-finger2' shape="poly"
                                     coords="506,779,503,808,496,835,487,868,486,885,493,898,505,904,525,902,549,892,565,860,568,845,573,818,590,784,593,779" />
-                                <area alt="" title="Right Finger 3" data-map='foot-right-finger3'
-                                    shape="poly"
+                                <area alt="" title="Right Finger 3" data-map='foot-right-finger3' shape="poly"
                                     coords="444,757,430,793,415,832,410,859,417,874,444,877,466,867,478,829,491,796,502,779" />
-                                <area alt="" title="Right Finger 4" data-map='foot-right-finger4'
-                                    shape="poly"
+                                <area alt="" title="Right Finger 4" data-map='foot-right-finger4' shape="poly"
                                     coords="403,731,416,740,440,756,434,776,426,794,416,812,407,835,390,846,374,843,362,833,359,816,367,792" />
-                                <area alt="" title="Right Finger 5" data-map='foot-right-finger5'
-                                    shape="poly" coords="373,687,404,730,378,765,361,780,344,777,333,756,339,732" />
+                                <area alt="" title="Right Finger 5" data-map='foot-right-finger5' shape="poly"
+                                    coords="373,687,404,730,378,765,361,780,344,777,333,756,339,732" />
                             </map>
                         </div>
 
@@ -244,20 +241,15 @@
                                 title='imgmap201293016112' alt='imgmap201293016112' id='img-imgmap201293016112' />
                             <map id='imgmap201293016112' data-map="foot-left"
                                 name='imgmap_css_container_imgmap201293016112'>
-                                <area alt="" title="Left Finger 1" data-map='foot-left-finger1'
-                                    shape="poly"
+                                <area alt="" title="Left Finger 1" data-map='foot-left-finger1' shape="poly"
                                     coords="336,737,442,777,438,787,441,796,447,810,456,835,447,868,432,887,396,897,369,892,358,881,347,866,343,850" />
-                                <area alt="" title="Left Finger 2" data-map='foot-left-finger2'
-                                    shape="poly"
+                                <area alt="" title="Left Finger 2" data-map='foot-left-finger2' shape="poly"
                                     coords="443,780,459,788,466,813,471,834,478,861,488,887,501,896,526,903,540,903,549,894,558,877,554,857,545,831,541,811,537,799,537,777" />
-                                <area alt="" title="Left Finger 3" data-map='foot-left-finger3'
-                                    shape="poly"
+                                <area alt="" title="Left Finger 3" data-map='foot-left-finger3' shape="poly"
                                     coords="540,779,598,756,618,798,627,835,637,861,622,874,596,876,582,872,574,868,553,801" />
-                                <area alt="" title="Left Finger 4" data-map='foot-left-finger4'
-                                    shape="poly"
+                                <area alt="" title="Left Finger 4" data-map='foot-left-finger4' shape="poly"
                                     coords="598,760,636,730,660,766,674,788,684,808,683,821,680,836,666,844,645,847,632,830" />
-                                <area alt="" title="Left Finger 5" data-map='foot-left-finger5'
-                                    shape="poly"
+                                <area alt="" title="Left Finger 5" data-map='foot-left-finger5' shape="poly"
                                     coords="642,730,667,686,689,718,704,739,708,759,703,776,688,779,674,779,657,756" />
                             </map>
                         </div>
@@ -283,8 +275,8 @@
                                     coords="102,243,248,242,250,206,127,207,89,207,90,214,97,217,103,225" />
                                 <area alt="" title="Right Eyebrow" shape="poly" data-map="G"
                                     coords="386,243,250,242,250,206,410,206,406,218,398,233,390,243" />
-                                <area alt="" id="test" title="Left Eye" shape="poly"
-                                    data-map="H" coords="216,297,102,297,104,244,246,244" />
+                                <area alt="" id="test" title="Left Eye" shape="poly" data-map="H"
+                                    coords="216,297,102,297,104,244,246,244" />
                                 <area alt="" title="Right Eye" shape="poly" data-map="I"
                                     coords="250,245,278,296,385,295,384,245" />
                                 <area alt="" title="Nose" shape="poly" data-map="J"
@@ -496,8 +488,7 @@
                                 <area alt="" title="Right Eyebrow" data-map='G' shape="poly"
                                     coords="105,193,249,194,250,134,106,135,104,152,105,163,106,174,106,187" />
 
-                                <area alt="" id="test" title="Left Eye" data-map='H'
-                                    shape="poly"
+                                <area alt="" id="test" title="Left Eye" data-map='H' shape="poly"
                                     coords="250,193,295,283,398,283,401,274,402,252,400,231,399,213,396,192" />
 
                                 <area alt="" title="Right Eye" data-map='I' shape="poly"
@@ -551,25 +542,31 @@
                                 <th>Body Part</th>
                                 <th>Count</th>
                             </tr>
-                            <?php if(!empty($countBodyPart)){
-                             $i =1;
-                             foreach ($countBodyPart as $countpart){
-                             $trname = str_replace(' ', '', $countpart['body_part']);?>
                             <?php
-                            $class2 = '';
-                            if ($i == 1) {
-                                $class2 = 'topclass';
-                            } ?>
+                            if (!empty($countBodyPart)) {
+                                $i = 1;
+                                $displayedParts = []; // Array to track unique body parts
+
+                                foreach ($countBodyPart as $countpart) {
+                                    $bodyPart = $countpart['body_part'];
+                                    $trname = str_replace(' ', '', $bodyPart);
+
+                                    // Skip if already displayed
+                                    if (in_array($bodyPart, $displayedParts)) {
+                                        continue;
+                                    }
+
+                                    $class2 = ($i == 1) ? 'topclass' : '';
+                                    ?>
                             <tr class="<?php echo $trname . '_tr' . ' ' . $class2; ?>">
-
-                                <td><?php echo $countpart['body_part']; ?></td>
+                                <td><?php echo $bodyPart; ?></td>
                                 <td><?php echo $countpart['count']; ?></td>
-
                             </tr>
-
-                            <?php $i++;}
-
-                         }else{ ?>
+                            <?php
+                                    $i++;
+                                    $displayedParts[] = $bodyPart;
+                                }
+                            } else { ?>
                             <tr>
                                 <td colspan="3">No Details Found</td>
                             </tr>

@@ -271,7 +271,7 @@
                                     </div>
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label require">Brief Description</label>
+                                        <label class="form-label">Brief Description</label>
                                         <div class="view_data">
                                             {{ $incident_report->brief_description }}
                                         </div>

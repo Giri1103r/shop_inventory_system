@@ -266,7 +266,8 @@
                             <div class="card-header">
 
                                 <div class="align-back-btc">
-                                    <x-button-back href="{{ admin_url('incident/initial-incident/list/all/type') }}"></x-button-back>
+                                    <x-button-back
+                                        href="{{ admin_url('incident/initial-incident/list/all/type') }}"></x-button-back>
                                 </div>
                             </div>
 
@@ -395,7 +396,7 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3 form-input">
-                                                <label for="company_id" class="form-label ">Company</label>
+                                                <label for="company_id" class="form-label require">Company</label>
                                                 <select name="company_id" id="company_id"
                                                     class="form-control single-select form-control-sm"
                                                     style="width: 100%">
@@ -408,7 +409,7 @@
                                             </div>
 
                                             <div class="col-md-4 mb-3 form-input">
-                                                <label for="location_id" class="form-label ">Location</label>
+                                                <label for="location_id" class="form-label require">Location</label>
                                                 <select name="location_id" id="location_id"
                                                     class="form-control single-select form-control-sm"
                                                     style="width: 100%">
@@ -418,7 +419,7 @@
                                             </div>
 
                                             <div class="col-md-4 mb-3 form-input">
-                                                <label for="unit_id" class="form-label">Unit</label>
+                                                <label for="unit_id" class="form-label require">Unit</label>
                                                 <select name="unit_id" id="unit_id"
                                                     class="form-control single-select form-control-sm"
                                                     style="width: 100%">
@@ -514,8 +515,9 @@
                                             <div class="row mt-2 injuryDetails" style="display: none;">
 
                                                 <div class="card-header-inner d-flex justify-content-between">
-                                                    <a class="text-white card-link">Injured Person Details</a>
-                                                    <div class="btn btn-warning btn-sm addMoreInjuryDetails">Add</div>
+                                                    <h4 class="text-white fw-bold">Injured Person Details</h4>
+
+                                                    <div class="btn btn-warning btn-sm addMoreInjuryDetails mb-2">Add</div>
                                                 </div>
 
 
@@ -703,14 +705,14 @@
                                                 <map id='imgmap1' name='imgmap_1' data-type='total' data-map="total">
                                                 <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-face')"  title="Head" data-map="one"  shape="poly" coords="63,45,72,43,80,43,85,47,88,51,88,57,88,61,90,63,90,67,87,70,85,71,85,74,85,77,82,79,80,81,76,81,64,81,62,80,61,74,60,72,58,70,57,67,57,62,57,58,57,54,59,50,59,48" />
                                                 <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()"  title="Neck" data-map="Two" shape="poly" coords="62,82,82,81,81,91,63,90" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Shoulder Front" data-map="three"  shape="poly" coords="62,88,73,91,72,107,28,108,34,99,42,96,49,96,57,94,59,93" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right shoulder Front" data-map="four"   shape="poly" coords="72,90,82,90,85,93,91,96,95,96,100,96,107,99,112,101,115,104,116,108,72,108" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Arm Front" data-map="five"  shape="poly" coords="28,108,48,107,46,110,43,118,43,129,41,150,26,146,27,129" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Arm Front" data-map="six"  shape="poly" coords="100,107,116,108,119,114,119,120,120,125,120,131,121,138,122,146,105,150,103,125,102,117,102,113" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Elbow Front" data-map="seven"  shape="poly" coords="26,145,40,150,40,157,39,164,22,156,24,151" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Elbow Front " data-map="eight"  shape="poly" coords="104,149,122,146,122,150,125,156,125,159,106,161" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Forearm Front" data-map="nine"  shape="poly" coords="21,155,39,163,36,172,33,179,28,192,25,195,17,190,18,181,19,174,19,167" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Forearm Front" data-map="ten"  shape="poly" coords="107,161,124,158,126,164,126,169,126,174,127,184,128,191,121,195,111,178" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Shoulder Front" data-map="three"  shape="poly" coords="62,88,73,91,72,107,28,108,34,99,42,96,49,96,57,94,59,93" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left shoulder Front" data-map="four"   shape="poly" coords="72,90,82,90,85,93,91,96,95,96,100,96,107,99,112,101,115,104,116,108,72,108" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Arm Front" data-map="five"  shape="poly" coords="28,108,48,107,46,110,43,118,43,129,41,150,26,146,27,129" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Arm Front" data-map="six"  shape="poly" coords="100,107,116,108,119,114,119,120,120,125,120,131,121,138,122,146,105,150,103,125,102,117,102,113" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Elbow Front" data-map="seven"  shape="poly" coords="26,145,40,150,40,157,39,164,22,156,24,151" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Elbow Front " data-map="eight"  shape="poly" coords="104,149,122,146,122,150,125,156,125,159,106,161" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Forearm Front" data-map="nine"  shape="poly" coords="21,155,39,163,36,172,33,179,28,192,25,195,17,190,18,181,19,174,19,167" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Forearm Front" data-map="ten"  shape="poly" coords="107,161,124,158,126,164,126,169,126,174,127,184,128,191,121,195,111,178" />
                                                 <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-hand-right')" title="Right Hand " data-map="eleven"  shape="poly" coords="16,193,25,196,27,205,24,212,24,220,20,223,18,224,15,226,12,225,9,222,10,212,9,207,6,207,5,203,11,196" />
                                                 <area alt="" data-parentid = "0" data-isparent="1"  onclick="changeImage('.male-hand-left')" title="Left Hand" data-map="twelve"  shape="poly" coords="119,194,129,190,132,193,136,196,140,201,141,204,140,206,136,204,136,209,136,215,135,221,132,224,126,224,122,219,120,210" />
                                                 <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Chest" data-map="thirteen"  shape="poly" coords="46,108,44,115,43,125,43,135,72,135,71,108" />
@@ -738,7 +740,7 @@
                                                 <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Elbow back" data-map="thirtyfive"  shape="poly" coords="164,156,181,162,177,174,161,166" />
                                                 <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Elbow back" data-map="thirtysix"  shape="poly" coords="244,161,261,155,264,162,264,166,248,171,245,168" />
                                                 <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Arm Back " data-map="thirtyseven"  shape="poly" coords="161,164,177,174,167,198,157,194,160,185,159,174" />
-                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Arm Back" data-map="thirtyeight"  shape="poly" coords="247,170,263,164,265,185,267,192,267,195,257,198,251,182,247,174" />
+                                                <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Forearm Back" data-map="thirtyeight"  shape="poly" coords="247,170,263,164,265,185,267,192,267,195,257,198,251,182,247,174" />
                                                 <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Upper Back " data-map="thirtynine"  shape="poly" coords="183,122,242,121,242,128,241,136,241,143,239,147,238,153,237,155,187,156,184,148,181,129" />
                                                 <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Lower Back"   data-map="forty"  shape="poly" coords="187,154,237,154,237,175,240,188,186,187,187,176" />
                                                 <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Buttock"  data-map="fortyone"  shape="poly" coords="185,188,211,188,213,212,209,215,208,218,181,217,183,202,184,199,184,195" />
@@ -752,7 +754,8 @@
                                                 <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Left Ankle"  shape="poly"  data-map="fortynine" coords="195,324,206,323,207,336,198,336,196,335" />
                                                 <area alt="" data-parentid = "0" data-isparent="0"  onclick="changeImage()" title="Right Ankle"  shape="poly" data-map="fifty" coords="195,324,206,323,207,336,198,336,196,335" />
                                                 </map>
-                                                </div></script>
+                                                </div>
+                                            </script>
                                                         <!--male total parts -->
 
                                                         <!--female total parts -->
@@ -1282,8 +1285,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                   </div>-->
+                                                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                               </div>-->
             </div>
         </div>
     </div>
@@ -2040,6 +2043,9 @@
                     unit_id: {
                         required: true,
                     },
+                    company_id: {
+                        required: true,
+                    },
                     shift: {
                         required: true,
                         minlength: 2,
@@ -2102,6 +2108,9 @@
                     },
                     unit_id: {
                         required: "Unit is required.",
+                    },
+                    company_id: {
+                        required: "Company is required.",
                     },
                     shift: {
                         required: "Shift is required.",
@@ -2321,7 +2330,7 @@
         window.mapEdit = false;
         window.canvas_obj = {};
         $("#injury_model").on("shown.bs.modal", function() {
-          
+
             setTimeout(function() {
                 $(".img-map").css("opacity", "0");
                 $(".img-map").html($("#tmp-male").html())
