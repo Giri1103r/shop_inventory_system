@@ -69,7 +69,7 @@ class TrainingSchedule extends Model
          * Role Based list view condition start
          */
 
-        if (CheckUserRole(ROLE_SUPERADMIN)) {
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
             $query->where('training_schedule.trash', 'NO');
         } elseif (CheckUserRole(ROLE_ADMIN)) {
             $query->where('training_schedule.trash', 'NO');

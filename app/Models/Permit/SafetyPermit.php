@@ -109,7 +109,7 @@ class SafetyPermit extends Model
         $companyId = $user->company_id;
 
         $userRole = string_to_array($userRole);
-        if (isAdmin()) {
+        if (isAdmin() ||CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
         } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');

@@ -75,7 +75,7 @@
                                                 </div>
                                             </div>
 
-                                             <div class="col-md-3 mb-2">
+                                            <div class="col-md-3 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
                                                     <select name="company_id" id="company_id"
@@ -91,7 +91,7 @@
 
 
                                                     </select>
-                                                     <div class="text-danger"></div>
+                                                    <div class="text-danger"></div>
                                                 </div>
                                             </div>
                                             <div class="col-md-3 mb-2">
@@ -102,7 +102,7 @@
                                                         <option value="">Select Location Name</option>
 
                                                     </select>
-                                                     <div class="text-danger"></div>
+                                                    <div class="text-danger"></div>
                                                 </div>
                                             </div>
                                             <div class="col-md-3 mb-2">
@@ -113,7 +113,7 @@
                                                         <option value="">Select Unit Name</option>
 
                                                     </select>
-                                                     <div class="text-danger"></div>
+                                                    <div class="text-danger"></div>
                                                 </div>
                                             </div>
 
@@ -318,7 +318,7 @@
                                                 </tbody>
                                             </table>
                                         </div>
-                                        <hr>    
+                                        <hr>
 
                                         <div class="row border p-3 mx-1">
                                             <div class="col-12 col-md-6 mb-3">
@@ -1119,96 +1119,69 @@
 @push('script')
     <script>
         $(document).ready(function() {
+            let fromDate = new Date();
+            let nextDate = new Date();
+            nextDate.setDate(fromDate.getDate() + 1);
+            let fromDateTime = null;
 
+            function formatDate(date) {
+                return flatpickr.formatDate(date, 'd-m-Y');
+            }
 
+            function initFromDatePicker() {
+                $('#date_picker').flatpickr({
+                    dateFormat: 'd-m-Y',
+                    minDate: 'today',
+                    defaultDate: "{{ Displaydateformat($safetypermit->date) }}",
+                    onChange: function(selectedDates) {
+                        if (selectedDates.length > 0) {
+                            fromDate = selectedDates[0];
+                            nextDate = new Date(fromDate);
+                            nextDate.setDate(fromDate.getDate() + 1);
 
-
-            $(document).ready(function() {
-                let fromDate = new Date();
-                let nextDate = new Date();
-                nextDate.setDate(fromDate.getDate() + 1);
-                let fromDateTime = null;
-
-                function formatDate(date) {
-                    return flatpickr.formatDate(date, 'd-m-Y');
-                }
-
-                function initFromDatePicker() {
-                    $('#date_picker').flatpickr({
-                        dateFormat: 'd-m-Y',
-                        minDate: 'today',
-                        defaultDate: "{{ Displaydateformat($safetypermit->date) }}",
-                        onChange: function(selectedDates) {
-                            if (selectedDates.length > 0) {
-                                fromDate = selectedDates[0];
-                                nextDate = new Date(fromDate);
-                                nextDate.setDate(fromDate.getDate() + 1);
-
-                                initToDatePicker();
-                            }
+                            initToDatePicker();
                         }
-                    });
+                    }
+                });
+            }
+
+            function initToDatePicker() {
+                $('#to_date_picker').flatpickr({
+                    dateFormat: 'd-m-Y',
+                    minDate: fromDate,
+                    maxDate: nextDate,
+                    defaultDate: "{{ Displaydateformat($safetypermit->to_date) }}",
+                });
+            }
+
+            var fromDatepicker = flatpickr("#time_from_picker", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+                onChange: function(selectedDates) {
+                    if (selectedDates.length > 0) {
+                        var startDate = selectedDates[0];
+                        toDatepicker.set('minDate', startDate);
+                        toDatepicker.clear();
+                    }
                 }
-
-                function initToDatePicker() {
-                    $('#to_date_picker').flatpickr({
-                        dateFormat: 'd-m-Y',
-                        minDate: fromDate,
-                        maxDate: nextDate,
-                        defaultDate: "{{ Displaydateformat($safetypermit->to_date) }}",
-                    });
-                }
-
-                function initTimePickers() {
-                    $('#time_from_picker').flatpickr({
-                        enableTime: true,
-                        noCalendar: true,
-                        dateFormat: "H:i",
-                        defaultDate: "{{ $safetypermit->from_time }}",
-                        time_24hr: true,
-                        onChange: function(selectedDates) {
-                            if (selectedDates.length > 0) {
-                                const selectedTime = selectedDates[0];
-
-
-                                fromDateTime = new Date(fromDate);
-                                fromDateTime.setHours(selectedTime.getHours(), selectedTime
-                                    .getMinutes());
-
-                                const toMinTime = new Date(fromDateTime);
-                                const toMaxTime = new Date(fromDateTime);
-                                toMaxTime.setHours(toMaxTime.getHours() + 9);
-
-
-                                if ($('#time_to_picker')[0]._flatpickr) {
-                                    $('#time_to_picker')[0]._flatpickr.destroy();
-                                }
-
-                                $('#time_to_picker').flatpickr({
-                                    enableTime: true,
-                                    noCalendar: true,
-                                    dateFormat: "H:i",
-                                    defaultDate: "{{ $safetypermit->to_time }}",
-                                    time_24hr: true,
-                                    minTime: formatTime(toMinTime),
-
-                                });
-                            }
-                        }
-                    });
-                }
-
-                function formatTime(date) {
-                    return date.toTimeString().slice(0, 5); // "HH:MM"
-                }
-
-
-                // Initialize
-                initFromDatePicker();
-                initToDatePicker();
-                initTimePickers();
             });
 
+            var toDatepicker = flatpickr("#time_to_picker", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true
+            });
+
+
+            // Initialize
+            initFromDatePicker();
+            initToDatePicker();
+
+        });
+        $(document).ready(function() {
 
 
             $(document).ready(function() {
@@ -2480,6 +2453,17 @@
                 return this.optional(element) || regexp.test(value);
             }, "Please check your input.");
 
+            $.validator.addMethod("greaterThanTime", function(value, element, params) {
+                var fromTime = $(params).val();
+
+                if (!fromTime || !value)
+                  return true;
+                var from = new Date("1970-01-01T" + fromTime + ":00");
+                var to = new Date("1970-01-01T" + value + ":00");
+
+                return to > from;
+            }, "To Time must be after From Time");
+
             $('#safetyPermitadd').validate({
                 rules: {
                     date: {
@@ -2493,6 +2477,7 @@
                     },
                     time_to: {
                         required: true,
+                        greaterThanTime: "#time_from_picker"
                     },
                     unit_id: {
                         required: true,
@@ -2500,7 +2485,7 @@
                     company_id: {
                         required: true,
                     },
-                     location_id: {
+                    location_id: {
                         required: true,
                     },
                     exact_location_job: {
@@ -2567,14 +2552,15 @@
                     },
                     time_to: {
                         required: "To Time cannot be empty.",
+                        greaterThanTime: "To time must be after From time"
                     },
                     unit_id: {
                         required: "Please Select the unit.",
                     },
-                     company_id: {
+                    company_id: {
                         required: "Please Select the Company.",
                     },
-                     location_id: {
+                    location_id: {
                         required: "Please Select the Location.",
                     },
                     exact_location_job: {
@@ -2681,7 +2667,7 @@
 
         // get company based unit
 
-      $(document).ready(function() {
+        $(document).ready(function() {
 
             var initialCompanyId = $('#company_id').val();
             var preselectedLocationId = "{{ encryptId($safetypermit->location_id) ?? '0' }}";
@@ -2760,6 +2746,5 @@
 
 
         });
-
     </script>
 @endpush

@@ -88,6 +88,7 @@ class AppServiceProvider extends ServiceProvider
         defined('ROLE_NURSING_OFFICER') or define('ROLE_NURSING_OFFICER', 25);
         defined('ROLE_CLEANER') or define('ROLE_CLEANER', 26);
         defined('ROLE_INSPECTION_CREATOR') or define('ROLE_INSPECTION_CREATOR', 27);
+        defined('ROLE_DASHBOARD_VIEWER') or define('ROLE_DASHBOARD_VIEWER', 28);
 
         defined('NEW_TRAINING_SCHEDULE') or define('NEW_TRAINING_SCHEDULE', 1);
         defined('VP_APPROVE') or define('VP_APPROVE', 2);

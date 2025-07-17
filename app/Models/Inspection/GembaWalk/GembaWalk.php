@@ -55,7 +55,7 @@ class GembaWalk extends Model
 
 
 
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) {
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
         } else {
             $query->whereRaw("FIND_IN_SET(?, inspection_gemba_walk_checklist.responsibility_id)", [Auth::id()]);
         }

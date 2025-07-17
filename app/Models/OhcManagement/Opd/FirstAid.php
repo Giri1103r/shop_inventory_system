@@ -65,7 +65,7 @@ class FirstAid extends Model
                 }
             });
         }
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || in_array(ROLE_EHS_HEAD, $userRole)) {
+        if (in_array(ROLE_ADMIN, $userRole) || CheckUserRole(ROLE_DASHBOARD_VIEWER) || in_array(ROLE_SUPERADMIN, $userRole) || in_array(ROLE_EHS_HEAD, $userRole)) {
             $query->orderBy('ohc_opd_first_aid.id', 'DESC');
         } else {
             $query->where('ohc_opd_first_aid.created_by', Auth::id());

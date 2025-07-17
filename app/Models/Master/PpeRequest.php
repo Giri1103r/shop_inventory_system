@@ -77,7 +77,7 @@ class PpeRequest extends Model
             $query->orderBy('ppe_pperequest.id', 'DESC');
         } elseif (in_array(ROLE_ADMIN, $userRole)) {
             $query->orderBy('ppe_pperequest.id', 'DESC');
-        } elseif (in_array(ROLE_SUPERADMIN, $userRole)) {
+        } elseif (in_array(ROLE_SUPERADMIN, $userRole) || CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
             $query->orderBy('ppe_pperequest.id', 'DESC');
         } else {
             $query->where('ppe_pperequest.created_by', Auth::id());

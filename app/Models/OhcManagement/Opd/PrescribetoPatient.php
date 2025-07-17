@@ -84,7 +84,7 @@ class PrescribetoPatient extends Model
                 }
             });
         }
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || in_array(ROLE_EHS_HEAD, $userRole)) {
+        if (in_array(ROLE_ADMIN, $userRole) ||  CheckUserRole(ROLE_DASHBOARD_VIEWER) || in_array(ROLE_SUPERADMIN, $userRole) || in_array(ROLE_EHS_HEAD, $userRole)) {
             $query->orderBy('ohc_management_opd_patient.id', 'DESC');
         }  else {
             $query->where('ohc_management_opd_patient.created_by', Auth::id());
