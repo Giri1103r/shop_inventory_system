@@ -1021,13 +1021,13 @@
                 });
                 $('.un-safe-act').on('click', function() {
                     var url = "{{ admin_url('incident/initial-incident/list/all/type') }}";
-                    const id = '1';
-                    cardRedirectUrl('unsafe_act', id, url);
+                    const id = '23';
+                    cardRedirectUrl('near_miss', id, url);
                 });
                 $('.unsafe-condition ').on('click', function() {
                     var url = "{{ admin_url('incident/initial-incident/list/all/type') }}";
-                    const id = '2';
-                    cardRedirectUrl('unsafe_condition', id, url);
+                    const id = '24';
+                    cardRedirectUrl('near_miss', id, url);
                 });
                 $('.gemba-walk ').on('click', function() {
                     var url = "{{ admin_url('inspection/gemba-walk/list') }}";
