@@ -174,8 +174,8 @@ class TrainingSchedule extends Model
             $query = $query->where('training_schedule.status', 'LIKE', '%' . decryptId($request->status) . '%');
         }
 
-        if ($request->has('dashboard_openCloseStatus') && $request->dashboard_openCloseStatus) {
-            $openCloseStatus = decryptId($request->dashboard_openCloseStatus);
+        if ($request->has('open_close_status') && $request->open_close_status) {
+            $openCloseStatus = ($request->open_close_status);
             if ($openCloseStatus == "1") {
                 $query = $query->where('training_schedule.training_status', '!=', 8);
             } else {
@@ -737,7 +737,7 @@ class TrainingSchedule extends Model
         return $data;
     }
 
-    public function getTrainigCompletionCountData($request)
+    public function getTrainingOpenClose($request)
     {
         $query = DB::table('training_schedule')
             ->select(
@@ -748,25 +748,19 @@ class TrainingSchedule extends Model
                 DB::raw('ROUND(SUM(CASE WHEN training_status != 8 THEN 1 ELSE 0 END) * 100.0 / COUNT(id), 2) as open_percentage')
             );
 
-        // Apply company Filter
-        if ($request->CompanyId) {
-            $company_id = decryptId($request->CompanyId);
-            $query->where('company_id', $company_id);
+       if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('training_schedule.company_id', decryptId($request->CompanyId));
         }
 
-        // Date Filters
-        if ($request->Fromdate && $request->Todate) {
-            $query->whereBetween('created_at', [
-                DBdateformat($request->Fromdate),
-                DBdateformat($request->Todate) . ' 23:59:59'
-            ]);
-        } elseif ($request->Fromdate) {
-            $query->where('created_at', '>=', DBdateformat($request->Fromdate));
-        } elseif ($request->Todate) {
-            $query->where('created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('training_schedule.created_at', '>=', DBdateformat($request->Fromdate));
         }
 
-        return $query->first(); // only one row
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->get(); 
     }
 
 

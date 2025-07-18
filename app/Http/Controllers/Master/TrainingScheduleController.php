@@ -79,7 +79,7 @@ class TrainingScheduleController extends Controller
 
     public function index(Request $request)
     {
-        
+
         if (Auth::check()) {
             if ($request->ajax()) {
 
@@ -240,6 +240,7 @@ class TrainingScheduleController extends Controller
         $status = $request->status;
         $toDate = $request->toDate;
         $TopicId = $request->topic_id;
+        $open_close_status = $request->open_close_status;
         $data = array(
             'department' => $departmentList,
             'unitList' => $unitList,
@@ -254,6 +255,7 @@ class TrainingScheduleController extends Controller
             'toDate' => $toDate,
             'TopicId' => $TopicId,
             'companyname' => $companyname,
+            'open_close_status' => $open_close_status,
         );
         return view('master.training_schedule.list', $data);
     }

@@ -313,7 +313,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('PPEIssuanceGroupWise', [AdminController::class, 'getPPEIssuanceGroupWise']);
                 Route::get('PTWAvgTimeChart', [AdminController::class, 'getPTWAvgTimeChart']);
                 Route::get('PPEAvailabilityChart', [AdminController::class, 'getPPEAvailabilityChart']);
-                Route::get('TrainingCompletionCount', [AdminController::class, 'getTrainingCompletionCount']);
+
                 Route::get('TypeofIIRCount', [AdminController::class, 'getTypeofIIRCount']);
                 Route::get('AccidentReportUnitWiseCount', [AdminController::class, 'getAccidentReportUnitWiseCount']);
                 Route::get('injurypart', [AdminController::class, 'getInjurypart']);
@@ -328,6 +328,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('monthwiseptw', [AdminController::class, 'monthwiseptw']);
                 // Training Management
                 Route::get('department', [AdminController::class, 'getDepartment']);
+                Route::get('training-open-close-total', [AdminController::class, 'getTrainingOpenClose']);
                 Route::get('training-hour-topic-wise', [AdminController::class, 'trainingTopicWise']);
                 Route::get('month-wise-training-count', [AdminController::class, 'getmonthwiseTraining']);
                 Route::get('trainingStatusCount', [AdminController::class, 'gettrainingStatusCount']);

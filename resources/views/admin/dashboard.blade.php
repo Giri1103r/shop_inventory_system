@@ -809,7 +809,7 @@
                                     <a class="fas fa-arrow-alt-circle-down chartdownload"
                                         id="TrainingCompletion_download"></a>
                                 </div>
-                                <div id="TrainingCompletionCountDiv"></div>
+                                <div id="training_open_close"></div>
                             </div>
                         </div>
                     </div>
@@ -2589,13 +2589,13 @@
                 }
 
                 function TrainingCompletionCount(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/TrainingCompletionCount') }}"
+                    var url = "{{ admin_url('dashboard/training-open-close-total') }}"
                     var data = {
                         CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#TrainingCompletionCountDiv').html('');
+                    $('#training_open_close').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -2603,7 +2603,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#TrainingCompletionCountDiv').html(dataAjx);
+                            $('#training_open_close').html(dataAjx);
                         }
                     });
                 }

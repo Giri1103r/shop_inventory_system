@@ -22,7 +22,7 @@
 }
 
 #ptw_open_close_countDiv,
-#IncidentTypeChartDiv, #TrainingCompletionCountDiv,#LoadPPEAvailabilityChartCountDiv {
+#IncidentTypeChartDiv, #training_open_close,#LoadPPEAvailabilityChartCountDiv {
     height: 400px;
 
     overflow: hidden;

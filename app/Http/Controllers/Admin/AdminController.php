@@ -916,44 +916,7 @@ class AdminController extends Controller
         }
     }
 
-    public function trainingTopicWise(Request $request)
-    {
-        try {
-            $dates = [
-                'from_date' => $request->input('FromDate'),
-                'to_date' => $request->input('ToDate')
-            ];
 
-            $training_data = $this->training_schedule->getTopicWiseTraining();
-
-
-            if ($training_data->isEmpty()) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
-
-            $chartData = [
-                'labels' => [],
-                'series' => [],
-                'topic_name' => [],
-                'training_topic_id' => [] 
-            ];
-
-            foreach ($training_data as $item) {
-                $chartData['labels'][] = $item->topic_name;
-                $chartData['series'][] = (float) $item->total_hours;
-                $chartData['topic_name'][] = $item->department_name;
-                $chartData['training_topic_id'][] = $item->training_topic_id;
-            }
-
-            return view('admin.dashboard.training_hour_department_wise', [
-                'training_data' => $training_data,
-                'chartData' => $chartData,
-                'getdashdata' => (object) $dates
-            ]);
-        } catch (\Exception $ex) {
-            report($ex);
-        }
-    }
 
 
     public function ptwholdviolation(Request $request)
@@ -1048,37 +1011,7 @@ class AdminController extends Controller
         }
     }
 
-    public function getTrainingCompletionCount(Request $request)
-    {
-        try {
-            $chartData = $this->training_schedule->getTrainigCompletionCountData($request);
 
-            if (empty($chartData) || $chartData->training_total_count == 0) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
-
-            $formattedData = [
-                'total' => $chartData->training_total_count,
-                'closed' => $chartData->closed_count,
-                'open' => $chartData->open_count,
-                'closed_percentage' => $chartData->closed_percentage,
-                'open_percentage' => $chartData->open_percentage,
-            ];
-            $openEncrypted = encryptId(1);
-            $closeEncrypted = encryptId(2);
-            $totalEncrypted = encryptId(3);
-            return view('admin.dashboard.training_completion', [
-                'formattedData' => $formattedData,
-                'getdashdata' => $request,
-                'openStatusEncrypted' => $openEncrypted,
-                'closeStatusEncrypted' => $closeEncrypted,
-                'totalStatusEncrypted' => $totalEncrypted,
-            ]);
-        } catch (\Exception $ex) {
-            report($ex);
-            return back()->with('error', 'Failed to load training completion data.');
-        }
-    }
 
     public function getTypeofIIRCount(Request $request)
     {
@@ -1549,69 +1482,81 @@ class AdminController extends Controller
             return back()->withErrors('An error occurred');
         }
     }
-    public function gettrainingStatusCount(Request $request)
+
+    // Training Management
+
+    // Training Open Close
+
+    public function getTrainingOpenClose(Request $request)
     {
         try {
-            $chartData = $this->training_schedule->getTrainingCount();
+            $chartData = $this->training_schedule->getTrainingOpenClose($request);
 
-            if ($chartData) {
+
+            $row = $chartData[0] ?? null;
+
+            if (!$row || $row->training_total_count == 0) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
 
-            // Prepare data for the pie chart
-            $chartDataArray = [
-                'Pending' => $chartData->pending_count ?? 0,
-                'Rejected' => $chartData->rejected_count ?? 0,
-                'In Progress' => $chartData->inprogress_count ?? 0,
-                'Completed' => $chartData->completed_count ?? 0,
+            $formattedData = [
+                'closed' => $row->closed_count,
+                'open' => $row->open_count,
+                'closed_percentage' => $row->closed_percentage,
+                'open_percentage' => $row->open_percentage,
             ];
-            $data = [
+
+            return view('admin.dashboard.training_open_close', [
+                'formattedData' => $formattedData,
                 'getdashdata' => $request,
-                'chartDataArray' => $chartDataArray
-            ];
-            return view('admin.dashboard.trainingstatusCount', $data);
-        } catch (\Exception $ex) {
-            report($ex); // Debug any errors during execution
-        }
-    }
-
-    // department wise schedule count
-    public function getDepartment(Request $request)
-    {
-        try {
-            $chartData = $this->training_schedule->getDepartmentData();
-
-            if ($chartData->isEmpty()) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
-
-            // Fetch department info and key by ID for easy mapping
-            $departmentDetails = $this->department->select('id', 'department_name')->get()->keyBy('id');
-
-            $chartDataArray = [];
-            foreach ($chartData as $data) {
-                $deptId = $data->department_id;
-                if (isset($departmentDetails[$deptId])) {
-                    $chartDataArray[$deptId] = $data->count;
-                }
-            }
-
-            // Filter out zero-counts if needed
-            $chartDataArray = array_filter($chartDataArray, fn($count) => $count > 0);
-
-            $data = [
-                'getdashdata' => $request,
-                'departmentDetails' => $departmentDetails,
-                'chartDataArray' => $chartDataArray
-            ];
-
-            return view('admin.dashboard.departmentData', $data);
+            ]);
         } catch (\Exception $ex) {
             report($ex);
-            return response()->json('An error occurred.');
+            return back()->with('error', 'Failed to load training completion data.');
         }
     }
 
+
+    // Training topic wise data
+    public function trainingTopicWise(Request $request)
+    {
+        try {
+            $dates = [
+                'from_date' => $request->input('FromDate'),
+                'to_date' => $request->input('ToDate')
+            ];
+
+            $training_data = $this->training_schedule->getTopicWiseTraining();
+
+
+            if ($training_data->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
+            $chartData = [
+                'labels' => [],
+                'series' => [],
+                'topic_name' => [],
+                'training_topic_id' => []
+            ];
+
+            foreach ($training_data as $item) {
+                $chartData['labels'][] = $item->topic_name;
+                $chartData['series'][] = (float) $item->total_hours;
+                $chartData['topic_name'][] = $item->department_name;
+                $chartData['training_topic_id'][] = $item->training_topic_id;
+            }
+
+            return view('admin.dashboard.training_hour_department_wise', [
+                'training_data' => $training_data,
+                'chartData' => $chartData,
+                'getdashdata' => (object) $dates
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+        }
+    }
+    // month wise data
     public function getmonthwiseTraining(Request $request)
     {
         try {
@@ -1683,6 +1628,70 @@ class AdminController extends Controller
         } catch (\Exception $ex) {
             report($ex);
             return back()->with('error', 'Failed to load month-wise Training data.');
+        }
+    }
+
+    // department wise schedule count
+    public function getDepartment(Request $request)
+    {
+        try {
+            $chartData = $this->training_schedule->getDepartmentData();
+
+            if ($chartData->isEmpty()) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
+
+            $departmentDetails = $this->department->select('id', 'department_name')->get()->keyBy('id');
+
+            $chartDataArray = [];
+            foreach ($chartData as $data) {
+                $deptId = $data->department_id;
+                if (isset($departmentDetails[$deptId])) {
+                    $chartDataArray[$deptId] = $data->count;
+                }
+            }
+
+
+            $chartDataArray = array_filter($chartDataArray, fn($count) => $count > 0);
+
+            $data = [
+                'getdashdata' => $request,
+                'departmentDetails' => $departmentDetails,
+                'chartDataArray' => $chartDataArray
+            ];
+
+            return view('admin.dashboard.departmentData', $data);
+        } catch (\Exception $ex) {
+            report($ex);
+            return response()->json('An error occurred.');
+        }
+    }
+
+    // not addede in the main dashboard training status wise count
+    public function gettrainingStatusCount(Request $request)
+    {
+        try {
+            $chartData = $this->training_schedule->getTrainingCount();
+
+            if ($chartData) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
+
+            // Prepare data for the pie chart
+            $chartDataArray = [
+                'Pending' => $chartData->pending_count ?? 0,
+                'Rejected' => $chartData->rejected_count ?? 0,
+                'In Progress' => $chartData->inprogress_count ?? 0,
+                'Completed' => $chartData->completed_count ?? 0,
+            ];
+            $data = [
+                'getdashdata' => $request,
+                'chartDataArray' => $chartDataArray
+            ];
+            return view('admin.dashboard.trainingstatusCount', $data);
+        } catch (\Exception $ex) {
+            report($ex); // Debug any errors during execution
         }
     }
 }
