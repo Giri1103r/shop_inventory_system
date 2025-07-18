@@ -814,6 +814,8 @@
                         </div>
                     </div>
 
+                    {{-- Training Management --}}
+
                     <div class="row">
                         <div class="col-xl-12 col-xxl-12">
                             <div class="card dashboard_card responsive">
@@ -862,31 +864,6 @@
                     </div>
 
 
-
-                    {{-- <div class="row">
-                    <div class="col-xl-12 col-xxl-12">
-                        <div class="card dashboard_card responsive">
-                            <div class="card-header">
-                                <h4 class="text-white">Daily 6's Observation Report Monthly Static Report</h4>
-                                <a class="fas fa-arrow-alt-circle-down chartdownload" id="dailyObservationDownload"></a>
-                            </div>
-                            <div id="dailyObservation"></div>
-                        </div>
-                    </div>
-                </div> --}}
-
-                    {{-- <div class="row" style="display: none">
-
-                <div class="col-xl-6 col-xxl-6">
-                    <div class="card dashboard_card responsive">
-                        <div class="card-header">
-                            <h4 class="text-white">TRAINING STATUS COUNT</h4>
-                            <a class="fas fa-arrow-alt-circle-down chartdownload" id="training_count_download"></a>
-                        </div>
-                        <div id="trainingStatusPieChartDiv"></div>
-                    </div>
-                </div>
-            </div> --}}
                 </div>
             </div>
         @endsection
@@ -2804,9 +2781,9 @@
                 // trainig schedule
 
                 function redirectcharturl(chart_type, id, url) {
-                    let companyId = $('#company_id').val();
+                    let CompanyId = $('#company_id').val();
                     let Fromdate = $('#fromDate').val();
-                    let todate = $('#toDate').val();
+                    let Todate = $('#toDate').val();
 
                     let form = $('<form>', {
                         method: 'POST',
@@ -2839,7 +2816,7 @@
                     form.append($('<input>', {
                         type: 'hidden',
                         name: 'company_id',
-                        value: company_id
+                        value: CompanyId
                     }));
 
 
