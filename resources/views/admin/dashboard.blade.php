@@ -814,37 +814,38 @@
                         </div>
                     </div>
 
-                    {{-- Training Management --}}
+                    {{-- Training Management Topic wise--}}
 
                     <div class="row">
                         <div class="col-xl-12 col-xxl-12">
                             <div class="card dashboard_card responsive">
                                 <div class="card-header">
-                                    <h4 class="text-white">Training Hour of Safety Department Wise</h4>
+                                    <h4 class="text-white">Training Hour of Topic Wise</h4>
                                     <a class="fas fa-arrow-alt-circle-down chartdownload"
                                         id="LoadTrainingHourSafetyDepartmentWise_download"></a>
                                 </div>
-                                <div id="LoadTrainingHourSafetyDepartmentWise_CountDiv"></div>
+                                <div id="training_topic_wise_count"></div>
                             </div>
                         </div>
                     </div>
-
+                    {{-- Training management Month wise count --}}
                     <div class="row">
                         <div class="col-xl-12 col-xxl-12">
                             <div class="card dashboard_card">
                                 <div class="card-header">
                                     <h4 class="text-white">MONTH WISE TRAINING COUNT</h4>
                                     <a class="fas fa-arrow-alt-circle-down chartdownload"
-                                        id="monthwisetraining_download"></a>
+                                        id="month_wise_training_count_download"></a>
                                 </div>
                                 <div class="px-2 boder-rounded px-0 pt-0 dlab-scroll height450"
-                                    id="LoadmonthwisetrainingDiv">
+                                    id="month_wise_training_count">
                                 </div>
 
                             </div>
                         </div>
                     </div>
 
+                    {{-- Training management department wise count --}}
 
                     <div class="row">
                         <div class="col-xl-12 col-xxl-12">
@@ -2187,13 +2188,13 @@
 
 
                 function loadfmonthwisetraining(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/monthwisetraining') }}"
+                    var url = "{{ admin_url('dashboard/month-wise-training-count') }}"
                     var data = {
                         CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#LoadmonthwisetrainingDiv').html('');
+                    $('#month_wise_training_count').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -2201,7 +2202,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#LoadmonthwisetrainingDiv').html(dataAjx);
+                            $('#month_wise_training_count').html(dataAjx);
                         }
                     });
                 }
@@ -2608,13 +2609,13 @@
                 }
 
                 function TrainingHourSafetyDepartmentWise(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/training-hour-safety-department') }}"
+                    var url = "{{ admin_url('dashboard/training-hour-topic-wise') }}"
                     var data = {
                         CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#LoadTrainingHourSafetyDepartmentWise_CountDiv').html('');
+                    $('#training_topic_wise_count').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -2622,7 +2623,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#LoadTrainingHourSafetyDepartmentWise_CountDiv').html(dataAjx);
+                            $('#training_topic_wise_count').html(dataAjx);
                         }
                     });
                 }
@@ -2799,6 +2800,55 @@
                     form.append($('<input>', {
                         type: 'hidden',
                         name: chart_type,
+                        value: id
+                    }));
+
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'fromDate',
+                        value: Fromdate
+                    }));
+
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'toDate',
+                        value: Todate
+                    }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'company_id',
+                        value: CompanyId
+                    }));
+
+
+                    $('body').append(form);
+                    form.submit();
+                }
+
+                function redirectTrainingcharturl(month, id, url) {
+                    let CompanyId = $('#company_id').val();
+                    let Fromdate = $('#fromDate').val();
+                    let Todate = $('#toDate').val();
+
+                    let form = $('<form>', {
+                        method: 'POST',
+                        action: url,
+                    });
+
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: '_token',
+                        value: "{{ csrf_token() }}"
+                    }));
+
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'month',
+                        value: month
+                    }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'status',
                         value: id
                     }));
 

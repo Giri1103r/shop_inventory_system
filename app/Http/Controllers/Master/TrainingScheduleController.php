@@ -79,7 +79,7 @@ class TrainingScheduleController extends Controller
 
     public function index(Request $request)
     {
-   
+        
         if (Auth::check()) {
             if ($request->ajax()) {
 
@@ -120,10 +120,10 @@ class TrainingScheduleController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
-                          ->addColumn('company_id', function ($row) {
+                        ->addColumn('company_id', function ($row) {
                             return getcompanyname($row->company_id);
                         })
-                          ->addColumn('department_id', function ($row) {
+                        ->addColumn('department_id', function ($row) {
                             return getDepartment($row->department_id);
                         })
                         ->addColumn('action', function ($row) {
@@ -215,7 +215,7 @@ class TrainingScheduleController extends Controller
                             // }
                             return $btn;
                         })
-                        ->rawColumns(['to_date', 'from_date', 'action', 'created_date', 'created_by',   'unit_id',  'department_id','status']);
+                        ->rawColumns(['to_date', 'from_date', 'action', 'created_date', 'created_by',   'unit_id',  'department_id', 'status']);
                     if (Auth::user()->role != ROLE_USER) {
                         $datatables->setFilteredRecords($data['filter_records'])
                             ->setTotalRecords($data['total_records']);
@@ -233,10 +233,13 @@ class TrainingScheduleController extends Controller
         $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
         $employeeList  = $this->employee->select('id', 'emp_name')->whereRaw('FIND_IN_SET(' . ROLE_TRAINER . ', user_role)')->where('status', '1')->get();
         $companyList = $this->company->getCompany();
-        $departmentData =$request->department;
-          $companyname = $request->company_id;
+        $departmentData = $request->department;
+        $companyname = $request->company_id;
         $fromdate = $request->fromDate;
+        $month = $request->month;
+        $status = $request->status;
         $toDate = $request->toDate;
+        $TopicId = $request->topic_id;
         $data = array(
             'department' => $departmentList,
             'unitList' => $unitList,
@@ -246,7 +249,10 @@ class TrainingScheduleController extends Controller
             'dashboard_search' => $request,
             'departmentData' => $departmentData,
             'fromdate' => $fromdate,
+            'month' => $month,
+            'status' => $status,
             'toDate' => $toDate,
+            'TopicId' => $TopicId,
             'companyname' => $companyname,
         );
         return view('master.training_schedule.list', $data);
@@ -260,7 +266,7 @@ class TrainingScheduleController extends Controller
             $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
             $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
             $employeeList  = $this->employee->select('id', 'emp_name')->whereRaw('FIND_IN_SET(' . ROLE_TRAINER . ', user_role)')->where('status', '1')->get();
-               $companyList = $this->company->getCompany();
+            $companyList = $this->company->getCompany();
             $data = array(
                 'departmentList' => $departmentList,
                 'unitList' => $unitList,
@@ -376,7 +382,7 @@ class TrainingScheduleController extends Controller
                                     'message' => 'A new training schedule has been created by ' . getUsername($trainingSchedule->created_by),
                                     'icon' => $img,
                                     'module' => 4,
-                                    'id'=>$training->id
+                                    'id' => $training->id
                                 ]),
                                 'web_link' => 'training_schedule/ehs_approval/' . encryptId($trainingSchedule->id),
                                 'assigned_user' => array_to_string($ehsids),
@@ -397,7 +403,7 @@ class TrainingScheduleController extends Controller
             return redirect(admin_url('training_schedule/list'));
         } catch (Exception $ex) {
 
-        report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -455,7 +461,7 @@ class TrainingScheduleController extends Controller
                                 'message' => 'Training on the topic ' . getTopic($nominee->topic_id) . ' has been started by ' . getUsername(Auth::id()),
                                 'icon' =>  $img,
                                 'module' => 4,
-                                'id'=>  $trainingScheduleId
+                                'id' =>  $trainingScheduleId
                             ]),
                             'web_link' => 'training_schedule/view/' . encryptId($trainingScheduleId),
                             'assigned_user' => array_to_string($assignedUsers),
@@ -766,14 +772,14 @@ class TrainingScheduleController extends Controller
                             // Prepare a single notification
                             $notificationData = [
                                 'notification_type' => 2,
-                               'module_type' => 4,
+                                'module_type' => 4,
                                 'notification_message' => $mailSubject,
                                 'mobile_notification' => json_encode([
                                     'title' => $mailSubject,
                                     'message' => $mailSubject,
                                     'icon' => $img,
                                     'module' => 4,
-                                    'id'=>  $trainingScheduleId
+                                    'id' =>  $trainingScheduleId
                                 ]),
                                 'web_link' => $feedbackLink,
                                 'assigned_user' => $empIds,
@@ -882,7 +888,7 @@ class TrainingScheduleController extends Controller
                     ->get();
 
                 $workerIds = $this->training_assessment_feedback->getWorkers($training_schedule->id)->pluck('emp_id')
-                ->toArray();;
+                    ->toArray();;
 
 
                 // Check how many workers have given feedback
@@ -987,8 +993,8 @@ class TrainingScheduleController extends Controller
                 }
             }
         } catch (Exception $ex) {
-         
-             report($ex);
+
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -1061,7 +1067,7 @@ class TrainingScheduleController extends Controller
                                         'message' => 'A new training schedule has been created by ' . getUsername($trainingSchedule->created_by),
                                         'icon' =>  $img,
                                         'module' => 4,
-                                        'id'=> $id
+                                        'id' => $id
                                     ]),
                                     'web_link' => 'training_schedule/view/' . encryptId($trainingSchedule->id),
                                     'assigned_user' => $assigned_users,
@@ -1128,7 +1134,7 @@ class TrainingScheduleController extends Controller
                                             'message' => 'Training rejected by EHS Head ' . getUsername(Auth::id()),
                                             'icon' => $img,
                                             'module' => 4,
-                                            'id'=> $id
+                                            'id' => $id
                                         ]),
                                         'web_link' => 'training_schedule/view/' . encryptId($trainingSchedule->id),
                                         'assigned_user' => array_to_string($adminIds),
@@ -1184,7 +1190,7 @@ class TrainingScheduleController extends Controller
             }
             return view('master.training_schedule.nomination', $data);
         } catch (Exception $ex) {
-           report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -1292,7 +1298,7 @@ class TrainingScheduleController extends Controller
                                 'message' => 'A training reschedule has been created by ' . getUsername($trainingSchedule->created_by),
                                 'icon' =>  $img,
                                 'module' => 4,
-                                'id'=> $id
+                                'id' => $id
                             ]),
                             'web_link' => 'training_schedule/ehs_approval/' . encryptId($trainingSchedule->id),
                             'assigned_user' => array_to_string($ehsids),
@@ -1448,9 +1454,9 @@ class TrainingScheduleController extends Controller
                 'End Time',
                 'Training Topic',
                 'Trainer',
-                 __("common.company"),
+                __("common.company"),
                 __("common.unit"),
-               __("common.department"),
+                __("common.department"),
                 'Target Trainees',
                 'Venue/Location',
                 'Training Man Hours',
@@ -1492,9 +1498,10 @@ class TrainingScheduleController extends Controller
                     $exportData
                 );
         } catch (Exception $ex) {
- report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('training_schedule/list'));report($ex);
+            return redirect(admin_url('training_schedule/list'));
+            report($ex);
         }
     }
 
@@ -1518,9 +1525,9 @@ class TrainingScheduleController extends Controller
                 'End Time',
                 'Training Topic',
                 'Trainer',
-                  __("common.company"),
+                __("common.company"),
                 __("common.unit"),
-               __("common.department"),
+                __("common.department"),
                 'Target Trainees',
                 'Venue/Location',
                 'Training Man Hours',
@@ -1558,7 +1565,7 @@ class TrainingScheduleController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
-           report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -1598,7 +1605,7 @@ class TrainingScheduleController extends Controller
             $filename = "Certificate.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-           report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }
@@ -1655,7 +1662,7 @@ class TrainingScheduleController extends Controller
             $filename = "Training.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-         report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('training_schedule/list'));
         }

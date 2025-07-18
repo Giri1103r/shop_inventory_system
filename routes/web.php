@@ -308,7 +308,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('inspection-count', [AdminController::class, 'InspectionWiseCount']);
                 Route::get('ptw-open-close', [AdminController::class, 'PTWActiveVsClose']);
                 Route::get('ptw-type-wise-count', [AdminController::class, 'PTWTypeWiseCount']);
-                Route::get('training-hour-safety-department', [AdminController::class, 'TrainingHoursSafetyDepartmentWise']);
+
                 Route::get('ptw-hold-violation', [AdminController::class, 'ptwholdviolation']);
                 Route::get('PPEIssuanceGroupWise', [AdminController::class, 'getPPEIssuanceGroupWise']);
                 Route::get('PTWAvgTimeChart', [AdminController::class, 'getPTWAvgTimeChart']);
@@ -326,8 +326,10 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('gemba-walk-observation', [AdminController::class, 'gembaWalkObservation']);
                 Route::get('unitwiseptw', [AdminController::class, 'unitwiseptw']);
                 Route::get('monthwiseptw', [AdminController::class, 'monthwiseptw']);
+                // Training Management
                 Route::get('department', [AdminController::class, 'getDepartment']);
-                Route::get('monthwisetraining', [AdminController::class, 'getmonthwiseTraining']);
+                Route::get('training-hour-topic-wise', [AdminController::class, 'trainingTopicWise']);
+                Route::get('month-wise-training-count', [AdminController::class, 'getmonthwiseTraining']);
                 Route::get('trainingStatusCount', [AdminController::class, 'gettrainingStatusCount']);
                 // Route::get('dailyObservation', [AdminController::class, 'DailyObservationMonthCount']);
             });

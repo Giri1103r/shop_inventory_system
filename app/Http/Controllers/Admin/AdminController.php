@@ -916,7 +916,7 @@ class AdminController extends Controller
         }
     }
 
-    public function TrainingHoursSafetyDepartmentWise(Request $request)
+    public function trainingTopicWise(Request $request)
     {
         try {
             $dates = [
@@ -924,7 +924,8 @@ class AdminController extends Controller
                 'to_date' => $request->input('ToDate')
             ];
 
-            $training_data = $this->training_schedule->GetTrainingHoursDepartmentData($request);
+            $training_data = $this->training_schedule->getTopicWiseTraining();
+
 
             if ($training_data->isEmpty()) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
@@ -933,15 +934,15 @@ class AdminController extends Controller
             $chartData = [
                 'labels' => [],
                 'series' => [],
-                'departments' => [],
-                'department_ids' => [] // ➕ include department IDs
+                'topic_name' => [],
+                'training_topic_id' => [] 
             ];
 
             foreach ($training_data as $item) {
                 $chartData['labels'][] = $item->topic_name;
                 $chartData['series'][] = (float) $item->total_hours;
-                $chartData['departments'][] = $item->department_name;
-                $chartData['department_ids'][] = $item->department_id;
+                $chartData['topic_name'][] = $item->department_name;
+                $chartData['training_topic_id'][] = $item->training_topic_id;
             }
 
             return view('admin.dashboard.training_hour_department_wise', [
@@ -1614,31 +1615,24 @@ class AdminController extends Controller
     public function getmonthwiseTraining(Request $request)
     {
         try {
-            // Fetch chart data
             $chartData = $this->training_schedule->monthwiseTrainingCountData();
-
             if ($chartData->isEmpty()) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
 
-            // Initialize count arrays for each month
-            $overallCounts = array_fill(1, 12, 0);
             $pendingCounts = array_fill(1, 12, 0);
             $rejectedCounts = array_fill(1, 12, 0);
             $inProgressCounts = array_fill(1, 12, 0);
             $completedCounts = array_fill(1, 12, 0);
 
-            // Populate counts based on fetched data
             foreach ($chartData as $data) {
-                $overallCounts[$data->month] = $data->total_count;
                 $pendingCounts[$data->month] = $data->pending_count;
                 $rejectedCounts[$data->month] = $data->rejected_count;
                 $inProgressCounts[$data->month] = $data->inprogress_count;
                 $completedCounts[$data->month] = $data->completed_count;
             }
 
-            // Prepare chart data array
-            $chartDataArray = [];
+
             $months = [
                 'January',
                 'February',
@@ -1654,17 +1648,37 @@ class AdminController extends Controller
                 'December'
             ];
 
-            foreach ($months as $monthIndex => $monthName) {
-                $chartDataArray[$monthName] = [
-                    'pending' => $pendingCounts[$monthIndex + 1],
-                    'rejected' => $rejectedCounts[$monthIndex + 1],
-                    'in_progress' => $inProgressCounts[$monthIndex + 1],
-                    'completed' => $completedCounts[$monthIndex + 1]
-                ];
-            }
+
+
             return view('admin.dashboard.monthwisetraining', [
-                'getdashdata' => $request,
-                'chartDataArray' => $chartDataArray
+
+
+                'chartData' => [
+                    'categories' => $months,
+                    'series' => [
+                        [
+                            'name' => 'Pending',
+                            'data' => array_values($pendingCounts),
+                            'id' => 'pending'
+                        ],
+                        [
+                            'name' => 'Rejected',
+                            'data' => array_values($rejectedCounts),
+                            'id' => 'rejected'
+                        ],
+                        [
+                            'name' => 'In Progress',
+                            'data' => array_values($inProgressCounts),
+                            'id' => 'inprogress'
+                        ],
+                        [
+                            'name' => 'Completed',
+                            'data' => array_values($completedCounts),
+                            'id' => 'completed'
+                        ],
+                    ]
+                ]
+
             ]);
         } catch (\Exception $ex) {
             report($ex);
