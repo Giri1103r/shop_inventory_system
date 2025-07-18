@@ -697,7 +697,7 @@ class InitialIncidentController extends Controller
             $getEmpdetails = $this->incident_body_parts->getEmpdetails();
             return $getEmpdetails;
         } catch (Exception $ex) {
-              report($ex);
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -708,7 +708,7 @@ class InitialIncidentController extends Controller
             $getEmpdetails = $this->incident_body_parts->apigetEmpdetails();
             return $getEmpdetails;
         } catch (Exception $ex) {
-           report($ex);
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -719,7 +719,7 @@ class InitialIncidentController extends Controller
             $addInjury = $this->incident_body_parts->addInjury();
             return $addInjury;
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -729,7 +729,7 @@ class InitialIncidentController extends Controller
             $addInjury = $this->incident_body_parts->addInjuryApi();
             return $addInjury;
         } catch (Exception $ex) {
-           report($ex);
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -989,7 +989,9 @@ class InitialIncidentController extends Controller
             $locationList  = $this->location->select('id', 'location_name')->where('status', '1')->get();
             $incTypeList  = $this->inctype->select('id', 'incident_type_name')->where('status', '1')->get();
             $companyList = $this->company->getcompany();
-              $body_parts = $this->incident_body_parts->delete_webtemprow();
+            $body_parts = $this->incident_body_parts->delete_webtemprow();
+            $randomID = getsequence('IncidentRandomID');
+
             $data = array(
                 'unitList' => $unitList,
                 'locationList' => $locationList,
@@ -998,9 +1000,10 @@ class InitialIncidentController extends Controller
                 'initialincident' => $initialincident,
                 'initialincidentevidence' => $initialincidentevidence,
                 'injury_details' => $injury_details,
+                'randomID' => $randomID ,
                 'body_parts' => $body_parts,
             );
-
+           
 
             return view('ims.initial.incident.edit', $data);
         } catch (Exception $error) {
@@ -1051,7 +1054,6 @@ class InitialIncidentController extends Controller
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
-
 
             $initialincident =   $this->initialincident->updates($id);
             $this->initialincidentevidence->updates($id);
@@ -2034,7 +2036,12 @@ class InitialIncidentController extends Controller
             $bobypart_id = $getbodyParts->id;
             $injury_id = $getbodyParts->injury_id;
             $injuryPersonType = $getbodyParts->injured_person_type;
-            $injuredPerson = $getbodyParts->injury_person_id;
+            if($getbodyParts->injured_person_type == 3){
+                $injuredPerson = $getbodyParts->injury_person_name;
+            }else{
+                  $injuredPerson = $getbodyParts->injury_person_id;
+            }
+          
             $data = [
                 'randomID' => $randomId,
                 'rowId' => $rowId,

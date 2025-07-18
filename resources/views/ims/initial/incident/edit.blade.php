@@ -283,6 +283,13 @@
                                             value="{{ $initialincident->id }} ">
                                         <input type="hidden" name="acc_prim_add" id="acc_prim_add"
                                             value="{{ 'acc_prim_edit' }} ">
+                                        @php
+                                            $finalRandomId =
+                                                $initialincident->anyone_injured == 1
+                                                    ? $initialincident->random_id
+                                                    : $randomID;
+                                        @endphp
+                                        <input type="text" name="random_id" id="random_id" value="{{ $finalRandomId }}">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">Incident Reported By</h4>
@@ -931,9 +938,11 @@
                         <input type="hidden" name="injury_id" id="injury_id" value="">
                         <input type="hidden" name="bodypartimage" id="bodypartimage">
                         <input type="hidden" name="incident_id" id="incident_id" value="{{ $initialincident->id }}">
-                        <input type="hidden" name="random_id" id="random_id"
-                            value="{{ $initialincident->random_id }}">
-
+                        @php
+                            $finalRandomId =
+                                $initialincident->anyone_injured == 1 ? $initialincident->random_id : $randomID;
+                        @endphp
+                        <input type="hidden" name="random_id" id="random_id" value="{{ $finalRandomId }}">
 
                         <div class="container-fluid1">
 
@@ -1549,8 +1558,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                           </div>-->
+                                                                                                                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                   </div>-->
             </div>
         </div>
     </div>

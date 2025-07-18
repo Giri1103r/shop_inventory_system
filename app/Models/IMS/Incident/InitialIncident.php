@@ -482,7 +482,6 @@ class InitialIncident extends Model
 
         $request = request();
 
-        // dd($request);
         if (is_array($request->reporting_media) && !empty($request->reporting_media)) {
             $reporting_media = implode(',', array_map(function ($item) {
                 return $item;
@@ -513,6 +512,9 @@ class InitialIncident extends Model
             'anyone_injured' => $request->anyone_injured,
             'updated_by' => Auth::id()
         );
+        // if ($request->anyone_injured == 1) {
+        //     $update_array['random_id'] = $request->random_id;
+        // }
 
         // dd($update_array);
         return $this->where('id', $id)->update($update_array);
