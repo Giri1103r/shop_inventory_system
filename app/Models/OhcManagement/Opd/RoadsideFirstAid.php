@@ -70,7 +70,7 @@ class RoadsideFirstAid extends Model
                     }
             });
         }
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
             $query->orderBy('ohc_opd_roadside_first_aid.id', 'DESC');
         } else {
             $query->where('ohc_opd_roadside_first_aid.created_by', Auth::id());

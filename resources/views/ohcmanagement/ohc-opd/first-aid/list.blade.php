@@ -28,7 +28,9 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-
+                                        <input type="hidden" name="company_name" value="{{ $companyId }}">
+                                        <input type="hidden" name="fromDate" value="{{ $fromdate }}">
+                                        <input type="hidden" name="toDate" value="{{ $toDate }}">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_id" class="form-label ">Emp Id</label>
                                             <input type="text" class="form-control" name="emp_id" id="emp_id">
@@ -40,7 +42,7 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">{{__('common.from_date')}}</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.from_date') }}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -51,7 +53,7 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">{{__('common.to_date')}}</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.to_date') }}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -93,15 +95,15 @@
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
 
-                                        <th>{{__('common.employee_or_worker_name')}}</th>
-                                        <th>{{__('common.employee_or_worker_code')}}</th>
-                                        <th>{{__('ohc_management.date_of_incident')}}</th>
-                                        <th>{{__('ohc_management.time_of_incident')}}</th>
-                                        <th>{{__('ohc_management.treatment_start_time')}}</th>
-                                        <th>{{__('ohc_management.treatment_end_time')}}</th>
-                                        <th>{{__('ohc_management.first_aider_name')}}</th>
-                                        <th>{{__('ohc_management.medicine_name')}}</th>
-                                        <th>{{__('ohc_management.treatment_provided')}}</th>
+                                        <th>{{ __('common.employee_or_worker_name') }}</th>
+                                        <th>{{ __('common.employee_or_worker_code') }}</th>
+                                        <th>{{ __('ohc_management.date_of_incident') }}</th>
+                                        <th>{{ __('ohc_management.time_of_incident') }}</th>
+                                        <th>{{ __('ohc_management.treatment_start_time') }}</th>
+                                        <th>{{ __('ohc_management.treatment_end_time') }}</th>
+                                        <th>{{ __('ohc_management.first_aider_name') }}</th>
+                                        <th>{{ __('ohc_management.medicine_name') }}</th>
+                                        <th>{{ __('ohc_management.treatment_provided') }}</th>
                                         <th data-priority='3'>{{ __('common.status') }}</th>
                                         <th data-priority='2'>{{ __('common.created_by') }}</th>
                                         <th data-priority='1'>{{ __('common.action') }}</th>
@@ -168,11 +170,9 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     data: function(d) {
-                        d.emp_name = $('#emp_name').val();
-                        d.from_date = $('#from_date').val();
-                        d.to_date = $('#to_date').val();
-                        d.emp_id = $('#emp_id').val();
-                        d.status = $('#status').val();
+                        let formData = $('#formsearch').serialize();
+                        let params = new URLSearchParams(formData);
+                        params.forEach((value, key) => d[key] = value);
                     },
                     error: function(xhr) {
                         if (xhr.status === 419) {

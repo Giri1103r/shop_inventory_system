@@ -153,11 +153,17 @@ class PpeExemptionController extends Controller
         $unit = $this->unit->getunit();
         $company = $this->company->getcompany();
         $approvestatus = $this->approvestatus->status();
+        $companyname = $request->company_id;
+        $fromdate = $request->fromDate;
+        $toDate = $request->toDate;
 
         $data = [
             'department' => $department,
             'unit' => $unit,
             'company' => $company,
+            'fromdate' => $fromdate,
+            'toDate' => $toDate,
+            'companyname' => $companyname,
             'loggedInCompanyId' => $loggedInCompanyId,
             'approvestatus' => $approvestatus,
         ];
@@ -303,7 +309,6 @@ class PpeExemptionController extends Controller
             } elseif ($ppeexemption->approve_status == 6) {
 
                 $ehsheadstatus = $this->ppestatus->getehsheadrejectstatuslog($id);
-                  
             } else {
                 $ehsheadstatus = null;
             }

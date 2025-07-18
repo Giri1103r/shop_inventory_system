@@ -46,7 +46,7 @@ class AuditAssessment extends Model
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
                 $query->orWhereRaw('audit_id LIKE "%' . $search . '%"')
-                ->orWhereRaw('floor_name LIKE "%' . $search . '%"');
+                    ->orWhereRaw('floor_name LIKE "%' . $search . '%"');
             });
         }
 
@@ -62,6 +62,26 @@ class AuditAssessment extends Model
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->whereBetween('inspection_audit_assessment.created_at', [$startDate, $endDate]);
+        }
+
+        // if ($request->has('company_name') && $request->company_name) {
+
+        //     $query->where('inspection_audit_assessment.company_id', decryptId($request->company_name));
+        // }
+        if ($request->has('fromDate') && !empty($request->fromDate)) {
+            $datepickersearch = DBdateformat($request->fromDate);
+
+            $query->where(function ($query) use ($datepickersearch) {
+                $query->whereDate('inspection_audit_assessment.created_at', '>=', $datepickersearch);
+            });
+        }
+
+        if ($request->has('toDate') && !empty($request->toDate)) {
+            $enddatepickersearch = DBdateformat($request->toDate);
+
+            $query->where(function ($query) use ($enddatepickersearch) {
+                $query->whereDate('inspection_audit_assessment.created_at', '<=', $enddatepickersearch);
+            });
         }
 
         if (isset($request->audit_id) && $request->audit_id) {
@@ -103,7 +123,7 @@ class AuditAssessment extends Model
         return self::create($insert_array);
     }
 
-      public function store_api()
+    public function store_api()
     {
         $request = request();
         $insert_array = [
@@ -134,13 +154,13 @@ class AuditAssessment extends Model
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
                 $query->orWhereRaw('audit_id LIKE "%' . $search . '%"')
-                ->orWhereRaw('floor_name LIKE "%' . $search . '%"');
+                    ->orWhereRaw('floor_name LIKE "%' . $search . '%"');
             });
         }
 
         if (isset($request->audit_id) && $request->audit_id) {
 
-            $query = $query->where('inspection_audit_assessment.audit_id', $request->audit_id );
+            $query = $query->where('inspection_audit_assessment.audit_id', $request->audit_id);
         }
         if (isset($request->status) && $request->status) {
             $query = $query->where('inspection_audit_assessment.status', decryptId($request->status));
@@ -236,7 +256,26 @@ class AuditAssessment extends Model
         return $this->where('id', $id)->update($update_data);
     }
 
+    public function getTotalRecords()
+    {
+        $request = request();
 
+        $query = $this->where('inspection_audit_assessment.trash', 'No');
+
+        // if ($request->has('CompanyId') && $request->CompanyId) {
+        //     $query->where('inspection_audit_assessment.company_id', decryptId($request->CompanyId));
+        // }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('inspection_audit_assessment.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('inspection_audit_assessment.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_audit_assessment'));

@@ -114,8 +114,14 @@ class InterUnitAuditController extends Controller
             }
         }
         $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
+        $companyId = $request->company_id;
+        $fromdate =$request->fromDate;
+        $toDate =$request->toDate;
         $data = array(
             'checklist_types' => $checklist_types,
+             'fromdate' => $fromdate,
+            'toDate' => $toDate,
+            'companyId' => $companyId,
 
         );
         return view('inspection.inspection_audit.interUnitAudit.list', $data);

@@ -46,6 +46,7 @@ class AuditAnalysisController extends Controller
 
     public function Index(Request $request)
     {
+        // dd($request->all());
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
@@ -98,9 +99,14 @@ class AuditAnalysisController extends Controller
         }
 
         $auditAnalysisList  = $this->auditAnalysis->select('id', 'audit_analysis_id')->where('status', '1')->get();
-
+        $companyId = $request->company_id;
+        $fromdate = $request->fromDate;
+        $toDate = $request->toDate;
         $data = array(
             'auditAnalysisList' => $auditAnalysisList,
+            'fromdate' => $fromdate,
+            'toDate' => $toDate,
+            'companyId' => $companyId,
         );
         return view('inspection.inspection_audit.auditAnalysis.list', $data);
     }
@@ -289,7 +295,7 @@ class AuditAnalysisController extends Controller
                 } else {
                     $fyText = "FY FROM APR " . ($currentYear - 1) . " TO MAR $currentYear";
                 }
-                
+
                 $sheet->setCellValue('E' . $row, "   6'S AUDIT ANALYSIS REPORT ($fyText)");
                 $sheet->getStyle('E' . $row . ':O' . ($row + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
@@ -591,7 +597,7 @@ class AuditAnalysisController extends Controller
             } else {
                 $fyText = "FY FROM APR " . ($currentYear - 1) . " TO MAR $currentYear";
             }
-            
+
             $sheet->setCellValue('E1', "   6'S AUDIT ANALYSIS REPORT ($fyText)");
             $sheet->getStyle('E1:O3')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],

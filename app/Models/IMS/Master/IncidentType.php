@@ -69,7 +69,7 @@ class IncidentType extends Model
             $fromDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay();
             $query = $query->where('ims_master_incident_type.created_at', '>=', $fromDate);
         }
-        
+
         if ($request->has('to_date') && $request->to_date) {
             $toDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay();
             $query = $query->where('ims_master_incident_type.created_at', '<=', $toDate);
@@ -226,7 +226,9 @@ class IncidentType extends Model
         return $data;
     }
 
-
+    public function getIncidentType(){
+        return $this->where('status',1)->where('trash','NO')->get();
+    }
 
 
     protected static function booted()

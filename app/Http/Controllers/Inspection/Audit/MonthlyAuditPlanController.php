@@ -98,10 +98,16 @@ class MonthlyAuditPlanController extends Controller
         }
         $unit = $this->unit->getunit();
         $audit_task = $this->audit_task->getAuditTask();
+        $companyId = $request->company_id;
+        $fromdate = $request->fromDate;
+        $toDate = $request->toDate;
 
         $data = array(
             'unit' => $unit,
             'audit_task' => $audit_task,
+            'fromdate' => $fromdate,
+            'toDate' => $toDate,
+            'companyId' => $companyId,
 
         );
         return view('inspection.inspection_audit.monthlyAudit.list', $data);
@@ -395,7 +401,7 @@ class MonthlyAuditPlanController extends Controller
             $filename = "Monthly Audit Plan Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return redirect(admin_url('audit/monthly-audit/audit-plan/list'));
         }

@@ -84,7 +84,25 @@ class MonthlyAuditPlan extends Model
         if ($request->has('compliance_category') && $request->compliance_category) {
             $query = $query->where('inspection_audit_monthly_audit_plan.compliance_category_id', 'LIKE', '%' . decryptId($request->compliance_category) . '%');
         }
+        // if ($request->has('company_name') && $request->company_name) {
 
+        //     $query->where('inspection_audit_monthly_audit_plan.company_id', decryptId($request->company_name));
+        // }
+        if ($request->has('fromDate') && !empty($request->fromDate)) {
+            $datepickersearch = DBdateformat($request->fromDate);
+
+            $query->where(function ($query) use ($datepickersearch) {
+                $query->whereDate('inspection_audit_monthly_audit_plan.created_at', '>=', $datepickersearch);
+            });
+        }
+
+        if ($request->has('toDate') && !empty($request->toDate)) {
+            $enddatepickersearch = DBdateformat($request->toDate);
+
+            $query->where(function ($query) use ($enddatepickersearch) {
+                $query->whereDate('inspection_audit_monthly_audit_plan.created_at', '<=', $enddatepickersearch);
+            });
+        }
 
 
         $data_count = $query;
@@ -298,9 +316,29 @@ class MonthlyAuditPlan extends Model
         return $query;
     }
 
+    public function getTotalRecords()
+    {
+        $request = request();
+
+        $query = $this->where('inspection_audit_monthly_audit_plan.trash', 'No');
+
+        // if ($request->has('CompanyId') && $request->CompanyId) {
+        //     $query->where('inspection_audit_assessment.company_id', decryptId($request->CompanyId));
+        // }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('inspection_audit_monthly_audit_plan.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('inspection_audit_monthly_audit_plan.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
+    }
+
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_audit_monthly_audit_plan'));
-
     }
 }

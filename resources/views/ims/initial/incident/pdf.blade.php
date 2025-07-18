@@ -27,10 +27,11 @@
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->sr_no }}
                         </td>
+
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ getCompanyname($value->company_id) }}
                         </td>
-                         <td style='padding: 7px;border: 0.5px solid'>
+                        <td style='padding: 7px;border: 0.5px solid'>
                             {{ getLocationname($value->location_id) }}
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
@@ -38,6 +39,9 @@
                         </td>
                         <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->shift }}
+                        </td>
+                          <td style='padding: 7px;border: 0.5px solid'>
+                            {{ getIIRTypename($value->iir_type) }}
                         </td>
                         {{-- <td style='padding: 7px;border: 0.5px solid'>
                             {{ $value->to_status }}

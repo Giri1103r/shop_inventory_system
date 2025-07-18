@@ -109,8 +109,14 @@ class FirstAidController extends Controller
                 }
             }
         }
-
-        $data = [];
+        $companyId = $request->company_id;
+        $fromdate = $request->fromDate;
+        $toDate = $request->toDate;
+        $data = [
+            'fromdate' => $fromdate,
+            'toDate' => $toDate,
+            'companyId' => $companyId,
+        ];
 
         return view('ohcmanagement.ohc-opd.first-aid.list', $data);
     }

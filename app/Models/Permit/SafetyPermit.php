@@ -109,7 +109,7 @@ class SafetyPermit extends Model
         $companyId = $user->company_id;
 
         $userRole = string_to_array($userRole);
-        if (isAdmin()) {
+        if (isAdmin() || CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
         } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
             $query = $this->select('ptw_safety.*', 'masters_unit.unit_name', 'ptw_status.status_name', 'ptw_status.bg_color')->leftJoin('masters_unit', 'masters_unit.id', '=', 'ptw_safety.unit_id')->leftJoin('ptw_status', 'ptw_status.id', '=', 'ptw_safety.permit_status');
@@ -157,7 +157,25 @@ class SafetyPermit extends Model
             $fromDate = $request->from_date;
             $query->where('ptw_safety.date', '>=', $fromDate);
         }
+        if ($request->has('company_name') && $request->company_name) {
 
+            $query->where('ptw_safety.company_id', decryptId($request->company_name));
+        }
+        if ($request->has('fromDate') && !empty($request->fromDate)) {
+            $datepickersearch = DBdateformat($request->fromDate);
+
+            $query->where(function ($query) use ($datepickersearch) {
+                $query->whereDate('ptw_safety.created_at', '>=', $datepickersearch);
+            });
+        }
+
+        if ($request->has('toDate') && !empty($request->toDate)) {
+            $enddatepickersearch = DBdateformat($request->toDate);
+
+            $query->where(function ($query) use ($enddatepickersearch) {
+                $query->whereDate('ptw_safety.created_at', '<=', $enddatepickersearch);
+            });
+        }
         if ($request->has('to_date') && !empty($request->to_date)) {
             $toDate = $request->to_date;
             $query->where('ptw_safety.date', '<=', $toDate);
@@ -1402,5 +1420,27 @@ class SafetyPermit extends Model
                 'hold_count' => $item->hold_count,
             ];
         })->toArray();
+    }
+
+    // card total of safety in the dashboard
+    public function getTotalRecords()
+    {
+        $request = request();
+
+        $query = $this->where('ptw_safety.trash','No');
+
+        if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('ptw_safety.company_id', decryptId($request->CompanyId));
+        }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('ptw_safety.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('ptw_safety.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
     }
 }

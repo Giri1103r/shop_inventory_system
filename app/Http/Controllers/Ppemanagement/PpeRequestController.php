@@ -74,6 +74,7 @@ class PpeRequestController extends Controller
     }
     public function index(Request $request)
     {
+
         if (Auth::check()) {
 
             if ($request->ajax()) {
@@ -205,7 +206,9 @@ class PpeRequestController extends Controller
         $approvestatus = $this->approvestatus->status();
         $loggedInCompanyId = encryptId(Auth::user()->company_id);
 
-
+        $companyId = $request->company_id;
+        $fromdate =$request->fromDate;
+        $toDate =$request->toDate;
         $ppename = $this->ppetypemaster->getppetypemaster();
         $data = [
             'ppetype' => $ppetype,
@@ -213,6 +216,9 @@ class PpeRequestController extends Controller
             'company' => $company,
             'dashboard_search' => $request,
             'ppename' => $ppename,
+            'fromdate' => $fromdate,
+            'toDate' => $toDate,
+            'companyId' => $companyId,
             'loggedInCompanyId' => $loggedInCompanyId,
             'approvestatus' => $approvestatus,
         ];

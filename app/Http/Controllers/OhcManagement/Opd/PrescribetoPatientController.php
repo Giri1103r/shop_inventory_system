@@ -180,9 +180,14 @@ class PrescribetoPatientController extends Controller
         $patientstatus = $this->patient_status->getpatientstatus();
 
         $unit = $this->unit->getunit();
+        $companyId = $request->company_id;
+        $fromdate = $request->fromDate;
+        $toDate = $request->toDate;
         $data = array(
             'patientstatus' => $patientstatus,
-
+  'fromdate' => $fromdate,
+            'toDate' => $toDate,
+            'companyId' => $companyId,
             'unit' => $unit
         );
 

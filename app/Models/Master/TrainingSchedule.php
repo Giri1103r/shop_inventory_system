@@ -69,7 +69,7 @@ class TrainingSchedule extends Model
          * Role Based list view condition start
          */
 
-        if (CheckUserRole(ROLE_SUPERADMIN)) {
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
             $query->where('training_schedule.trash', 'NO');
         } elseif (CheckUserRole(ROLE_ADMIN)) {
             $query->where('training_schedule.trash', 'NO');
@@ -141,6 +141,28 @@ class TrainingSchedule extends Model
         if ($request->has('department_id') && $request->department_id) {
             $query = $query->where('training_schedule.department_id', decryptId($request->department_id));
         }
+        if ($request->has('company_name') && $request->company_name) {
+
+            $query->where('training_schedule.company_id', decryptId($request->company_name));
+        }
+        if ($request->has('fromDate') && !empty($request->fromDate)) {
+            $datepickersearch = DBdateformat($request->fromDate);
+
+            $query->where(function ($query) use ($datepickersearch) {
+                $query->whereDate('training_schedule.created_at', '>=', $datepickersearch);
+            });
+        }
+
+        if ($request->has('toDate') && !empty($request->toDate)) {
+            $enddatepickersearch = DBdateformat($request->toDate);
+
+            $query->where(function ($query) use ($enddatepickersearch) {
+                $query->whereDate('training_schedule.created_at', '<=', $enddatepickersearch);
+            });
+        }
+        if ($request->has('training_department') && $request->training_department) {
+            $query = $query->where('training_schedule.department_id', ($request->training_department));
+        }
         if ($request->has('venue_id') && $request->venue_id) {
             $query = $query->where('training_schedule.venue_id', decryptId($request->venue_id));
         }
@@ -153,9 +175,8 @@ class TrainingSchedule extends Model
             $openCloseStatus = decryptId($request->dashboard_openCloseStatus);
             if ($openCloseStatus == "1") {
                 $query = $query->where('training_schedule.training_status', '!=', 8);
-
             } else {
-               $query = $query->where('training_schedule.training_status', 8);
+                $query = $query->where('training_schedule.training_status', 8);
             }
         }
 
@@ -410,6 +431,8 @@ class TrainingSchedule extends Model
         return $results;
     }
 
+
+    // Department wise schedule count in the dashboard
     public function getDepartmentData()
     {
         $request = request();
@@ -417,13 +440,12 @@ class TrainingSchedule extends Model
         $query = $this->leftJoin('masters_department', 'training_schedule.department_id', '=', 'masters_department.id');
 
 
-        // Apply company Filter
         if ($request->CompanyId) {
             $company_id = decryptId($request->CompanyId);
             $query->where('training_schedule.company_id', $company_id);
         }
 
-        // Date Filters
+
         if ($request->Fromdate && $request->Todate) {
             $query->whereBetween('training_schedule.created_at', [
                 DBdateformat($request->Fromdate),
@@ -434,11 +456,13 @@ class TrainingSchedule extends Model
         } elseif ($request->Todate) {
             $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
         }
-        $query = $query->selectRaw('masters_department.department_name, COUNT(*) as count')
-            ->groupBy('training_schedule.department_id', 'masters_department.department_name')->orderBy('count', 'desc');
 
-        return $query->get();
+        return $query->selectRaw('training_schedule.department_id, COUNT(*) as count')
+            ->groupBy('training_schedule.department_id')
+            ->orderBy('count', 'desc')
+            ->get();
     }
+
     public function getTrainingCount()
     {
         $request = request();
@@ -710,43 +734,63 @@ class TrainingSchedule extends Model
 
         return $query->first(); // only one row
     }
-   public function GetTrainingHoursDepartmentData($request)
-{
-    $query = DB::table('training_schedule')
-        ->join('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id')
-        ->join('masters_department', 'training_schedule.department_id', '=', 'masters_department.id')
-        ->select(
-            'training_masters_topic.topic_name',
-            'masters_department.department_name',
-            'masters_department.id as department_id', // ✅ Include this
-            DB::raw('ROUND(SUM(TIMESTAMPDIFF(MINUTE, start_time, end_time)) / 60, 2) as total_hours')
-        )
-        ->whereNotNull('start_time')
-        ->whereNotNull('end_time')
-        ->groupBy('training_masters_topic.topic_name', 'masters_department.department_name', 'masters_department.id');
+    public function GetTrainingHoursDepartmentData($request)
+    {
+        $query = DB::table('training_schedule')
+            ->join('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id')
+            ->join('masters_department', 'training_schedule.department_id', '=', 'masters_department.id')
+            ->select(
+                'training_masters_topic.topic_name',
+                'masters_department.department_name',
+                'masters_department.id as department_id', // ✅ Include this
+                DB::raw('ROUND(SUM(TIMESTAMPDIFF(MINUTE, start_time, end_time)) / 60, 2) as total_hours')
+            )
+            ->whereNotNull('start_time')
+            ->whereNotNull('end_time')
+            ->groupBy('training_masters_topic.topic_name', 'masters_department.department_name', 'masters_department.id');
 
-    // Apply company Filter
-    if ($request->CompanyId) {
-        $company_id = decryptId($request->CompanyId);
-        $query->where('training_schedule.company_id', $company_id);
+        // Apply company Filter
+        if ($request->CompanyId) {
+            $company_id = decryptId($request->CompanyId);
+            $query->where('training_schedule.company_id', $company_id);
+        }
+
+        // Date Filters
+        if ($request->Fromdate && $request->Todate) {
+            $query->whereBetween('training_schedule.created_at', [
+                DBdateformat($request->Fromdate),
+                DBdateformat($request->Todate) . ' 23:59:59'
+            ]);
+        } elseif ($request->Fromdate) {
+            $query->where('training_schedule.created_at', '>=', DBdateformat($request->Fromdate));
+        } elseif ($request->Todate) {
+            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
+        }
+
+        return $query->get();
     }
 
-    // Date Filters
-    if ($request->Fromdate && $request->Todate) {
-        $query->whereBetween('training_schedule.created_at', [
-            DBdateformat($request->Fromdate),
-            DBdateformat($request->Todate) . ' 23:59:59'
-        ]);
-    } elseif ($request->Fromdate) {
-        $query->where('training_schedule.created_at', '>=', DBdateformat($request->Fromdate));
-    } elseif ($request->Todate) {
-        $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
+    // card total of shcedule in the dashboard
+    public function getTotalRecords()
+    {
+        $request = request();
+
+        $query = $this->where('training_schedule.trash','No');
+
+        if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('training_schedule.company_id', decryptId($request->CompanyId));
+        }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('training_schedule.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
     }
-
-    return $query->get();
-}
-
-
 
     protected static function booted()
     {

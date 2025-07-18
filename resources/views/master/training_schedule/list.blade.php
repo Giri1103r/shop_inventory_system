@@ -5,7 +5,9 @@
 @php
 
     $dash_department_id =
-        isset($dashboard_search['department']) && $dashboard_search['department'] != '' ? $dashboard_search['department'] : '';
+        isset($dashboard_search['department']) && $dashboard_search['department'] != ''
+            ? $dashboard_search['department']
+            : '';
 
 @endphp
 @section('content')
@@ -32,6 +34,11 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
+                                        <input type="hidden" name="company_name" value="{{ $companyname }}">
+                                        <input type="hidden" name="fromDate" value="{{ $fromdate }}">
+                                        <input type="hidden" name="toDate" value="{{ $toDate }}">
+                                        <input type="hidden" name="training_department" value="{{ ($departmentData) }}">
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="from_date" class="form-label ">From Date</label>
                                             <input type="text" name ="from_date" id="from_date_datepicker"
@@ -102,7 +109,7 @@
 
                                         @if ($dash_department_id != '')
                                             <div class="col-md-3 mb-3 form-input">
-                                                <label for="inspectiontype" class="form-label ">Unit</label>
+                                                <label for="inspectiontype" class="form-label ">Department</label>
                                                 <select name="department_id" id="department_id"
                                                     class=" form-control single-select" style="width: 100%">
                                                     <option value="">Select Department</option>
@@ -254,7 +261,6 @@
 
             });
             $(function() {
-
                 var dashboard_openCloseStatus =
                     '{{ isset($dashboard_search['openclose']) && $dashboard_search['openclose'] != '' ? $dashboard_search['openclose'] : '' }}';
                 /* Datatable */
@@ -280,30 +286,21 @@
                         bottom2Start: 'info',
                         bottom2End: 'paging'
                     },
-
                     ajax: {
                         url: "{{ admin_url('training_schedule/list') }}",
                         type: 'POST',
                         headers: {
-                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
-                                .attr('content')
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                         },
                         data: function(d) {
-                            d.from_date = $('#from_date_datepicker').val();
-                            d.to_date = $('#to_date_datepicker').val();
-                            d.topic_id = $('#topic_id').val();
-                            d.trainer_id = $('#trainer_id').val();
-                            d.unit_id = $('#unit_id').val();
-                            d.department_id = $('#department_id').val();
-                            d.company_id = $('#company_id').val();
-                            d.status = $('#status').val();
-                            d.dashboard_openCloseStatus = dashboard_openCloseStatus;
-
+                            let formData = $('#formsearch').serialize();
+                            let params = new URLSearchParams(formData);
+                            params.forEach((value, key) => d[key] = value);
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
                                 alert('Session has expired. You will be redirected to the login page.');
-                                window.location.href = "{{ url('') }}"; // Redirect to login page
+                                window.location.href = "{{ url('') }}";
                             }
                         }
                     },
@@ -381,31 +378,12 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        from_date = $('#from_date_datepicker').val();
-                                        to_date = $('#to_date_datepicker').val();
-                                        topic_id = $('#topic_id').val();
-                                        trainer_id = $('#trainer_id').val();
-                                        unit_id = $('#unit_id').val();
-                                        department_id = $('#department_id').val();
-                                        company_id = $('#company_id').val();
-                                        status = $('#status').val();
-                                        dashboard_openCloseStatus = dashboard_openCloseStatus;
-
-                                        $(".dt-button").removeClass('processing');
-                                        $('body').click();
-                                        window.location.href =
-                                            "{{ admin_url('training_schedule/export/pdf') }}" +
-                                            '?search=' + searchValue +
-                                            '&from_date=' + from_date +
-                                            '&to_date=' + to_date +
-                                            '&topic_id=' + topic_id +
-                                            '&trainer_id=' + trainer_id +
-                                            '&company_id=' + company_id +
-                                            '&department_id=' + department_id +
-                                            '&unit_id=' + unit_id +
-                                            '&dashboard_openCloseStatus=' +
-                                            dashboard_openCloseStatus +
-                                            '&status=' + status
+                                        var formData = $('#formsearch').serialize();
+                                        var exportUrl =
+                                            "{{ admin_url('training_schedule/export/pdf') }}";
+                                        window.location.href = exportUrl + '?search=' +
+                                            searchValue + '&' +
+                                            formData;
                                     }
                                 },
                                 {
@@ -413,31 +391,13 @@
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        from_date = $('#from_date_datepicker').val();
-                                        to_date = $('#to_date_datepicker').val();
-                                        topic_id = $('#topic_id').val();
-                                        trainer_id = $('#trainer_id').val();
-                                        unit_id = $('#unit_id').val();
-                                        department_id = $('#department_id').val();
-                                        company_id = $('#company_id').val();
-                                        status = $('#status').val();
-                                        dashboard_openCloseStatus = dashboard_openCloseStatus;
-
-                                        $(".dt-button").removeClass('processing');
-                                        $('body').click();
-                                        window.location.href =
-                                            "{{ admin_url('training_schedule/export/excel') }}" +
-                                            '?search=' + searchValue +
-                                            '&from_date=' + from_date +
-                                            '&to_date=' + to_date +
-                                            '&topic_id=' + topic_id +
-                                            '&trainer_id=' + trainer_id +
-                                            '&company_id=' + company_id +
-                                            '&department_id=' + department_id +
-                                            '&unit_id=' + unit_id +
-                                            '&dashboard_openCloseStatus=' +
-                                            dashboard_openCloseStatus +
-                                            '&status=' + status
+                                        var searchValue = $('#datatable-list_filter input').val();
+                                        var formData = $('#formsearch').serialize();
+                                        var exportUrl =
+                                            "{{ admin_url('training_schedule/export/excel') }}";
+                                        window.location.href = exportUrl + '?search=' +
+                                            searchValue + '&' +
+                                            formData;
                                     }
                                 },
                             ]

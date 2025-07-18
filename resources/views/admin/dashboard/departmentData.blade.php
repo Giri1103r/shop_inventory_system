@@ -1,24 +1,25 @@
 <div id="departmentData"></div>
 
 @php
-    $departments = $departmentDetails->pluck('department_name')->toArray();
-    $departmentsID = $departmentDetails->pluck('id')->toArray();
-
+    $departmentNames = $departmentDetails->mapWithKeys(fn($d) => [$d->id => $d->department_name]);
 @endphp
 
 <script>
-    var departments = @json($departments);
-    var chartData = @json($chartDataArray);
+    var chartData = @json($chartDataArray); // { 1: 10, 5: 7 }
+    var departmentNames = @json($departmentNames); // { 1: "HR", 5: "Finance" }
 
     var sortedData = Object.entries(chartData).sort((a, b) => b[1] - a[1]);
-
-    var sorteddepartments = sortedData.map(item => item[0]);
+    var sortedDepartmentIds = sortedData.map(item => parseInt(item[0]));
     var sortedCounts = sortedData.map(item => item[1]);
-    // Prepare series data
+
+    var sortedLabels = sortedDepartmentIds.map(id => {
+        var name = departmentNames[id] ?? 'Unknown';
+        return name.length > 8 ? name.substring(0, 8) + '...' : name;
+    });
+
     var seriesData = [{
         name: 'Department Count',
         data: sortedCounts
-        // data: departments.map(category => chartData[category] || 0)
     }];
 
     var options = {
@@ -32,25 +33,17 @@
             },
             events: {
                 dataPointSelection: function(event, chartContext, config) {
-                    var departmentsID = departmentIds[config.dataPointIndex];
-                    redirectTotrainigschedule(departmentsID);
+                    var selectedDepartmentID = sortedDepartmentIds[config.dataPointIndex];
+                    const url = "{{ admin_url('training_schedule/list') }}";
+                    redirectcharturl('department', selectedDepartmentID, url);
                 }
             },
         },
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                legend: {
-                    position: 'bottom',
-                    offsetX: -10,
-                    offsetY: 0
-                }
-            }
-        }],
         plotOptions: {
             bar: {
                 horizontal: false,
                 columnWidth: '10%',
+                distributed: true,
                 dataLabels: {
                     total: {
                         enabled: true,
@@ -59,22 +52,18 @@
                             fontWeight: 900
                         }
                     }
-                },
-                distributed: true
-            },
+                }
+            }
         },
-
         xaxis: {
-            categories: sorteddepartments,
+            categories: sortedLabels,
             labels: {
                 rotate: -45,
-                formatter: function(value) {
-                    return value.length > 8 ? value.substring(0, 8) + '...' : value;
+                formatter: function(val) {
+                    return val.length > 8 ? val.substring(0, 8) + '...' : val;
                 }
-            },
-
+            }
         },
-
         fill: {
             opacity: 1
         }
@@ -103,11 +92,6 @@
                 var headerText = 'DEPARTMENT WISE TRAINING COUNT';
                 ctx.fillText(headerText, 10, 30);
 
-                // var factoryNames = '';
-                // @if ($getdashdata->Factory && is_array($getdashdata->Factory) && isset($getdashdata->Factory))
-                //     factoryNames = @json(getFactoryNames(arrayDecrypt($getdashdata->Factory)));
-                // @endif
-
                 var Fromdate = @json($getdashdata->Fromdate ?? null);
                 var Todate = @json($getdashdata->Todate ?? null);
 
@@ -116,11 +100,6 @@
                 if (Fromdate || Todate) {
                     var subHeaderText = 'Filtered By:';
                     ctx.fillText(subHeaderText, 10, yPos);
-
-                    // if (factoryNames) {
-                    //     yPos += 50;
-                    //     ctx.fillText('Factory: ' + factoryNames, 10, yPos);
-                    // }
 
                     if (Fromdate) {
                         yPos += 30;

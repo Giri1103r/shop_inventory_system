@@ -21,10 +21,18 @@ use App\Models\Master\TrainingSchedule;
 use Illuminate\Support\Facades\Session;
 use App\Models\IMS\Incident\InitialIncident;
 use App\Models\IMS\Incident\IncidentBodyParts;
+use App\Models\Inspection\audit\AuditAnalysis;
+use App\Models\Inspection\audit\AuditAssessment;
+use App\Models\Inspection\audit\InterUnitAudit;
+use App\Models\Inspection\audit\MonthlyAuditPlan;
 use App\Models\Inspection\GembaWalk\GembaWalk;
 use Illuminate\Support\Facades\DB as FacadesDB;
 use App\Models\Inspection\GembaWalk\GembaWalkChecklist;
 use App\Models\Master\Company;
+use App\Models\Master\PpeExemption;
+use App\Models\Master\PpeRequest;
+use App\Models\OhcManagement\Opd\FirstAid;
+use App\Models\OhcManagement\Opd\PrescribetoPatient;
 use PHPUnit\TextUI\Configuration\IniSetting;
 
 class AdminController extends Controller
@@ -40,8 +48,18 @@ class AdminController extends Controller
     private $department;
     private $company;
     private $initial_incident;
-
+    private $ppe_request;
+    private $ppe_exemption;
+    private $training;
+    private $audit_assessment;
+    private $audit_analysis;
+    private $monthly_audit;
+    private $inter_unit_audit;
+    private $ims;
+    private $opd;
+    private $first_aid;
     private $incident_ims;
+    private $gemba_Walk;
 
     public function __construct()
     {
@@ -55,7 +73,18 @@ class AdminController extends Controller
         $this->unit = new Unit();
         $this->department = new Department();
         $this->company = new Company();
+        $this->ppe_request = new PpeRequest();
+        $this->training = new TrainingSchedule();
+        $this->ppe_exemption = new PpeExemption();
         $this->initial_incident = new InitialIncident();
+        $this->audit_assessment = new AuditAssessment();
+        $this->audit_analysis = new AuditAnalysis();
+        $this->inter_unit_audit = new InterUnitAudit();
+        $this->monthly_audit = new MonthlyAuditPlan();
+        $this->ims = new InitialIncident();
+        $this->opd = new PrescribetoPatient();
+        $this->first_aid = new FirstAid();
+        $this->gemba_Walk = new GembaWalk();
     }
 
     public function index(Request $request)
@@ -64,8 +93,8 @@ class AdminController extends Controller
             if (Auth::check()) {
                 $user = Auth::user();
                 $data = [];
-                 $allowedIds = [11, 27, 16, 9, 10, 37, 34];
-                if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD) ||  in_array(auth()->id(), $allowedIds)) {
+
+                if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD) ||  CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
                     $masterLink = [
                         [
                             'link' => 'company/list',
@@ -115,194 +144,20 @@ class AdminController extends Controller
                         ],
 
                     ];
-                    $nearMiss = $this->initial_incident->getNearmiss();
-                    $fireIncidence = $this->initial_incident->getFireIncidence();
 
-                    $minor = encryptId(MINOR_ACCIDENT);
-                    $major = encryptId(MAJOR_ACCIDENT);
-                    $un_safe_act = encryptId(UNSAFE_ACT);
-                    $un_safe_condition = encryptId(UNSAFE_CONDITION);
-                    $near_miss = encryptId($nearMiss);
-                    $fire_Incidence = encryptId($fireIncidence);
-
-
-
-                    $type1 = encryptId(1);
-                    $type2 = encryptId(2);
-                    $type3 = encryptId(3);
-                    $type4 = encryptId(4);
-
-                    GetInspectionCount('Fire');
-
-                    $moduleLink = [
-                        [
-                            'link' => 'ppe_request/list',
-                            'name' => 'PPE Request',
-                            'count' => gettotalCount('ppe_request'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-                        [
-                            'link' => 'ppe_exemption/list',
-                            'name' => 'PPE Exemption',
-                            'count' => gettotalCount('ppe_exception'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-                        [
-                            'link' => 'safetypermit/list',
-                            'name' => 'Safety Permit',
-                            'count' => gettotalCount('safetypermit'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-
-                        [
-                            'link' => 'training_schedule/list',
-                            'name' => 'Training',
-                            'count' => gettotalCount('training'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-
-                        [
-                            'link' => 'audit/assessment/list',
-                            'name' => '6S Audit Assessment',
-                            'count' => gettotalCount('audit_assessment'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-
-                        [
-                            'link' => 'audit/6s-analysis/list',
-                            'name' => 'Audit Analysis',
-                            'count' => gettotalCount('audit_analysis'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-
-                        [
-                            'link' => 'audit/monthly-audit/audit-plan/list',
-                            'name' => 'Monthly Audit Plan',
-                            'count' => gettotalCount('monthly_audit'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-
-                        [
-                            'link' => 'audit/inter-unit-audit/checklist/list',
-                            'name' => 'Inter Unit Audit',
-                            'count' => gettotalCount('inter_unit_audit'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-
-                        [
-                            'link' => 'ohc/prescribe-to-patient/list',
-                            'name' => 'No of OPD',
-                            'count' => gettotalCount('prescribe_to_patient'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-
-                        [
-                            'link' => 'ohc/first-aid/list',
-                            'name' => 'No of First Aid',
-                            'count' => gettotalCount('ohc_first_aid'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-
-                        [
-                            'link' => 'incident/initial-incident/list/' . $minor . '/' . $type1,
-                            'name' => 'No of Minor Accident',
-                            'count' => gettotalCount('minor_accident'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-
-                        [
-                            'link' => 'incident/initial-incident/list/' . $major . '/' . $type1,
-                            'name' => 'No of Major Accident',
-                            'count' => gettotalCount('major_accident'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-
-                        [
-                            'link' => 'incident/initial-incident/list/' . $near_miss . '/' . $type3,
-                            'name' => 'No of Near Miss',
-                            'count' => gettotalCount('near_miss'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-
-                        [
-                            'link' => 'incident/initial-incident/list/' . $un_safe_act . '/' . $type2,
-                            'name' => 'No of Unsafe Act',
-                            'count' => gettotalCount('un_safe_act'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-                        [
-                            'link' => 'incident/initial-incident/list/' . $un_safe_condition . '/' . $type2,
-                            'name' => 'No of Unsafe Condition',
-                            'count' => gettotalCount('un_safe_condition'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-                        [
-                            // 'link' => 'audit/inter-unit-audit/checklist/list',
-                            'name' => 'No of Fire Inspection',
-                            'count' => GetInspectionCount('Fire')['Fire'],
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-                        [
-                            'link' => 'inspection/gemba-walk/list',
-                            'name' => 'No of 6s Observation',
-                            'count' => GetInspectionCount('GembaWalk')['GembaWalk'],
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-                        [
-                            'link' => 'incident/initial-incident/list/' . $fire_Incidence . '/' . $type4,
-                            'name' => 'No of Fire Call',
-                            'count' => gettotalCount('fire_incidence'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-                        [
-                            // 'link' => 'audit/inter-unit-audit/checklist/list',
-                            'name' => 'No of Safety Inspection',
-                            'count' => GetInspectionCount('Safety')['Safety'],
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-                        [
-
-                            'name' => 'No of OHC Inspection',
-                            'count' => GetInspectionCount('Ohc')['Ohc'],
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-                    ];
                     $companyList  = $this->company->where('status', '1')->get();
-                    $type1 = MINOR_ACCIDENT;
                     $data = [
                         'masterLink' => $masterLink,
                         'companyList' => $companyList,
-                        'moduleLink' => $moduleLink,
-                        'type1' => $type1,
                     ];
                 }
-                $allowedIds = [11, 27, 16, 9, 10, 37, 34];
+
 
                 if (
                     CheckUserRole(ROLE_SUPERADMIN) ||
                     CheckUserRole(ROLE_ADMIN) ||
                     CheckUserRole(ROLE_EHS_HEAD) ||
-                    in_array(auth()->id(), $allowedIds)
+                    CheckUserRole(ROLE_DASHBOARD_VIEWER)
                 ) {
                     return view('admin.dashboard', $data);
                 } else {
@@ -449,6 +304,377 @@ class AdminController extends Controller
         }
     }
 
+
+    // card
+
+    // ppe totals
+
+    public function getpperequest(Request $request)
+    {
+        try {
+            $total = $this->ppe_request->getTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+    // total of the ppe exemption
+
+    public function getExemption(Request $request)
+    {
+        try {
+            $total = $this->ppe_exemption->getTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+    // Safety Permit
+
+    public function getSafetytotal(Request $request)
+    {
+        try {
+            $total = $this->ptw->getTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+    // training
+    public function getTrainingTotal(Request $request)
+    {
+        try {
+            $total = $this->training->getTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+    // audit assessment
+
+    public function getAuditAssessmentTotal(Request $request)
+    {
+        try {
+            $total = $this->audit_assessment->getTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+    // audit assessment
+
+    public function getAuditAnanlysisTotal(Request $request)
+    {
+        try {
+            $total = $this->audit_analysis->getTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+    // monthly audit
+
+    public function getMonthlyTotal(Request $request)
+    {
+        try {
+            $total = $this->monthly_audit->getTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+    // inter unit audit
+
+    public function getInterTotal(Request $request)
+    {
+        try {
+            $total = $this->inter_unit_audit->getTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+    // opd --> ohc managemnt
+    public function getopdTotal(Request $request)
+    {
+        try {
+            $total = $this->opd->getTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+    // get first aid total
+
+    public function getFirstaidTotal(Request $request)
+    {
+        try {
+            $total = $this->first_aid->getTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+    // minor accident
+    public function getminorAccident(Request $request)
+    {
+        try {
+            $total = $this->ims->getminorTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+    // major accident
+    public function getmajorAccident(Request $request)
+    {
+        try {
+            $total = $this->ims->getmajorTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+    // near miss
+    public function getNearmiss(Request $request)
+    {
+        try {
+            $total = $this->ims->getNearTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+    // unsafe act
+    public function getUnsafeTotal(Request $request)
+    {
+        try {
+            $total = $this->ims->getUnsafeTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+    // unsafe condition
+    public function getUnsafeConditionTotal(Request $request)
+    {
+        try {
+            $total = $this->ims->getUnsafeConditionTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+    // gemba walk
+    public function getGembaWalk(Request $request)
+    {
+        try {
+            $total = $this->gemba_Walk->getGembaWalkTotalRecords();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+    //  fire incidence total
+    public function getFireincidence(Request $request)
+    {
+        try {
+            $total = $this->ims->getFireIncidenceTotal();
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+
+    //  fire inspection total
+    public function getFireinspection(Request $request)
+    {
+        try {
+            $totalData = GetInspectionCount('Fire');
+            $total = isset($totalData['Fire']) ? $totalData['Fire'] : 0;
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+
+
+    //  ohc inspection total
+    public function getOhcinspection(Request $request)
+    {
+        try {
+            $totalData = GetInspectionCount('Ohc');
+            $total = isset($totalData['Ohc']) ? $totalData['Ohc'] : 0;
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
+
+    //  safety inspection total
+    public function getSafetyinspection(Request $request)
+    {
+        try {
+
+            $totalData = GetInspectionCount('Safety');
+            $total = isset($totalData['Safety']) ? $totalData['Safety'] : 0;
+
+            return response()->json([
+                'status' => 'success',
+                'total' => $total,
+            ]);
+        } catch (\Exception $ex) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $ex->getMessage(),
+            ], 500);
+        }
+    }
 
     public function getTotalIncident(Request $request)
     {
@@ -1348,31 +1574,29 @@ class AdminController extends Controller
         }
     }
 
-
+    // department wise schedule count
     public function getDepartment(Request $request)
     {
         try {
             $chartData = $this->training_schedule->getDepartmentData();
+
             if ($chartData->isEmpty()) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
-            $departmentDetails = $this->department->select('department_name', 'id')->get();
 
-            // Initialize chartDataArray with all departments having count 0
-            $chartDataArray = $departmentDetails->pluck('id', 'department_name')->mapWithKeys(function ($value, $key) {
-                return [$key => 0];
-            });
+            // Fetch department info and key by ID for easy mapping
+            $departmentDetails = $this->department->select('id', 'department_name')->get()->keyBy('id');
 
-            // Fill chartDataArray with actual counts from the query
+            $chartDataArray = [];
             foreach ($chartData as $data) {
-                if (isset($chartDataArray[$data->department_name])) {
-                    $chartDataArray[$data->department_name] = $data->count;
+                $deptId = $data->department_id;
+                if (isset($departmentDetails[$deptId])) {
+                    $chartDataArray[$deptId] = $data->count;
                 }
             }
 
-            $chartDataArray = $chartDataArray->filter(function ($count) {
-                return $count > 0;
-            });
+            // Filter out zero-counts if needed
+            $chartDataArray = array_filter($chartDataArray, fn($count) => $count > 0);
 
             $data = [
                 'getdashdata' => $request,
@@ -1382,7 +1606,8 @@ class AdminController extends Controller
 
             return view('admin.dashboard.departmentData', $data);
         } catch (\Exception $ex) {
-            report($ex); // Debug any errors during execution
+            report($ex);
+            return response()->json('An error occurred.');
         }
     }
 

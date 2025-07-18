@@ -49,15 +49,17 @@ class PpeExemption extends Model
         $userRole = $user->role;
 
         $userRole = string_to_array($userRole);
-        if (in_array(ROLE_EHS_HEAD, $userRole)) {
+        if(in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || CheckUserRole(ROLE_DASHBOARD_VIEWER)){
+
+        }
+        else if (in_array(ROLE_EHS_HEAD, $userRole)) {
             $query->whereIn('ppe_ppeexemption.approve_status', [STATUS_EHS_APPROVAL_PENDING, STATUS_EHS_APPROVED, STATUS_EHS_REJECTED]);
         } elseif (in_array(ROLE_HOD, $userRole)) {
             $departmentId = $user->department_id;
             $query->where('ppe_ppeexemption.department', $departmentId);
-        } elseif (in_array(ROLE_EHS_OFFICER, $userRole) ) {
-             $query
+        } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
+            $query
                 ->orderBy('ppe_ppeexemption.id', 'DESC');
-        } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
         } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
             $query
                 ->orderBy('ppe_ppeexemption.id', 'DESC');
@@ -114,6 +116,26 @@ class PpeExemption extends Model
             } else {
                 $query->where('ppe_ppeexemption.approve_status', $approveStatus);
             }
+        }
+
+        if ($request->has('fromDate') && !empty($request->fromDate)) {
+            $datepickersearch = DBdateformat($request->fromDate);
+
+            $query->where(function ($query) use ($datepickersearch) {
+                $query->whereDate('ppe_ppeexemption.created_at', '>=', $datepickersearch);
+            });
+        }
+
+        if ($request->has('company_name') && $request->company_name) {
+
+            $query->where('ppe_ppeexemption.company', decryptId($request->company_name));
+        }
+        if ($request->has('toDate') && !empty($request->toDate)) {
+            $enddatepickersearch = DBdateformat($request->toDate);
+
+            $query->where(function ($query) use ($enddatepickersearch) {
+                $query->whereDate('ppe_ppeexemption.created_at', '<=', $enddatepickersearch);
+            });
         }
         if ($request->has('status') && $request->status) {
 
@@ -491,5 +513,26 @@ class PpeExemption extends Model
             ->get();
 
         return $results;
+    }
+
+    public function getTotalRecords()
+    {
+        $request = request();
+
+        $query = $this->where('ppe_ppeexemption.trash','No');
+
+        if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('ppe_ppeexemption.company', decryptId($request->CompanyId));
+        }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('ppe_ppeexemption.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('ppe_ppeexemption.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
     }
 }

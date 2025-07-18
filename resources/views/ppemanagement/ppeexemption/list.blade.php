@@ -25,8 +25,12 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
+                                        <input type="hidden" name="company_name" value="{{ $companyname }}">
+                                        <input type="hidden" name="fromDate" value="{{ $fromdate }}">
+                                        <input type="hidden" name="toDate" value="{{ $toDate }}">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_id" class="form-label ">{{__('ppe_management.ppe_emp_id')}}</label>
+                                            <label for="emp_id"
+                                                class="form-label ">{{ __('ppe_management.ppe_emp_id') }}</label>
                                             <select name="emp_id" id="emp_id" class="form-control form-control-sm"
                                                 style="width: 100%">
                                                 <option value="">Select the Employee ID</option>
@@ -34,17 +38,18 @@
                                         </div>
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{__('ppe_management.ppe_emp_name')}}</label>
+                                                <label
+                                                    class="form-label require">{{ __('ppe_management.ppe_emp_name') }}</label>
                                                 <input type="text" name="emp_name" id="emp_name" class="form-control"
                                                     placeholder="Employee Name">
                                             </div>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="company_id" class="form-label ">{{__('common.company')}}</label>
+                                            <label for="company_id" class="form-label ">{{ __('common.company') }}</label>
                                             <select name="company_id" id="company_id"
                                                 class="form-control single-select form-control-sm" style="width: 100%">
                                                 <option value="">Select the company</option>
-                                               @if (CheckUserRole(ROLE_EHS_OFFICER) || checkUserRole(ROLE_EHS_HEAD) || checkUserRole(ROLE_STORE_MANAGER))
+                                                @if (CheckUserRole(ROLE_EHS_OFFICER) || checkUserRole(ROLE_EHS_HEAD) || checkUserRole(ROLE_STORE_MANAGER))
                                                     @foreach ($company as $list)
                                                         @php
                                                             $isEhs = in_array(auth()->user()->role, [
@@ -79,7 +84,8 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="location_id" class="form-label ">{{__('common.location')}}</label>
+                                            <label for="location_id"
+                                                class="form-label ">{{ __('common.location') }}</label>
                                             <select name="location_id" id="location_id"
                                                 class="form-control single-select form-control-sm" style="width: 100%">
                                                 <option value="">Select the Location</option>
@@ -88,7 +94,7 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="unit_id" class="form-label">{{__('common.unit')}}</label>
+                                            <label for="unit_id" class="form-label">{{ __('common.unit') }}</label>
                                             <select name="unit_id" id="unit_id"
                                                 class="form-control single-select form-control-sm" style="width: 100%">
                                                 <option value="">Select the Unit</option>
@@ -97,7 +103,7 @@
                                         </div>
                                         <div class="col-md-3 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label require">{{__('common.department')}}</label>
+                                                <label class="form-label require">{{ __('common.department') }}</label>
                                                 <select name="department_id" id="department_id"
                                                     class="form-control single-select form-control-sm" style="width: 100%">
                                                     <option value="">Select the department</option>
@@ -106,7 +112,8 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">{{__('ppe_management.from_date')}}</label>
+                                            <label for="emp_name"
+                                                class="form-label ">{{ __('ppe_management.from_date') }}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -117,7 +124,8 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">{{__('ppe_management.to_date')}}</label>
+                                            <label for="emp_name"
+                                                class="form-label ">{{ __('ppe_management.to_date') }}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -136,7 +144,8 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">{{__('ppe_management.ppe_approval_status')}}</label>
+                                            <label for="emp_name"
+                                                class="form-label ">{{ __('ppe_management.ppe_approval_status') }}</label>
                                             <select name="approve_status" id="approve_status" style="width: 100%"
                                                 class="form-select single-select">
                                                 <option value="">Select the approve status</option>
@@ -163,18 +172,18 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{__('ppe_management.ppe_request_employee_worker_id')}}</th>
-                                        <th>{{__('ppe_management.ppe_request_employee_worker_name')}}</th>
-                                        <th>{{__('common.company')}}</th>
-                                        <th>{{__('common.location')}}</th>
-                                        <th>{{__('common.unit')}}</th>
-                                        <th>{{__('common.department')}}</th>
-                                        <th>{{__('ppe_management.from_date')}}</th>
-                                        <th>{{__('ppe_management.to_date')}}</th>
-                                        <th>{{__('ppe_management.ppe_reason')}}</th>
-                                        <th>{{__('common.status')}}</th>
-                                        <th data-priority="2">{{__('ppe_management.ppe_approval_status')}}</th>
-                                        <th data-priority="1">{{__('common.action')}}</th>
+                                        <th>{{ __('ppe_management.ppe_request_employee_worker_id') }}</th>
+                                        <th>{{ __('ppe_management.ppe_request_employee_worker_name') }}</th>
+                                        <th>{{ __('common.company') }}</th>
+                                        <th>{{ __('common.location') }}</th>
+                                        <th>{{ __('common.unit') }}</th>
+                                        <th>{{ __('common.department') }}</th>
+                                        <th>{{ __('ppe_management.from_date') }}</th>
+                                        <th>{{ __('ppe_management.to_date') }}</th>
+                                        <th>{{ __('ppe_management.ppe_reason') }}</th>
+                                        <th>{{ __('common.status') }}</th>
+                                        <th data-priority="2">{{ __('ppe_management.ppe_approval_status') }}</th>
+                                        <th data-priority="1">{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
                                 <tbody></tbody>
@@ -395,17 +404,9 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     data: function(d) {
-                        d.emp_id = $('#emp_id').val();
-                        d.emp_name = $('#emp_name').val();
-
-                        d.unit_id = $('#unit_id').val();
-                        d.company_id = $('#company_id').val();
-                        d.location_id = $('#location_id').val();
-                        d.department_id = $('#department_id').val();
-                        d.from_date = $('#from_date').val();
-                        d.to_date = $('#to_date').val();
-                        d.status = $('#status').val();
-                        d.approve_status = $('#approve_status').val();
+                        let formData = $('#formsearch').serialize();
+                        let params = new URLSearchParams(formData);
+                        params.forEach((value, key) => d[key] = value);
                     },
                     error: function(xhr, error, code) {
                         if (xhr.status === 419) {

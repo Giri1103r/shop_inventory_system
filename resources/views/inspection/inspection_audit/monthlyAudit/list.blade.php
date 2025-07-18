@@ -27,7 +27,9 @@
                                 <div class="col-md-12">
                                     <div class="row">
 
-
+                                        <input type="hidden" name="company_name" value="{{ $companyId }}">
+                                        <input type="hidden" name="fromDate" value="{{ $fromdate }}">
+                                        <input type="hidden" name="toDate" value="{{ $toDate }}">
                                         <div class="col-md-4">
                                             <div class="form-group form-input">
                                                 <label class="form-label require">Auditee Name</label>
@@ -205,13 +207,9 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.auditee_name = $('#auditee_name').val();
-                            d.unit_id = $('#unit_id').val();
-                            d.task_name = $('#task_name').val();
-                            d.compliance_category = $('#compliance_category').val();
-                            d.from_date = $('#from_date').val();
-                            d.to_date = $('#to_date').val();
-
+                            let formData = $('#formsearch').serialize();
+                            let params = new URLSearchParams(formData);
+                            params.forEach((value, key) => d[key] = value);
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {

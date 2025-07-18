@@ -28,7 +28,9 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-
+                                        <input type="hidden" name="company_name" value="{{ $companyId }}">
+                                        <input type="hidden" name="fromDate" value="{{ $fromdate }}">
+                                        <input type="hidden" name="toDate" value="{{ $toDate }}">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">Emp Name</label>
                                             <input type="text" name="emp_name" id="emp_name"
@@ -175,10 +177,9 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     data: function(d) {
-                        d.emp_name = $('#emp_name').val();
-                        d.from_date = $('#from_date').val();
-                        d.to_date = $('#to_date').val();
-                        d.status = $('#status').val();
+                        let formData = $('#formsearch').serialize();
+                        let params = new URLSearchParams(formData);
+                        params.forEach((value, key) => d[key] = value);
 
                     },
                     error: function(xhr) {

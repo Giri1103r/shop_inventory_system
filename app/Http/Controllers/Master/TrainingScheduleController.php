@@ -79,6 +79,7 @@ class TrainingScheduleController extends Controller
 
     public function index(Request $request)
     {
+   
         if (Auth::check()) {
             if ($request->ajax()) {
 
@@ -232,6 +233,10 @@ class TrainingScheduleController extends Controller
         $topicList  = $this->topic->select('id', 'topic_name')->where('status', '1')->get();
         $employeeList  = $this->employee->select('id', 'emp_name')->whereRaw('FIND_IN_SET(' . ROLE_TRAINER . ', user_role)')->where('status', '1')->get();
         $companyList = $this->company->getCompany();
+        $departmentData =$request->department;
+          $companyname = $request->company_id;
+        $fromdate = $request->fromDate;
+        $toDate = $request->toDate;
         $data = array(
             'department' => $departmentList,
             'unitList' => $unitList,
@@ -239,8 +244,11 @@ class TrainingScheduleController extends Controller
             'employeeList' => $employeeList,
             'companyList' => $companyList,
             'dashboard_search' => $request,
+            'departmentData' => $departmentData,
+            'fromdate' => $fromdate,
+            'toDate' => $toDate,
+            'companyname' => $companyname,
         );
-
         return view('master.training_schedule.list', $data);
     }
 

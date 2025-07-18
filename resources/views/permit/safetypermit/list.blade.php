@@ -6,8 +6,6 @@
     $dash_unit_id =
         isset($dashboard_search['unit_id']) && $dashboard_search['unit_id'] != '' ? $dashboard_search['unit_id'] : '';
 
-
-
 @endphp
 
 @section('content')
@@ -33,6 +31,9 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
+                                        <input type="hidden" name="company_name" value="{{ $companyname }}">
+                                        <input type="hidden" name="fromDate" value="{{ $fromdate }}">
+                                        <input type="hidden" name="toDate" value="{{ $toDate }}">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="permit_id" class="form-label ">Work Permit No</label>
                                             <input type="text" name="permit_id" id="permit_id" class="form-control"
@@ -328,19 +329,10 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                             .attr('content')
                     },
-                    data: function(d) {
-                        d.permit_id = $('#permit_id').val();
-                        d.unit_id = $('#unit_id').val();
-                        d.company_id = $('#company_id').val();
-                        d.location_id = $('#location_id').val();
-                        d.from_date = $('#from_date').val();
-                        d.to_date = $('#to_date').val();
-                        d.status = $('#status').val();
-                        d.dashboard_month = dashboard_month;
-                        d.dashboard_openCloseStatus = dashboard_openCloseStatus;
-                        d.dashboard_permitType = dashboard_permitType;
-                        d.dashboard_permitStatus = dashboard_permitStatus;
-
+                     data: function(d) {
+                        let formData = $('#formsearch').serialize();
+                        let params = new URLSearchParams(formData);
+                        params.forEach((value, key) => d[key] = value);
                     },
                     error: function(xhr, error, code) {
                         if (xhr.status === 419) {
