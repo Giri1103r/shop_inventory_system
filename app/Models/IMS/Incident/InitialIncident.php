@@ -1299,7 +1299,8 @@ class InitialIncident extends Model
     {
         $request = request();
 
-        $query = $this->whereRaw("FIND_IN_SET(?, ua_or_uc)", [UNSAFE_ACT])->where('ims_initial_incident.trash', 'NO');
+              $query = $this->where('ims_initial_incident.iir_type', IIR_TYPE_UNSAFE_ACT)->where('ims_initial_incident.trash', 'NO');
+
 
         if ($request->has('CompanyId') && $request->CompanyId) {
             $query->where('ims_initial_incident.company_id', decryptId($request->CompanyId));
@@ -1319,7 +1320,8 @@ class InitialIncident extends Model
     {
         $request = request();
 
-        $query = $this->whereRaw("FIND_IN_SET(?, ua_or_uc)", [UNSAFE_CONDITION])->where('ims_initial_incident.trash', 'NO');
+             $query = $this->where('ims_initial_incident.iir_type', IIR_TYPE_UNSAFE_CONDITION)->where('ims_initial_incident.trash', 'NO');
+
 
         if ($request->has('CompanyId') && $request->CompanyId) {
             $query->where('ims_initial_incident.company_id', decryptId($request->CompanyId));
