@@ -157,6 +157,7 @@ class InitialIncidentController extends BaseController
                     'sr_no' => $incident->sr_no,
                     'unit' => $incident->unit_name,
                     'shift' => $incident->shift,
+                    'shift' => getIIRTypename($incident->iir_type),
                     'approve_status' => $incident->status_name,
                     'status' => $incident->status == 1 ? 'Active' : 'In-Active',
                     'created_by' => getUsername($incident->created_by),

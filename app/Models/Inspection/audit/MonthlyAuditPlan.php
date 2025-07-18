@@ -320,7 +320,7 @@ class MonthlyAuditPlan extends Model
     {
         $request = request();
 
-        $query = $this->where('inspection_audit_monthly_audit_plan.status', 1);
+        $query = $this->where('inspection_audit_monthly_audit_plan.trash', 'No');
 
         // if ($request->has('CompanyId') && $request->CompanyId) {
         //     $query->where('inspection_audit_assessment.company_id', decryptId($request->CompanyId));

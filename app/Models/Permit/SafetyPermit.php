@@ -1427,7 +1427,7 @@ class SafetyPermit extends Model
     {
         $request = request();
 
-        $query = $this->where('ptw_safety.status', 1);
+        $query = $this->where('ptw_safety.trash','No');
 
         if ($request->has('CompanyId') && $request->CompanyId) {
             $query->where('ptw_safety.company_id', decryptId($request->CompanyId));

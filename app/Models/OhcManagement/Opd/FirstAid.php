@@ -297,7 +297,7 @@ class FirstAid extends Model
     {
         $request = request();
 
-        $query = $this->where('ohc_opd_first_aid.status', 1);
+        $query = $this->where('ohc_opd_first_aid.trash','No');
 
         if ($request->has('CompanyId') && $request->CompanyId) {
             $query->where('ohc_opd_first_aid.company_id', decryptId($request->CompanyId));

@@ -504,7 +504,7 @@ class GembaWalk extends Model
     {
         $request = request();
 
-        $query = $this->where('inspection_gemba_walk.status',1)->where('inspection_gemba_walk.trash', 'NO');
+        $query = $this->where('inspection_gemba_walk.trash', 'NO');
 
         if ($request->has('CompanyId') && $request->CompanyId) {
             $query->where('inspection_gemba_walk.company_id', decryptId($request->CompanyId));

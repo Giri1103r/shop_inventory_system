@@ -412,7 +412,7 @@ class PrescribetoPatient extends Model
     {
         $request = request();
 
-        $query = $this->where('ohc_management_opd_patient.status', 1);
+        $query = $this->where('ohc_management_opd_patient.trash','No');
 
         if ($request->has('CompanyId') && $request->CompanyId) {
             $query->where('ohc_management_opd_patient.company_id', decryptId($request->CompanyId));

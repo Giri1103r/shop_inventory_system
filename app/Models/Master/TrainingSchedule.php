@@ -775,7 +775,7 @@ class TrainingSchedule extends Model
     {
         $request = request();
 
-        $query = $this->where('training_schedule.status', 1);
+        $query = $this->where('training_schedule.trash','No');
 
         if ($request->has('CompanyId') && $request->CompanyId) {
             $query->where('training_schedule.company_id', decryptId($request->CompanyId));

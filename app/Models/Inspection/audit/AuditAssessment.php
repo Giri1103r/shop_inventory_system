@@ -260,7 +260,7 @@ class AuditAssessment extends Model
     {
         $request = request();
 
-        $query = $this->where('status', 1);
+        $query = $this->where('inspection_audit_assessment.trash', 'No');
 
         // if ($request->has('CompanyId') && $request->CompanyId) {
         //     $query->where('inspection_audit_assessment.company_id', decryptId($request->CompanyId));

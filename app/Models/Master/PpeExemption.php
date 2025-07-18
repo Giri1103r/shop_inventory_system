@@ -519,7 +519,7 @@ class PpeExemption extends Model
     {
         $request = request();
 
-        $query = $this->where('ppe_ppeexemption.status', 1);
+        $query = $this->where('ppe_ppeexemption.trash','No');
 
         if ($request->has('CompanyId') && $request->CompanyId) {
             $query->where('ppe_ppeexemption.company', decryptId($request->CompanyId));

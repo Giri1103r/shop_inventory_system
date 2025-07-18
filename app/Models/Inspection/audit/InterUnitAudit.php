@@ -256,7 +256,7 @@ class InterUnitAudit extends Model
     {
         $request = request();
 
-        $query = $this->where('inspection_audit_inter_unit.status',1)->where('inspection_audit_inter_unit.trash', 'No');
+        $query = $this->where('inspection_audit_inter_unit.trash', 'No');
 
         // if ($request->has('CompanyId') && $request->CompanyId) {
         //     $query->where('inspection_audit_assessment.company_id', decryptId($request->CompanyId));

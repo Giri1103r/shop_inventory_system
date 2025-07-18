@@ -70,7 +70,7 @@ class AuditAnalysis extends Model
         //     $query->where('inspection_audit_analysis.company_id', decryptId($request->company_name));
         // }
         if ($request->has('fromDate') && !empty($request->fromDate)) {
-           
+
             $datepickersearch = DBdateformat($request->fromDate);
 
             $query->where(function ($query) use ($datepickersearch) {
@@ -209,14 +209,14 @@ class AuditAnalysis extends Model
     {
         $request = request();
 
-        $query = $this->where('inspection_audit_analysis.status', 1);
+        $query = $this->where('inspection_audit_analysis.trash', 'No');
 
         // if ($request->has('CompanyId') && $request->CompanyId) {
         //     $query->where('inspection_audit_analysis.company_id', decryptId($request->CompanyId));
         // }
 
         if ($request->has('Fromdate') && $request->Fromdate) {
-          
+
             $query->where('inspection_audit_analysis.created_at', '>=', DBdateformat($request->Fromdate));
         }
 

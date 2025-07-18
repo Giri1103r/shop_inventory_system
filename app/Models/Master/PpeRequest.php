@@ -624,7 +624,7 @@ class PpeRequest extends Model
     {
         $request = request();
 
-       $query = $this->all();
+       $query = $this->where('ppe_pperequest.trash','No');
 
         if ($request->has('CompanyId') && $request->CompanyId) {
             $query->where('ppe_pperequest.company_id', decryptId($request->CompanyId));
