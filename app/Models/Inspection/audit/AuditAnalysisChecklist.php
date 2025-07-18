@@ -144,7 +144,7 @@ class AuditAnalysisChecklist extends Model
         }
     }
 
-      public function store_api($auditanalysis_id)
+    public function store_api($auditanalysis_id)
     {
         $request = request();
 
@@ -343,7 +343,26 @@ class AuditAnalysisChecklist extends Model
         return $conflicts;
     }
 
+    public function getTotalRecords()
+    {
+        $request = request();
 
+        $query = $this->where('status', 1);
+
+        // if ($request->has('CompanyId') && $request->CompanyId) {
+        //     $query->where('inspection_audit_analysis_checklist.company_id', decryptId($request->CompanyId));
+        // }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('inspection_audit_analysis_checklist.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('inspection_audit_analysis_checklist.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_audit_analysis_checklist'));

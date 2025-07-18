@@ -41,7 +41,15 @@
                                                 <input type="text" name="sr_no" id="sr_no" class=" form-control ">
                                             </div>
                                         </div>
-
+                                        <input type="hidden" name="company_name" value="{{ $companyId }}">
+                                        <input type="hidden" name="fromDate" value="{{ $fromdate }}">
+                                        <input type="hidden" name="toDate" value="{{ $toDate }}">
+                                        <input type="hidden" name="major" value="{{ $major }}">
+                                        <input type="hidden" name="minor" value="{{ $minor }}">
+                                        <input type="hidden" name="near_miss" value="{{ $near_miss }}">
+                                        <input type="hidden" name="unsafe_condition" value="{{ $unsafe_condition }}">
+                                        <input type="hidden" name="fire_incidence" value="{{ $fire_incidence }}">
+                                        <input type="hidden" name="unsafe_act" value="{{ $unsafe_act }}">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspectiontype" class="form-label ">Unit</label>
                                             <select name="unit_id" id="unit_id" class=" form-control single-select"
@@ -123,6 +131,7 @@
                                         <th>Sr. No</th>
                                         <th>Unit</th>
                                         <th>Shift</th>
+                                        <th>IIR Type</th>
                                         <th>Approve Status</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
@@ -216,16 +225,9 @@
                             .attr('content')
                     },
                     data: function(d) {
-                        d.sr_no = $('#sr_no').val();
-                        d.dash_iirtype_id = dash_iirtype_id;
-                        d.dash_month = dash_month;
-                        d.dash_initial_id = dash_initial_id;
-                        d.unit_id = $('#unit_id').val();
-                        d.dash_injuryType = dash_injuryType;
-                        d.from_date = $('#from_date').val();
-                        d.to_date = $('#to_date').val();
-                        d.incident_status = $('#incident_status').val();
-                        d.status = $('#status').val();
+                        let formData = $('#formsearch').serialize();
+                        let params = new URLSearchParams(formData);
+                        params.forEach((value, key) => d[key] = value);
 
                     },
                     error: function(xhr, error, code) {
@@ -251,6 +253,10 @@
                     {
                         data: 'shift',
                         name: 'shift'
+                    },
+                    {
+                        data: 'iir_type',
+                        name: 'iir_type'
                     },
                     {
                         data: 'status_batch',

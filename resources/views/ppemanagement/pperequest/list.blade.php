@@ -41,6 +41,9 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
+                                        <input type="hidden" name="company_name" value="{{$companyId}}">
+                                        <input type="hidden" name="fromDate" value="{{$fromdate}}">
+                                        <input type="hidden" name="toDate" value="{{$toDate}}">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_id" class="form-label ">{{__('ppe_management.ppe_emp_id')}}</label>
                                             <select name="emp_id" id="emp_id" class="form-control form-control-sm"
@@ -414,21 +417,14 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     data: function(d) {
-                        d.emp_id = $('#emp_id').val();
-                        d.emp_name = $('#emp_name').val();
-                        d.from_date = $('#from_date').val();
-                        d.unit_id = $('#unit_id').val();
-                        d.company_id = $('#company_id').val();
-                        d.location_id = $('#location_id').val();
-                        d.department_id = $('#department_id').val();
-                        d.to_date = $('#to_date').val();
-                        d.approve_status = $('#approve_status').val();
-
+                        let formData = $('#formsearch').serialize();
+                        let params = new URLSearchParams(formData);
+                        params.forEach((value, key) => d[key] = value);
                     },
                     error: function(xhr, error, code) {
                         if (xhr.status === 419) {
                             alert('Session has expired. You will be redirected to the login page.');
-                            window.location.href = "{{ url('') }}"; // Redirect to login page
+                            window.location.href = "{{ url('') }}"; 
                         }
                     }
                 },

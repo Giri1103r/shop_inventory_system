@@ -83,31 +83,50 @@ class InitialIncident extends Model
 
             $query->where('ims_initial_incident.created_by', Auth::user()->id)->where('ims_initial_incident.status', '1');
         }
-        // $condition =  decryptId($request->condition);
-        // if ($request->has('type') && $request->type) {
-        // if ($condition  == 1) {
-        //     $type = ($request->type);
-        //     // if ($type != ALL) {
-        //     //     $query = $query->where('ims_injury_details.nature_of_injury', decryptId($type));
-        //     // }
-        // } else if ($condition  == 2) {
-        //     $type = ($request->type);
-        //     if ($type != ALL) {
-        //         $query = $query->whereRaw("FIND_IN_SET(?, ims_initial_incident.ua_or_uc)", [decryptId($type)]);
-        //     }
-        // } else if ($condition  == 3) {
-        //     $type = ($request->type);
-        //     if ($type != ALL) {
-        //         $query = $query->where('ims_initial_incident.iir_type', decryptId($type));
-        //     }
-        // } else if ($condition  == 4) {
-        //     $type = ($request->type);
-        //     if ($type != ALL) {
-        //         $query = $query->where('ims_initial_incident.iir_type', decryptId($type));
-        //     }
-        // }
+        if ($request->has('fromDate') && !empty($request->fromDate)) {
+            $datepickersearch = DBdateformat($request->fromDate);
 
+            $query->where(function ($query) use ($datepickersearch) {
+                $query->whereDate('ims_initial_incident.created_at', '>=', $datepickersearch);
+            });
+        }
 
+        if ($request->has('toDate') && !empty($request->toDate)) {
+            $enddatepickersearch = DBdateformat($request->toDate);
+
+            $query->where(function ($query) use ($enddatepickersearch) {
+                $query->whereDate('ims_initial_incident.created_at', '<=', $enddatepickersearch);
+            });
+        }
+        if ($request->has('company_name') && $request->company_name) {
+
+            $query->where('ims_initial_incident.company_id', decryptId($request->company_name));
+        }
+
+        if ($request->has('major') && $request->major) {
+
+            $query->where('ims_initial_incident.iir_type', ($request->major));
+        }
+        if ($request->has('fire_incidence') && $request->fire_incidence) {
+
+            $query->where('ims_initial_incident.iir_type', ($request->fire_incidence));
+        }
+        if ($request->has('minor') && $request->minor) {
+
+            $query->where('ims_initial_incident.iir_type', ($request->minor));
+        }
+        if ($request->has('near_miss') && $request->near_miss) {
+
+            $query->where('ims_initial_incident.iir_type', ($request->near_miss));
+        }
+        if ($request->has('unsafe_condition') && $request->unsafe_condition) {
+
+            $query->whereRaw("FIND_IN_SET(?, ims_initial_incident.ua_or_uc)", ($request->unsafe_condition));
+        }
+        if ($request->has('unsafe_act') && $request->unsafe_act) {
+
+            $query->whereRaw("FIND_IN_SET(?, ims_initial_incident.ua_or_uc)", ($request->unsafe_act));
+        }
         // }
         /**
          * Role Based list view condition end
@@ -1131,6 +1150,132 @@ class InitialIncident extends Model
         }
 
         return $query->get(); // returns multiple rows
+    }
+
+    public function getMajorTotalRecords()
+    {
+        $request = request();
+
+        $query = $this->where('ims_initial_incident.iir_type', IIR_TYPE_MAJOR)->where('ims_initial_incident.trash', 'NO');
+
+        if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('ims_initial_incident.company_id', decryptId($request->CompanyId));
+        }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('ims_initial_incident.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('ims_initial_incident.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
+    }
+
+    public function getMinorTotalRecords()
+    {
+        $request = request();
+
+        $query = $this->where('ims_initial_incident.iir_type', IIR_TYPE_MINOR)->where('ims_initial_incident.trash', 'NO');
+        // dd($$query->count());
+        if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('ims_initial_incident.company_id', decryptId($request->CompanyId));
+        }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('ims_initial_incident.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('ims_initial_incident.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
+    }
+
+    public function getNearTotalRecords()
+    {
+        $request = request();
+
+        $query = $this->where('ims_initial_incident.iir_type', IIR_TYPE_NEAR_MISS)->where('ims_initial_incident.trash', 'NO');
+
+        if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('ims_initial_incident.company_id', decryptId($request->CompanyId));
+        }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('ims_initial_incident.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('ims_initial_incident.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
+    }
+
+    public function getUnsafeTotalRecords()
+    {
+        $request = request();
+
+        $query = $this->whereRaw("FIND_IN_SET(?, ua_or_uc)", [UNSAFE_ACT])->where('ims_initial_incident.trash', 'NO');
+
+        if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('ims_initial_incident.company_id', decryptId($request->CompanyId));
+        }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('ims_initial_incident.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('ims_initial_incident.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
+    }
+    public function getUnsafeConditionTotalRecords()
+    {
+        $request = request();
+
+        $query = $this->whereRaw("FIND_IN_SET(?, ua_or_uc)", [UNSAFE_CONDITION])->where('ims_initial_incident.trash', 'NO');
+
+        if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('ims_initial_incident.company_id', decryptId($request->CompanyId));
+        }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('ims_initial_incident.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('ims_initial_incident.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
+    }
+
+
+    public function getFireIncidenceTotal()
+    {
+        $request = request();
+
+        $query = $this->where('ims_initial_incident.iir_type', IIR_TYPE_FIRE_INCIDENCE)->where('ims_initial_incident.trash', 'NO');
+
+        if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('ims_initial_incident.company_id', decryptId($request->CompanyId));
+        }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('ims_initial_incident.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('ims_initial_incident.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
     }
 
     protected static function booted()

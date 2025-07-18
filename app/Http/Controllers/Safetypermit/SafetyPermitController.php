@@ -222,6 +222,9 @@ class SafetyPermitController extends Controller
         $companyList  = $this->company->select('id', 'company_name')->where('status', '1')->get();
         $status = $this->status->get();
         $loggedInCompanyId = encryptId(Auth::user()->company_id);
+        $companyname = $request->company_id;
+        $fromdate = $request->fromDate;
+        $toDate = $request->toDate;
         // $location = $this->location->select('id', 'location_type_name')->where('status', 1)->where('trash', 'NO')->get();
         $data = array(
             'unitList' => $unitList,
@@ -229,6 +232,9 @@ class SafetyPermitController extends Controller
             'companyList' => $companyList,
             'loggedInCompanyId' => $loggedInCompanyId,
             'dashboard_search' => $request,
+            'fromdate' => $fromdate,
+            'toDate' => $toDate,
+            'companyname' => $companyname,
             // 'location' => $location,
         );
         return view('permit.safetypermit.list', $data);

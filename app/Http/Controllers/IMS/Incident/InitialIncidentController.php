@@ -142,6 +142,9 @@ class InitialIncidentController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
+                        ->addColumn('iir_type', function ($row) {
+                            return getIIRTypename($row->iir_type);
+                        })
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
@@ -165,7 +168,7 @@ class InitialIncidentController extends Controller
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'status_batch'])
+                        ->rawColumns(['action', 'created_date', 'created_by', 'status', 'status_batch', 'iir_type'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -182,6 +185,16 @@ class InitialIncidentController extends Controller
         $status = Incidentstatus::select('id', 'status_name')->where('status', '1')->get();
         $type = ($request->type);
         $condition = ($request->condition);
+        $major = $request->major_accident;
+        $minor = $request->minor_accident;
+        $near_miss = $request->near_miss;
+        $companyId = $request->company_id;
+        $fromdate = $request->fromDate;
+        $toDate = $request->toDate;
+        $near_miss = $request->near_miss;
+        $unsafe_act = $request->unsafe_act;
+        $unsafe_condition = $request->unsafe_condition;
+        $fire_incidence = $request->fire_incidence;
         $data = array(
             'unitList' => $unitList,
             'companyList' => $companyList,
@@ -189,6 +202,16 @@ class InitialIncidentController extends Controller
             'dashboard_search' => $request,
             'type' => $type,
             'condition' => $condition,
+            'fromdate' => $fromdate,
+            'fromdate' => $fromdate,
+            'minor' => $minor,
+            'major' => $major,
+            'near_miss' => $near_miss,
+            'toDate' => $toDate,
+            'unsafe_act' => $unsafe_act,
+            'unsafe_condition' => $unsafe_condition,
+            'fire_incidence' => $fire_incidence,
+            'companyId' => $companyId,
         );
 
         return view('ims.initial.incident.list', $data);
@@ -236,6 +259,7 @@ class InitialIncidentController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
+
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
@@ -697,7 +721,7 @@ class InitialIncidentController extends Controller
             $getEmpdetails = $this->incident_body_parts->getEmpdetails();
             return $getEmpdetails;
         } catch (Exception $ex) {
-              report($ex);
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -708,7 +732,7 @@ class InitialIncidentController extends Controller
             $getEmpdetails = $this->incident_body_parts->apigetEmpdetails();
             return $getEmpdetails;
         } catch (Exception $ex) {
-           report($ex);
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -719,7 +743,7 @@ class InitialIncidentController extends Controller
             $addInjury = $this->incident_body_parts->addInjury();
             return $addInjury;
         } catch (Exception $ex) {
-             report($ex);
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -729,7 +753,7 @@ class InitialIncidentController extends Controller
             $addInjury = $this->incident_body_parts->addInjuryApi();
             return $addInjury;
         } catch (Exception $ex) {
-           report($ex);
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }

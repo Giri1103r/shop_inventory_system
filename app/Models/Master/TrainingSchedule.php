@@ -141,9 +141,27 @@ class TrainingSchedule extends Model
         if ($request->has('department_id') && $request->department_id) {
             $query = $query->where('training_schedule.department_id', decryptId($request->department_id));
         }
+        if ($request->has('company_name') && $request->company_name) {
 
-        if ($request->has('department') && $request->department) {
-            $query = $query->where('training_schedule.department_id', decryptId($request->department));
+            $query->where('training_schedule.company_id', decryptId($request->company_name));
+        }
+        if ($request->has('fromDate') && !empty($request->fromDate)) {
+            $datepickersearch = DBdateformat($request->fromDate);
+
+            $query->where(function ($query) use ($datepickersearch) {
+                $query->whereDate('training_schedule.created_at', '>=', $datepickersearch);
+            });
+        }
+
+        if ($request->has('toDate') && !empty($request->toDate)) {
+            $enddatepickersearch = DBdateformat($request->toDate);
+
+            $query->where(function ($query) use ($enddatepickersearch) {
+                $query->whereDate('training_schedule.created_at', '<=', $enddatepickersearch);
+            });
+        }
+        if ($request->has('training_department') && $request->training_department) {
+            $query = $query->where('training_schedule.department_id', ($request->training_department));
         }
         if ($request->has('venue_id') && $request->venue_id) {
             $query = $query->where('training_schedule.venue_id', decryptId($request->venue_id));
@@ -752,7 +770,27 @@ class TrainingSchedule extends Model
         return $query->get();
     }
 
+    // card total of shcedule in the dashboard
+    public function getTotalRecords()
+    {
+        $request = request();
 
+        $query = $this->where('training_schedule.status', 1);
+
+        if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('training_schedule.company_id', decryptId($request->CompanyId));
+        }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('training_schedule.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
+    }
 
     protected static function booted()
     {

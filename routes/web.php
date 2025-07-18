@@ -274,6 +274,34 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('training/dashboard/trainingStatusCount', [TrainingController::class, 'gettrainingStatusCount']);
 
             Route::group(['prefix' => 'dashboard/'], function () {
+                // card totals
+
+                Route::get('get-pperequest-total', [AdminController::class, 'getpperequest']);
+                Route::get('get-ppe-exemption-total', [AdminController::class, 'getExemption']);
+                Route::get('get-safety-permit-total', [AdminController::class, 'getSafetytotal']);
+                Route::get('get-training-schedule-total', [AdminController::class, 'getTrainingTotal']);
+
+                Route::get('get-audit-assessment-total', [AdminController::class, 'getAuditAssessmentTotal']);
+                Route::get('get-audit-analysis-total', [AdminController::class, 'getAuditAnanlysisTotal']);
+                Route::get('get-monthly-audit-total', [AdminController::class, 'getMonthlyTotal']);
+                Route::get('get-inter-audit-total', [AdminController::class, 'getInterTotal']);
+
+                Route::get('get-opd-total', [AdminController::class, 'getopdTotal']);
+                Route::get('get-first-aid-total', [AdminController::class, 'getFirstaidTotal']);
+                Route::get('get-minor-accident-total', [AdminController::class, 'getminorAccident']);
+                Route::get('get-major-accident-total', [AdminController::class, 'getmajorAccident']);
+
+                Route::get('get-near-miss-total', [AdminController::class, 'getNearmiss']);
+                Route::get('get-unsafe-act-total', [AdminController::class, 'getUnsafeTotal']);
+                Route::get('get-gemba-walk-total', [AdminController::class, 'getGembaWalk']);
+                Route::get('get-unsafe-condition-total', [AdminController::class, 'getUnsafeConditionTotal']);
+
+                Route::get('get-fire-incidence-total', [AdminController::class, 'getFireincidence']);
+                Route::get('get-fire-inspection-total', [AdminController::class, 'getFireinspection']);
+                Route::get('get-ohc-inspection-total', [AdminController::class, 'getOhcinspection']);
+                Route::get('get-safety-inspection-total', [AdminController::class, 'getSafetyinspection']);
+
+
                 Route::get('total-incident', [AdminController::class, 'getTotalIncident']);
                 Route::get('heatmap-of-imsData', [AdminController::class, 'getHeatmapImsData']);
                 Route::get('incident-type-chart', [AdminController::class, 'getIncidentTypeChart']);
@@ -936,7 +964,6 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::post('delete', [TaskMasterController::class, 'Delete']);
                     Route::post('status', [TaskMasterController::class, 'StatusChange']);
                     Route::post('unique', [TaskMasterController::class, 'Uniquecheck']);
-
                 });
 
                 Route::group(['prefix' => 'master/compliance_category'], function () {
@@ -1466,7 +1493,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::post('status', [CertifiedFireFighterController::class, 'statusChange']);
                     Route::GET('exportViewPdf/{id}', [CertifiedFireFighterController::class, 'ExportViewPDF']);
                     Route::GET('generalExcel/{id}', [CertifiedFireFighterController::class, 'generalExcel']);
-                    Route::GET('employeedetails',[CertifiedFireFighterController::class,'employeedetails']);
+                    Route::GET('employeedetails', [CertifiedFireFighterController::class, 'employeedetails']);
                 });
 
                 Route::group(['prefix' => 'equipment-monthly-physical-inspection/'], function () {

@@ -81,6 +81,25 @@ class FirstAid extends Model
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
             $query->where('ohc_opd_first_aid.created_at', '<=', $endDate);
         }
+        // if ($request->has('company_name') && $request->company_name) {
+
+        //     $query->where('ohc_management_opd_patient.company_id', decryptId($request->company_name));
+        // }
+        if ($request->has('fromDate') && !empty($request->fromDate)) {
+            $datepickersearch = DBdateformat($request->fromDate);
+
+            $query->where(function ($query) use ($datepickersearch) {
+                $query->whereDate('ohc_opd_first_aid.created_at', '>=', $datepickersearch);
+            });
+        }
+
+        if ($request->has('toDate') && !empty($request->toDate)) {
+            $enddatepickersearch = DBdateformat($request->toDate);
+
+            $query->where(function ($query) use ($enddatepickersearch) {
+                $query->whereDate('ohc_opd_first_aid.created_at', '<=', $enddatepickersearch);
+            });
+        }
         if ($request->has('emp_id') && $request->emp_id) {
 
             $query = $query->where('ohc_opd_first_aid.emp_id', $request->emp_id);
@@ -272,5 +291,26 @@ class FirstAid extends Model
         $query->orderBy('id', 'DESC');
 
         return  $query->get();
+    }
+
+    public function getTotalRecords()
+    {
+        $request = request();
+
+        $query = $this->where('ohc_opd_first_aid.status', 1);
+
+        if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('ohc_opd_first_aid.company_id', decryptId($request->CompanyId));
+        }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('ohc_opd_first_aid.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('ohc_opd_first_aid.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
     }
 }

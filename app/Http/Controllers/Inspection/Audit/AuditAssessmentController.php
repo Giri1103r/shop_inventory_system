@@ -115,8 +115,14 @@ class AuditAssessmentController extends Controller
             }
         }
         $checklist_types  = $this->checklist_type->select('id', 'category_name')->where('status', '1')->get();
+        $companyId = $request->company_id;
+        $fromdate = $request->fromDate;
+        $toDate = $request->toDate;
         $data = array(
             'checklist_types' => $checklist_types,
+             'fromdate' => $fromdate,
+            'toDate' => $toDate,
+            'companyId' => $companyId,
 
         );
         return view('inspection.inspection_audit.auditAssessment.list', $data);
@@ -176,7 +182,7 @@ class AuditAssessmentController extends Controller
 
         try {
             try {
-                
+
                 $this->audit_assessment->store();
 
                 Session::flash('success', __('Your data has been created successfully'));

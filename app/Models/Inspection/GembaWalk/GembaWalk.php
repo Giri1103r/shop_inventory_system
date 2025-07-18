@@ -47,7 +47,7 @@ class GembaWalk extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift', 'inspection_gemba_walk.id as gemba_walk_id', 'inspection_gemba_walk_checklist.responsibility_id', 'masters_unit.*', 'inspection_gemba_walk_checklist.unit_id','inspection_gemba_walk.created_at as inspection_created_date', 'inspection_gemba_walk.created_by as inspection_created_by')
+        $query = $this->select('inspection_gemba_walk.*', 'inspection_gemba_walk_status.status_name', 'inspection_gemba_walk_status.bg_color', 'inspection_shift_option.shift', 'inspection_gemba_walk.id as gemba_walk_id', 'inspection_gemba_walk_checklist.responsibility_id', 'masters_unit.*', 'inspection_gemba_walk_checklist.unit_id', 'inspection_gemba_walk.created_at as inspection_created_date', 'inspection_gemba_walk.created_by as inspection_created_by')
             ->leftJoin('inspection_shift_option', 'inspection_shift_option.id', '=', 'inspection_gemba_walk.shift_id')
             ->leftJoin('inspection_gemba_walk_status', 'inspection_gemba_walk_status.id', '=', 'inspection_gemba_walk.gemba_walk_status')
             ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
@@ -500,7 +500,26 @@ class GembaWalk extends Model
         return $data;
     }
 
+    public function getGembaWalkTotalRecords()
+    {
+        $request = request();
 
+        $query = $this->where('inspection_gemba_walk.status',1)->where('inspection_gemba_walk.trash', 'NO');
+
+        if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('inspection_gemba_walk.company_id', decryptId($request->CompanyId));
+        }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('inspection_gemba_walk.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('inspection_gemba_walk.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_gemba_walk'));

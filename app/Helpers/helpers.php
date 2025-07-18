@@ -1623,6 +1623,21 @@ if (!function_exists('getMonth')) {
         }
     }
 
+      if (!function_exists('getIIRTypename')) {
+
+        function getIIRTypename($userid)
+        {
+
+            $iirType = DB::table('ims_master_incident_type')->select('*')->where('id', $userid)->where('trash', 'NO')->first();
+
+            if ($iirType == null) {
+                return '';
+            } else {
+                return $iirType->incident_type_name;
+            }
+        }
+    }
+
     if (!function_exists('getCompanyname')) {
 
         function getCompanyname($userid)

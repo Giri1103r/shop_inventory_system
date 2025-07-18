@@ -86,7 +86,7 @@ class PrescribetoPatient extends Model
         }
         if (in_array(ROLE_ADMIN, $userRole) ||  CheckUserRole(ROLE_DASHBOARD_VIEWER) || in_array(ROLE_SUPERADMIN, $userRole) || in_array(ROLE_EHS_HEAD, $userRole)) {
             $query->orderBy('ohc_management_opd_patient.id', 'DESC');
-        }  else {
+        } else {
             $query->where('ohc_management_opd_patient.created_by', Auth::id());
         }
 
@@ -108,6 +108,26 @@ class PrescribetoPatient extends Model
         if ($request->has('status') && $request->status) {
 
             $query = $query->where('ohc_management_opd_patient.patient_status', ($request->status));
+        }
+
+        if ($request->has('company_name') && $request->company_name) {
+
+            $query->where('ohc_management_opd_patient.company_id', decryptId($request->company_name));
+        }
+        if ($request->has('fromDate') && !empty($request->fromDate)) {
+            $datepickersearch = DBdateformat($request->fromDate);
+
+            $query->where(function ($query) use ($datepickersearch) {
+                $query->whereDate('ohc_management_opd_patient.created_at', '>=', $datepickersearch);
+            });
+        }
+
+        if ($request->has('toDate') && !empty($request->toDate)) {
+            $enddatepickersearch = DBdateformat($request->toDate);
+
+            $query->where(function ($query) use ($enddatepickersearch) {
+                $query->whereDate('ohc_management_opd_patient.created_at', '<=', $enddatepickersearch);
+            });
         }
 
         $data_count = $query;
@@ -386,5 +406,26 @@ class PrescribetoPatient extends Model
         $query->orderBy('ohc_management_opd_patient.id', 'DESC');
 
         return $query->get(); // Ensure this returns a Collection, not null
+    }
+
+    public function getTotalRecords()
+    {
+        $request = request();
+
+        $query = $this->where('ohc_management_opd_patient.status', 1);
+
+        if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('ohc_management_opd_patient.company_id', decryptId($request->CompanyId));
+        }
+
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('ohc_management_opd_patient.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('ohc_management_opd_patient.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->count();
     }
 }

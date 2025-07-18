@@ -23,6 +23,9 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
+                                           <input type="hidden" name="company_name" value="{{$companyId}}">
+                                        <input type="hidden" name="fromDate" value="{{$fromdate}}">
+                                        <input type="hidden" name="toDate" value="{{$toDate}}">
                                         <div class="col-md-4 mb-3 form-input">
                                             <label for="audit_id" class="form-label ">Audit Id</label>
                                             <input type="text" name="audit_id" id="audit_id" class="form-control">
@@ -152,10 +155,9 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.audit_id = $('#audit_id').val();
-                            d.status = $('#status').val();
-                            d.from_date = $('#from_date').val();
-                            d.to_date = $('#to_date').val();
+                          let formData = $('#formsearch').serialize();
+                        let params = new URLSearchParams(formData);
+                        params.forEach((value, key) => d[key] = value);
 
                         },
                         error: function(xhr, error, code) {
