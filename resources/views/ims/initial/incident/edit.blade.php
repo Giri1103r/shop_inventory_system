@@ -592,8 +592,10 @@
                                                 style="{{ isset($initialincident) && $initialincident->anyone_injured == 1 ? '' : 'display:none;' }}">
 
                                                 <div class="card-header-inner d-flex justify-content-between">
-                                                    <a class="text-white card-link">Injured Person Details</a>
-                                                    <div class="btn btn-warning btn-sm addMoreInjuryDetails">Add</div>
+                                                
+                                                    <h4 class="text-white fw-bold">Injured Person Details</h4>
+
+                                                    <div class="btn btn-warning btn-sm addMoreInjuryDetails mb-2">Add</div>
                                                 </div>
 
                                                 @if (count($injury_details) > 0)
@@ -1549,8 +1551,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                           </div>-->
+                                                                                                                                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                               </div>-->
             </div>
         </div>
     </div>

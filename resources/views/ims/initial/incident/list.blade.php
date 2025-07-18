@@ -50,6 +50,20 @@
                                         <input type="hidden" name="unsafe_condition" value="{{ $unsafe_condition }}">
                                         <input type="hidden" name="fire_incidence" value="{{ $fire_incidence }}">
                                         <input type="hidden" name="unsafe_act" value="{{ $unsafe_act }}">
+
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="inspectiontype" class="form-label ">IIR Type</label>
+                                            <select name="iir_type" id="iir_type" class=" form-control single-select"
+                                                style="width: 100%">
+                                                <option value="">Select Status</option>
+                                                @foreach ($incTypeList as $iir_type)
+                                                    <option value="{{ encryptId($iir_type->id) }}">
+                                                        {{ $iir_type->incident_type_name }}</option>
+                                                @endforeach
+
+                                            </select>
+                                        </div>
+
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspectiontype" class="form-label ">Unit</label>
                                             <select name="unit_id" id="unit_id" class=" form-control single-select"
@@ -303,66 +317,25 @@
                                 text: '{{ __('common.pdf') }}',
                                 action: function(e, dt, button, config) {
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    var sr_no = $('#sr_no').val();
-                                    var dash_iirtype_id = dash_iirtype_id;
-                                    var dash_month = dash_month;
-                                    var dash_initial_id = dash_initial_id;
-                                    var unit_id = $('#unit_id').val();
-                                    var dash_injuryType = dash_injuryType;
-                                    var from_date = $('#from_date').val();
-                                    var to_date = $('#to_date').val();
-                                    var incident_status = $('#incident_status').val();
-                                    var status = $('#status').val();
-
-                                    $(".dt-button").removeClass('processing');
-                                    $('body').click();
-                                    window.location.href =
-                                        "{{ admin_url('incident/initial-incident/export/pdf') }}" +
-                                        '?search=' + searchValue +
-                                        '&sr_no=' + sr_no +
-                                        '&dash_iirtype_id=' + dash_iirtype_id +
-                                        '&dash_month=' + dash_month +
-                                        '&dash_initial_id=' + dash_initial_id +
-                                        '&unit_id=' + unit_id +
-                                        '&dash_injuryType=' + dash_injuryType +
-                                        '&from_date=' + from_date +
-                                        '&to_date=' + to_date +
-                                        '&incident_status=' + incident_status +
-                                        '&status=' + status
+                                    var formData = $('#formsearch').serialize();
+                                    var exportUrl =
+                                        "{{ admin_url('incident/initial-incident/export/pdf') }}";
+                                    window.location.href = exportUrl + '?search=' +
+                                        searchValue + '&' +
+                                        formData;
                                 }
                             },
                             {
                                 extend: 'excel',
                                 text: '{{ __('common.excel') }}',
                                 action: function(e, dt, button, config) {
-
                                     var searchValue = $('#datatable-list_filter input').val();
-                                    var sr_no = $('#sr_no').val();
-                                    var dash_iirtype_id = dash_iirtype_id;
-                                    var dash_month = dash_month;
-                                    var dash_initial_id = dash_initial_id;
-                                    var unit_id = $('#unit_id').val();
-                                    var dash_injuryType = dash_injuryType;
-                                    var from_date = $('#from_date').val();
-                                    var to_date = $('#to_date').val();
-                                    var incident_status = $('#incident_status').val();
-                                    var status = $('#status').val();
-                                    $(".dt-button").removeClass('processing');
-                                    $('body').click();
-                                    window.location.href =
-                                        "{{ admin_url('incident/initial-incident/export/excel') }}" +
-                                        '?search=' + searchValue +
-                                        '&dash_iirtype_id=' + dash_iirtype_id +
-                                        '&dash_month=' + dash_month +
-                                        '&dash_initial_id=' + dash_initial_id +
-                                        '&sr_no=' + sr_no +
-                                        '&dash_iirtype_id=' + dash_iirtype_id +
-                                        '&unit_id=' + unit_id +
-                                        '&dash_injuryType=' + dash_injuryType +
-                                        '&from_date=' + from_date +
-                                        '&to_date=' + to_date +
-                                        '&incident_status=' + incident_status +
-                                        '&status=' + status
+                                    var formData = $('#formsearch').serialize();
+                                    var exportUrl =
+                                        "{{ admin_url('incident/initial-incident/export/excel') }}";
+                                    window.location.href = exportUrl + '?search=' +
+                                        searchValue + '&' +
+                                        formData;
                                 }
                             },
                         ]
