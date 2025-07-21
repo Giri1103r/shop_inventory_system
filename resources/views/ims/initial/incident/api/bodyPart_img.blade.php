@@ -1032,8 +1032,7 @@
 
                                                         </div>
                                                     @endif
-                                                    <div class="img-desc col-lg-4 col-md-4 col-sm-4"
-                                                        >
+                                                    <div class="img-desc col-lg-4 col-md-4 col-sm-4">
                                                     </div>
 
 
@@ -2165,9 +2164,14 @@
                                 data: data,
                                 url: url,
                                 success: function(data) {
-                                    $('.alert-msg').html(
-                                        '<span style="color:green;">Body Part Saved Successfully!</span>'
-                                    );
+                                    var message = "Body Part Saved Successfully!";
+
+                                    // SweetAlert popup
+                                    Swal.fire('Success', message, 'success');
+
+                                    // Show message in alert-msg element
+                                    $('.alert-msg').html('<span style="color:green;">' +
+                                        message + '</span>');
                                     $(".alert-msg").show().delay(3000)
                                         .fadeOut();
                                     setTimeout(function() {
