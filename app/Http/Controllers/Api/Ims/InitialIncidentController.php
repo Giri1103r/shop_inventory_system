@@ -1277,4 +1277,15 @@ class InitialIncidentController extends BaseController
             'message'   => 'New random id generated.'
         ]);
     }
+    public function getSavedOrNot(Request $request)
+    {
+        $isSaved = IncidentBodyParts::where('random_id', $request->random_id)
+            ->where('row_id', $request->row_id)
+            ->value('is_saved');
+
+        return response()->json([
+            'status'   => true,
+            'is_saved' => $isSaved ?? 0,
+        ]);
+    }
 }

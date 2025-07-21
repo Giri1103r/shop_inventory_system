@@ -33,6 +33,7 @@ class IncidentBodyParts extends Model
         'body_parts',
         'body_parts_label',
         'body_part_image',
+        'is_saved',
         'status',
         'trash',
         'created_by',
@@ -261,7 +262,6 @@ class IncidentBodyParts extends Model
     public function addInjuryApi()
     {
         $request = request();
-
         $random_id = $request->random_id;
         $folderPath = 'incident/body_parts/' . $random_id;
         Storage::makeDirectory($folderPath);
@@ -296,6 +296,7 @@ class IncidentBodyParts extends Model
                 'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
                 'row_id' => $request->row_id,
+                'is_saved' => $request->save_inj,
                 'injured_person_type' => $request->injury_person_type,
                 'imgMapdata' => postData($request, 'imgMapdata'),
                 'body_parts' => $request->humanbodyinjury,
@@ -315,6 +316,7 @@ class IncidentBodyParts extends Model
                 'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
                 'row_id' => $request->row_id,
+                'is_saved' => $request->save_inj,
                 'injured_person_type' => $request->injury_person_type,
                 'imgMapdata' => postData($request, 'imgMapdata'),
                 'body_parts' => $request->humanbodyinjury,
@@ -334,6 +336,7 @@ class IncidentBodyParts extends Model
                 'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
                 'row_id' => $request->row_id,
+                'is_saved' => $request->save_inj,
                 'injured_person_type' => $request->injury_person_type,
                 'imgMapdata' => postData($request, 'imgMapdata'),
                 'body_parts' => $request->humanbodyinjury,
@@ -354,6 +357,7 @@ class IncidentBodyParts extends Model
                 'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
                 'row_id' => $request->row_id,
+                'is_saved' => $request->save_inj,
                 'injured_person_type' => $request->injury_person_type,
                 'imgMapdata' => postData($request, 'imgMapdata'),
                 'body_parts' => $request->humanbodyinjury,

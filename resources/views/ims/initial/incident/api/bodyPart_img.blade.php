@@ -1056,7 +1056,7 @@
                                         <div class="">
                                             <button name="save_inj"
                                                 style="background-color: #086ca6 !important;border-color: #086ca6 !important;"
-                                                type="submit" id="button" value="Save & Submit"
+                                                type="submit" id="button" value="1"
                                                 class="btn btn-secondary save_inj">{{ 'Save' }}</button>
 
                                             <button type="button"

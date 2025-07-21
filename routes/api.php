@@ -337,6 +337,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('calist', [InitialIncidentController::class, 'calist']);
             Route::post('capa/view', [InitialIncidentController::class, 'capaView']);
             Route::get('generate-random-id', [InitialIncidentController::class, 'generate']);
+            Route::get('get-saved-or-not', [InitialIncidentController::class, 'getSavedOrNot']);
         
         });
 
