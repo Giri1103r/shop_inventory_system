@@ -38,6 +38,10 @@
                                         <input type="hidden" name="fromDate" value="{{ $fromdate }}">
                                         <input type="hidden" name="toDate" value="{{ $toDate }}">
                                         <input type="hidden" name="training_department" value="{{ ($departmentData) }}">
+                                        <input type="hidden" name="month" value="{{ ($month) }}">
+                                        <input type="hidden" name="training_status" value="{{ ($status) }}">
+                                        <input type="hidden" name="training_topic_id" value="{{ ($TopicId) }}">
+                                        <input type="hidden" name="open_close_status" value="{{ ($open_close_status) }}">
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="from_date" class="form-label ">From Date</label>

@@ -132,6 +132,9 @@ class TrainingSchedule extends Model
         if ($request->has('trainer_id') && $request->trainer_id) {
             $query = $query->where('training_schedule.trainer_id', decryptId($request->trainer_id));
         }
+         if ($request->has('training_topic_id') && $request->training_topic_id) {
+            $query = $query->where('training_schedule.topic_id', ($request->training_topic_id));
+        }
         if ($request->has('unit_id') && $request->unit_id) {
             $query = $query->where('training_schedule.unit_id', decryptId($request->unit_id));
         }
@@ -171,14 +174,48 @@ class TrainingSchedule extends Model
             $query = $query->where('training_schedule.status', 'LIKE', '%' . decryptId($request->status) . '%');
         }
 
-        if ($request->has('dashboard_openCloseStatus') && $request->dashboard_openCloseStatus) {
-            $openCloseStatus = decryptId($request->dashboard_openCloseStatus);
+        if ($request->has('open_close_status') && $request->open_close_status) {
+            $openCloseStatus = ($request->open_close_status);
             if ($openCloseStatus == "1") {
                 $query = $query->where('training_schedule.training_status', '!=', 8);
             } else {
                 $query = $query->where('training_schedule.training_status', 8);
             }
         }
+
+        if ($request->has('training_status') && $request->training_status && $request->has('month') && $request->month) {
+            $query->where(function ($q) use ($request) {
+
+                $monthName = ucfirst(strtolower(trim($request->month)));
+                $monthNumber = date('n', strtotime($monthName));
+
+                // Normalize training_status to lowercase
+                $status = strtolower(trim($request->training_status));
+
+                switch ($status) {
+                    case 'completed':
+                        $q->where('training_schedule.training_status', 8)
+                            ->whereMonth('training_schedule.created_at', $monthNumber);
+                        break;
+
+                    case 'inprogress':
+                        $q->whereIn('training_schedule.training_status', [6, 7])
+                            ->whereMonth('training_schedule.created_at', $monthNumber);
+                        break;
+
+                    case 'rejected':
+                        $q->where('training_schedule.training_status', 3)
+                            ->whereMonth('training_schedule.created_at', $monthNumber);
+                        break;
+
+                    case 'pending':
+                        $q->whereIn('training_schedule.training_status', [1, 2, 4, 5])
+                            ->whereMonth('training_schedule.created_at', $monthNumber);
+                        break;
+                }
+            });
+        }
+
 
         $data_count = $query;
         $total_records = $data_count->count();
@@ -393,17 +430,13 @@ class TrainingSchedule extends Model
     public function monthwiseTrainingCountData()
     {
         $request = request();
-
-        // Start query
         $query = self::query();
 
-        // Apply company Filter
         if ($request->CompanyId) {
             $company_id = decryptId($request->CompanyId);
             $query->where('training_schedule.company_id', $company_id);
         }
 
-        // Date Filters
         if ($request->Fromdate && $request->Todate) {
             $query->whereBetween('training_schedule.created_at', [
                 DBdateformat($request->Fromdate),
@@ -414,19 +447,20 @@ class TrainingSchedule extends Model
         } elseif ($request->Todate) {
             $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
         }
-        // Select and group data by year and month
-        $results = $query->selectRaw(
-            'YEAR(from_date) as year,
-             MONTH(from_date) as month,
-             COUNT(*) as total_count,
-             SUM(CASE WHEN training_status IN (1, 2, 4, 5) THEN 1 ELSE 0 END) as pending_count,
-             SUM(CASE WHEN training_status = 3 THEN 1 ELSE 0 END) as rejected_count,
-             SUM(CASE WHEN training_status IN (6, 7) THEN 1 ELSE 0 END) as inprogress_count,
-             SUM(CASE WHEN training_status = 8 THEN 1 ELSE 0 END) as completed_count'
+
+        $results = $query->select(
+            DB::raw('MONTH(created_at) as month'),
+            DB::raw('
+                SUM(CASE WHEN training_status IN (1,2,4,5) THEN 1 ELSE 0 END) as pending_count,
+                SUM(CASE WHEN training_status = 3 THEN 1 ELSE 0 END) as rejected_count,
+                SUM(CASE WHEN training_status IN (6,7) THEN 1 ELSE 0 END) as inprogress_count,
+                SUM(CASE WHEN training_status = 8 THEN 1 ELSE 0 END) as completed_count
+            ')
         )
-            ->groupBy('year', 'month')
-            ->orderByRaw('year ASC, month ASC') // Ensure chronological order
+            ->groupBy(DB::raw('MONTH(created_at)'))
             ->get();
+
+
 
         return $results;
     }
@@ -703,7 +737,7 @@ class TrainingSchedule extends Model
         return $data;
     }
 
-    public function getTrainigCompletionCountData($request)
+    public function getTrainingOpenClose($request)
     {
         $query = DB::table('training_schedule')
             ->select(
@@ -714,68 +748,72 @@ class TrainingSchedule extends Model
                 DB::raw('ROUND(SUM(CASE WHEN training_status != 8 THEN 1 ELSE 0 END) * 100.0 / COUNT(id), 2) as open_percentage')
             );
 
-        // Apply company Filter
-        if ($request->CompanyId) {
-            $company_id = decryptId($request->CompanyId);
-            $query->where('company_id', $company_id);
+       if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('training_schedule.company_id', decryptId($request->CompanyId));
         }
 
-        // Date Filters
-        if ($request->Fromdate && $request->Todate) {
-            $query->whereBetween('created_at', [
-                DBdateformat($request->Fromdate),
-                DBdateformat($request->Todate) . ' 23:59:59'
-            ]);
-        } elseif ($request->Fromdate) {
-            $query->where('created_at', '>=', DBdateformat($request->Fromdate));
-        } elseif ($request->Todate) {
-            $query->where('created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('training_schedule.created_at', '>=', DBdateformat($request->Fromdate));
         }
 
-        return $query->first(); // only one row
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        return $query->get(); 
     }
-    public function GetTrainingHoursDepartmentData($request)
+
+
+    // topic wise count
+
+    public function getTopicWiseTraining()
     {
+        $request = request();
+
         $query = DB::table('training_schedule')
             ->join('training_masters_topic', 'training_schedule.topic_id', '=', 'training_masters_topic.id')
             ->join('masters_department', 'training_schedule.department_id', '=', 'masters_department.id')
             ->select(
                 'training_masters_topic.topic_name',
                 'masters_department.department_name',
-                'masters_department.id as department_id', // ✅ Include this
+                'masters_department.id as department_id',
+                'training_masters_topic.id as training_topic_id',
                 DB::raw('ROUND(SUM(TIMESTAMPDIFF(MINUTE, start_time, end_time)) / 60, 2) as total_hours')
             )
             ->whereNotNull('start_time')
             ->whereNotNull('end_time')
-            ->groupBy('training_masters_topic.topic_name', 'masters_department.department_name', 'masters_department.id');
+            ->groupBy(
+                'training_masters_topic.topic_name',
+                'training_masters_topic.id',
+                'masters_department.department_name',
+                'masters_department.id'
+            );
 
         // Apply company Filter
-        if ($request->CompanyId) {
-            $company_id = decryptId($request->CompanyId);
-            $query->where('training_schedule.company_id', $company_id);
+        if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('training_schedule.company_id', decryptId($request->CompanyId));
         }
 
-        // Date Filters
-        if ($request->Fromdate && $request->Todate) {
-            $query->whereBetween('training_schedule.created_at', [
-                DBdateformat($request->Fromdate),
-                DBdateformat($request->Todate) . ' 23:59:59'
-            ]);
-        } elseif ($request->Fromdate) {
+        if ($request->has('Fromdate') && $request->Fromdate) {
             $query->where('training_schedule.created_at', '>=', DBdateformat($request->Fromdate));
-        } elseif ($request->Todate) {
-            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
         }
 
         return $query->get();
     }
+
+
+
 
     // card total of shcedule in the dashboard
     public function getTotalRecords()
     {
         $request = request();
 
-        $query = $this->where('training_schedule.trash','No');
+        $query = $this->where('training_schedule.trash', 'No');
 
         if ($request->has('CompanyId') && $request->CompanyId) {
             $query->where('training_schedule.company_id', decryptId($request->CompanyId));

@@ -1,10 +1,10 @@
-<div id="LoadTrainingHourSafetyDepartmentWise_Count"></div>
+<div id="TrainingTopicWiseCount"></div>
 
 <script>
-    var departments = {!! json_encode($chartData['departments']) !!};
-    var categories = {!! json_encode($chartData['labels']) !!};
-    var seriesData = {!! json_encode($chartData['series']) !!};
-    var departmentIds = {!! json_encode($chartData['department_ids']) !!};
+    // Blade Variables
+    var categories = {!! json_encode($chartData['labels']) !!}; // topic names
+    var seriesData = {!! json_encode($chartData['series']) !!}; // total hours
+    var topicIds = {!! json_encode($chartData['training_topic_id']) !!}; // training_topic_id
 
     var dynamicColors = [
         '#3B5998', '#26A69A', '#FFC300', '#6C3483', '#E74C3C', '#3498DB',
@@ -27,8 +27,9 @@
             },
             events: {
                 dataPointSelection: function(event, chartContext, config) {
-                    var departmentId = departmentIds[config.dataPointIndex];
-                    redirectTotrainigschedule(departmentId);
+                    var topicId = topicIds[config.dataPointIndex];
+                    const url = "{{ admin_url('training_schedule/list') }}";
+                    redirectcharturl('topic_id', topicId, url);
                 }
             },
             zoom: {
@@ -52,30 +53,15 @@
                 rotate: -45,
                 formatter: function(value) {
                     return value.length > 8 ? value.substring(0, 8) + '...' : value;
+                },
+                style: {
+                    fontSize: '10px'
                 }
-            },
-            style: {
-                fontSize: '8px',
-            },
+            }
         },
         grid: {
             padding: {
                 bottom: 60
-            }
-        },
-        tooltip: {
-            custom: function({
-                series,
-                seriesIndex,
-                dataPointIndex,
-                w
-            }) {
-                return `
-                    <div style="padding:10px;">
-                        <strong>Topic:</strong> ${w.globals.labels[dataPointIndex]}<br>
-                        <strong>Hours:</strong> ${series[seriesIndex][dataPointIndex]}<br>
-                        <strong>Department:</strong> ${departments[dataPointIndex]}
-                    </div>`;
             }
         },
         fill: {
@@ -86,32 +72,27 @@
         }
     };
 
-    var LoadTrainingHourSafetyDepartmentWise_Count = new ApexCharts(document.querySelector(
-        "#LoadTrainingHourSafetyDepartmentWise_Count"), options);
-    LoadTrainingHourSafetyDepartmentWise_Count.render();
+    var TrainingTopicWiseCount = new ApexCharts(document.querySelector("#TrainingTopicWiseCount"), options);
+    TrainingTopicWiseCount.render();
 
-    // Prepare date filters (embedded as strings from Blade)
-    var filterFrom = "{{ $getdashdata->Fromdate ?? '' }}";
-    var filterTo = "{{ $getdashdata->Todate ?? '' }}";
+    // Handle chart download
+    var filterFrom = "{{ $getdashdata->from_date ?? '' }}";
+    var filterTo = "{{ $getdashdata->to_date ?? '' }}";
 
-    $("#LoadTrainingHourSafetyDepartmentWise_download").off("click").on("click", function() {
-        LoadTrainingHourSafetyDepartmentWise_Count.dataURI().then(({
-            imgURI
-        }) => {
+    $("#LoadTrainingHourSafetyDepartmentWise_download").off("click").on("click", function () {
+        TrainingTopicWiseCount.dataURI().then(({ imgURI }) => {
             var newCanvas = document.createElement('canvas');
             var ctx = newCanvas.getContext('2d');
             var image = new Image();
 
-            image.onload = function() {
+            image.onload = function () {
                 newCanvas.width = image.width;
                 let headerHeight = 120;
                 newCanvas.height = image.height + headerHeight;
 
-                // White background
                 ctx.fillStyle = 'white';
                 ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
 
-                // Header text
                 ctx.fillStyle = '#203669';
                 ctx.font = '20px Arial';
                 ctx.fillText('Training Hours by Topic (Department-wise)', 10, 30);
@@ -135,11 +116,9 @@
                     }
                 }
 
-                // Draw chart
                 ctx.drawImage(image, 0, headerHeight);
 
-                // Save chart
-                newCanvas.toBlob(function(blob) {
+                newCanvas.toBlob(function (blob) {
                     var link = document.createElement('a');
                     link.href = URL.createObjectURL(blob);
                     link.download = 'TrainingHours_DepartmentWise.png';
@@ -150,4 +129,6 @@
             image.src = imgURI;
         });
     });
+
+
 </script>
