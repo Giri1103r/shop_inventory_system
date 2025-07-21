@@ -188,6 +188,7 @@ class IncidentBodyParts extends Model
             $locdatas = [
                 'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
+                'is_saved' => $request->save_inj,
                 'injury_person_id' => decryptId($request->injuredPerson),
                 'injured_person_type' => decryptId($request->injury_person_type),
                 'injury_person_name' => $request->injuredPerson,
@@ -203,6 +204,7 @@ class IncidentBodyParts extends Model
             $locdatas = [
                 'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
+                'is_saved' => $request->save_inj,
                 'injury_person_id' => decryptId($request->injuredPerson),
                 'injured_person_type' => decryptId($request->injury_person_type),
                 'injury_person_name' => $request->injuredPerson,
@@ -218,6 +220,7 @@ class IncidentBodyParts extends Model
             $locdatas = [
                 'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
+                'is_saved' => $request->save_inj,
                 'injury_person_id' => decryptId($request->injuredPerson),
                 'injured_person_type' => decryptId($request->injury_person_type),
                 'injury_person_name' => $request->injuredPerson,
@@ -233,6 +236,7 @@ class IncidentBodyParts extends Model
             $locdatas = [
                 'incident_id' => decryptId($request->incident_id),
                 'random_id' => $random_id,
+                'is_saved' => $request->save_inj,
                 'injury_person_id' => decryptId($request->injuredPerson),
                 'injured_person_type' => decryptId($request->injury_person_type),
                 'injury_person_name' => $request->injuredPerson,
