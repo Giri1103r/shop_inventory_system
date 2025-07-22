@@ -546,16 +546,16 @@ class CronController extends Controller
     }
 
 
-    public function ExpireExemption()
-    {
-        try {
-            $status = $this->ppeexemption->getExpirestatus();
-            return response()->json(['message' => 'Data saved successfully.']);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
-        }
-    }
+    // public function ExpireExemption()
+    // {
+    //     try {
+    //         $status = $this->ppeexemption->getExpirestatus();
+    //         return response()->json(['message' => 'Data saved successfully.']);
+    //     } catch (Exception $ex) {
+    //         report($ex);
+    //         return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+    //     }
+    // }
 
 
     public function EmployeeSave()

@@ -197,7 +197,7 @@ Route::get('cron/inspection/audit/task-master/import', [CronController::class, '
 
 
 Route::get('stockitem', [CronController::class, 'storeItem']);
-Route::get('expireexemptionstatus', [CronController::class, 'ExpireExemption']);
+// Route::get('expireexemptionstatus', [CronController::class, 'ExpireExemption']);
 Route::get('updateStockitem', [CronController::class, 'updateItem']);
 Route::get('cron/master/work/all-details-temp', [CronController::class, 'workMasterAllDetailsTemp']);
 Route::get('cron/master/workmastertemp', [CronController::class, 'workMasterTemp']);

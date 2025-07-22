@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\DB;
 
 class PpeExemption extends Model
 {
@@ -41,6 +42,15 @@ class PpeExemption extends Model
     public function list()
     {
         $request = request();
+
+        $today = now()->toDateString(); // Gets current date as 'YYYY-MM-DD'
+
+        $this->whereRaw("STR_TO_DATE(to_date, '%d-%m-%Y') < ?", [$today])
+            ->where('status', 1)
+            ->where('trash', 'NO')
+            ->update(['status' => 0]);
+
+
         $search = '';
         $query = $this->select('ppe_ppeexemption.*');
 
@@ -49,10 +59,8 @@ class PpeExemption extends Model
         $userRole = $user->role;
 
         $userRole = string_to_array($userRole);
-        if(in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || CheckUserRole(ROLE_DASHBOARD_VIEWER)){
-
-        }
-        else if (in_array(ROLE_EHS_HEAD, $userRole)) {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
+        } else if (in_array(ROLE_EHS_HEAD, $userRole)) {
             $query->whereIn('ppe_ppeexemption.approve_status', [STATUS_EHS_APPROVAL_PENDING, STATUS_EHS_APPROVED, STATUS_EHS_REJECTED]);
         } elseif (in_array(ROLE_HOD, $userRole)) {
             $departmentId = $user->department_id;
@@ -298,13 +306,14 @@ class PpeExemption extends Model
     {
         return $this->where('id', $id)->update($updateData);
     }
-    public function getExpirestatus()
-    {
-        $date = Carbon::now();
+
+    // public function getExpirestatus()
+    // {
+    //     $date = Carbon::now();
 
 
-        $this->where('to_date', '>', $date)->update(['status' => 0]);
-    }
+    //     $this->where('to_date', '>', $date)->update(['status' => 0]);
+    // }
 
 
 
@@ -519,7 +528,7 @@ class PpeExemption extends Model
     {
         $request = request();
 
-        $query = $this->where('ppe_ppeexemption.trash','No');
+        $query = $this->where('ppe_ppeexemption.trash', 'No');
 
         if ($request->has('CompanyId') && $request->CompanyId) {
             $query->where('ppe_ppeexemption.company', decryptId($request->CompanyId));

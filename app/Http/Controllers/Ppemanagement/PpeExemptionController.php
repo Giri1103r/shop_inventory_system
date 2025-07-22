@@ -79,13 +79,13 @@ class PpeExemptionController extends Controller
                             }
 
 
-                            if (CheckUserRole(ROLE_SUPERADMIN)) {
-                                if ($row->status == 1) {
-                                    $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active<span>";
-                                } else if ($row->status == 0) {
-                                    $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active<span>";
-                                }
-                            }
+                            // if (CheckUserRole(ROLE_SUPERADMIN)) {
+                            //     if ($row->status == 1) {
+                            //         $text = "<span style='color:green;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='1'>Active<span>";
+                            //     } else if ($row->status == 0) {
+                            //         $text = "<span style='color:red;cursor:pointer' class='statusChange' data-id='" . encryptId($row->id) . "' data-type='0'>In-Active<span>";
+                            //     }
+                            // }
                             return $text;
                         })
                         ->addColumn('created_at', function ($row) {
