@@ -771,7 +771,7 @@ class InitialIncidentController extends Controller
             $addInjury = $this->incident_body_parts->addInjury();
             return $addInjury;
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -779,9 +779,12 @@ class InitialIncidentController extends Controller
     {
         try {
             $addInjury = $this->incident_body_parts->addInjuryApi();
+            Session::flash('success', 'Your data has been created successfully!');
+            
             return $addInjury;
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
@@ -1052,7 +1055,7 @@ class InitialIncidentController extends Controller
                 'initialincident' => $initialincident,
                 'initialincidentevidence' => $initialincidentevidence,
                 'injury_details' => $injury_details,
-                'randomID' => $randomID ,
+                'randomID' => $randomID,
                 'body_parts' => $body_parts,
             );
 
@@ -2088,10 +2091,10 @@ class InitialIncidentController extends Controller
             $bobypart_id = $getbodyParts->id;
             $injury_id = $getbodyParts->injury_id;
             $injuryPersonType = $getbodyParts->injured_person_type;
-            if($getbodyParts->injured_person_type == 3){
+            if ($getbodyParts->injured_person_type == 3) {
                 $injuredPerson = $getbodyParts->injury_person_name;
-            }else{
-                  $injuredPerson = $getbodyParts->injury_person_id;
+            } else {
+                $injuredPerson = $getbodyParts->injury_person_id;
             }
 
             $data = [

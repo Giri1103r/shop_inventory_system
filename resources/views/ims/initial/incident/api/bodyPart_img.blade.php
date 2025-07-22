@@ -1032,8 +1032,7 @@
 
                                                         </div>
                                                     @endif
-                                                    <div class="img-desc col-lg-4 col-md-4 col-sm-4"
-                                                        >
+                                                    <div class="img-desc col-lg-4 col-md-4 col-sm-4">
                                                     </div>
 
 
@@ -1056,7 +1055,7 @@
                                         <div class="">
                                             <button name="save_inj"
                                                 style="background-color: #086ca6 !important;border-color: #086ca6 !important;"
-                                                type="submit" id="button" value="Save & Submit"
+                                                type="submit" id="button" value="1"
                                                 class="btn btn-secondary save_inj">{{ 'Save' }}</button>
 
                                             <button type="button"
@@ -2165,9 +2164,14 @@
                                 data: data,
                                 url: url,
                                 success: function(data) {
-                                    $('.alert-msg').html(
-                                        '<span style="color:green;">Body Part Saved Successfully!</span>'
-                                    );
+                                    var message = "Body Part Saved Successfully!";
+
+                                    // SweetAlert popup
+                                    Swal.fire('Success', message, 'success');
+
+                                    // Show message in alert-msg element
+                                    $('.alert-msg').html('<span style="color:green;">' +
+                                        message + '</span>');
                                     $(".alert-msg").show().delay(3000)
                                         .fadeOut();
                                     setTimeout(function() {

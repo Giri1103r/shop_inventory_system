@@ -289,7 +289,7 @@
                                                     ? $initialincident->random_id
                                                     : $randomID;
                                         @endphp
-                                        <input type="text" name="random_id" id="random_id" value="{{ $finalRandomId }}">
+                                        <input type="hidden" name="random_id" id="random_id" value="{{ $finalRandomId }}">
                                         <div class="row mt-3">
                                             <div class="card-header-inner">
                                                 <h4 class="text-white">Incident Reported By</h4>
@@ -1542,7 +1542,7 @@
                                         <div class="">
                                             <button name="save_inj"
                                                 style="background-color: #086ca6 !important;border-color: #086ca6 !important;"
-                                                type="submit" id="button" value="Save & Submit"
+                                                type="submit" id="button" value="1"
                                                 class="btn btn-secondary save_inj">{{ 'Save' }}</button>
 
                                             <button type="button"
