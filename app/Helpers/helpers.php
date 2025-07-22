@@ -1623,7 +1623,7 @@ if (!function_exists('getMonth')) {
         }
     }
 
-      if (!function_exists('getIIRTypename')) {
+    if (!function_exists('getIIRTypename')) {
 
         function getIIRTypename($userid)
         {
@@ -2482,29 +2482,31 @@ if (!function_exists('getMonth')) {
         }
     }
 
-    if(!function_exists('getFirstAidOpdStatus')){
-        function getFirstAidOpdStatus($id){
-            if($id == 1){
+    if (!function_exists('getFirstAidOpdStatus')) {
+        function getFirstAidOpdStatus($id)
+        {
+            if ($id == 1) {
                 return "Waiting For EHS Officer Verification";
-            }else if($id == 2){
+            } else if ($id == 2) {
                 return "Observation Rejected";
-            }else if($id == 3){
+            } else if ($id == 3) {
                 return "Observation Approved";
-            }else{
+            } else {
                 return "Inspection Creation";
             }
         }
     }
 
-    if(!function_exists('getMonthlyMedicineStatus')){
-        function getMonthlyMedicineStatus($id){
-            if($id == 1){
+    if (!function_exists('getMonthlyMedicineStatus')) {
+        function getMonthlyMedicineStatus($id)
+        {
+            if ($id == 1) {
                 return "Waiting For EHS Officer Verification";
-            }else if($id == 2){
+            } else if ($id == 2) {
                 return "Observation Rejected";
-            }else if($id == 3){
+            } else if ($id == 3) {
                 return "Observation Approved";
-            }else{
+            } else {
                 return "Inspection Creation";
             }
         }
@@ -2620,6 +2622,22 @@ if (!function_exists('getMonth')) {
                 return false;
             } else {
                 return $type->type;
+            }
+        }
+    }
+
+
+    if (!function_exists('GetTypeofjob')) {
+
+        function GetTypeofjob($id)
+        {
+
+            $typeofJob = DB::table('ptw_masters_typeofwork')->where('id', $id)->where('trash', 'NO')->first();
+
+            if ($typeofJob == null) {
+                return false;
+            } else {
+                return $typeofJob->work_name;
             }
         }
     }

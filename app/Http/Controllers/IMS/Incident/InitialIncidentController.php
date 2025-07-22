@@ -102,7 +102,7 @@ class InitialIncidentController extends Controller
 
     public function index(Request $request)
     {
-
+// dd($request->all());
         if (Auth::check()) {
             if ($request->ajax()) {
 
@@ -190,6 +190,8 @@ class InitialIncidentController extends Controller
         $minor = $request->minor_accident;
         $near_miss = $request->near_miss;
         $companyId = $request->company_id;
+        $accident_report = $request->accident_report;
+        $unit_id = $request->unit_id;
         $fromdate = $request->fromDate;
         $toDate = $request->toDate;
         $near_miss = $request->near_miss;
@@ -209,6 +211,8 @@ class InitialIncidentController extends Controller
             'major' => $major,
             'near_miss' => $near_miss,
             'toDate' => $toDate,
+            'accident_report' => $accident_report,
+            'unitId' => $unit_id,
             'unsafe_act' => $unsafe_act,
             'unsafe_condition' => $unsafe_condition,
             'fire_incidence' => $fire_incidence,
@@ -1051,7 +1055,7 @@ class InitialIncidentController extends Controller
                 'randomID' => $randomID ,
                 'body_parts' => $body_parts,
             );
-           
+
 
             return view('ims.initial.incident.edit', $data);
         } catch (Exception $error) {
@@ -2089,7 +2093,7 @@ class InitialIncidentController extends Controller
             }else{
                   $injuredPerson = $getbodyParts->injury_person_id;
             }
-          
+
             $data = [
                 'randomID' => $randomId,
                 'rowId' => $rowId,

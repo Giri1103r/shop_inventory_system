@@ -315,7 +315,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('PPEAvailabilityChart', [AdminController::class, 'getPPEAvailabilityChart']);
 
                 Route::get('TypeofIIRCount', [AdminController::class, 'getTypeofIIRCount']);
-                Route::get('AccidentReportUnitWiseCount', [AdminController::class, 'getAccidentReportUnitWiseCount']);
+                Route::get('accident-report-unit-wise', [AdminController::class, 'getAccidentReportUnitWiseCount']);
                 Route::get('injurypart', [AdminController::class, 'getInjurypart']);
                 Route::post('getbodycount', [AdminController::class, 'injurybodycount']);
                 Route::get('IIRTypeWiseUAUC', [AdminController::class, 'IIRTypeWiseUAUC']);

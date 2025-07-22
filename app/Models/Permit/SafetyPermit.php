@@ -152,6 +152,16 @@ class SafetyPermit extends Model
             $location_id = decryptId($request->location_id);
             $query = $query->where('ptw_safety.location_id',  $location_id);
         }
+        if ($request->has('type_of_job') && !empty($request->type_of_job)) {
+            $typeOfJobArray = is_array($request->type_of_job) ? $request->type_of_job : explode(',', $request->type_of_job);
+
+            $query = $query->where(function ($q) use ($typeOfJobArray) {
+                foreach ($typeOfJobArray as $jobId) {
+                    $q->orWhereRaw('FIND_IN_SET(?, ptw_safety.sub_permit)', [trim($jobId)]);
+                }
+            });
+        }
+
 
         if ($request->has('from_date') && !empty($request->from_date)) {
             $fromDate = $request->from_date;
@@ -1182,6 +1192,16 @@ class SafetyPermit extends Model
             $fromDate = $request->from_date;
             $query->where('ptw_safety.date', '>=', $fromDate);
         }
+        if ($request->has('type_of_job') && !empty($request->type_of_job)) {
+            $typeOfJobArray = is_array($request->type_of_job) ? $request->type_of_job : explode(',', $request->type_of_job);
+
+            $query = $query->where(function ($q) use ($typeOfJobArray) {
+                foreach ($typeOfJobArray as $jobId) {
+                    $q->orWhereRaw('FIND_IN_SET(?, ptw_safety.sub_permit)', [trim($jobId)]);
+                }
+            });
+        }
+
 
         if ($request->has('to_date') && !empty($request->to_date)) {
             $toDate = $request->to_date;
@@ -1427,7 +1447,7 @@ class SafetyPermit extends Model
     {
         $request = request();
 
-        $query = $this->where('ptw_safety.trash','No');
+        $query = $this->where('ptw_safety.trash', 'No');
 
         if ($request->has('CompanyId') && $request->CompanyId) {
             $query->where('ptw_safety.company_id', decryptId($request->CompanyId));

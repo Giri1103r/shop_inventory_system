@@ -20,6 +20,7 @@
         chart: {
             type: 'bar',
             height: 350,
+            stacked: true,
             toolbar: {
                 show: false
             },
@@ -32,18 +33,22 @@
                     if (selected) {
                         var unitId = selected.unit_id;
                         var injuryType = selected.injury_type;
-                        redirectToIms('',unitId, '',injuryType,'','','');
+                        const url = "{{ admin_url('incident/initial-incident/list/all/type') }}";
+                        redirectcharturl('accident_report', injuryType, url, unitId);
+
                     }
                 }
             }
         },
 
         plotOptions: {
-            bar: {
-                horizontal: false,
-                columnWidth: '50%',
-                borderRadiusApplication: 'end'
-            },
+           bar: {
+                    horizontal: false,
+                    borderRadius: 10,
+                      columnWidth: '10%',
+                    borderRadiusApplication: 'end',
+                    borderRadiusWhenStacked: 'last'
+                },
         },
         dataLabels: {
             enabled: true

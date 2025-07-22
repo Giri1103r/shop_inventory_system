@@ -155,6 +155,7 @@ class AppServiceProvider extends ServiceProvider
         defined('MINOR_ACCIDENT') or define('MINOR_ACCIDENT', 2);
         defined('IIR_TYPE_MAJOR') or define('IIR_TYPE_MAJOR', 11);
         defined('IIR_TYPE_MINOR') or define('IIR_TYPE_MINOR', 10);
+        defined('IIR_TYPE_FATAL') or define('IIR_TYPE_FATAL', 12);
         defined('IIR_TYPE_NEAR_MISS') or define('IIR_TYPE_NEAR_MISS', 8);
         defined('IIR_TYPE_UNSAFE_ACT') or define('IIR_TYPE_UNSAFE_ACT', 23);
         defined('IIR_TYPE_UNSAFE_CONDITION') or define('IIR_TYPE_UNSAFE_CONDITION', 24);

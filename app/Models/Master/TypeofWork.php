@@ -241,6 +241,10 @@ class TypeofWork extends Model
         return $data;
     }
 
+    public function getTypeofJob(){
+        return $this->where('status',1)->where('trash','NO')->get();
+    }
+
 
     protected static function booted()
     {

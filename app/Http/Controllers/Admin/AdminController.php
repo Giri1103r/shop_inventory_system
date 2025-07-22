@@ -1045,6 +1045,7 @@ class AdminController extends Controller
         try {
             $chartData = $this->ims_incident->getAccidentReportUnitWiseCountData($request);
 
+
             if ($chartData->isEmpty()) {
                 return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
             }
@@ -1054,15 +1055,15 @@ class AdminController extends Controller
             foreach ($chartData as $item) {
                 $lookup['Major'][$item->unit_name] = [
                     'unit_id' => $item->unit_id,
-                    'injury_type' => 1
+                    'injury_type' =>IIR_TYPE_MAJOR
                 ];
                 $lookup['Minor'][$item->unit_name] = [
                     'unit_id' => $item->unit_id,
-                    'injury_type' => 2
+                    'injury_type' => IIR_TYPE_MINOR
                 ];
                 $lookup['Fatal'][$item->unit_name] = [
                     'unit_id' => $item->unit_id,
-                    'injury_type' => 3
+                    'injury_type' =>IIR_TYPE_FATAL
                 ];
             }
 

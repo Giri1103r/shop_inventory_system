@@ -39,7 +39,18 @@
                                             <input type="text" name="permit_id" id="permit_id" class="form-control"
                                                 placeholder="Work Permit No">
                                         </div>
+                                        <div class="col-md-3 mb-3 form-input">
+                                            <label for="type_of_job" class="form-label ">Type Of Job</label>
+                                            <select name="type_of_job" id="type_of_job"
+                                                class="form-control single-select form-control-sm" style="width: 100%">
+                                                <option value="">Select the type of job</option>
+                                                @foreach ($typeofjob as $job )
+                                                 <option value="{{$job->id}}">{{$job->work_name}}</option>
 
+                                                @endforeach
+
+                                            </select>
+                                        </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspectiontype" class="form-label ">Company</label>
                                             <select name="company_id" id="company_id" class=" form-control single-select"
@@ -166,6 +177,7 @@
                                         <th>Unit</th>
                                         <th>Date</th>
                                         <th>Exact Job Location</th>
+                                        <th>Type of Job</th>
                                         <th>Approve Status</th>
                                         <th>Verified By</th>
                                         <th>Approved By</th>
@@ -329,7 +341,7 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
                             .attr('content')
                     },
-                     data: function(d) {
+                    data: function(d) {
                         let formData = $('#formsearch').serialize();
                         let params = new URLSearchParams(formData);
                         params.forEach((value, key) => d[key] = value);
@@ -354,6 +366,7 @@
                         data: 'unit_name',
                         name: 'unit_name'
                     },
+
                     {
                         data: 'date',
                         name: 'date'
@@ -361,6 +374,10 @@
                     {
                         data: 'exact_location_job',
                         name: 'exact_location_job'
+                    },
+                    {
+                        data: 'sub_permit',
+                        name: 'sub_permit'
                     },
                     {
                         data: 'status_batch',
@@ -418,6 +435,7 @@
                                     from_date = $('#from_date').val();
                                     company_id = $('#company_id').val();
                                     location_id = $('#location_id').val();
+                                    type_of_job = $('#type_of_job').val();
                                     to_date = $('#to_date').val();
                                     status = $('#status').val();
                                     dashboard_month = dashboard_month;
@@ -438,6 +456,7 @@
                                         dashboard_openCloseStatus +
                                         '&company_id=' + company_id +
                                         '&location_id=' + location_id +
+                                        '&type_of_job=' + type_of_job +
                                         '&unit_id=' + unit_id +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
@@ -453,6 +472,7 @@
                                     permit_id = $('#permit_id').val();
                                     company_id = $('#company_id').val();
                                     location_id = $('#location_id').val();
+                                    type_of_job = $('#type_of_job').val();
                                     unit_id = $('#unit_id').val();
                                     from_date = $('#from_date').val();
                                     to_date = $('#to_date').val();
@@ -471,6 +491,7 @@
                                         '&permit_id=' + permit_id +
                                         '&dashboard_month=' + dashboard_month +
                                         '&dashboard_permitType=' + dashboard_permitType +
+                                        '&type_of_job=' + type_of_job +
                                         '&dashboard_permitStatus=' + dashboard_permitStatus +
                                         '&dashboard_openCloseStatus=' +
                                         dashboard_openCloseStatus +

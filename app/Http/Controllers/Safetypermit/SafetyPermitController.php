@@ -121,6 +121,23 @@ class SafetyPermitController extends Controller
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })
+
+                        ->addColumn('sub_permit', function ($row) {
+                            $names = [];
+
+                            if (!empty($row->sub_permit)) {
+                                $sub_permit_array = is_array($row->sub_permit) ? $row->sub_permit : explode(',', $row->sub_permit);
+
+                                foreach ($sub_permit_array as $sub_permit_id) {
+                                    $name = GetTypeofjob(trim($sub_permit_id));
+                                    if (!empty($name)) {
+                                        $names[] = $name;
+                                    }
+                                }
+                            }
+
+                            return implode('<br>', $names);
+                        })
                         ->addColumn('verified_by', function ($row) {
                             return getUsername($row->verified_by);
                         })
@@ -206,14 +223,14 @@ class SafetyPermitController extends Controller
 
                             return $btn;
                         })
-                        ->rawColumns(['action', 'date', 'created_date', 'created_by', 'status', 'status_batch', 'verified_by', 'approved_by'])
+                        ->rawColumns(['action', 'date', 'created_date', 'created_by', 'status', 'status_batch', 'verified_by', 'approved_by','sub_permit'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
                         ->make(true);
                     return $datatables;
                 } catch (Exception $ex) {
-                    report($ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => __('ptw.please_try_after_some_time')], 406);
                 }
             }
@@ -221,6 +238,7 @@ class SafetyPermitController extends Controller
         $unitList  = $this->unit->select('id', 'unit_name')->where('status', '1')->get();
         $companyList  = $this->company->select('id', 'company_name')->where('status', '1')->get();
         $status = $this->status->get();
+        $typeofjob = $this->typeofwork->getTypeofJob();
         $loggedInCompanyId = encryptId(Auth::user()->company_id);
         $companyname = $request->company_id;
         $fromdate = $request->fromDate;
@@ -230,6 +248,7 @@ class SafetyPermitController extends Controller
             'unitList' => $unitList,
             'status' => $status,
             'companyList' => $companyList,
+            'typeofjob' => $typeofjob,
             'loggedInCompanyId' => $loggedInCompanyId,
             'dashboard_search' => $request,
             'fromdate' => $fromdate,

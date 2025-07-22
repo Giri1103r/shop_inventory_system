@@ -50,6 +50,8 @@
                                         <input type="hidden" name="unsafe_condition" value="{{ $unsafe_condition }}">
                                         <input type="hidden" name="fire_incidence" value="{{ $fire_incidence }}">
                                         <input type="hidden" name="unsafe_act" value="{{ $unsafe_act }}">
+                                        <input type="hidden" name="accident_report" value="{{ $accident_report }}">
+                                        <input type="hidden" name="unit_name" value="{{ $unitId }}">
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspectiontype" class="form-label ">IIR Type</label>

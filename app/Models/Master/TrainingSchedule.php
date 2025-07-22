@@ -176,7 +176,7 @@ class TrainingSchedule extends Model
 
         if ($request->has('open_close_status') && $request->open_close_status) {
             $openCloseStatus = ($request->open_close_status);
-            if ($openCloseStatus == "1") {
+            if ($openCloseStatus == "0") {
                 $query = $query->where('training_schedule.training_status', '!=', 8);
             } else {
                 $query = $query->where('training_schedule.training_status', 8);
@@ -760,7 +760,7 @@ class TrainingSchedule extends Model
             $query->where('training_schedule.created_at', '<=', DBdateformat($request->Todate));
         }
 
-        return $query->get(); 
+        return $query->get();
     }
 
 

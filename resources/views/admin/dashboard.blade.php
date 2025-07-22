@@ -662,7 +662,7 @@
                                     <a class="fas fa-arrow-alt-circle-down chartdownload"
                                         id="AccidentReportUnitWise_download"></a>
                                 </div>
-                                <div id="AccidentReportUnitWiseCountDiv"></div>
+                                <div id="accident_report_unit_wise"></div>
                             </div>
                         </div>
                     </div>
@@ -2549,13 +2549,13 @@
                 }
 
                 function AccidentReportUnitWiseCount(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/AccidentReportUnitWiseCount') }}"
+                    var url = "{{ admin_url('dashboard/accident-report-unit-wise') }}"
                     var data = {
                         CompanyId: CompanyId,
                         Fromdate: Fromdate,
                         Todate: Todate,
                     };
-                    $('#AccidentReportUnitWiseCountDiv').html('');
+                    $('#accident_report_unit_wise').html('');
                     $.ajax({
                         type: 'get',
                         url: url,
@@ -2563,7 +2563,7 @@
                         cache: false,
                         success: function(dataAjx) {
 
-                            $('#AccidentReportUnitWiseCountDiv').html(dataAjx);
+                            $('#accident_report_unit_wise').html(dataAjx);
                         }
                     });
                 }
@@ -2781,7 +2781,7 @@
 
                 // trainig schedule
 
-                function redirectcharturl(chart_type, id, url) {
+                function redirectcharturl(chart_type, id, url, unit_id = null) {
                     let CompanyId = $('#company_id').val();
                     let Fromdate = $('#fromDate').val();
                     let Todate = $('#toDate').val();
@@ -2801,6 +2801,12 @@
                         type: 'hidden',
                         name: chart_type,
                         value: id
+                    }));
+
+                      form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'unit_id',
+                        value: unit_id
                     }));
 
                     form.append($('<input>', {

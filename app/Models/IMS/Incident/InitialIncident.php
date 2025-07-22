@@ -141,7 +141,14 @@ class InitialIncident extends Model
             $query->whereRaw("FIND_IN_SET(?, ims_initial_incident.ua_or_uc)", ($request->unsafe_act));
         }
 
+        if ($request->has('accident_report') && $request->accident_report) {
 
+            $query->where('ims_initial_incident.iir_type', ($request->accident_report));
+        }
+          if ($request->has('unit_name') && $request->unit_name) {
+
+            $query->where('ims_initial_incident.unit_id', ($request->unit_name));
+        }
         if ($request->search['value'] != null || $request->search['value'] != '') {
             $search = $request->search['value'];
 
@@ -994,17 +1001,16 @@ class InitialIncident extends Model
     public function getAccidentReportUnitWiseCountData($request)
     {
         $query = DB::table('ims_initial_incident as iii')
-            ->join('masters_unit as unit', 'iii.unit_id', '=', 'unit.id')
-            ->join('ims_injury_details as imit', 'iii.id', '=', 'imit.incident_id')
-            ->select(
-                'unit.unit_name',
-                'unit.id as unit_id',
-                DB::raw("SUM(CASE WHEN imit.nature_of_injury = 1 THEN 1 ELSE 0 END) AS major"),
-                DB::raw("SUM(CASE WHEN imit.nature_of_injury = 2 THEN 1 ELSE 0 END) AS minor"),
-                DB::raw("SUM(CASE WHEN imit.nature_of_injury = 3 THEN 1 ELSE 0 END) AS fatal")
-            )
-            ->groupBy('unit.unit_name', 'unit.id')
-            ->orderBy('unit.unit_name');
+        ->join('masters_unit as unit', 'iii.unit_id', '=', 'unit.id')
+        ->select(
+            'unit.unit_name',
+            'unit.id as unit_id',
+            DB::raw("SUM(CASE WHEN iii.iir_type = 11 THEN 1 ELSE 0 END) AS major"),
+            DB::raw("SUM(CASE WHEN iii.iir_type = 10 THEN 1 ELSE 0 END) AS minor"),
+            DB::raw("SUM(CASE WHEN iii.iir_type = 12 THEN 1 ELSE 0 END) AS fatal")
+        )
+        ->groupBy('unit.unit_name', 'unit.id')
+        ->orderBy('unit.unit_name');
 
         // Apply company Filter
         if ($request->CompanyId) {
@@ -1301,7 +1307,7 @@ class InitialIncident extends Model
     {
         $request = request();
 
-              $query = $this->where('ims_initial_incident.iir_type', IIR_TYPE_UNSAFE_ACT)->where('ims_initial_incident.trash', 'NO');
+        $query = $this->where('ims_initial_incident.iir_type', IIR_TYPE_UNSAFE_ACT)->where('ims_initial_incident.trash', 'NO');
 
 
         if ($request->has('CompanyId') && $request->CompanyId) {
@@ -1322,7 +1328,7 @@ class InitialIncident extends Model
     {
         $request = request();
 
-             $query = $this->where('ims_initial_incident.iir_type', IIR_TYPE_UNSAFE_CONDITION)->where('ims_initial_incident.trash', 'NO');
+        $query = $this->where('ims_initial_incident.iir_type', IIR_TYPE_UNSAFE_CONDITION)->where('ims_initial_incident.trash', 'NO');
 
 
         if ($request->has('CompanyId') && $request->CompanyId) {
