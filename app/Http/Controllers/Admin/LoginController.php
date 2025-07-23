@@ -66,16 +66,16 @@ class LoginController extends Controller
         }
 
         $email = strtolower($request->email);
-        $ipAddress = $request->ip();
-        $throttleKey = "login_attempts:" . $email;
-        if ($ipAddress) {
-            if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
-                $lockoutTime = RateLimiter::availableIn($throttleKey);
-                $minutesLeft = ceil($lockoutTime / 60);
-                Session::flash('error', "Too many failed login attempts. Try again in $minutesLeft minutes.");
-                return back()->withErrors(['email' => "Too many failed login attempts. Try again in $minutesLeft minutes."]);
-            }
-        }
+        // $ipAddress = $request->ip();
+        // $throttleKey = "login_attempts:" . $email;
+        // if ($ipAddress) {
+        //     if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+        //         $lockoutTime = RateLimiter::availableIn($throttleKey);
+        //         $minutesLeft = ceil($lockoutTime / 60);
+        //         Session::flash('error', "Too many failed login attempts. Try again in $minutesLeft minutes.");
+        //         return back()->withErrors(['email' => "Too many failed login attempts. Try again in $minutesLeft minutes."]);
+        //     }
+        // }
 
         $credentials = $request->only('email', 'password');
         $remember = $request->has('remember');
@@ -84,7 +84,7 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials, $remember)) {
             $request->session()->regenerate();
-            RateLimiter::clear($throttleKey);
+            // RateLimiter::clear($throttleKey);
 
             $user = Auth::user();
 
@@ -98,7 +98,7 @@ class LoginController extends Controller
             Session::flash('success', 'Login successful');
             return redirect()->intended(admin_url('dashboard'));
         }
-        RateLimiter::hit($throttleKey, 18000);
+        // RateLimiter::hit($throttleKey, 18000);
 
         Session::flash('error', 'Invalid Email or Password');
         return back()->withErrors(['email' => 'Email or Password is incorrect']);
