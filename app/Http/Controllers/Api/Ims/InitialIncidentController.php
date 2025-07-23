@@ -263,11 +263,15 @@ class InitialIncidentController extends BaseController
             if ($validator->fails()) {
                 return $this->sendError('Validation Error', $validator->errors(), 422);
             }
-            $getRandomID = IncidentBodyParts::select('random_id')
-                ->where('status', 'T')
-                ->orderByDesc('id')
-                ->first();
-            $randomID = $getRandomID->random_id;
+            $randomID = '';
+            if ($request->anyone_injured  == 1) {
+                $getRandomID = IncidentBodyParts::select('random_id')
+                    ->where('status', 'T')
+                    ->orderByDesc('id')
+                    ->first();
+                $randomID = $getRandomID->random_id;
+            }
+        
             $initialincident = $this->initialincident->incidentStore_api($randomID);
 
 
