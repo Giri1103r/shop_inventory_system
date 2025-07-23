@@ -40,51 +40,55 @@ class LoginController extends Controller
     public function showLoginForm()
     {
 
-        if(Auth::check()){
+        if (Auth::check()) {
             return redirect('dashboard');
         }
 
         return view('auth.login');
     }
 
+
+
     public function authenticate(Request $request)
     {
+        // Validation rules
         $rules = [
             'email' => 'required',
             'password' => 'required',
-            // 'g-recaptcha-response' => 'required',
         ];
+
         $messages = [
             'email.required' => 'Please enter your email address!',
             'password.required' => 'Please enter your password',
-            // 'g-recaptcha-response.required' => 'Please complete the reCAPTCHA verification',
         ];
 
         $validator = Validator::make($request->all(), $rules, $messages);
+
         if ($validator->fails()) {
             return redirect()->back()->withErrors($validator)->withInput();
         }
 
         $email = strtolower($request->email);
-        // $ipAddress = $request->ip();
-        // $throttleKey = "login_attempts:" . $email;
-        // if ($ipAddress) {
-        //     if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
-        //         $lockoutTime = RateLimiter::availableIn($throttleKey);
-        //         $minutesLeft = ceil($lockoutTime / 60);
-        //         Session::flash('error', "Too many failed login attempts. Try again in $minutesLeft minutes.");
-        //         return back()->withErrors(['email' => "Too many failed login attempts. Try again in $minutesLeft minutes."]);
-        //     }
-        // }
+        $ipAddress = $request->ip();
 
+        $throttleKey = 'login:' . $email;
+        if ($ipAddress) {
+
+            // Check attempts
+            if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+                $seconds = RateLimiter::availableIn($throttleKey);
+                $minutes = ceil($seconds / 60);
+                Session::flash('error', "Too many failed login attempts. Try again in $minutes minute(s).");
+                return back()->withErrors(['email' => "Too many failed login attempts. Try again in $minutes minute(s)."]);
+            }
+        }
         $credentials = $request->only('email', 'password');
         $remember = $request->has('remember');
 
-
-
+        // Attempt login
         if (Auth::attempt($credentials, $remember)) {
-            $request->session()->regenerate();
-            // RateLimiter::clear($throttleKey);
+            $request->session()->regenerate();            
+            RateLimiter::clear($throttleKey);             
 
             $user = Auth::user();
 
@@ -93,17 +97,17 @@ class LoginController extends Controller
                 Session::flash('error', 'Employee no longer exists');
                 return redirect()->back();
             }
-            session()->put('locale', $user->language ?: env('APP_LOCALE'));
 
+            session()->put('locale', $user->language ?: env('APP_LOCALE'));
             Session::flash('success', 'Login successful');
             return redirect()->intended(admin_url('dashboard'));
         }
-        // RateLimiter::hit($throttleKey, 18000);
+
+        RateLimiter::hit($throttleKey, 300);  // 300 seconds = 5 mins
 
         Session::flash('error', 'Invalid Email or Password');
         return back()->withErrors(['email' => 'Email or Password is incorrect']);
     }
-
 
     public function logout(Request $request)
     {
