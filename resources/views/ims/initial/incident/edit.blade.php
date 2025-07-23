@@ -1560,8 +1560,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                   </div>-->
+                                                                                                                                                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                       </div>-->
             </div>
         </div>
     </div>
@@ -1827,12 +1827,26 @@
         });
         $(document).ready(function() {
             $('input[name="anyone_injured"]').on('change', function() {
-                if ($(this).val() === '1') {
-                    $('.injuryDetails').slideDown();
+                if ($(this).val() == '1') {
+                    $('.injuryDetails').show();
+
+                    $('.injuryDetails').find('input, select').each(function() {
+                        $(this).addClass('require');
+                        $(this).attr('required', true);
+                    });
                 } else {
-                    $('.injuryDetails').slideUp();
+                    $('.injuryDetails').hide();
+                    $('.injuryDetails').find('input, select').each(function() {
+                        $(this).removeClass('require');
+                        $(this).removeAttr('required');
+                        $(this).val('');
+                        if ($(this).hasClass('single-select')) {
+                            $(this).val('').trigger('change');
+                        }
+                    });
                 }
             });
+            $('input[name="anyone_injured"]:checked').trigger('change');
 
             // if ($('input[name="anyone_injured"]:checked').val() == '1') {
             //     $('.editInjuryDetails').show();

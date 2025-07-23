@@ -152,7 +152,7 @@ class InitialIncidentController extends Controller
                             // }
                             // if (CheckUserPermission('edit')) {
 
-                            if ($row->incident_status == 1 && $row->created_by == Auth::id()) {
+                            if ((CheckUserRole(ROLE_SUPERADMIN)) || ($row->incident_status == 1 && $row->created_by == Auth::id())) {
                                 $btn .= '<a href="' . admin_url('incident/initial-incident/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
                             // }

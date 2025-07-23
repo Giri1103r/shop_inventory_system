@@ -84,14 +84,13 @@ class LoginController extends Controller
         }
         $credentials = $request->only('email', 'password');
         $remember = $request->has('remember');
-
+        $credentials['trash'] = 'no';
         // Attempt login
         if (Auth::attempt($credentials, $remember)) {
-            $request->session()->regenerate();            
-            RateLimiter::clear($throttleKey);             
+            $request->session()->regenerate();
+            RateLimiter::clear($throttleKey);
 
             $user = Auth::user();
-
             if ($user->status == 0) {
                 Auth::logout();
                 Session::flash('error', 'Employee no longer exists');
