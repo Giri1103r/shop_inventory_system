@@ -271,7 +271,7 @@ class InitialIncidentController extends BaseController
                     ->first();
                 $randomID = $getRandomID->random_id;
             }
-        
+
             $initialincident = $this->initialincident->incidentStore_api($randomID);
 
 
@@ -1153,30 +1153,34 @@ class InitialIncidentController extends BaseController
                         $fishboneDecodedData = $decoded;
                     }
                 }
+                if ($getInvestigation) {
+                    $Investigation = [
+                        'name_of_the_witness' => $getInvestigation->witness_name,
+                        'was_anything_damaged' => implode(', ', $damagedLabels),
+                        'prca' => $getInvestigation->root_cause_analysis == 1 ? 'Why Why Analysis' : ($getInvestigation->root_cause_analysis == 2 ? 'Fish Bone Analysis' : 'NA'),
+                        'remark' => $getInvestigation->remark,
+                        'investigation_submission_date' => Displaydateformat($getInvestigation->investigation_date),
+                        'investigation_submission_time' => $getInvestigation->investigation_time,
+                        'risk_analysis' => $getInvestigation->risk_analysis == 1 ? 'Yes' : 'No',
+                        'risk_analysis_remark' => $remark,
+                        'why_why_analysis' => $why_why_analysis,
+                        'fishboneData' => $fishboneDecodedData,
+                        'corrective_preventive_action' => $getInvestigation->corrective_preventive_action,
+                    ];
+                }
 
-                $Investigation = [
-                    'name_of_the_witness' => $getInvestigation->witness_name,
-                    'was_anything_damaged' => implode(', ', $damagedLabels),
-                    'prca' => $getInvestigation->root_cause_analysis == 1 ? 'Why Why Analysis' : ($getInvestigation->root_cause_analysis == 2 ? 'Fish Bone Analysis' : 'NA'),
-                    'remark' => $getInvestigation->remark,
-                    'investigation_submission_date' => Displaydateformat($getInvestigation->investigation_date),
-                    'investigation_submission_time' => $getInvestigation->investigation_time,
-                    'risk_analysis' => $getInvestigation->risk_analysis == 1 ? 'Yes' : 'No',
-                    'risk_analysis_remark' => $remark,
-                    'why_why_analysis' => $why_why_analysis,
-                    'fishboneData' => $fishboneDecodedData,
-                    'corrective_preventive_action' => $getInvestigation->corrective_preventive_action,
-                ];
 
+                if ($rcpa) {
+                    $rcpaList = [
+                        'rcpa_id' => $rcpa->rcpa_id,
+                        'rcpa' => $rcpa->rcpa,
+                        'responsibility' => getUsername($rcpa->responsibility),
+                        'timeline' => DisplayDateformat($rcpa->timeline),
+                        'status' =>  $rcpa->capa_status == 1 ? 'Open' : ($rcpa->capa_status == 2 ? 'In Progress' : 'Closed'),
+                        'remark' => $rcpa->remark,
+                    ];
+                }
 
-                $rcpaList = [
-                    'rcpa_id' => $rcpa->rcpa_id,
-                    'rcpa' => $rcpa->rcpa,
-                    'responsibility' => getUsername($rcpa->responsibility),
-                    'timeline' => DisplayDateformat($rcpa->timeline),
-                    'status' =>  $rcpa->capa_status == 1 ? 'Open' : ($rcpa->capa_status == 2 ? 'In Progress' : 'Closed'),
-                    'remark' => $rcpa->remark,
-                ];
 
 
                 $ua_uc_labels = [];
@@ -1202,10 +1206,12 @@ class InitialIncidentController extends BaseController
                     'uauc' => $incident_report->ua_uc_yes_no == 1 ? 'Yes' : 'No',
                     'ua/uc' => $ua_uc_labels,
                 ];
-                $risk_levelList = [
-                    'risk_level' => $getrisklevel->risk_level == 1 ? 'Low' : ($getrisklevel->risk_level == 2 ? 'Medium' : 'High'),
-                    'description_capa' => $getrisklevel->description_ca,
-                ];
+                if ($getrisklevel) {
+                    $risk_levelList = [
+                        'risk_level' => $getrisklevel->risk_level == 1 ? 'Low' : ($getrisklevel->risk_level == 2 ? 'Medium' : 'High'),
+                        'description_capa' => $getrisklevel->description_ca,
+                    ];
+                }
 
 
 
@@ -1216,19 +1222,25 @@ class InitialIncidentController extends BaseController
                     }
                 }
 
+                $action_submissionList = [];
+                if ($rcpa) {
+                    $action_submissionList = [
+                        'submission_by' => getUsername($rcpa->action_submission_by),
+                        'date' => Displaydateformat($rcpa->action_submission_date),
+                        'existing_evidence' => $action_submission_evidenceimages,
+                        'action_taken' => $rcpa->action_submission_description,
+                    ];
+                }
 
-                $action_submissionList = [
-                    'submission_by' => getUsername($rcpa->action_submission_by),
-                    'date' => Displaydateformat($rcpa->action_submission_date),
-                    'existing_evidence' => $action_submission_evidenceimages,
-                    'action_taken' => $rcpa->action_submission_description,
-                ];
+                $ehs_approval = [];
+                if ($getEHSApprovalincident) {
+                    $ehs_approval = [
+                        'approval_by' => $getEHSApprovalincident->reviewer_name,
+                        'date' => Displaydateformat($getEHSApprovalincident->date),
+                        'remark' => $getEHSApprovalincident->remark,
+                    ];
+                }
 
-                $ehs_approval = [
-                    'approval_by' => $getEHSApprovalincident->reviewer_name ?? '',
-                    'date' => Displaydateformat($getEHSApprovalincident->date),
-                    'remark' => $getEHSApprovalincident->remark,
-                ];
 
 
                 return response()->json([
@@ -1240,7 +1252,7 @@ class InitialIncidentController extends BaseController
                         'accelerating_incident_investigations' => $accelerating_incident_investigations,
                         'investigation' => $Investigation,
                         'rcpa' => $rcpaList,
-                        'main_root_cause' =>  $getInvestigation->main_root_cause,
+                        'main_root_cause' =>  $getInvestigation->main_root_cause ?? '',
                         'leading_factors' =>  $getInvestigation->leading_factors == 1 ? 'Human Factor' : ' System Factor',
                         'recommended_causes' => $recommended_causesList,
                         'risk_level' => $risk_levelList,
