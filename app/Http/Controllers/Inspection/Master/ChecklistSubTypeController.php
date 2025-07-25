@@ -4,19 +4,24 @@ namespace App\Http\Controllers\Inspection\Master;
 
 use Exception;
 // use Response;
+use App\Models\UploadLog;
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
-use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
+use App\Imports\ImportChecklistSubtype;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Response;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
+use Spatie\SimpleExcel\SimpleExcelWriter;
 use App\Models\Inspection\Master\ChecklistFile;
 use App\Models\Inspection\Master\ChecklistType;
 use App\Models\Inspection\Master\ChecklistSubType;
 use App\Models\Inspection\Master\ChecklistOptionType;
 use App\Models\Inspection\Master\ChecklistSubTypeData;
-use Illuminate\Support\Facades\Response;
+use App\Jobs\ImportChecklistSubtype as JobsImportChecklistSubtype;
 
 class ChecklistSubTypeController extends Controller
 {
@@ -35,6 +40,7 @@ class ChecklistSubTypeController extends Controller
         $this->checklist_subtype_data = new ChecklistSubTypeData();
         $this->checklist_file = new ChecklistFile();
         $this->checklist_option = new ChecklistOptionType();
+        $this->upload_log = new UploadLog();
     }
     public function index(Request $request)
     {
@@ -235,11 +241,9 @@ class ChecklistSubTypeController extends Controller
             if ($checklistSubtypeData) {
                 return response()->json(['status' => 'warning', 'msg' => 'Dependancy Master you Cannot make this In-active!'], 200);
             } else {
-                 $this->checklist_subtype->statuschange($id);
-                 return response()->json(['status' => 'success', 'msg' => 'Checklist Category Status Changed Successfully!'], 200);
+                $this->checklist_subtype->statuschange($id);
+                return response()->json(['status' => 'success', 'msg' => 'Checklist Category Status Changed Successfully!'], 200);
             }
-
-
         } catch (Exception $ex) {
 
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
@@ -346,13 +350,13 @@ class ChecklistSubTypeController extends Controller
     {
         $data = array();
 
-        return view('master.checklist_subtype.import', $data);
+        return view('inspection.master.checklist_subtype.import', $data);
     }
 
     public function downloadSample()
     {
 
-        $filedetails =  exportsamplefile('checklist_type');
+        $filedetails =  exportsamplefile('checklist_sub_type');
         $filePath = $filedetails->sample_file;
         $customFileName = $filedetails->file_name;
 
@@ -362,12 +366,12 @@ class ChecklistSubTypeController extends Controller
     public function importSubmit(Request $request)
     {
         try {
-            $file = $request->file('checklist_type_file_upload');
+            $file = $request->file('checklist_upload');
             $rules = [
-                'checklist_type_file_upload' => 'required',
+                'checklist_upload' => 'required',
             ];
             $messages = [
-                'checklist_type_file_upload.required' => 'Please upload a file',
+                'checklist_upload.required' => 'Please upload a file',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
@@ -375,22 +379,29 @@ class ChecklistSubTypeController extends Controller
             }
             if ($file != null) {
 
-                $uploadpath = 'uploads/checklist_type';
+                $uploadpath = 'public/uploads/inspection/master/checklistsubtype';
 
-                $filenewname = time() . Str::random('16') . '.' . $file->getClientOriginalExtension();
+                $folderPath = public_path('uploads/inspection/checklistsubtype');
+
+                if (!File::exists($folderPath)) {
+
+                    File::makeDirectory($folderPath, 0755, true);
+                }
+
+                $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
 
                 $fileName = $file->getClientOriginalName();
                 $fileSize = $file->getSize();
 
                 $fileExt = $file->getClientOriginalExtension();
 
-                uploadFile($file, $uploadpath, $filenewname);
+                $file->move($uploadpath, $filenewname);
 
                 $path = $uploadpath . "/" . $filenewname;
                 $user_id = Auth::id();
 
                 $insert_data = array(
-                    'upload_type' => checklist_type_UPLOAD,
+                    'upload_type' => 1,
                     'upload_status' => 0,
                     'file_name' => $filenewname,
                     'file_orgname' => $fileName,
@@ -407,18 +418,17 @@ class ChecklistSubTypeController extends Controller
                     "log_id" => $insert_id,
                     "path" => $path,
                 ];
-
-                dispatch(new ImportChecklistCategoryJob($details));
+                dispatch(new JobsImportChecklistSubtype($details));
             }
             $insert_data['log_id'] = $insert_id;
             $insert_data['Uploded_by'] = Auth::user()->toArray();
 
-            Session::flash('success', 'Permit Checklist Category Upload Successfull');
-            return redirect(admin_url('inspection/checklist-type/list'));
+            Session::flash('success', 'Permit Checklist Category Upload Successfully');
+            return redirect(admin_url('inspection/master/checklist-sub-type/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Permit Checklist Category failed!');
-            return redirect(admin_url('inspection/checklist-type/list'));
+            return redirect(admin_url('inspection/master/checklist-sub-type/list'));
         }
     }
 

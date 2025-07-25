@@ -897,9 +897,9 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::post('delete', [ChecklistSubTypeDataController::class, 'delete']);
                     Route::get('export/excel', [ChecklistSubTypeDataController::class, 'exportExcel']);
                     Route::get('export/pdf', [ChecklistSubTypeDataController::class, 'exportPdf']);
-                    Route::get('sample_download', [ChecklistSubTypeDataController::class, 'DownloadSample']);
+                    Route::get('sampledownload', [ChecklistSubTypeDataController::class, 'DownloadSample']);
                     Route::get('import', [ChecklistSubTypeDataController::class, 'import']);
-                    Route::post('import/Submit', [ChecklistSubTypeDataController::class, 'importSubmit']);
+                    Route::post('import/submit', [ChecklistSubTypeDataController::class, 'importSubmit']);
                     Route::post('status', [ChecklistSubTypeDataController::class, 'statusChange']);
                     Route::post('unique', [ChecklistSubTypeDataController::class, 'Uniquecheck']);
                     Route::DELETE('deleteChecklist/{id}', [ChecklistSubTypeDataController::class, 'deleteChecklist']);
