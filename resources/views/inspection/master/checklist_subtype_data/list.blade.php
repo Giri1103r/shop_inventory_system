@@ -13,9 +13,8 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-                        {{-- @if (CheckUserPermission('import'))
-                            <x-button-import href="{{ admin_url('inspection/master/checklist-sub-type-data/import') }}"></x-button-import>
-                        @endif --}}
+                        <x-button-import
+                            href="{{ admin_url('inspection/master/checklist-sub-type-data/import') }}"></x-button-import>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
                             href="{{ admin_url('inspection/master/checklist-sub-type-data/add') }}">Add</x-button-add>
@@ -25,65 +24,65 @@
                         <form action="" id="formsearch">
                             <div class="card-body">
 
-                                    <div class="row">
+                                <div class="row">
 
-                                        <div class="col-md-4 mb-3 form-input">
-                                            <label for="checklist_type_id" class="form-label ">Checklist Type Name</label>
-                                            <select name="checklist_type_id" id="checklist_type_id"
-                                                class=" form-control single-select" style="width: 100%">
-                                                <option value="">Select Checklist Type Name</option>
-                                                @foreach ($checklistTypeList as $list)
-                                                    <option value="{{ encryptId($list->id) }}">
-                                                        {{ $list->category_name }}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4 mb-3 form-input">
-                                            <label for="checklist_sub_type_id" class="form-label ">Checklist Sub Type Name
-                                            </label>
-                                            <select name="checklist_sub_type_id" id="checklist_sub_type_id"
-                                                class=" form-control single-select" style="width: 100%">
-                                                <option value="">Select Checklist Sub Type Name</option>
+                                    <div class="col-md-4 mb-3 form-input">
+                                        <label for="checklist_type_id" class="form-label ">Checklist Type Name</label>
+                                        <select name="checklist_type_id" id="checklist_type_id"
+                                            class=" form-control single-select" style="width: 100%">
+                                            <option value="">Select Checklist Type Name</option>
+                                            @foreach ($checklistTypeList as $list)
+                                                <option value="{{ encryptId($list->id) }}">
+                                                    {{ $list->category_name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mb-3 form-input">
+                                        <label for="checklist_sub_type_id" class="form-label ">Checklist Sub Type Name
+                                        </label>
+                                        <select name="checklist_sub_type_id" id="checklist_sub_type_id"
+                                            class=" form-control single-select" style="width: 100%">
+                                            <option value="">Select Checklist Sub Type Name</option>
 
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">From Date</label>
-                                            <div class="input-group date form-input custom-height">
-                                                <input type="text" class="form-control " name="from_date" id="from_date"
-                                                    autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                        <div class="col-md-4 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">To Date</label>
-                                            <div class="input-group date form-input  custom-height">
-                                                <input type="text" class="form-control " name="to_date" id="to_date"
-                                                    autocomplete="off">
-                                                <div class="input-group-addon input-group-text">
-                                                    <span class="fa fa-calendar"></span>
-                                                </div>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mb-3 form-input">
+                                        <label for="emp_name" class="form-label ">From Date</label>
+                                        <div class="input-group date form-input custom-height">
+                                            <input type="text" class="form-control " name="from_date" id="from_date"
+                                                autocomplete="off">
+                                            <div class="input-group-addon input-group-text">
+                                                <span class="fa fa-calendar"></span>
                                             </div>
                                         </div>
 
-                                        <div class="col-md-4 mb-3 form-input">
-                                            <label for="status" class="form-label ">{{ __('common.status') }}</label>
-                                            <select name="status" id="status" style="width: 100%"
-                                                class="form-control single-select">
-                                                <option value="">Select Status</option>
-                                                <option value="{{ encryptId(1) }}">Active</option>
-                                                <option value="{{ encryptId(0) }}">In-Active</option>
-                                            </select>
-                                        </div>
-                                        <div class="col-md-4 mt-3">
-                                            <x-button-search></x-button-search>
-                                            <x-button-reset></x-button-reset>
-
+                                    </div>
+                                    <div class="col-md-4 mb-3 form-input">
+                                        <label for="emp_name" class="form-label ">To Date</label>
+                                        <div class="input-group date form-input  custom-height">
+                                            <input type="text" class="form-control " name="to_date" id="to_date"
+                                                autocomplete="off">
+                                            <div class="input-group-addon input-group-text">
+                                                <span class="fa fa-calendar"></span>
+                                            </div>
                                         </div>
                                     </div>
+
+                                    <div class="col-md-4 mb-3 form-input">
+                                        <label for="status" class="form-label ">{{ __('common.status') }}</label>
+                                        <select name="status" id="status" style="width: 100%"
+                                            class="form-control single-select">
+                                            <option value="">Select Status</option>
+                                            <option value="{{ encryptId(1) }}">Active</option>
+                                            <option value="{{ encryptId(0) }}">In-Active</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 mt-3">
+                                        <x-button-search></x-button-search>
+                                        <x-button-reset></x-button-reset>
+
+                                    </div>
+                                </div>
 
                             </div>
                         </form>

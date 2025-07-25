@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Checklist Type Import')
-@section('pageurl', admin_url('checklistmaster/list'))
+@section('title', 'Checklist Sub Type Import')
+@section('pageurl', admin_url('inspection/master/checklist-sub-type/list'))
 
 
 @section('content')
@@ -24,21 +24,21 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('administration.employee_import') }}</h4> --}}
                                 <div class="d-flex justify-content-end p-2 gap-2">
-                                    <x-button-download href="{{ admin_url('inspection/master/checklist-type/sample_download') }}"></x-button-download>
-                                    <x-button-back href="{{ admin_url('inspection/master/checklist-type/list') }}"></x-button-back>
+                                    <x-button-download href="{{ admin_url('inspection/master/checklist-sub-type/sampledownload') }}"></x-button-download>
+                                    <x-button-back href="{{ admin_url('inspection/master/checklist-sub-type/list') }}"></x-button-back>
                                 </div>
                             </div>
 
                             <div class="card-body ">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="companyimport" enctype="multipart/form-data"
-                                        action="{{ admin_url('inspection/master/checklist-type/import/Submit') }}">
+                                    <form method="POST" id="checklistimport" enctype="multipart/form-data"
+                                        action="{{ admin_url('inspection/master/checklist-sub-type/import/submit') }}">
                                         @csrf
                                         <div class="row">
                                             <div class="mb-3 col-md-6 form-input">
-                                                <label class="form-label required">File</label>
-                                                <input type="file"  name="checklist_type_file_upload" class="form-control"  placeholder="">
+                                                <label class="form-label require">File</label>
+                                                <input type="file"  name="checklist_upload" class="form-control"  placeholder="">
                                             </div>
                                         </div>
                                         <hr>
@@ -65,17 +65,16 @@
 @push('script')
     <script type="text/javascript">
         $(function() {
-            $('#companyimport').validate({
+            $('#checklistimport').validate({
                 rules: {
-
-                    company_upload: {
+                    checklist_upload: {
                         required: true,
                         extension: "xlsx",
                         filesize: 5242880,
                     },
                 },
                 messages: {
-                    company_upload: {
+                    checklist_upload: {
                         required: "Please upload a file",
                         extension: "Please upload an Excel file (.xlsx)",
                     },

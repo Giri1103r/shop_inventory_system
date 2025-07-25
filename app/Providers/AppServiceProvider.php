@@ -269,7 +269,7 @@ class AppServiceProvider extends ServiceProvider
         defined('CHECKLIST_SUB_TYPE') or define('CHECKLIST_SUB_TYPE', 2);
 
         //Upload
-        defined('CHECKLIST_TYPE_UPLOAD') or define('CHECKLIST_TYPE_UPLOAD', 19);
+        defined('CHECKLIST_SUBTYPE_UPLOAD') or define('CHECKLIST_SUBTYPE_UPLOAD', 19);
 
 
 

@@ -13,7 +13,7 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
-
+                        <x-button-import href="{{ admin_url('inspection/master/checklist-sub-type/import') }}"></x-button-import>
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
                             href="{{ admin_url('inspection/master/checklist-sub-type/add') }}">Add</x-button-add>
