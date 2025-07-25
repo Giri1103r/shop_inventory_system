@@ -611,15 +611,19 @@
                                                         </div>
 
                                                         <div class="col-md-2 form-input">
-                                                            <label for="inputFirstName" class="form-label">Location of
+                                                            <label for="inputFirstName"
+                                                                class="form-label require">Location of
                                                                 the
                                                                 Injury</label>
                                                             <br>
+                                                            <input type="hidden" id="injury_body_part_0">
                                                             <span class="input-group-addon injury-btn btn btn-info"
                                                                 data-id="0" data-injid="0" attr_emp=""
                                                                 alt="0"><i class="fa fa-male"
                                                                     aria-hidden="true"></i></span>
                                                         </div>
+                                                        <span id="injury_body_part_0-error"
+                                                            class="error invalid-feedback">This field is required.</span>
                                                         <div class="col-md-2 text-right">
                                                             <button type="button"
                                                                 class="btn btn-danger btn-sm removeInjuryDetails"
@@ -1285,8 +1289,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                               </div>-->
+                                                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                   </div>-->
             </div>
         </div>
     </div>
@@ -1570,6 +1574,7 @@
             });
             $('input[name="anyone_injured"]:checked').trigger('change');
 
+
             function initializeSelect2() {
                 $('.responsible_person').select2({
                     ajax: {
@@ -1661,8 +1666,10 @@
 
                 <div class="col-md-2 form-input">
                     <label for="inputFirstName" class="form-label require">Location of the Injury</label></br>
+                     <input type="hidden" id="injury_body_part_${injuryIndex}">
                     <span class="input-group-addon injury-btn btn btn-info" data-id='${injuryIndex}' data-injid="${injuryIndex}" attr_emp="" alt="${injuryIndex}"><i class="fa fa-male" aria-hidden="true"></i></span>
                 </div>
+                 <span id="injury_body_part_${injuryIndex}-error" class="error invalid-feedback">This field is required.</span>
             <div class="col-md-2 text-right">
                 <button type="button" class="btn btn-danger btn-sm removeInjuryDetails" data-index="${injuryIndex}" style="margin-top: 35px;">Remove</button>
             </div>
@@ -2051,6 +2058,8 @@
 
         $(function() {
             $('#incidentAdd').validate({
+                ignore: [],
+
                 rules: {
                     incident_date_time: {
                         required: true,
