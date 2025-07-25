@@ -1114,10 +1114,10 @@ class InitialIncidentController extends BaseController
                         'id' => $getEHSReview->id,
                         'reviewer_name' => $getEHSReview->reviewer_name ?? '',
                         'date' => Displaydateformat($getEHSReview->date) ?? '',
-                        'target_date' => Displaydateformat($getEHSReview->target_date) ?? '', 
-                        'team_member_names' => $getEHSReview->team_member_names,
-                        'investigation_reported_prepared_by' => getUsername($getEHSReview->investigation_reported_by),
-                        'remark' => $getEHSReview->remark,
+                        'target_date' => Displaydateformat($getEHSReview->target_date) ?? '',
+                        'team_member_names' => $getEHSReview->team_member_names ?? '',
+                        'investigation_reported_prepared_by' => getUsername($getEHSReview->investigation_reported_by) ?? '',
+                        'remark' => $getEHSReview->remark ?? '',
                     ];
                 }
 
@@ -1246,6 +1246,7 @@ class InitialIncidentController extends BaseController
                 return response()->json([
                     'success' => true,
                     'data' => [
+                        'approve_status' => $rcpa->status_name,
                         'incident_reported_by' => $incident_reported_by,
                         'incident_report_details' => $incident_report_details,
                         'injury_details' => $injuryDetailList,

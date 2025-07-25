@@ -208,17 +208,20 @@ class Rcpa extends Model
         $update_array = array(
             'incident_status' => $incident_status,
             'updated_by' => Auth::id(),
-            'ehs_remarks' =>$request->remark,
+            'ehs_remarks' => $request->remark,
             'updated_at' => now(),
         );
         return $this->where('id', $rcpa_id)->update($update_array);
     }
+
     public function selectOne($id)
     {
 
         $data = $this->select(
             'ims_rcpa_responsible.*',
+            'ims_incident_status.status_name',
         )
+            ->leftJoin('ims_incident_status', 'ims_rcpa_responsible.incident_status', '=', 'ims_incident_status.id')
             ->where('ims_rcpa_responsible.id', $id)
             ->first();
         return $data;
