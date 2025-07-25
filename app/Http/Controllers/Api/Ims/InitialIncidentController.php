@@ -1113,8 +1113,8 @@ class InitialIncidentController extends BaseController
                     $accelerating_incident_investigations = [
                         'id' => $getEHSReview->id,
                         'reviewer_name' => $getEHSReview->reviewer_name ?? '',
-                        'date' => Displaydateformat($getEHSReview->date),
-                        'target_date' => Displaydateformat($getEHSReview->target_date),
+                        'date' => Displaydateformat($getEHSReview->date) ?? '',
+                        'target_date' => Displaydateformat($getEHSReview->target_date) ?? '', 
                         'team_member_names' => $getEHSReview->team_member_names,
                         'investigation_reported_prepared_by' => getUsername($getEHSReview->investigation_reported_by),
                         'remark' => $getEHSReview->remark,
