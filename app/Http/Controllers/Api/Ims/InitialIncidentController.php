@@ -1112,7 +1112,7 @@ class InitialIncidentController extends BaseController
                 if ($getEHSReview) {
                     $accelerating_incident_investigations = [
                         'id' => $getEHSReview->id,
-                        'reviewer_name' => $getEHSReview->reviewer_name,
+                        'reviewer_name' => $getEHSReview->reviewer_name ?? '',
                         'date' => Displaydateformat($getEHSReview->date),
                         'target_date' => Displaydateformat($getEHSReview->target_date),
                         'team_member_names' => $getEHSReview->team_member_names,
@@ -1225,7 +1225,7 @@ class InitialIncidentController extends BaseController
                 ];
 
                 $ehs_approval = [
-                    'approval_by' => $getEHSApprovalincident->reviewer_name,
+                    'approval_by' => $getEHSApprovalincident->reviewer_name ?? '',
                     'date' => Displaydateformat($getEHSApprovalincident->date),
                     'remark' => $getEHSApprovalincident->remark,
                 ];
