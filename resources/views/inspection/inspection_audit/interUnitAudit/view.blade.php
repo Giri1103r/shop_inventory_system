@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Inter Unit Monthly Audit')
+@section('title', 'EHS Monthly Audit')
 @section('pageurl', admin_url('audit/audit/inter-unit-audit/checklist/list'))
 
 @section('content')
@@ -32,7 +32,7 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Inter Unit Monthly Audit</h4>
+                                        <h4 class="text-white">EHS Monthly Audit</h4>
                                     </div>
                                 </div>
                                 <div class="row">

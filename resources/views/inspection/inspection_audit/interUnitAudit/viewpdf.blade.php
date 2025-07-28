@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Inter Unit Monthly Audit | KARAM</title>
+    <title>EHS Monthly Audit | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Inter Unit Monthly Audit</td>
+                   EHS Monthly Audit</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -149,7 +149,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Inter Unit Monthly Audit
+                   EHS Monthly Audit
                 </td>
             </tr>
         </table>
@@ -167,7 +167,7 @@
                     </th>
                     <th colspan="8" style="border:1px solid black;">
                         <h3>
-                            <span><b>Inter Unit Monthly Audit Checklist</b></span>
+                            <span><b>Inter Unit Auditt Checklist</b></span>
                         </h3>
                     </th>
 

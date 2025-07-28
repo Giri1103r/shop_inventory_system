@@ -15,7 +15,7 @@
             'Audit Assessment',
             'Audit Analysis',
             'Inter Unit Audit',
-            'EHS Audit Calendar'
+            'Monthly Audit Plan'
         ];
 
         var values = [

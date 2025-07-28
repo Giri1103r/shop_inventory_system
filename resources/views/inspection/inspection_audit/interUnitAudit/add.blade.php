@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Inter Unit Monthly Audit')
+@section('title', 'EHS Monthly Audit')
 @section('pageurl', admin_url('audit/inter-unit-audit/checklist/list'))
 
 

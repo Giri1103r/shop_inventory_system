@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Inter Unit Monthly Audit')
+@section('title', 'EHS Monthly Audit')
 @section('pageurl', admin_url('audit/audit/inter-unit-audit/checklist/list'))
 
 
@@ -294,12 +294,12 @@
                     var id = $(this).data('id');
                     var types = $(this).data('type');
                     if (types == 1) {
-                        var title = '{{ __('Do You want to In-Activate Inter Unit Monthly Audit') }}';
+                        var title = '{{ __('Do You want to In-Activate EHS Monthly Audit') }}';
                         var text = '{{ __('common.inactive') }}';
                         var btncolor = '#dc3545'
 
                     } else {
-                        var title = '{{ __('Do You want to Activate Inter Unit Monthly Audit') }}';
+                        var title = '{{ __('Do You want to Activate EHS Monthly Audit') }}';
                         var text = '{{ __('common.active') }}';
                         var btncolor = '#7ddc35'
                     }
