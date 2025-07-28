@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Auth;
 use App\Scopes\TrashScope;
+use App\Models\Inspection\MSDS\MsdsFileUpload;
 
 class MSDSDetails extends Model
 {
@@ -27,6 +28,7 @@ class MSDSDetails extends Model
         'nfa_rating_value',
         'msds_availability_status',
         'remark',
+        'type_of_chemical',
         'status',
         'trash',
         'created_by',
@@ -40,40 +42,77 @@ class MSDSDetails extends Model
         'trash' => 'NO'
     ];
 
+    // public function store($id)
+    // {
+    //     $request = request();
+
+    //     foreach ($request->item_code as $index => $itemCode) {
+
+
+    //         $nfaRatingData = [];
+
+    //         foreach ($request->nfa_rating_id as $index => $ratingIds) {
+    //             $values = $request->value_nfa_rating[$index] ?? [];
+    //             foreach ($ratingIds as $i => $ratingId) {
+    //                 $nfaRatingData[] = [
+    //                     'id' => $ratingId,
+    //                     'value' => $values[$i] ?? null,
+    //                 ];
+    //             }
+    //         }
+
+
+    //         $insert_array = [
+    //             'serial_number' => $request->serial_number[$index],
+    //             'item_code' => $itemCode,
+    //             'msds_id' => $id,
+    //             'name_of_chemical' => $request->name_of_chemical[$index],
+    //             'storage_capacity' => $request->storage_capacity[$index],
+    //             'nfa_rating' => json_encode($nfaRatingData),
+    //             'msds_availability_status' => decryptId($request->msds_availability_status[$index]),
+    //             'type_of_chemical' => decryptId($request->type_of_chemical[$index]),
+    //             'remark' => $request->remark[$index],
+    //             'created_by' => Auth::id(),
+    //         ];
+
+    //         $detail = $this->create($insert_array);
+
+
+    //     }
+    // }
     public function store($id)
     {
         $request = request();
 
         foreach ($request->item_code as $index => $itemCode) {
-
-
             $nfaRatingData = [];
 
-            foreach ($request->nfa_rating_id as $index => $ratingIds) {
-                $values = $request->value_nfa_rating[$index] ?? [];
-                foreach ($ratingIds as $i => $ratingId) {
-                    $nfaRatingData[] = [
-                        'id' => $ratingId,
-                        'value' => $values[$i] ?? null,
-                    ];
-                }
+            foreach ($request->nfa_rating_id[$index] ?? [] as $i => $ratingId) {
+                $nfaRatingData[] = [
+                    'id'    => $ratingId,
+                    'value' => $request->value_nfa_rating[$index][$i] ?? null,
+                ];
             }
 
-
             $insert_array = [
-                'serial_number' => $request->serial_number[$index],
-                'item_code' => $itemCode,
-                'msds_id' => $id,
-                'name_of_chemical' => $request->name_of_chemical[$index],
-                'storage_capacity' => $request->storage_capacity[$index],
-                'nfa_rating' => json_encode($nfaRatingData),
+                'serial_number'            => $request->serial_number[$index],
+                'item_code'                => $itemCode,
+                'msds_id'                  => $id,
+                'name_of_chemical'         => $request->name_of_chemical[$index],
+                'storage_capacity'         => $request->storage_capacity[$index],
+                'nfa_rating'               => json_encode($nfaRatingData),
                 'msds_availability_status' => decryptId($request->msds_availability_status[$index]),
-                'remark' => $request->remark[$index],
-                'created_by' => Auth::id(),
+                'type_of_chemical'         => decryptId($request->type_of_chemical[$index]),
+                'remark'                   => $request->remark[$index],
+                'created_by'               => Auth::id(),
             ];
 
-            $this->create($insert_array);
+            $detail = $this->create($insert_array);
 
+            // Upload file for this detail if exists
+            if ($request->hasFile("msds_image.$index")) {
+                app(MsdsFileUpload::class)->file_upload($id, $detail->id, $index);
+            }
         }
     }
 

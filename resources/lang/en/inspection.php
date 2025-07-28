@@ -186,7 +186,7 @@ return [
 
     // Isolation Valve Inspection
     'location_isv' => 'Location Of ISV',
-    'size_isv' => 'Size Of ISV',
+    'size_isv' => 'Size Of ISV (mm)',
     'wheel_operation' => 'Wheel Operation',
     'leakage' => 'Leakage',
     'valve_type' => 'Valve Type',

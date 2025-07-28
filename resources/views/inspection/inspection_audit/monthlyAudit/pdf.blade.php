@@ -152,11 +152,11 @@
             </tr>
         </table>
     </div>
-    
+
     @php
-    $flattenedContent = collect($content)->flatten(1);
+        $flattenedContent = collect($content)->flatten(1);
     @endphp
-    
+
     <table width="100%" style="width:100%; border-collapse: collapse; margin-top: 10px;">
         <tr>
             <td colspan="4" style="border:1px solid black; height:50px; text-align: center;">
@@ -167,8 +167,9 @@
             </td>
         </tr>
     </table>
-    
-    <table class="table table-bordered table-hover tblborder" style="width:100%; border-collapse: collapse;" border="1">
+
+    <table class="table table-bordered table-hover tblborder" style="width:100%; border-collapse: collapse;"
+        border="1">
         <thead>
             <tr>
                 <th>Sr.</th>
@@ -179,16 +180,19 @@
                 <th>Frequency</th>
                 <th>Direct/Indirect</th>
                 <th>Points</th>
+                <th>Auditor Name</th>
+                <th>Audit Date</th>
+                <th>Audit Time</th>
                 <th>Remarks</th>
                 <th>Created At</th>
             </tr>
         </thead>
         <tbody>
             @foreach ($content as $unitName => $records)
-            <tr style="background-color: #ffb9bf; color: #fff; font-weight: bold;">
-                <td colspan="13" style="text-align: center;">{{ strtoupper($unitName) }}</td>
-            </tr>
-    
+                <tr style="background-color: #ffb9bf; color: #fff; font-weight: bold;">
+                    <td colspan="13" style="text-align: center;">{{ strtoupper($unitName) }}</td>
+                </tr>
+
                 @foreach ($records as $index => $item)
                     <tr>
                         <td>{{ $index + 1 }}</td>
@@ -199,14 +203,17 @@
                         <td>{{ getFrequencyname($item->frequency_id) }}</td>
                         <td>{{ $item->direct_in_direct == 1 ? 'Direct' : 'Indirect' }}</td>
                         <td>{{ $item->points }}</td>
+                        <td>{{ $item->auditor_name }}</td>
+                        <td>{{ Displaydateformat($item->audit_date) }}</td>
+                        <td>{{ $item->audit_time }}</td>
                         <td>{{ $item->remarks }}</td>
-                        <td>{{ displayDateformat($item->created_at)}}</td>
+                        <td>{{ displayDateformat($item->created_at) }}</td>
                     </tr>
                 @endforeach
             @endforeach
         </tbody>
     </table>
-    
+
 
 
     {{-- <div class="page-break"></div> --}}

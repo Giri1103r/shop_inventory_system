@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title> Monthly Audit plan | KARAM</title>
+    <title> EHS Audit Calendar | KARAM</title>
 
     <style>
         .badge {
@@ -123,7 +123,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Monthly Audit Plan</td>
+                    EHS Audit Calendar</td>
             </tr>
         </table>
     </htmlpageheader>
@@ -150,7 +150,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Monthly Audit plan
+                    EHS Audit Calendar
                 </td>
             </tr>
         </table>
@@ -168,6 +168,9 @@
                 <th>Frequency</th>
                 <th>Direct/Indirect</th>
                 <th>Points</th>
+                <th>Auditor Name</th>
+                <th>Audit Date</th>
+                <th>Audit Time</th>
                 <th>Remarks</th>
                 <th>Created At</th>
             </tr>
@@ -182,6 +185,9 @@
                 <td>{{ getFrequencyname($monthly_audit_plan->frequency_id ?? '') }}</td>
                 <td>{{ $monthly_audit_plan->direct_in_direct == 1 ? 'Direct' : 'Indirect' }}</td>
                 <td>{{ $monthly_audit_plan->points ?? '' }}</td>
+                <td>{{ $monthly_audit_plan->auditor_name ?? '' }}</td>
+                <td>{{ Displaydateformat($monthly_audit_plan->audit_date) }}</td>
+                <td>{{ $monthly_audit_plan->audit_time ?? '' }}</td>
                 <td>{{ $monthly_audit_plan->remarks ?? '' }}</td>
                 <td>{{ displayDateformat($monthly_audit_plan->created_at ?? '') }}</td>
             </tr>

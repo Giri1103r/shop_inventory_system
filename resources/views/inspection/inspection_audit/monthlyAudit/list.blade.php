@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Monthly Audit Plan')
+@section('title', 'EHS Audit Calendar')
 @section('pageurl', admin_url('audit/monthly-audit/audit-plan/list'))
 
 @section('content')

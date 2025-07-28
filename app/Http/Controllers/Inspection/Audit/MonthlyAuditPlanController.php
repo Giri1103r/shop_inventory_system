@@ -398,7 +398,7 @@ class MonthlyAuditPlanController extends Controller
             $html = $view->render();
             $mpdf->WriteHTML($html);
 
-            $filename = "Monthly Audit Plan Details.pdf";
+            $filename = "EHS Audit Calendar Details.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
@@ -435,7 +435,7 @@ class MonthlyAuditPlanController extends Controller
             $html = view('inspection.inspection_audit.monthlyAudit.generalpdf', $data)->render();
             $mpdf->WriteHTML($html);
 
-            $filename = "Monthly Audit Plan Details.pdf";
+            $filename = "EHS Audit Calendar Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
@@ -512,6 +512,9 @@ class MonthlyAuditPlanController extends Controller
                 'Direct/Indirect',
                 'Status',
                 'Points',
+                'Auditor Name',
+                'Audit Date',
+                'Audit Time',
                 'Remarks'
             ];
             $colIndex = 'A';
@@ -547,6 +550,9 @@ class MonthlyAuditPlanController extends Controller
             $sheet->setCellValue("I{$row}", $monthly_audit_plan->audit_plan_status == 1 ? 'YES' : 'NO');
             $sheet->setCellValue("J{$row}", $monthly_audit_plan->points ?? '');
             $sheet->setCellValue("K{$row}", $monthly_audit_plan->remarks ?? '');
+            $sheet->setCellValue("L{$row}", $monthly_audit_plan->auditor_name ?? '');
+            $sheet->setCellValue("M{$row}",  Displaydateformat($monthly_audit_plan->audit_date));
+            $sheet->setCellValue("N{$row}", $monthly_audit_plan->audit_time ?? '');
 
             $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT],

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Monthly Audit Plan view')
+@section('title', 'EHS Audit Calendar view')
 @section('pageurl', admin_url('audit/monthly-audit/audit-plan/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -107,6 +107,25 @@
                                             <label class="form-label view_label">Points</label>
                                             <div class="view_data">
                                                 {{ isset($monthly_audit_plan->points) ? $monthly_audit_plan->points : '' }}
+                                            </div>
+                                        </div>
+
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Auditor Name</label>
+                                            <div class="view_data">
+                                                {{ isset($monthly_audit_plan->auditor_name) ? $monthly_audit_plan->auditor_name : '' }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Audit Date</label>
+                                            <div class="view_data">
+                                                {{ Displaydateformat($monthly_audit_plan->audit_date) }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Audit Time</label>
+                                            <div class="view_data">
+                                                {{ isset($monthly_audit_plan->audit_time) ? $monthly_audit_plan->audit_time : '' }}
                                             </div>
                                         </div>
                                         

@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Monthly Audit Plan')
+@section('title', 'EHS Audit Calendar')
 @section('pageurl', admin_url('audit/monthly-audit/audit-plan/list'))
 
 @section('content')
@@ -37,7 +37,7 @@
                                         <div class="form-wrapper">
 
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white">Monthly Audit Plan</h4>
+                                                <h4 class="text-white">EHS Audit Calendar</h4>
                                                 <button class="btn btn-primary add-row mb-2 " type="button" id="add-row"
                                                     style="margin-left: 10px;  margin-right: 10px; width: 84px;">
                                                     Add
@@ -160,7 +160,28 @@
                                                             class="form-control" placeholder="Enter Points">
                                                     </div>
                                                 </div>
-
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Auditor Name</label>
+                                                        <input type="text" name="auditor_name[1]"
+                                                            id = "auditor_name[1]" class="form-control"
+                                                            placeholder="Enter Auditor Name">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Audit Date</label>
+                                                        <input type="text" name="audit_date[1]" id = "audit_date_1"
+                                                            class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Audit Time</label>
+                                                        <input type="text" name="audit_time[1]" id = "audit_time_1"
+                                                            class="form-control">
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-4 mb-2 mt-2">
                                                     <div class="form-group form-input require">
                                                         <label class="form-label">Remark</label>
@@ -218,6 +239,18 @@
                 e.preventDefault();
                 location.reload();
             });
+
+            flatpickr("#audit_date_1", {
+                dateFormat: "d-m-Y",
+                minDate: "today",
+            });
+            flatpickr("#audit_time_1", {
+                enableTime: true,
+                noCalendar: true,
+                dateFormat: "H:i",
+                time_24hr: true,
+                defaultMinute: 0,
+            });
         });
 
         $(document).ready(function() {
@@ -247,6 +280,15 @@
                     "status[1]": {
                         required: true,
                     },
+                    "auditor_name[1]": {
+                        required: true,
+                    },
+                    "audit_date[1]": {
+                        required: true,
+                    },
+                    "audit_time[1]": {
+                        required: true,
+                    },
                     "points[1]": {
                         required: true,
                         number: true,
@@ -266,6 +308,9 @@
                     "frequency_id[1]": "Please select Frequency",
                     "direct_in_direct[1]": "Please choose Direct or In-Direct",
                     "status[1]": "Please select Yes or No",
+                    "auditor_name[1]": "Please Enter the Auditor Name",
+                    "audit_date[1]": "Please Select the Audit Date",
+                    "audit_time[1]": "Please Select the Audit Time",
                     "points[1]": {
                         required: "Please enter Points",
                         number: "Please enter a valid number",
@@ -451,7 +496,28 @@
                                                             placeholder="Enter Points">
                                                     </div>
                                                 </div>
-
+                                                  <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Auditor Name</label>
+                                                        <input type="text" name="auditor_name[${form_set_count}]"
+                                                            id = "auditor_name[${form_set_count}]" class="form-control"
+                                                            placeholder="Enter Auditor Name">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Audit Date</label>
+                                                        <input type="text" name="audit_date[${form_set_count}]" id = "audit_date_${form_set_count}"
+                                                            class="form-control">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Audit Time</label>
+                                                        <input type="text" name="audit_time[${form_set_count}]" id = "audit_time_${form_set_count}"
+                                                            class="form-control">
+                                                    </div>
+                                                </div>
                                                 <div class="col-md-4 mb-2  mt-2">
                                                     <div class="form-group form-input require">
                                                         <label class="form-label">Remark</label>
@@ -472,6 +538,19 @@
                 let newFormSetElement = $(newFormSet);
 
                 $('.form-wrapper').append(newFormSetElement);
+
+                flatpickr(`#audit_date_${form_set_count}`, {
+                    dateFormat: "d-m-Y",
+                    minDate: "today",
+                });
+
+                flatpickr(`#audit_time_${form_set_count}`, {
+                    enableTime: true,
+                    noCalendar: true,
+                    dateFormat: "H:i",
+                    time_24hr: true,
+                    defaultMinute: 0,
+                });
 
                 $("input[name='auditee_name[" + form_set_count + "]']").rules('add', {
                     required: true,
@@ -526,6 +605,27 @@
                     required: true,
                     messages: {
                         required: 'Please Select the Status',
+                    }
+                });
+
+                $("input[name='auditor_name[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please Enter the Auditor Name',
+                    }
+                });
+
+                $("input[name='audit_date[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please Select the Audit Date',
+                    }
+                });
+
+                $("input[name='audit_time[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please Select the Audit Time',
                     }
                 });
 

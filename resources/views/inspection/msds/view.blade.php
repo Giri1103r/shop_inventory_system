@@ -150,7 +150,27 @@
                                             </div>
                                         </div>
                                         <div class="mb-3 col-md-4 form-input">
-                                            <label class="form-label view_label">{{ __('inspection.remarks') }}</label>
+                                            <label class="form-label view_label">Type of Chemical</label>
+                                            <div class="view_data">
+                                                {{ $msdsDetails->type_of_chemical == 1 ? 'Hazardous' : 'Non-Hazardous' }}
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">File Upload</label>
+                                            <div class="view_data">
+                                                @if (!empty($msdsDetails->msds_file))
+                                                    <a href="{{ asset($msdsDetails->msds_file->file_path) }}"
+                                                        target="_blank" class="d-block mt-2">
+                                                        <i class="fa-solid fa-eye text-danger"></i> View
+                                                    </a>
+                                                @else
+                                                    <small class="text-muted">No file uploaded yet.</small>
+                                                @endif
+
+                                            </div>
+                                        </div>
+                                        <div class="mb-3 col-md-4 form-input">
+                                            <label class="form-label view_label">Remark</label>
                                             <div class="view_data">
                                                 {{ isset($msdsDetails->remark) ? $msdsDetails->remark : '' }}
                                             </div>

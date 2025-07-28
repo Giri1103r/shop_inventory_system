@@ -33,6 +33,7 @@ use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\MSDS\Master\NFARating;
 use App\Models\Inspection\MSDS\MSDSSignatureUpload;
+use App\Models\Inspection\MSDS\MsdsFileUpload;
 use App\Models\Inspection\MSDS\Master\NFARatingValue;
 use App\Models\Inspection\MSDS\MSDS;
 
@@ -47,6 +48,7 @@ class MSDSController extends Controller
     private $document_reference;
     private $nfarating;
     private $nfaratingvalue;
+    private $msdsFileUpload;
     private $msds;
 
     public function __construct()
@@ -60,6 +62,7 @@ class MSDSController extends Controller
         $this->nfarating = new NFARating();
         $this->nfaratingvalue = new NFARatingValue();
         $this->msds = new MSDS();
+        $this->msdsFileUpload = new MsdsFileUpload();
     }
 
     public function Index(Request $request)
@@ -150,7 +153,7 @@ class MSDSController extends Controller
 
             return redirect(admin_url('msds/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('msds/list'));
         }
@@ -186,6 +189,9 @@ class MSDSController extends Controller
             if (Auth::check()) {
                 $msds = $this->msds->find($id);
                 $inspection_details = $this->msdsDetails->getDetails($msds->id);
+                foreach ($inspection_details as $detail) {
+                    $detail->msds_file = $this->msdsFileUpload->GetFile($msds->id, $detail->id);
+                }
                 $document_no = $this->document_reference->selectOne($msds->document_reference_id);
 
                 $data = array(
@@ -348,21 +354,21 @@ class MSDSController extends Controller
 
                 // Data Rows
                 foreach ($msds as $index => $msdsDetails) {
-                   $ratings = json_decode($msdsDetails->nfa_rating, true) ?? [];
+                    $ratings = json_decode($msdsDetails->nfa_rating, true) ?? [];
 
-                // Build a combined string like "Flammability: 3, Health: 4"
-                $combinedNFPA = '';
-                foreach ($ratings as $rating) {
-                    $name = getNFARating($rating['id'] ?? '') ?? '-';
-                    $value = isset($rating['value']) ? $rating['value'] : '-';
-                    $combinedNFPA .= "{$name}: {$value}, ";
-                }
+                    // Build a combined string like "Flammability: 3, Health: 4"
+                    $combinedNFPA = '';
+                    foreach ($ratings as $rating) {
+                        $name = getNFARating($rating['id'] ?? '') ?? '-';
+                        $value = isset($rating['value']) ? $rating['value'] : '-';
+                        $combinedNFPA .= "{$name}: {$value}, ";
+                    }
 
-                // Trim trailing comma
-                $combinedNFPA = rtrim($combinedNFPA, ', ');
+                    // Trim trailing comma
+                    $combinedNFPA = rtrim($combinedNFPA, ', ');
 
-                // Set cell value in the sheet (e.g., H column)
-                $sheet->setCellValue("H{$row}:I{$row}", $combinedNFPA);
+                    // Set cell value in the sheet (e.g., H column)
+                    $sheet->setCellValue("H{$row}:I{$row}", $combinedNFPA);
                     $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", $index + 1);
                     $sheet->setCellValue("C{$row}", $msdsDetails->item_code ?? '');
                     $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", $msdsDetails->name_of_chemical ?? '');
@@ -472,7 +478,7 @@ class MSDSController extends Controller
             $filename = "MSDS Details.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('msds/list'));
         }

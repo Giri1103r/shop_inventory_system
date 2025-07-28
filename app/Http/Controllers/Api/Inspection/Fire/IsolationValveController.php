@@ -104,7 +104,7 @@ class IsolationValveController extends Controller
                 'department.*.required' => 'Department is required',
                 'location_isv.*.required' => 'Location ISV is required',
                 'resource_code.*.required' => 'Resource Code is required',
-                'size_isv.*.required' => 'Size of ISV is required',
+                'size_isv.*.required' => 'Size of ISV (mm) is required',
                 'isv_status.*.required' => 'Status Of ISV is required',
                 'wheel_operation.*.required' => 'Wheel Operation Status is required',
                 'leakage.*.required' => 'Leakage Status is required',

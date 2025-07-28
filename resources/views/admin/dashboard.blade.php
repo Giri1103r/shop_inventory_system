@@ -245,7 +245,7 @@
                                                 <span class="me-3 bgl-primary text-primary" style="flex-shrink: 0;">
                                                 </span>
                                                 <div class="media-body" style="display: block;">
-                                                    <h4 class="fw-bold text-black">Monthly Audit Plan</h4>
+                                                    <h4 class="fw-bold text-black">EHS Audit Calendar</h4>
                                                     <h4 class="my-1 count-value text-black" id="total_monthly_audit">0
                                                     </h4>
                                                 </div>

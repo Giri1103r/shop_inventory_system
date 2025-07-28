@@ -211,7 +211,28 @@
                                                             @endforeach
                                                         </div>
 
+                                                        <div class="col-md-4 mb-3 mt-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label require">Type of Chemical</label>
+                                                                <select name="type_of_chemical[1]"
+                                                                    class="form-control single-select"
+                                                                    style="width: 100%">
+                                                                    <option value="">Select Type of Chemical
+                                                                    </option>
+                                                                    <option value="{{ encryptId(1) }}">Hazardous</option>
+                                                                    <option value="{{ encryptId(2) }}">Non-Hazardous
+                                                                    </option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
 
+                                                        <div class="col-md-4 mb-3 mt-2">
+                                                            <div class="form-group form-input">
+                                                                <label class="form-label">File Upload</label>
+                                                                <input type="file" name="msds_image[1]"
+                                                                    class="form-control">
+                                                            </div>
+                                                        </div>
 
                                                         <div class="col-md-12 mt-2">
                                                             <div class="form-group form-input">
@@ -382,8 +403,10 @@
                     'msds_availability_status[1]': {
                         required: true,
                     },
-
                     'storage_capacity[1]': {
+                        required: true,
+                    },
+                    'type_of_chemical[1]': {
                         required: true,
                     },
 
@@ -428,9 +451,11 @@
                     'msds_availability_status[1]': {
                         required: "MSDS Availability Status is Required",
                     },
-
                     'storage_capacity[1]': {
                         required: "Storage Capacity is Required",
+                    },
+                    'type_of_chemical[1]': {
+                        required: "Type of Chemical is Required",
                     },
 
                     'remark[1]': {
@@ -544,6 +569,13 @@
                                 <div class="row">
                                     ${nfpaRatingInputs}
                                     </div>
+                                      <div class="col-md-4 mb-3"><div class="form-group form-input"><label class="form-label require">Type of Chemical</label>
+                                       <select name="type_of_chemical[${form_set_count}]" class="form-control single-select" style="width: 100%"> <option value="">Select Type of Chemical
+                                        </option><option value="{{ encryptId(1) }}">Hazardous</option><option value="{{ encryptId(2) }}">Non-Hazardous
+                                       </option></select></div></div>
+                                     <div class="col-md-4 mb-3 mt-2"><div class="form-group form-input">
+                                    <label class="form-label">File Upload</label> <input type="file" name="msds_image[${form_set_count}]" class="form-control">
+                                     </div></div>
                                 <div class="col-md-12 mt-2 form-group form-input">
                                     <label class="form-label">Remark</label>
                                     <textarea name="remark[${form_set_count}]" class="form-control" rows="3" placeholder="Remark"></textarea>

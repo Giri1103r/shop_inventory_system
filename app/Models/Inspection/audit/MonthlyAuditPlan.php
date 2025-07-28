@@ -23,6 +23,9 @@ class MonthlyAuditPlan extends Model
         'direct_in_direct',
         'points',
         'remarks',
+        'auditor_name',
+        'audit_date',
+        'audit_time',
         'created_by',
         'updated_by',
         'status',
@@ -184,38 +187,30 @@ class MonthlyAuditPlan extends Model
     {
         $request = request();
 
-        $auditee_name = $request->auditee_name;
-        $unit_id = $request->unit_id;
-        $task_name = $request->task_name;
-        $compliance_category = $request->compliance_category;
-        $reference_doc_no = $request->reference_doc_no;
-        $frequency_id = $request->frequency_id;
-        $direct_in_direct = $request->direct_in_direct;
-        $status = $request->status;
-        $points = $request->points;
-        $remark = $request->remark;
-
-        foreach ($auditee_name as $index => $auditee_name) {
+        foreach ($request->auditee_name as $index => $auditee_name) {
             $data = [
-                'auditee_name' => $auditee_name,
-                'unit_id' => decryptId($unit_id[$index]),
-                'task_id' => decryptId($task_name[$index]),
-                'compliance_category_id' => decryptId($compliance_category[$index]),
-                'reference_doc_no' => $reference_doc_no[$index],
-                'frequency_id' => decryptId($frequency_id[$index]),
-                'direct_in_direct' => $direct_in_direct[$index],
-                'audit_plan_status' => $status[$index],
-                'points' => $points[$index],
-                'remarks' => $remark[$index],
-                'created_by' => Auth::id(),
+                'auditee_name'          => $auditee_name,
+                'unit_id'               => decryptId($request->unit_id[$index]),
+                'task_id'               => decryptId($request->task_name[$index]),
+                'compliance_category_id' => decryptId($request->compliance_category[$index]),
+                'reference_doc_no'      => $request->reference_doc_no[$index],
+                'frequency_id'          => decryptId($request->frequency_id[$index]),
+                'direct_in_direct'      => $request->direct_in_direct[$index],
+                'audit_plan_status'     => $request->status[$index],
+                'points'                => $request->points[$index],
+                'auditor_name'          => $request->auditor_name[$index],
+                'audit_date'            => DBdateformat($request->audit_date[$index]), 
+                'audit_time'            => $request->audit_time[$index],
+                'remarks'               => $request->remark[$index],
+                'created_by'            => Auth::id(),
             ];
-
 
             $this->create($data);
         }
 
         return back()->with('success', 'Data saved successfully');
     }
+
 
     public function storeApi()
     {

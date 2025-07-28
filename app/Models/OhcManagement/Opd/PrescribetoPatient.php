@@ -97,13 +97,13 @@ class PrescribetoPatient extends Model
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('ohc_management_opd_patient.created_at', [$startDate, $endDate]);
+            $query->whereBetween('ohc_management_opd_patient.date', [$startDate, $endDate]);
         } elseif ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_management_opd_patient.created_at', '>=', $startDate);
+            $query->where('ohc_management_opd_patient.date', '>=', $startDate);
         } elseif ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_management_opd_patient.created_at', '<=', $endDate);
+            $query->where('ohc_management_opd_patient.date', '<=', $endDate);
         }
         if ($request->has('status') && $request->status) {
 
@@ -391,13 +391,13 @@ class PrescribetoPatient extends Model
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('ohc_management_opd_patient.created_at', [$startDate, $endDate]);
+            $query->whereBetween('ohc_management_opd_patient.date', [$startDate, $endDate]);
         } elseif ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_management_opd_patient.created_at', '>=', $startDate);
+            $query->where('ohc_management_opd_patient.date', '>=', $startDate);
         } elseif ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('ohc_management_opd_patient.created_at', '<=', $endDate);
+            $query->where('ohc_management_opd_patient.date', '<=', $endDate);
         }
         if ($request->has('status') && $request->status) {
 
