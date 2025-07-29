@@ -931,7 +931,7 @@ class HydrantRiserInspectionContoller extends Controller
                     $sheet->setCellValue("I{$dataRow}", ($detail['female_coupling'] ?? '') === '1' ? 'Functional' : 'Non-Functional');
                     $sheet->setCellValue("J{$dataRow}", ($detail['lever'] ?? '') === '1' ? 'Functional' : 'Non-Functional');
                     $sheet->setCellValue("K{$dataRow}", ($detail['flow_test'] ?? '') === "1" ? 'Good' : 'Bad');
-                    $sheet->setCellValue("L{$dataRow}", $detail['approach'] ?? '');
+                    $sheet->setCellValue("L{$dataRow}", getOkNotokStatus($detail['approach'] ?? ''));
                     $sheet->mergeCells("M{$dataRow}:O{$dataRow}")->setCellValue("M{$dataRow}", $detail['remarks'] ?? '');
 
                     $sheet->getStyle("A{$dataRow}:O{$dataRow}")->applyFromArray([
@@ -1298,7 +1298,7 @@ class HydrantRiserInspectionContoller extends Controller
                 $sheet->setCellValue("I$row", ($detail['female_coupling'] ?? '') === '1' ? 'Functional' : 'Non-Functional');
                 $sheet->setCellValue("J$row", ($detail['lever'] ?? '') === '1' ? 'Functional' : 'Non-Functional');
                 $sheet->setCellValue("K$row", ($detail['flow_test'] ?? '') === '1' ? 'Good' : "Bad");
-                $sheet->setCellValue("L$row", $detail['approach'] ?? '');
+                $sheet->setCellValue("L$row", getOkNotokStatus($detail['approach'] ?? ''));
                 $sheet->mergeCells("M$row:O$row")->setCellValue("M$row", $detail['remarks'] ?? '');
                 $sheet->getStyle("A$row:O$row")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],

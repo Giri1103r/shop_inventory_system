@@ -271,9 +271,9 @@
                 {{ $detail->female_coupling == '1' ? 'Functional' : 'Non-Functional' }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">
                 {{ $detail->lever == '1' ? 'Functional' : 'Non-Functional' }}</td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{  $details->flow_test == '1' ? 'Good' : 'Bad' }}</td>
+            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{  $detail->flow_test == '1' ? 'Good' : 'Bad' }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">
-                {{ $detail->approach }}
+                {{ getOkNotokStatus($detail->approach) }}
             </td>
             <td style="border: 1px solid black; padding: 6px;">{{ $detail->remarks }}</td>
         </tr>

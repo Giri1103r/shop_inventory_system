@@ -302,7 +302,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">Approach</label>
                                                         <div class="view_data">
-                                                            {{ $details->approach }}
+                                                            {{ getOkNotokStatus($details->approach) }}
                                                         </div>
                                                     </div>
                                                 </div>

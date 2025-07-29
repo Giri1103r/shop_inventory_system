@@ -420,18 +420,23 @@
                                                     </div>
 
                                                 </div>
-                                                <div class="col-md-6 mb-2">
+                                                <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Approach</label>
-                                                        <textarea name="approach[1]" id="approach[1]" class="form-control" style="resize: none;">{{ old('approach.1') }}</textarea>
+                                                        <select name="approach[1]" id="approach[1]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Approach</option>
+                                                            <option value="{{ encryptId(1) }}">
+                                                                Ok</option>
+                                                            <option value="{{ encryptId(0) }}">
+                                                                Not Ok</option>
 
+                                                        </select>
                                                     </div>
-                                                    @error('remarks.1')
-                                                        <div class="error">{{ $message }}</div>
-                                                    @enderror
+
                                                 </div>
 
-                                                <div class="col-md-6 mb-2">
+                                                <div class="col-md-8 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
@@ -655,8 +660,7 @@
                         },
                         "approach[1]": {
                             required: true,
-                            minlength: 3,
-                            maxlength: 300,
+
                         },
                         "remarks[1]": {
                             required: true,
@@ -748,9 +752,8 @@
                             required: "Please Select The Condition of IVS",
                         },
                         "approach[1]": {
-                            required: "Please add Approach",
-                            minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 300",
+                            required: "Please select Approach",
+
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
@@ -1025,19 +1028,26 @@
                                                     </div>
 
                                                 </div>
-                                                <div class="col-md-6 mb-2">
+                                                <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">Approach</label>
-                                                        <textarea name="approach[${form_set_count}]" id="approach[${form_set_count}]" class="form-control" style="resize: none;">{{ old('approach.1') }}</textarea>
+                                                              <select name="approach[${form_set_count}]" id="approach[${form_set_count}]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Approach</option>
+                                                            <option value="{{ encryptId(1) }}">
+                                                                Ok</option>
+                                                            <option value="{{ encryptId(0) }}">
+                                                                Not Ok</option>
+
+                                                        </select>
+
 
                                                     </div>
-                                                    @error('remarks.1')
-                                                        <div class="error">{{ $message }}</div>
-                                                    @enderror
+
                                                 </div>
 
-                                                <div class="col-md-6 mb-2">
+                                                <div class="col-md-8 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.remarks') }}</label>
@@ -1171,14 +1181,12 @@
                         }
                     });
 
-                    $("textarea[name='approach[" + form_set_count + "]']").rules('add', {
+                    $("select[name='approach[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength: 3,
-                        maxlength: 300,
+
                         messages: {
-                            required: 'Please add the Approach',
-                            minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 300",
+                            required: 'Please select the Approach',
+
                         }
                     });
 

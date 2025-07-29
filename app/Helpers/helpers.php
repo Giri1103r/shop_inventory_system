@@ -558,6 +558,23 @@ if (!function_exists('getYesNoStatus')) {
     }
 }
 
+if (!function_exists('getOkNotokStatus')) {
+
+    function getOkNotokStatus($value)
+    {
+        $status = "";
+        if ($value == 0) {
+            $status = "Not Ok";
+        } elseif ($value == 1) {
+            $status = "Ok";
+        } else {
+            $status = "-";
+        }
+
+        return $status;
+    }
+}
+
 if (!function_exists('getChecked')) {
 
     function getChecked($value)
