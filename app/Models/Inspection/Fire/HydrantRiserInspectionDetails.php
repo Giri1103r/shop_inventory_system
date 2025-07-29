@@ -79,7 +79,7 @@ class HydrantRiserInspectionDetails extends Model
                 'blank_cap' => decryptId($blank_cap[$index]),
                 'female_coupling' => decryptId($female_coupling[$index]),
                 'lever' => decryptId($lever[$index]),
-                'flow_test' => $flow_test[$index],
+                'flow_test' => decryptId($flow_test[$index]),
                 'physical_condition' => decryptId($physical_condition[$index]),
                 'condition_of_ivs' => decryptId($condition_of_ivs[$index]),
                 'approach' => $approach[$index],

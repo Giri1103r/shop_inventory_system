@@ -357,6 +357,8 @@ class AppServiceProvider extends ServiceProvider
         defined('POOR') or define('POOR', 3);
         defined('DAMAGED') or define('DAMAGED', 4);
 
+        defined('BAD') or define('BAD', 0);
+
 
         //Quantiy
         defined('INADEQUATE') or define('INADEQUATE', 0);

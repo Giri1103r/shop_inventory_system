@@ -194,13 +194,16 @@
     </tr>
 
     <tr style="background-color: #ddd;">
-        <th colspan="5" style="border: 1px solid black; text-align: left; padding: 6px;">
+        <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
             DATE OF INSPECTION: {{ Displaydateformat($first->date_of_inspection) }}
         </th>
-        <th colspan="6" style="border: 1px solid black; text-align: left; padding: 6px;">
+        <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
             LOCATION: {{ getLocationName($first->location) }}
         </th>
-        <th colspan="5" style="border: 1px solid black; text-align: left; padding: 6px;">
+        <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
+            Exaction LOCATION: {{ ($first->exact_location) }}
+        </th>
+        <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
             SHIFT: {{ getShift($first->shift_id) }}
         </th>
     </tr>
@@ -210,10 +213,10 @@
         <th colspan="5" style="border: 1px solid black; text-align: left; padding: 6px;">
             NEXT DUE ON: {{ Displaydateformat($first->next_due) }}
         </th>
-        <th colspan="6" style="border: 1px solid black; text-align: left; padding: 6px;">
+        <th colspan="5" style="border: 1px solid black; text-align: left; padding: 6px;">
             UNIT: {{ getUnitName($first->unit) }}
         </th>
-        <th colspan="5" style="border: 1px solid black; text-align: left; padding: 6px;">
+        <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
             FREQUENCY: {{ getFrequencyName($first->frequency) }}
         </th>
     </tr>
@@ -268,7 +271,7 @@
                 {{ $detail->female_coupling == '1' ? 'Functional' : 'Non-Functional' }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">
                 {{ $detail->lever == '1' ? 'Functional' : 'Non-Functional' }}</td>
-            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->flow_test }}</td>
+            <td style="border: 1px solid black; padding: 6px; text-align: center;">{{  $details->flow_test == '1' ? 'Good' : 'Bad' }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">
                 {{ $detail->approach }}
             </td>

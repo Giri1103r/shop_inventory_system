@@ -230,15 +230,17 @@
         style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
         <!-- Header with Date, Location, etc. -->
         <tr>
-            <th colspan="5"
+            <th colspan="4"
                 style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
                 DATE OF INSPECTION: {{ Displaydateformat($hydrant_details->date_of_inspection) ?? 'N/A' }}
             </th>
-            <th colspan="5"
-                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                LOCATION: {{ getLocationname($hydrant_details->location) ?? 'N/A' }}
+            <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
+                LOCATION: {{ getLocationName($hydrant_details->location) }}
             </th>
-            <th colspan="5"
+            <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
+                Exaction LOCATION: {{ $hydrant_details->exact_location }}
+            </th>
+            <th colspan="4"
                 style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
                 SHIFT: {{ getShift($hydrant_details->shift_id) ?? 'N/A' }}
             </th>
@@ -252,7 +254,7 @@
                 style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
                 UNIT: {{ getUnitname($hydrant_details->unit) ?? 'N/A' }}
             </th>
-            <th colspan="5"
+            <th colspan="4"
                 style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
                 FREQUENCY: {{ getFrequencyname($hydrant_details->frequency) ?? 'N/A' }}
             </th>
@@ -362,7 +364,8 @@
                     @endif
                 </td>
 
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->flow_test }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ $details->flow_test == '1' ? 'Good' : 'Bad' }}
+                </td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->approach }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
             </tr>
