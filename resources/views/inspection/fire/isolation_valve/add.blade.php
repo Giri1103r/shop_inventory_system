@@ -281,11 +281,17 @@
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Valve Type</option>
                                                             @foreach ($types as $type)
-                                                                <option value="{{ encryptId($type->id) }}"
-                                                                    {{ old('type.1') == encryptId($type->id) ? 'selected' : '' }}>
+                                                                <option value="{{ $type->id }}">
                                                                     {{ $type->name }}</option>
                                                             @endforeach
                                                         </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2 .valve_type_others d-none">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label require">Other</label>
+                                                        <input type="text" name="valve_type_others[1]"
+                                                            id="valve_type_others" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -383,6 +389,18 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
+            // display the valve types
+
+            $('#type').change(function() {
+                var selectedValue = $(this).val();
+
+                if (selectedValue == '5') {
+                    $('#valve_type_others').closest('.col-md-4').removeClass('d-none');
+                } else {
+                    $('#valve_type_others').closest('.col-md-4').addClass('d-none');
+
+                }
+            });
             // location based unit
 
             $(document).on('change', '#location_id', function() {
@@ -530,6 +548,15 @@
                             maxlength: 600,
                         },
 
+                        "valve_type_others[1]": {
+                            required: function() {
+                                return $('#type').val() ==
+                                    '5';
+                            },
+                            minlength: 3,
+                            maxlength: 100,
+                        },
+
                         device_image: {
                             required: true,
                             // extension: "jpg",
@@ -615,6 +642,11 @@
                             minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 600",
                         },
+                        "valve_type_others[1]": {
+                            required: "This field is required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 100",
+                        },
                         device_image: {
                             required: "Please upload an image.",
                             // extension: "Only JPG files are allowed.",
@@ -669,6 +701,8 @@
                         });
                         return;
                     }
+
+
 
                     let newSerialNumber = 'HTR-' + ('00000' + serial_number).slice(-5);
 
@@ -753,21 +787,27 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
+                                               <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.valve_type') }}</label>
-                                                        <select name="type[${form_set_count}]" id="type-${form_set_count}"
-                                                            class=" form-control single-select" style="width: 100%">
+                                                        <label class="form-label require">{{ __('inspection.valve_type') }}</label>
+                                                        <select name="type[${form_set_count}]" id="type-${form_set_count}" class="form-control single-select valve-type" data-count="${form_set_count}" style="width: 100%">
                                                             <option value="">Select Valve Type</option>
-                                                           @foreach ($types as $type)
-                                                                <option value="{{ encryptId($type->id) }}"
-                                                                    {{ old('type.1') == encryptId($type->id) ? 'selected' : '' }}>
-                                                                    {{ $type->name }}</option>
+                                                            @foreach ($types as $type)
+                                                                <option value="{{ $type->id }}">
+                                                                    {{ $type->name }}
+                                                                </option>
                                                             @endforeach
                                                         </select>
                                                     </div>
                                                 </div>
+
+                                                    <div class="col-md-4 mb-2 valve_type_others d-none" data-count="${form_set_count}">
+                                                        <div class="form-group form-input">
+                                                            <label class="form-label require">Other</label>
+                                                            <input type="text" name="valve_type_others[${form_set_count}]" id="valve_type_others-${form_set_count}" class="form-control others">
+                                                        </div>
+                                                    </div>
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -816,6 +856,21 @@
 
                     let newFormSetElement = $(newFormSet);
 
+                    $(document).on('change', '.valve-type', function() {
+                        var selectedValue = $(this).val();
+                        var count = $(this).data('count');
+
+
+                        var otherFieldBlock = $('.valve_type_others[data-count="' + count + '"]');
+
+                        if (selectedValue == '5') {
+                            otherFieldBlock.removeClass('d-none');
+                        } else {
+                            otherFieldBlock.addClass('d-none');
+                        }
+                    });
+
+
                     let departmentSelect = newFormSetElement.find('select[name^="department"]');
                     GetDepartment(departmentSelect);
 
@@ -861,6 +916,17 @@
                         messages: {
                             required: 'Please specify the size',
                             number: 'Size must be a valid number',
+                        }
+                    });
+                    $("input[name='valve_type_others[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+
+                        messages: {
+                            required: 'This field is required',
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 100",
                         }
                     });
 
@@ -909,7 +975,7 @@
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
                         minlength: 3,
-                      maxlength: 600,
+                        maxlength: 600,
                         messages: {
                             required: 'Please enter remarks',
                             minlength: "Minimum Characters should be 3",

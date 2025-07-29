@@ -246,18 +246,23 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label ">{{ __('inspection.valve_type') }}</label>
+                                                            class="form-label">{{ __('inspection.valve_type') }}</label>
                                                         <div class="view_data">
-                                                            @if ($details->type == GATE)
-                                                                {{ __('inspection.GATE') }}
-                                                            @elseif($details->type == BALL)
-                                                                {{ __('inspection.BALL') }}
-                                                            @elseif($details->type == BUTTERFLY)
-                                                                {{ __('inspection.BUTTERFLY') }}
-                                                            @endif
+                                                            {{ getValveTypeName($details->type) }}
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @if (!empty($details->valve_type_others))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label">{{ __('inspection.others') }}</label>
+                                                            <div class="view_data">
+                                                                {{ $details->valve_type_others }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.open') }}</label>

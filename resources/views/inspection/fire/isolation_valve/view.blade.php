@@ -234,6 +234,18 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                @if (!empty($details->valve_type_others))
+                                                    <div class="col-md-4 mb-2">
+                                                        <div class="form-group form-input">
+                                                            <label
+                                                                class="form-label">{{ __('inspection.others') }}</label>
+                                                            <div class="view_data">
+                                                                {{ $details->valve_type_others }}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                @endif
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label">{{ __('inspection.open') }}</label>
@@ -624,7 +636,7 @@
                                                 <table class="table table-bordered">
                                                     <thead>
                                                         <tr>
-                                                             <th>{{ __('common.sno') }}</th>
+                                                            <th>{{ __('common.sno') }}</th>
                                                             <th>{{ __('common.from_status') }}</th>
                                                             <th>{{ __('common.to_status') }}</th>
                                                             <th>{{ __('common.remarks') }}</th>

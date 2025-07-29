@@ -21,6 +21,7 @@ class IsolationValveDetails extends Model
         'size_isv',
         'isv_status',
         'wheel_operation',
+        'valve_type_others',
         'leakage',
         'type',
         'open',
@@ -55,11 +56,12 @@ class IsolationValveDetails extends Model
         $wheel_operation = $request->wheel_operation;
         $leakage = $request->leakage;
         $type = $request->type;
+        $valve_type_others = $request->valve_type_others;
         $open = $request->open;
         $close = $request->close;
         $status_isv = $request->isv_status;
         $remarks = $request->remarks;
-        
+
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'inspection_id' => $id,
@@ -70,7 +72,8 @@ class IsolationValveDetails extends Model
                 'isv_status' => decryptId($status_isv[$index]),
                 'wheel_operation' => decryptId($wheel_operation[$index]),
                 'leakage' => decryptId($leakage[$index]),
-                'type' => decryptId($type[$index]),
+                'type' => ($type[$index]),
+                'valve_type_others' => ($valve_type_others[$index]),
                 'open' => decryptId($open[$index]),
                 'close' => decryptId($close[$index]),
                 'remarks' => $remarks[$index],
@@ -96,7 +99,7 @@ class IsolationValveDetails extends Model
         $close = $request->close;
         $status_isv = $request->isv_status;
         $remarks = $request->remarks;
-        
+
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'inspection_id' => $id,
