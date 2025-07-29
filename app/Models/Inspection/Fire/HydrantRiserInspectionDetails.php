@@ -82,7 +82,7 @@ class HydrantRiserInspectionDetails extends Model
                 'flow_test' => decryptId($flow_test[$index]),
                 'physical_condition' => decryptId($physical_condition[$index]),
                 'condition_of_ivs' => decryptId($condition_of_ivs[$index]),
-                'approach' => $approach[$index],
+                'approach' => decryptId($approach[$index]),
                 'remarks' => $remarks[$index],
                 'created_by' => Auth::id(),
             ];

@@ -267,8 +267,8 @@
             <th rowspan="3" style="border: 1px solid black; padding: 8px;">LOCATION</th>
             <th rowspan="3" style="border: 1px solid black; padding: 8px;">HYDRANT NO.</th>
             <th colspan="8" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
-            <th rowspan="3" style="border: 1px solid black; padding: 8px;">REMARKS</th>
             <th rowspan="3" style="border: 1px solid black; padding: 8px;">APPROACH</th>
+            <th rowspan="3" style="border: 1px solid black; padding: 8px;">REMARKS</th>
         </tr>
         <tr>
             <th colspan="6" style="border: 1px solid black; padding: 8px;">CONDITION OF LANDING VALVE</th>
@@ -366,7 +366,7 @@
 
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->flow_test == '1' ? 'Good' : 'Bad' }}
                 </td>
-                <td style="border: 1px solid black; padding: 8px;">{{ $details->approach }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ getOkNotokStatus($details->approach) }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->remarks }}</td>
             </tr>
         @endforeach
