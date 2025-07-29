@@ -69,7 +69,7 @@ class EyeWashInspectionDetails extends Model
                 'inspection_condition' => isset($condition[$index]) ? decryptId($condition[$index]) : null,
                 'hand_free_stay_open_value' => $hfsov[$index] ?? null,
                 'foot_pedal_value' => $foot_pedal[$index] ?? null,
-                'eyewash_heads_value' => $eyewash_heads[$index] ?? null,
+                'eyewash_heads_value' => decryptId($eyewash_heads[$index]) ?? null,
                 'water' => isset($water[$index]) ? decryptId($water[$index]) : null,
                 'quality' => $quality[$index] ?? null,
                 'pressure' => $pressure[$index] ?? null,

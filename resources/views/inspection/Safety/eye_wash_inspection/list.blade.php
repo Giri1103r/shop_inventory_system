@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Monthly EyeWash Inspection')
+@section('title', 'Water Quality')
 @section('pageurl', admin_url('safety/eye-wash-inspection/monthly/list'))
 
 

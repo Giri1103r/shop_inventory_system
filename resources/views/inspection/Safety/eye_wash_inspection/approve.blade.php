@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Monthly Eye Wash Inspection')
+@section('title', 'Water Quality')
 @section('pageurl', admin_url('safety/eye-wash-inspection/monthly/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -193,7 +193,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.foot_pedal_value') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->foot_pedal_value }}
+                                                            {{ $details->eyewash_heads_value == 1 ? 'OK' : "NOT Ok" }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -255,7 +255,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.temperature') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->temperature }}
+                                                            {{ $details->temperature == "1" ? 'ABNORMAL' : 'NORMAL'  }}
                                                         </div>
                                                     </div>
                                                 </div>

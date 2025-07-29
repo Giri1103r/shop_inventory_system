@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Monthly Eye Wash Inspection')
+@section('title', 'Water Quality')
 @section('pageurl', admin_url('safety/eye-wash-inspection/monthly/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -123,7 +123,7 @@
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Monthly Eye Wash Inspection Checklist</h4>
+                                                    <h4 class="text-white">Water Quality Checklist</h4>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -201,7 +201,7 @@
                                                         <label
                                                             class="form-label ">{{ __('inspection.eyewash_heads') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->eyewash_heads_value }}
+                                                            {{ $details->eyewash_heads_value == 1 ? 'OK' : "NOT Ok" }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -254,7 +254,7 @@
                                                         <label
                                                             class="form-label ">{{ __('inspection.temperature') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->temperature }}
+                                                            {{ $details->temperature == "1" ? 'ABNORMAL' : 'NORMAL' }}
                                                         </div>
                                                     </div>
                                                 </div>

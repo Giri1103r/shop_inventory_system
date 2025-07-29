@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Monthly Eye Wash Inspection')
+@section('title', 'Water Quality')
 @section('pageurl', admin_url('safety/eye-wash-inspection/monthly/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -196,7 +196,7 @@
                                         <hr>
                                         <div class="form-wrapper">
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white ms-2">Monthly Eye Wash Inspection Checklist</h4>
+                                                <h4 class="text-white ms-2">Water Quality Checklist</h4>
                                                 <button class="btn btn-primary add-row mb-2 " type="button"
                                                     id="add-row"
                                                     style="margin-left: 10px;  margin-right: 10px; width: 84px;">
@@ -305,9 +305,18 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.eyewash_heads') }}</label>
-                                                        <input type="text" name="eyewash_heads[1]"
-                                                            id = "eyewash_heads" class="form-control"
-                                                            value="{{ old('eyewash_head.1') }}">
+
+                                                        <select name="eyewash_heads[1]" id="eyewash_heads"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select
+                                                                {{ __('inspection.eyewash_heads') }}</option>
+                                                            <option value="{{ encryptId(OK) }}"
+                                                                {{ old('eyewash_heads.1') == encryptId(OK) ? 'selected' : '' }}>
+                                                                OK</option>
+                                                            <option value="{{ encryptId(NOT_OK) }}"
+                                                                {{ old('eyewash_heads.1') == encryptId(NOT_OK) ? 'selected' : '' }}>
+                                                                NOT OK</option>
+                                                        </select>
                                                     </div>
                                                     @error('eyewash_heads.1')
                                                         <div class="error">{{ $message }}</div>
@@ -346,17 +355,7 @@
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.quality') }}</label>
-                                                        <input type="text" name="quality[1]" id = "quality"
-                                                            class="form-control" value="{{ old('quality.1') }}">
-                                                    </div>
-                                                    @error('quality.1')
-                                                        <div class="error">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -372,8 +371,17 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.temperature') }}</label>
-                                                        <input type="text" name="temperature[1]" id = "temperature"
-                                                            class="form-control" value="{{ old('temperature.1') }}">
+                                                        <select name="temperature[1]" id="temperature"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select
+                                                                {{ __('inspection.temperature') }}</option>
+                                                            <option value="{{ encryptId(OK) }}"
+                                                                {{ old('temperature.1') == encryptId(NORMAL) ? 'selected' : '' }}>
+                                                                Normal</option>
+                                                            <option value="{{ encryptId(NOT_OK) }}"
+                                                                {{ old('temperature.1') == encryptId(ABNORMAL) ? 'selected' : '' }}>
+                                                                Abnormal</option>
+                                                        </select>
                                                     </div>
                                                     @error('temperature.1')
                                                         <div class="error">{{ $message }}</div>
@@ -528,11 +536,6 @@
                             minlength: 3,
                             maxlength: 30
                         },
-                        "quality[1]": {
-                            required: true,
-                            minlength: 3,
-                            maxlength: 30
-                        },
                         "water[1]": {
                             required: true,
                         },
@@ -543,8 +546,6 @@
                         },
                         "eyewash_heads[1]": {
                             required: true,
-                            minlength: 3,
-                            maxlength: 30
                         },
                         "foot_pedal[1]": {
                             required: true,
@@ -615,7 +616,7 @@
                             required: "Frequency is required",
                         },
                         "temperature[1]": {
-                            required: "Please add the temperature of the water",
+                            required: "Please Select the Temperature",
                         },
                         "location[1]": {
                             required: "Please Select The Location",
@@ -639,9 +640,7 @@
                             maxlength: "Please enter no more than 30 characters."
                         },
                         "eyewash_heads[1]": {
-                            required: "Please add the name of Eyewash heads",
-                            minlength: "Please enter at least 3 characters.",
-                            maxlength: "Please enter no more than 30 characters."
+                            required: "Please add the name of Eye Wash & Head Shower",
                         },
                         "receptacle[1]": {
                             required: "Please add the name of receptable used",
@@ -650,11 +649,6 @@
                         },
                         "water[1]": {
                             required: "Please select the water quality",
-                        },
-                        "quality[1]": {
-                            required: "Please select the quality of water",
-                            minlength: "Please enter at least 3 characters.",
-                            maxlength: "Please enter no more than 30 characters."
                         },
                         "pressure[1]": {
                             required: "Please add the pressure of the water",
@@ -795,8 +789,16 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.eyewash_heads') }}</label>
-                                                        <input type="text" name="eyewash_heads[${form_set_count}]"
-                                                            id = "eyewash_heads[${form_set_count}]" class="form-control">
+                                                       <select name="eyewash_heads[${form_set_count}]" id="eyewash_heads[$${form_set_count}]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select {{ __('inspection.eyewash_heads') }}</option>
+                                                            <option value="{{ encryptId(OK) }}"
+                                                                {{ old('eyewash_heads.1') == encryptId(OK) ? 'selected' : '' }}>
+                                                                OK</option>
+                                                            <option value="{{ encryptId(NOT_OK) }}"
+                                                                {{ old('eyewash_heads.1') == encryptId(NOT_OK) ? 'selected' : '' }}>
+                                                                NOT OK</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -820,14 +822,7 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.quality') }}</label>
-                                                        <input type="text" name="quality[${form_set_count}]" id = "quality[${form_set_count}]"
-                                                            class="form-control">
-                                                    </div>
-                                                </div>
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -840,8 +835,17 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.temperature') }}</label>
-                                                        <input type="text" name="temperature[${form_set_count}]" id = "temperature[${form_set_count}]"
-                                                            class="form-control">
+                                                         <select name="temperature[${form_set_count}]" id="temperature[${form_set_count}]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select
+                                                                {{ __('inspection.temperature') }}</option>
+                                                            <option value="{{ encryptId(OK) }}"
+                                                                {{ old('temperature.1') == encryptId(NORMAL) ? 'selected' : '' }}>
+                                                                Normal</option>
+                                                            <option value="{{ encryptId(NOT_OK) }}"
+                                                                {{ old('temperature.1') == encryptId(ABNORMAL) ? 'selected' : '' }}>
+                                                                                                                                Abnormal</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-12 mb-2">
@@ -937,14 +941,10 @@
                         }
                     });
 
-                    $("input[name='eyewash_heads[" + form_set_count + "]']").rules('add', {
+                    $("select[name='eyewash_heads[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength: 3,
-                        maxlength: 30,
                         messages: {
-                            required: 'Please add the name of Eyewash heads',
-                            minlength: "Please enter at least 3 characters.",
-                            maxlength: "Please enter no more than 30 characters."
+                            required: 'Please add the name of Eye Wash & Head Shower',
                         }
                     });
 
@@ -966,17 +966,6 @@
                         }
                     });
 
-                    $("input[name='quality[" + form_set_count + "]']").rules('add', {
-                        required: true,
-                        minlength: 3,
-                        maxlength: 30,
-                        messages: {
-                            required: 'Please select the quality of water',
-                            minlength: "Please enter at least 3 characters.",
-                            maxlength: "Please enter no more than 30 characters."
-                        }
-                    });
-
                     $("input[name='pressure[" + form_set_count + "]']").rules('add', {
                         required: true,
                         minlength: 3,
@@ -988,10 +977,10 @@
                         }
                     });
 
-                    $("input[name='temperature[" + form_set_count + "]']").rules('add', {
+                    $("select[name='temperature[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please add the temperature of the water',
+                            required: 'Please Select the Temperature',
                         }
                     });
 
@@ -1033,12 +1022,11 @@
                     $(this).find('input[name^="value"]').attr('name', 'value[' + idx + ']');
                     $(this).find('input[name^="hfsov"]').attr('name', 'hfsov[' + idx + ']');
                     $(this).find('input[name^="foot_pedal"]').attr('name', 'foot_pedal[' + idx + ']');
-                    $(this).find('input[name^="eyewash_heads"]').attr('name', 'eyewash_heads[' + idx + ']');
+                    $(this).find('select[name^="eyewash_heads"]').attr('name', 'eyewash_heads[' + idx + ']');
                     $(this).find('input[name^="receptacle"]').attr('name', 'receptacle[' + idx + ']');
                     $(this).find('select[name^="water"]').attr('name', 'water[' + idx + ']');
-                    $(this).find('input[name^="quality"]').attr('name', 'quality[' + idx + ']');
                     $(this).find('input[name^="pressure"]').attr('name', 'pressure[' + idx + ']');
-                    $(this).find('input[name^="temperature"]').attr('name', 'temperature[' + idx + ']');
+                    $(this).find('select[name^="temperature"]').attr('name', 'temperature[' + idx + ']');
                     $(this).find('textarea[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
 
                     $(this).find('select').select2();

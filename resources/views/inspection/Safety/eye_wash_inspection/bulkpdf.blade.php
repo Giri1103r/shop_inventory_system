@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Monthly Eye Wash Inspection | KARAM</title>
+    <title>Water Quality | KARAM</title>
 
     <style>
         .badge {
@@ -248,7 +248,7 @@
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->value }}</td>
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->hand_free_stay_open_value }}</td>
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->foot_pedal_value }}</td>
-                    <td style="border: 2px solid black; padding: 6px;">{{ $details->eyewash_heads_value }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">{{ $details->eyewash_heads_value == 1 ? 'OK' : "NOT Ok" }}</td>
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->receptacle }}</td>
                     <td style="border: 2px solid black; padding: 6px;">
                         @if ($details->quality == 'GOOD')
@@ -262,7 +262,7 @@
                         @endif
                     </td>
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->pressure }}</td>
-                    <td style="border: 2px solid black; padding: 6px;">{{ $details->temperature }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">{{ $details->temperature == "1" ? 'ABNORMAL' : 'NORMAL'  }}</td>
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->remarks }}</td>
                 </tr>
                 @php

@@ -452,6 +452,10 @@ class AppServiceProvider extends ServiceProvider
         defined('OK') or define('OK', 1);
         defined('NOT_OK') or define('NOT_OK', 2);
 
+        //Water Quality
+        defined('ABNORMAL') or define('ABNORMAL', 1);
+        defined('NORMAL') or define('NORMAL', 2);
+
         // Audit
         defined('FIRE') or define('FIRE', 1);
         defined('HEALTH') or define('HEALTH', 2);
