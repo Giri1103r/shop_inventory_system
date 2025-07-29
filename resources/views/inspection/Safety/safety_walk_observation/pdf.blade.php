@@ -208,7 +208,7 @@
                 </th>
                 <th colspan="4" rowspan="3"
                     style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
-                    Safety Walk Taken By (Name):-  {{ $first->safety_walk_taken_by ?? 'N/A' }}
+                    Safety Walk Taken By (Name):-  {{ getUsername($first->safety_walk_taken_by) ?? 'N/A' }}
                 </th>
             </tr>
 
@@ -231,6 +231,8 @@
                     <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">SR. NO.
                     </th>
                     <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">LOCATION
+                    </th>
+                    <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">Exact Location
                     </th>
                     <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">DATE OF
                         OBSERVATION
@@ -281,6 +283,9 @@
                                 {{ getLocationName($details->location) }}
                             </td>
                             <td style="border: 2px solid black; padding: 8px;">
+                                {{ ($details->exact_location) }}
+                            </td>
+                            <td style="border: 2px solid black; padding: 8px;">
                                 {{ Displaydateformat($details->observation_date) }}</td>
                             <td style="border: 2px solid black; padding: 8px;">{{ $details->observation }}</td>
 
@@ -320,6 +325,8 @@
                         <td style="border: 2px solid black; padding: 8px;">{{ $loop->iteration }}</td>
                         <td style="border: 2px solid black; padding: 8px;">{{ getLocationName($detail->location) }}
                         </td>
+                        <td style="border: 2px solid black; padding: 8px;">{{ ($detail->exact_location) }}
+                        </td>
                         <td style="border: 2px solid black; padding: 8px;">
                             {{ Displaydateformat($detail->observation_date) }}</td>
                         <td style="border: 2px solid black; padding: 8px;">{{ $detail->observation }}</td>
@@ -358,13 +365,13 @@
                     );
                 @endphp --}}
                 <tr>
-                    <td colspan="5"
+                    <td colspan="6"
                         style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                         {{-- <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
                             style="height: 50px; margin-top:2px;"> --}}
                         <div>Checked & Prepared By: {{ getUsername($detail->checked_by) }}</div>
                     </td>
-                    <td colspan="5"
+                    <td colspan="6"
                         style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                         @if ($detail->verified_by != null)
                             {{-- <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"

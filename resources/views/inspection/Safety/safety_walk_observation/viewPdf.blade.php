@@ -244,6 +244,8 @@
             <tr>
                 <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">SR. NO.</th>
                 <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">LOCATION</th>
+                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">Exact Location
+                </th>
                 <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">DATE OF
                     OBSERVATION
                 </th>
@@ -281,6 +283,9 @@
                             <td style="border: 2px solid black; padding: 8px;">{{ $i }}</td>
                             <td style="border: 2px solid black; padding: 8px;">
                                 {{ getLocationName($details->location) }}
+                            </td>
+                            <td style="border: 2px solid black; padding: 8px;">
+                                {{ $details->exact_location }}
                             </td>
                             <td style="border: 2px solid black; padding: 8px;">
                                 {{ Displaydateformat($details->observation_date) }}</td>
@@ -325,6 +330,9 @@
                     <td style="border: 2px solid black; padding: 8px;">{{ getLocationName($detail->location) }}
                     </td>
                     <td style="border: 2px solid black; padding: 8px;">
+                        {{ $detail->exact_location }}
+                    </td>
+                    <td style="border: 2px solid black; padding: 8px;">
                         {{ Displaydateformat($detail->observation_date) }}</td>
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->observation }}</td>
                     <td style="border: 2px solid black; padding: 8px;"><img
@@ -362,13 +370,13 @@
                 );
             @endphp --}}
             <tr>
-                <td colspan="5"
+                <td colspan="6"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     {{-- <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
                         style="height: 50px; margin-top:2px;"> --}}
                     <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
                 </td>
-                <td colspan="5"
+                <td colspan="6"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     @if ($inspection_details->updated_by != null)
                         {{-- <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"
@@ -409,9 +417,10 @@
                 </td>
             </tr>
             <tr>
-                <td width="50%" style="padding:5px;"><b>{{__('inspection.status')}}</b></td>
+                <td width="50%" style="padding:5px;"><b>{{ __('inspection.status') }}</b></td>
                 <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ ($inspection_details->observation_status == 3 ? 'Approved' : 'Rejected') }}
+                <td width="48%" style="padding:5px;">
+                    {{ $inspection_details->observation_status == 3 ? 'Approved' : 'Rejected' }}
                 </td>
             </tr>
             <tr>

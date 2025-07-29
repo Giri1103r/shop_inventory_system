@@ -172,6 +172,7 @@ class SafetyWalkObservationController extends Controller
                 'safety_walk_taken_by' => 'required',
                 'unit' => 'required',
                 'location.*' => 'required',
+                'exact_location.*' => 'required',
                 'date_of_observation.*' => 'required',
                 'observation.*' => 'required',
                 'checklist_file.*' => 'required',
@@ -194,6 +195,7 @@ class SafetyWalkObservationController extends Controller
                 'safety_walk_taken_by.required' => 'Safety walk taken by is required.',
                 'unit.*.required' => 'Unit is required.',
                 'location.*.required' => 'Location is required.',
+                'exact_location.*.required' => 'Location is required.',
                 'date_of_observation.*.required' => 'Date of observation is required.',
                 'observation.*.required' => 'Observation is required.',
                 'checklist_file.*.required' => 'Image is required.',
@@ -457,10 +459,17 @@ class SafetyWalkObservationController extends Controller
                 $sheet->setCellValue("I{$row}", 'Document No.');
                 $sheet->setCellValue("I" . ($row + 1), 'Issue Date');
                 $sheet->setCellValue("I" . ($row + 2), 'Rev . No');
+
                 $sheet->setCellValue("J{$row}", $document_no->doc_no ?? '');
                 $sheet->setCellValue("J" . ($row + 1), $document_no->issue_date ?? '');
                 $sheet->setCellValue("J" . ($row + 2), $document_no->rev_dt ?? '');
-                $sheet->getStyle("I{$row}:J" . ($row + 2))->applyFromArray([
+
+                $sheet->mergeCells("J{$row}:K{$row}");
+                $sheet->mergeCells("J" . ($row + 1) . ":K" . ($row + 1));
+                $sheet->mergeCells("J" . ($row + 2) . ":K" . ($row + 2));
+
+
+                $sheet->getStyle("I{$row}:K" . ($row + 2))->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
@@ -484,9 +493,9 @@ class SafetyWalkObservationController extends Controller
 
                 $row++;
 
-                $headers = ['Sr. No.', 'Location', 'Observation Date', 'Observation', 'Picture', 'Recommended Action', 'Responsibility', 'Date of Compliance', 'Status', 'Remarks'];
+                $headers = ['Sr. No.', 'Location', 'Exact Location','Observation Date', 'Observation', 'Picture', 'Recommended Action', 'Responsibility', 'Date of Compliance', 'Status', 'Remarks'];
                 $sheet->fromArray($headers, null, "A{$row}");
-                $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                     'font' => ['bold' => true, 'size' => 12],
                     'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'FFEFEFEF']],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -496,8 +505,8 @@ class SafetyWalkObservationController extends Controller
                 $row++;
 
                 if (!empty($last_month_observation_details)) {
-                    $sheet->mergeCells("A{$row}:J{$row}")->setCellValue("A{$row}", 'Previous Month Observations');
-                    $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                    $sheet->mergeCells("A{$row}:K{$row}")->setCellValue("A{$row}", 'Previous Month Observations');
+                    $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                         'font' => ['bold' => true],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -511,30 +520,31 @@ class SafetyWalkObservationController extends Controller
                         foreach ($group as $observation) {
                             $sheet->setCellValue("A{$row}", $sr);
                             $sheet->setCellValue("B{$row}", getLocationName($observation->location));
-                            $sheet->setCellValue("C{$row}", Displaydateformat($observation->observation_date));
-                            $sheet->setCellValue("D{$row}", $observation->observation);
+                            $sheet->setCellValue("C{$row}", ($observation->exact_location));
+                            $sheet->setCellValue("D{$row}", Displaydateformat($observation->observation_date));
+                            $sheet->setCellValue("E{$row}", $observation->observation);
                             $imagePath = GetSafetyWalkImage($observation->id);
                             if (file_exists($imagePath)) {
                                 $drawing = new Drawing();
                                 $drawing->setPath($imagePath);
-                                $drawing->setCoordinates("E{$row}");
+                                $drawing->setCoordinates("F{$row}");
                                 $drawing->setHeight(60);
                                 $drawing->setOffsetX(5);
                                 $drawing->setWidth(80);
                                 $drawing->setOffsetY(20);
                                 $drawing->setWorksheet($sheet);
                                 $sheet->getRowDimension($row)->setRowHeight(90);
-                                $sheet->getColumnDimension('E')->setWidth(20);
+                                $sheet->getColumnDimension('F')->setWidth(20);
                             } else {
-                                $sheet->setCellValue("E{$row}", 'No Image');
+                                $sheet->setCellValue("F{$row}", 'No Image');
                             }
-                            $sheet->setCellValue("F{$row}", $observation->recomended_action);
-                            $sheet->setCellValue("G{$row}", getUsername($observation->responsibility));
-                            $sheet->setCellValue("H{$row}", $observation->date_of_compliance);
-                            $sheet->setCellValue("I{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Deactive' : 'Unknown'));
-                            $sheet->setCellValue("J{$row}", $observation->remarks);
+                            $sheet->setCellValue("G{$row}", $observation->recomended_action);
+                            $sheet->setCellValue("H{$row}", getUsername($observation->responsibility));
+                            $sheet->setCellValue("I{$row}", $observation->date_of_compliance);
+                            $sheet->setCellValue("J{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Deactive' : 'Unknown'));
+                            $sheet->setCellValue("K{$row}", $observation->remarks);
 
-                            $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                            $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                             ]);
@@ -546,8 +556,8 @@ class SafetyWalkObservationController extends Controller
                 }
 
                 if (!empty($current_month_inspection)) {
-                    $sheet->mergeCells("A{$row}:J{$row}")->setCellValue("A{$row}", 'Current Month Observations');
-                    $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                    $sheet->mergeCells("A{$row}:K{$row}")->setCellValue("A{$row}", 'Current Month Observations');
+                    $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                         'font' => ['bold' => true],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -560,29 +570,30 @@ class SafetyWalkObservationController extends Controller
                     foreach ($current_month_inspection as $observation) {
                         $sheet->setCellValue("A{$row}", $sr);
                         $sheet->setCellValue("B{$row}", getLocationName($observation->location));
-                        $sheet->setCellValue("C{$row}", Displaydateformat($observation->observation_date));
-                        $sheet->setCellValue("D{$row}", $observation->observation);
+                        $sheet->setCellValue("C{$row}", ($observation->exact_location));
+                        $sheet->setCellValue("D{$row}", Displaydateformat($observation->observation_date));
+                        $sheet->setCellValue("E{$row}", $observation->observation);
                         $imagePath = GetSafetyWalkImage($observation->id);
                         if (file_exists($imagePath)) {
                             $drawing = new Drawing();
                             $drawing->setPath($imagePath);
-                            $drawing->setCoordinates("E{$row}");
+                            $drawing->setCoordinates("F{$row}");
                             $drawing->setHeight(60);
                             $drawing->setOffsetX(5);
                             $drawing->setWidth(80);
                             $drawing->setOffsetY(20);
                             $drawing->setWorksheet($sheet);
                             $sheet->getRowDimension($row)->setRowHeight(90);
-                            $sheet->getColumnDimension('E')->setWidth(20);
+                            $sheet->getColumnDimension('F')->setWidth(20);
                         } else {
-                            $sheet->setCellValue("E{$row}", 'No Image');
+                            $sheet->setCellValue("F{$row}", 'No Image');
                         }
-                        $sheet->setCellValue("F{$row}", $observation->recomended_action);
-                        $sheet->setCellValue("G{$row}", getUsername($observation->responsibility));
-                        $sheet->setCellValue("H{$row}", $observation->date_of_compliance);
-                        $sheet->setCellValue("I{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Deactive' : 'Unknown'));
-                        $sheet->setCellValue("J{$row}", $observation->remarks);
-                        $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                        $sheet->setCellValue("G{$row}", $observation->recomended_action);
+                        $sheet->setCellValue("H{$row}", getUsername($observation->responsibility));
+                        $sheet->setCellValue("I{$row}", $observation->date_of_compliance);
+                        $sheet->setCellValue("J{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Deactive' : 'Unknown'));
+                        $sheet->setCellValue("K{$row}", $observation->remarks);
+                        $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         ]);
@@ -609,7 +620,7 @@ class SafetyWalkObservationController extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
 
-                $sheet->mergeCells("F{$row}:J{$row}");
+                $sheet->mergeCells("F{$row}:K{$row}");
                 $sheet->setCellValue("F{$signatureRowStart}", "Verified By:- "  . (
                     !empty(getUserName($inspection_details->verified_by))
                     ? getUserName($inspection_details->verified_by)
@@ -627,7 +638,7 @@ class SafetyWalkObservationController extends Controller
                 // } else {
                 //     $sheet->setCellValue("F{$signatureRowStart}", "Not Verified Yet");
                 // }
-                $sheet->getStyle("F{$signatureRowStart}:J{$signatureRowStart}")->applyFromArray([
+                $sheet->getStyle("F{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_BOTTOM],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
@@ -635,7 +646,7 @@ class SafetyWalkObservationController extends Controller
 
                 $lastRow = $signatureRowStart;
 
-                $sheet->getStyle("A{$titleRow}:J{$lastRow}")->applyFromArray([
+                $sheet->getStyle("A{$titleRow}:K{$lastRow}")->applyFromArray([
                     'borders' => [
                         'outline' => [
                             'borderStyle' => Border::BORDER_THICK,
@@ -718,7 +729,7 @@ class SafetyWalkObservationController extends Controller
                     'last_month_observation_details' => $last_month_observation_details,
                     'pagetitle' => "Safety Walk Observation",
                     'document_no' => $document_no,
-                    'status_log'=>$status_log
+                    'status_log' => $status_log
                 ];
             }
             $property = [
@@ -740,6 +751,7 @@ class SafetyWalkObservationController extends Controller
             $filename = "Safety Walk Observation.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/safety-walk-observation/list'));
@@ -818,14 +830,22 @@ class SafetyWalkObservationController extends Controller
             $sheet->setCellValue('J1', $document_no->doc_no ?? '');
             $sheet->setCellValue('J2', $document_no->issue_date ?? '');
             $sheet->setCellValue('J3', $document_no->rev_dt ?? '');
-            $sheet->getStyle('I1:J3')->applyFromArray([
+
+            $sheet->mergeCells('J1:K1');
+            $sheet->mergeCells('J2:K2');
+            $sheet->mergeCells('J3:K3');
+
+            $sheet->getStyle('J1:K3')->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'alignment' => [
+                    'horizontal' => Alignment::HORIZONTAL_CENTER,
+                    'vertical' => Alignment::VERTICAL_CENTER
+                ],
             ]);
 
             $sheet->mergeCells('A4:D4')->setCellValue('A4', "Date of Inspection: " . Displaydateformat($inspection_details->date));
             $sheet->mergeCells('E4:F4')->setCellValue('E4', "Shift: " . getShift($inspection_details->shift_id));
-            $sheet->mergeCells('G4:J5')->setCellValue('G4', "Safety Walk Taken By:- " . $inspection_details->safety_walk_taken_by);
+            $sheet->mergeCells('G4:J5')->setCellValue('G4', "Safety Walk Taken By:- " . getUsername($inspection_details->safety_walk_taken_by));
             $sheet->getRowDimension(4)->setRowHeight(20);
 
             $row = 5;
@@ -835,16 +855,16 @@ class SafetyWalkObservationController extends Controller
                 5
             )->setRowHeight(20);
 
-            $sheet->getStyle('A4:J5')->applyFromArray([
+            $sheet->getStyle('A4:K5')->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
             $row += 1;
-            $headers = ['Sr. No.', 'Location', 'Observation Date', 'Observation', 'Picture', 'Recommended Action', 'Responsibility', 'Date of Compliance', 'Status', 'Remarks'];
+            $headers = ['Sr. No.', 'Location', 'Exact Location', 'Observation Date', 'Observation', 'Picture', 'Recommended Action', 'Responsibility', 'Date of Compliance', 'Status', 'Remarks'];
             $sheet->fromArray($headers, null, "A{$row}");
-            $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+            $sheet->getStyle("A{$row}:k{$row}")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 12],
                 'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'FFEFEFEF']],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -856,8 +876,8 @@ class SafetyWalkObservationController extends Controller
 
 
             if (!empty($last_month_observation_details)) {
-                $sheet->mergeCells("A{$row}:J{$row}")->setCellValue("A{$row}", 'Previous Month Observations');
-                $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                $sheet->mergeCells("A{$row}:K{$row}")->setCellValue("A{$row}", 'Previous Month Observations');
+                $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -870,33 +890,34 @@ class SafetyWalkObservationController extends Controller
                     foreach ($observationGroup as $observation) {
                         $sheet->setCellValue("A{$row}", $sr++);
                         $sheet->setCellValue("B{$row}", getLocationName($observation->location));
-                        $sheet->setCellValue("C{$row}", Displaydateformat($observation->observation_date));
-                        $sheet->setCellValue("D{$row}", $observation->observation);
+                        $sheet->setCellValue("C{$row}", getLocationName($observation->exact_location));
+                        $sheet->setCellValue("D{$row}", Displaydateformat($observation->observation_date));
+                        $sheet->setCellValue("E{$row}", $observation->observation);
 
                         $imagePath = GetSafetyWalkImage($observation->id);
                         if (file_exists($imagePath)) {
                             $drawing = new Drawing();
                             $drawing->setPath($imagePath);
-                            $drawing->setCoordinates("E{$row}");
+                            $drawing->setCoordinates("F{$row}");
                             $drawing->setHeight(60);
                             $drawing->setOffsetX(5);
                             $drawing->setWidth(80);
                             $drawing->setOffsetY(5);
                             $sheet->getRowDimension($row)->setRowHeight(90);
-                            $sheet->getColumnDimension('E')->setWidth(20);
+                            $sheet->getColumnDimension('F')->setWidth(20);
 
                             $drawing->setWorksheet($sheet);
                         } else {
-                            $sheet->setCellValue("E{$row}", 'No Image');
+                            $sheet->setCellValue("F{$row}", 'No Image');
                         }
 
-                        $sheet->setCellValue("F{$row}", $observation->recomended_action);
-                        $sheet->setCellValue("G{$row}", getUsername($observation->responsibility));
-                        $sheet->setCellValue("H{$row}", $observation->date_of_compliance);
-                        $sheet->setCellValue("I{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Deactive' : 'Unknown'));
-                        $sheet->setCellValue("J{$row}", $observation->remarks);
+                        $sheet->setCellValue("G{$row}", $observation->recomended_action);
+                        $sheet->setCellValue("H{$row}", getUsername($observation->responsibility));
+                        $sheet->setCellValue("I{$row}", $observation->date_of_compliance);
+                        $sheet->setCellValue("J{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Deactive' : 'Unknown'));
+                        $sheet->setCellValue("K{$row}", $observation->remarks);
 
-                        $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                        $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         ]);
@@ -906,8 +927,8 @@ class SafetyWalkObservationController extends Controller
             }
 
             if (!empty($current_month_inspection)) {
-                $sheet->mergeCells("A{$row}:J{$row}")->setCellValue("A{$row}", 'Current Month Observations');
-                $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                $sheet->mergeCells("A{$row}:K{$row}")->setCellValue("A{$row}", 'Current Month Observations');
+                $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -919,33 +940,34 @@ class SafetyWalkObservationController extends Controller
                 foreach ($current_month_inspection as $observation) {
                     $sheet->setCellValue("A{$row}", $sr++);
                     $sheet->setCellValue("B{$row}", getLocationName($observation->location));
-                    $sheet->setCellValue("C{$row}", Displaydateformat($observation->observation_date));
-                    $sheet->setCellValue("D{$row}", $observation->observation);
+                    $sheet->setCellValue("C{$row}", ($observation->exact_location));
+                    $sheet->setCellValue("D{$row}", Displaydateformat($observation->observation_date));
+                    $sheet->setCellValue("E{$row}", $observation->observation);
 
                     $imagePath = GetSafetyWalkImage($observation->id);
                     if (file_exists($imagePath)) {
                         $drawing = new Drawing();
                         $drawing->setPath($imagePath);
-                        $drawing->setCoordinates("E{$row}");
+                        $drawing->setCoordinates("F{$row}");
                         $drawing->setHeight(60);
                         $drawing->setWidth(80);
 
                         $drawing->setOffsetX(5);
                         $drawing->setOffsetY(5);
                         $sheet->getRowDimension($row)->setRowHeight(90);
-                        $sheet->getColumnDimension('E')->setWidth(20);
+                        $sheet->getColumnDimension('F')->setWidth(20);
                         $drawing->setWorksheet($sheet);
                     } else {
-                        $sheet->setCellValue("E{$row}", 'No Image');
+                        $sheet->setCellValue("F{$row}", 'No Image');
                     }
 
-                    $sheet->setCellValue("F{$row}", $observation->recomended_action);
-                    $sheet->setCellValue("G{$row}", getUsername($observation->responsibility));
-                    $sheet->setCellValue("H{$row}", $observation->date_of_compliance);
-                    $sheet->setCellValue("I{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Deactive' : 'Unknown'));
-                    $sheet->setCellValue("J{$row}", $observation->remarks);
+                    $sheet->setCellValue("G{$row}", $observation->recomended_action);
+                    $sheet->setCellValue("H{$row}", getUsername($observation->responsibility));
+                    $sheet->setCellValue("I{$row}", $observation->date_of_compliance);
+                    $sheet->setCellValue("J{$row}", $observation->observation_status == 1 ? 'Active' : ($observation->observation_status == 0 ? 'Deactive' : 'Unknown'));
+                    $sheet->setCellValue("K{$row}", $observation->remarks);
 
-                    $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                    $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
@@ -983,8 +1005,8 @@ class SafetyWalkObservationController extends Controller
             //     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:- \n" . getUsername($inspection_details->created_by));
             // }
 
-            $sheet->mergeCells("F{$signatureRowStart}:J{$signatureRowStart}");
-            $sheet->getStyle("F{$signatureRowStart}:J{$signatureRowStart}")->applyFromArray([
+            $sheet->mergeCells("F{$signatureRowStart}:K{$signatureRowStart}");
+            $sheet->getStyle("F{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => [
                     'horizontal' => Alignment::HORIZONTAL_CENTER,

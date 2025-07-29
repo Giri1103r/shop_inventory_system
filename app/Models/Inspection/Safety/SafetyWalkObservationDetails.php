@@ -14,6 +14,7 @@ class SafetyWalkObservationDetails extends Model
         'id',
         'safety_walk_observation_id',
         'location',
+        'exact_location',
         'observation',
         'observation_date',
         'recomended_action',
@@ -40,6 +41,7 @@ class SafetyWalkObservationDetails extends Model
 
 
         $location = $request->location;
+        $exact_location = $request->exact_location;
         $observation = $request->observation;
         $recomended_action = $request->recomended_action;
         $responsibility = $request->emp_id;
@@ -54,6 +56,7 @@ class SafetyWalkObservationDetails extends Model
                 'safety_walk_observation_id' => $id,
                 'sr_no' => $sr_no_value,
                 'location' => decryptId($location[$index]),
+                'exact_location' => ($exact_location[$index]),
                 'observation' => $observation[$index],
                 'recomended_action' => $recomended_action[$index],
                 'responsibility' => $responsibility[$index],
