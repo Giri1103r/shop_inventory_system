@@ -123,6 +123,19 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                    <div class="input-group date form-input custom-height">
+                                                        <input type="text" name="exact_location" id = "exact_location"
+                                                            class="form-control" value="{{ old('exact_location') }}">
+                                                    </div>
+                                                </div>
+                                                @error('next_due')
+                                                    <div class="error">{{ $message }}</div>
+                                                @enderror
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.unit') }}</label>
                                                     <select name="unit_id" id="unit_id"
                                                         class=" form-control single-select" style="width: 100%">
@@ -356,8 +369,16 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Flow Test</label>
-                                                        <input type="text" name="flow_test[1]" id = "flow_test[1]"
-                                                            class="form-control" placeholder="Enter the Flow Test">
+                                                        <select name="flow_test[1]" id="flow_test[1]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Flow Test</option>
+                                                            <option value="{{ encryptId(GOOD) }}"
+                                                                {{ old('flow_test.1') == encryptId(GOOD) ? 'selected' : '' }}>
+                                                                Good</option>
+                                                            <option value="{{ encryptId(BAD) }}"
+                                                                {{ old('flow_test.1') == encryptId(BAD) ? 'selected' : '' }}>
+                                                                Bad</option>
+                                                        </select>
                                                     </div>
                                                 </div>
 
@@ -573,6 +594,10 @@
                         shift_id: {
                             required: true,
                         },
+                        exact_location: {
+                            required: true,
+                            maxlength: 255,
+                        },
                         next_due: {
                             required: true,
                         },
@@ -621,7 +646,6 @@
                         },
                         "flow_test[1]": {
                             required: true,
-                            number: true
                         },
                         "physical_condition[1]": {
                             required: true,
@@ -672,6 +696,9 @@
                         inspection_date: {
                             required: "Inspeciton Date is required",
                         },
+                        exact_location: {
+                            required: "Exact Location is required",
+                        },
                         location_id: {
                             required: "Location is required",
                         },
@@ -712,9 +739,7 @@
                             required: "Please select the Lever",
                         },
                         "flow_test[1]": {
-                            required: "Please add the Flow Test result (e.g., liters/minute)",
-                            number: "Please enter a valid numeric value (e.g., 12.5)"
-
+                            required: "Please add the Flow Test",
                         },
                         "physical_condition[1]": {
                             required: "Please Select The Physical Condition",
@@ -948,8 +973,16 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Flow Test</label>
-                                                        <input type="text" name="flow_test[${form_set_count}]" id = "flow_test[${form_set_count}]" class="form-control"
-                                                            placeholder="Enter the Flow Test">
+                                                        <select name="flow_test[${form_set_count}]" id="flow_test[${form_set_count}]"
+                                                            class=" form-control single-select" style="width: 100%">
+                                                            <option value="">Select Flow Test</option>
+                                                            <option value="{{ encryptId(GOOD) }}"
+                                                                {{ old('flow_test.1') == encryptId(GOOD) ? 'selected' : '' }}>
+                                                                Good</option>
+                                                            <option value="{{ encryptId(BAD) }}"
+                                                                {{ old('flow_test.1') == encryptId(BAD) ? 'selected' : '' }}>
+                                                                Bad</option>
+                                                        </select>
                                                     </div>
                                                 </div>
 
@@ -1105,12 +1138,10 @@
                         }
                     });
 
-                    $("input[name='flow_test[" + form_set_count + "]']").rules('add', {
+                    $("select[name='flow_test[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        number: true,
                         messages: {
-                            required: "Please add the Flow Test result (e.g., liters/minute)",
-                            number: "Please enter a valid numeric value (e.g., 12.5)"
+                            required: "Please Select the Flow Test result.",
                         }
                     });
 
@@ -1223,7 +1254,7 @@
                     $(this).find('select[name^="blank_cap"]').attr('name', 'blank_cap[' + idx + ']');
                     $(this).find('select[name^="female_coupling"]').attr('name', 'female_coupling[' + idx + ']');
                     $(this).find('select[name^="lever"]').attr('name', 'lever[' + idx + ']');
-                    $(this).find('input[name^="flow_test"]').attr('name', 'flow_test[' + idx + ']');
+                    $(this).find('select[name^="flow_test"]').attr('name', 'flow_test[' + idx + ']');
                     $(this).find('select[name^="physical_condition"]').attr('name', 'physical_condition[' + idx + ']');
                     $(this).find('select[name^="condition_of_ivs"]').attr('name', 'condition_of_ivs[' + idx + ']');
                     $(this).find('textarea[name^="approach"]').attr('name', 'approach[' + idx + ']');

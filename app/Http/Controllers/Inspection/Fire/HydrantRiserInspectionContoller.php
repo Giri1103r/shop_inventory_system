@@ -271,6 +271,7 @@ class HydrantRiserInspectionContoller extends Controller
                 'next_due.required' => 'Next Due Date is required.',
                 'unit_id.required' => 'Unit is required.',
                 'frequency_id.required' => 'Frequency is required.',
+                'exact_location.required' => 'Exact Location is required.',
 
                 'location_check_id.*.required' => 'Location Check is required.',
                 'hydrant_no.*.required' => 'Hydrant No is required.',
@@ -798,7 +799,6 @@ class HydrantRiserInspectionContoller extends Controller
                 $verified_by_signature = GetFireSignature($inspection_detail->hydrant_updated_by, $inspection_detail->hydrant_parent_id, HYDRANT_RISER);
                 $approved_by_signature = GetFireSignature($inspection_detail->approved_by, $inspection_detail->hydrant_parent_id, HYDRANT_RISER);
 
-
                 $titleRow = $row;
 
                 $logoPath = public_path('assets/images/logo-dark.png');
@@ -847,7 +847,8 @@ class HydrantRiserInspectionContoller extends Controller
                 $headerInfoRow = $titleRow + 3;
 
                 $sheet->mergeCells("A{$headerInfoRow}:E{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
-                $sheet->mergeCells("F{$headerInfoRow}:K{$headerInfoRow}")->setCellValue("F{$headerInfoRow}", "Location:- " . getLocationname($inspection_detail->location));
+                $sheet->mergeCells("F{$headerInfoRow}:H{$headerInfoRow}")->setCellValue("F{$headerInfoRow}", "Location:- " . getLocationname($inspection_detail->location));
+                $sheet->mergeCells("I{$headerInfoRow}:K{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Exact Location:- " . ($inspection_detail->exact_location));
                 $sheet->mergeCells("L{$headerInfoRow}:O{$headerInfoRow}")->setCellValue("L{$headerInfoRow}", "Shift:- " . getShift($inspection_detail->shift_id));
                 $sheet->getStyle("A{$headerInfoRow}:O{$headerInfoRow}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -929,7 +930,7 @@ class HydrantRiserInspectionContoller extends Controller
                     $sheet->setCellValue("H{$dataRow}", ($detail['blank_cap'] ?? '') === '1' ? 'Present' : 'Missing');
                     $sheet->setCellValue("I{$dataRow}", ($detail['female_coupling'] ?? '') === '1' ? 'Functional' : 'Non-Functional');
                     $sheet->setCellValue("J{$dataRow}", ($detail['lever'] ?? '') === '1' ? 'Functional' : 'Non-Functional');
-                    $sheet->setCellValue("K{$dataRow}", $detail['flow_test'] ?? '');
+                    $sheet->setCellValue("K{$dataRow}", ($detail['flow_test'] ?? '') === "1" ? 'Good' : 'Bad');
                     $sheet->setCellValue("L{$dataRow}", $detail['approach'] ?? '');
                     $sheet->mergeCells("M{$dataRow}:O{$dataRow}")->setCellValue("M{$dataRow}", $detail['remarks'] ?? '');
 
@@ -1183,7 +1184,6 @@ class HydrantRiserInspectionContoller extends Controller
             $verified_by_signature = GetFireSignature($hydrant_details->updated_by, $hydrant_details->id, HYDRANT_RISER);
             $approved_by_signature = GetFireSignature($hydrant_details->approved_by, $hydrant_details->id, HYDRANT_RISER);
 
-
             foreach (range('A', 'O') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
@@ -1248,7 +1248,8 @@ class HydrantRiserInspectionContoller extends Controller
 
             // Info section
             $sheet->mergeCells("A4:E4")->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($hydrant_details->date_of_inspection));
-            $sheet->mergeCells("F4:K4")->setCellValue("F4", "Location :- " . getLocationname($hydrant_details->location));
+            $sheet->mergeCells("F4:H4")->setCellValue("F4", "Location :- " . getLocationname($hydrant_details->location));
+            $sheet->mergeCells("I4:K4")->setCellValue("I4", "Exact Location :- " . ($hydrant_details->exact_location));
             $sheet->mergeCells("L4:O4")->setCellValue("L4", "Shift:- " . getShift($hydrant_details->shift_id));
             $sheet->mergeCells("A5:E5")->setCellValue("A5", "Next Due date:- " . Displaydateformat($hydrant_details->next_due));
             $sheet->mergeCells("F5:K5")->setCellValue("F5", "Unit:- " . getUnitname($hydrant_details->unit));
@@ -1296,7 +1297,7 @@ class HydrantRiserInspectionContoller extends Controller
                 $sheet->setCellValue("H$row", ($detail['blank_cap'] ?? '') === '1' ? 'Present' : 'Missing');
                 $sheet->setCellValue("I$row", ($detail['female_coupling'] ?? '') === '1' ? 'Functional' : 'Non-Functional');
                 $sheet->setCellValue("J$row", ($detail['lever'] ?? '') === '1' ? 'Functional' : 'Non-Functional');
-                $sheet->setCellValue("K$row", ($detail['flow_test'] ?? ''));
+                $sheet->setCellValue("K$row", ($detail['flow_test'] ?? '') === '1' ? 'Good' : "Bad");
                 $sheet->setCellValue("L$row", $detail['approach'] ?? '');
                 $sheet->mergeCells("M$row:O$row")->setCellValue("M$row", $detail['remarks'] ?? '');
                 $sheet->getStyle("A$row:O$row")->applyFromArray([

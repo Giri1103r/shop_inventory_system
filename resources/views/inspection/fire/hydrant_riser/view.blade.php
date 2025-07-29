@@ -73,6 +73,14 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
+                                                <label class="form-label ">{{ __('inspection.exact_location') }}</label>
+                                                <div class="view_data">
+                                                    {{ ($inspection->exact_location) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
                                                 <label class="form-label ">Shift</label>
                                                 <div class="view_data">
                                                     {{ getShift($inspection->shift_id) }}
@@ -259,7 +267,7 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">Flow Test</label>
                                                         <div class="view_data">
-                                                            {{ $details->flow_test }}
+                                                            {{  $details->flow_test == '1' ? 'Good' : 'Bad' }}
                                                         </div>
                                                     </div>
                                                 </div>
