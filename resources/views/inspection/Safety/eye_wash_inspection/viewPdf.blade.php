@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Water Quality | KARAM</title>
+    <title>Monthly Eye Wash Inspection | KARAM</title>
 
     <style>
         .badge {

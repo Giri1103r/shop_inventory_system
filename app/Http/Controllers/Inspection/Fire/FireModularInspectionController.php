@@ -355,7 +355,7 @@ class FireModularInspectionController extends Controller
                 return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
             }
         } catch (Exception $ex) {
-
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-modular-inspection/checklist/list'));
@@ -866,7 +866,7 @@ class FireModularInspectionController extends Controller
                 $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 2))->setCellValue("A{$headerStart}", "SR. NO");
                 $sheet->mergeCells("B{$headerStart}:C" . ($headerStart + 2))->setCellValue("B{$headerStart}", "DEPARTMENT");
                 $sheet->mergeCells("D{$headerStart}:D" . ($headerStart + 2))->setCellValue("D{$headerStart}", "RESOURCE CODE");
-                $sheet->mergeCells("E{$headerStart}:F" . ($headerStart + 2))->setCellValue("E{$headerStart}", "LOCATION");
+                $sheet->mergeCells("E{$headerStart}:F" . ($headerStart + 2))->setCellValue("E{$headerStart}", "eXACT LOCATION");
 
                 $sheet->mergeCells("G{$headerStart}:I" . ($headerStart + 1))->setCellValue("G{$headerStart}", "DESCRIPTION");
                 $sheet->setCellValue("G" . ($headerStart + 2), "TYPE");
@@ -900,7 +900,7 @@ class FireModularInspectionController extends Controller
                     $sheet->setCellValue("A{$dataRow}", $sr);
                     $sheet->mergeCells("B{$dataRow}:C{$dataRow}")->setCellValue("B{$dataRow}", getDepartment($detail['department']) ?? '');
                     $sheet->setCellValue("D{$dataRow}", $detail['resource_code'] ?? '');
-                    $sheet->mergeCells("E{$dataRow}:F{$dataRow}")->setCellValue("E{$dataRow}", getLocationname($detail['location']) ?? '');
+                    $sheet->mergeCells("E{$dataRow}:F{$dataRow}")->setCellValue("E{$dataRow}", ($detail['location']) ?? '');
                     $sheet->setCellValue("G{$dataRow}", $detail['types_of_equipment'] ?? '');
                     $sheet->setCellValue("H{$dataRow}", $detail['capacity_of_equipment'] ?? '');
                     $sheet->setCellValue("I{$dataRow}", $detail['working_temperature'] ?? '');
@@ -1229,7 +1229,7 @@ class FireModularInspectionController extends Controller
             $sheet->mergeCells("A6:A8")->setCellValue("A6", "SR. NO");
             $sheet->mergeCells("B6:C8")->setCellValue("B6", "DEPARTMENT");
             $sheet->mergeCells("D6:D8")->setCellValue("D6", "RESOURCE CODE");
-            $sheet->mergeCells("E6:F8")->setCellValue("E6", "LOCATION");
+            $sheet->mergeCells("E6:F8")->setCellValue("E6", "EXACT LOCATION");
 
             $sheet->mergeCells("G6:I7")->setCellValue("G6", "DESCRIPTION");
             $sheet->mergeCells("J6:L6")->setCellValue("J6", "CHECK ITEMS (OK/NOT OK)");
@@ -1257,7 +1257,7 @@ class FireModularInspectionController extends Controller
                 $sheet->setCellValue("A{$row}", $sr);
                 $sheet->mergeCells("B{$row}:C{$row}")->setCellValue("B{$row}", getDepartment($detail['department']) ?? '');
                 $sheet->setCellValue("D{$row}", $detail['resource_code'] ?? '');
-                $sheet->mergeCells("E{$row}:F{$row}")->setCellValue("E{$row}", getLocationname($detail['location']) ?? '');
+                $sheet->mergeCells("E{$row}:F{$row}")->setCellValue("E{$row}", ($detail['location']) ?? '');
 
                 $sheet->setCellValue("G{$row}", $detail['types_of_equipment'] ?? '');
                 $sheet->setCellValue("H{$row}", $detail['capacity_of_equipment'] ?? '');

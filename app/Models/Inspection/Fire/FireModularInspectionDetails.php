@@ -48,7 +48,7 @@ class FireModularInspectionDetails extends Model
         $request = request();
 
         $department = $request->department;
-        $location = $request->location;
+        $location = $request->exact_location;
         $cylinder_pressure = $request->cylinder_pressure;
         $neck_ring = $request->neck_ring;
         $sprinkler_head = $request->sprinkler_head;
@@ -62,7 +62,7 @@ class FireModularInspectionDetails extends Model
             $data = array(
                 'inspection_id' => $id,
                 'department' => decryptId($department[$index]),
-                'location' => decryptId($location),
+                'location' => ($location),
                 'cylinder_pressure' => $cylinder_pressure[$index],
                 'neck_ring' => ($neck_ring[$index]),
                 'remarks' => $remarks[$index],

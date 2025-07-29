@@ -64,9 +64,6 @@
                                                     Floor Manager Verification
                                                 </option>
                                                 <option value="{{ encryptId('5') }}">Closed</option>
-
-
-
                                             </select>
                                         </div>
 
@@ -164,6 +161,30 @@
     @push('script')
         <script type="text/javascript">
             $(document).ready(function() {
+
+                const savedData = localStorage.getItem('searchData');
+                if (savedData) {
+                    const searchValues = JSON.parse(savedData);
+
+                    for (let key in searchValues) {
+                        const $element = $(`[name="${key}"]`);
+                        const value = searchValues[key];
+
+                        if ($element.is(':checkbox')) {
+                            $element.prop('checked', value === 'on' || value === true);
+                        } else if ($element.is(':radio')) {
+                            $(`input[name="${key}"][value="${value}"]`).prop('checked', true);
+                        } else {
+                            $element.val(value);
+                        }
+
+                        if ($element.is('select') || $element.hasClass('select2')) {
+                            $element.trigger('change');
+                        }
+                    }
+                }
+
+
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
 
@@ -394,13 +415,24 @@
                     $('.buttons-page-length').find('span').text(text);
                 });
 
-                $(document).on('click', '#searchform', function() {
+                $(document).on('click', '#searchform', function(e) {
                     table.draw();
+                    e.preventDefault();
+                    const form = document.getElementById('formsearch');
+
+                    const formData = new FormData(form);
+                    const searchValues = {};
+
+                    formData.forEach((value, key) => {
+                        searchValues[key] = value;
+                    });
+                    localStorage.setItem('searchData', JSON.stringify(searchValues));
                 });
 
                 $(document).on('click', '#resetform', function() {
                     $('#formsearch .single-select').val('');
                     $('#formsearch .single-select').trigger('change');
+                    localStorage.removeItem('searchData');
                     setTimeout(function() {
                         table.draw();
                     }, 150);
