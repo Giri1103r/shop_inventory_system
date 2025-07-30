@@ -48,6 +48,20 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Safety Officer</label>
+                                                <select name="ehs_officer" id="ehs_officer" style="width: 100%"
+                                                    class="form-control single-select">
+                                                    <option value="">Select the Safety Officer</option>
+                                                    @foreach ($ehs_officers as $ehs_officer)
+                                                        <option value="{{ encryptId($ehs_officer->login_id) }}">
+                                                            {{ $ehs_officer->emp_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
 
                                         <div class="col-md-4 mb-3 form-input">
                                             <label for="inspection_status"
@@ -64,9 +78,6 @@
                                                     Floor Manager Verification
                                                 </option>
                                                 <option value="{{ encryptId('5') }}">Closed</option>
-
-
-
                                             </select>
                                         </div>
 
@@ -143,7 +154,7 @@
                                         <th>Shift</th>
                                         <th>{{ __('common.unit') }}</th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_by') }}</th>
+                                        <th>Safety Officer</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -164,6 +175,30 @@
     @push('script')
         <script type="text/javascript">
             $(document).ready(function() {
+
+                const savedData = localStorage.getItem('searchData');
+                if (savedData) {
+                    const searchValues = JSON.parse(savedData);
+
+                    for (let key in searchValues) {
+                        const $element = $(`[name="${key}"]`);
+                        const value = searchValues[key];
+
+                        if ($element.is(':checkbox')) {
+                            $element.prop('checked', value === 'on' || value === true);
+                        } else if ($element.is(':radio')) {
+                            $(`input[name="${key}"][value="${value}"]`).prop('checked', true);
+                        } else {
+                            $element.val(value);
+                        }
+
+                        if ($element.is('select') || $element.hasClass('select2')) {
+                            $element.trigger('change');
+                        }
+                    }
+                }
+
+
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
 
@@ -248,6 +283,7 @@
                             d.to_date = $('#to_date').val();
                             d.unit_name = $("#unit_name").val();
                             d.unit_id = $("#unit_id").val();
+                            d.ehs_officer = $("#ehs_officer").val();
 
                         },
                         error: function(xhr, error, code) {
@@ -325,8 +361,9 @@
                                         var shift = $('#shift').val();
                                         var from_date = $('#from_date').val();
                                         var to_date = $('#to_date').val();
-                                        var unit_name = $('#unit_name').val();
+                                        var unit_name = $('#unit_name').val() ?? "";
                                         var unit_id = $('#unit_id').val();
+                                        var ehs_officer = $('#ehs_officer').val();
 
 
                                         $(".dt-button").removeClass('processing');
@@ -341,8 +378,8 @@
                                             '&to_date=' + to_date +
                                             '&shift=' + shift +
                                             '&unit_name=' + unit_name +
+                                            '&ehs_officer=' + ehs_officer +
                                             '&unit_id=' + unit_id
-
 
                                     }
                                 },
@@ -358,8 +395,9 @@
                                         var shift = $('#shift').val();
                                         var from_date = $('#from_date').val();
                                         var to_date = $('#to_date').val();
-                                        var unit_name = $('#unit_name').val();
                                         var unit_id = $('#unit_id').val();
+                                        var unit_name = $('#unit_name').val() ?? "";
+                                        var ehs_officer = $('#ehs_officer').val();
 
 
                                         $(".dt-button").removeClass('processing');
@@ -374,8 +412,8 @@
                                             '&to_date=' + to_date +
                                             '&shift=' + shift +
                                             '&unit_name=' + unit_name +
+                                            '&ehs_officer=' + ehs_officer +
                                             '&unit_id=' + unit_id
-
                                     }
                                 },
                             ]
@@ -394,13 +432,24 @@
                     $('.buttons-page-length').find('span').text(text);
                 });
 
-                $(document).on('click', '#searchform', function() {
+                $(document).on('click', '#searchform', function(e) {
                     table.draw();
+                    e.preventDefault();
+                    const form = document.getElementById('formsearch');
+
+                    const formData = new FormData(form);
+                    const searchValues = {};
+
+                    formData.forEach((value, key) => {
+                        searchValues[key] = value;
+                    });
+                    localStorage.setItem('searchData', JSON.stringify(searchValues));
                 });
 
                 $(document).on('click', '#resetform', function() {
                     $('#formsearch .single-select').val('');
                     $('#formsearch .single-select').trigger('change');
+                    localStorage.removeItem('searchData');
                     setTimeout(function() {
                         table.draw();
                     }, 150);

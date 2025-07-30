@@ -148,12 +148,13 @@ class GembaWalkController extends Controller
                 }
             }
             $shift = $this->shift->getShiftname();
+            $ehs_officers =$this->employee->getEmployeeBasedOnRole(ROLE_EHS_OFFICER);
             $unit = $this->unit->getunit();
             $data = array(
                 'shift' => $shift,
                 'unit'=>$unit,
                 'dashboard_search' => $request->unit_name,
-
+                'ehs_officers' => $ehs_officers,
             );
             return view('inspection.gembaWalk.list', $data);
         } catch (Exception $ex) {
@@ -1198,7 +1199,7 @@ class GembaWalkController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Gemba Walk (Safety Observation).pdf";
-            $mpdf->Output($filename, 'D');
+            $mpdf->Output($filename, 'i');
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');

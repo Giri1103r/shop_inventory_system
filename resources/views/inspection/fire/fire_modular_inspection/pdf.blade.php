@@ -224,7 +224,7 @@
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">DEPARTMENT</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">RESOURCE CODE
         </th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">LOCATION</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">EXACT LOCATION</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="2" colspan="3">
             DESCRIPTON
         </th>
@@ -251,7 +251,7 @@
             <td style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
             <td style="border: 1px solid black; padding: 8px;">{{ GetDeptName($details->department) }}</td>
             <td style="border: 1px solid black; padding: 8px;">{{ $details->resource_code }}</td>
-            <td style="border: 1px solid black; padding: 8px;">{{ getLocationname($details->location) }}</td>
+            <td style="border: 1px solid black; padding: 8px;">{{ ($details->location) }}</td>
             <td style="border: 1px solid black; padding: 8px;">
                 {{ $details->types_of_equipment }}
             </td>

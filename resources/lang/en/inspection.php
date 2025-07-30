@@ -20,7 +20,7 @@ return [
     'next_due' => 'Next Due on',
     'unit' => 'Unit',
     'frequency' => 'Frequency',
-    'identification_no' => 'Identification Number',
+    'identification_no' => 'Identification/Serial No.',
     'forklift_type' => 'Forklift Type',
     'capacity' => 'Capacity',
     'monthly_forklift_inspection' => 'Monthly ForkLift Inspection',
@@ -78,8 +78,7 @@ return [
     'foot_pedal_value' => 'Foot Pedal Value',
     'eyewash_heads' => 'Eye Wash & Head Shower',
     'receptacle' => 'Receptacle',
-    'water' => 'Water',
-    'quality' => 'Quality',
+    'water' => 'Water Quality',
     'pressure' => 'Pressure',
     'temperature' => 'Temperature',
     'equipment_name' => 'Equipment Name',
@@ -252,7 +251,7 @@ return [
     'capacity_of_equipment' => 'Capacity Of Equipment',
     'working_temperature' => 'Working Temperature',
     'sprinkler_head' => 'Sprinkler Head',
-    'neck_ring' => 'Neck Rink',
+    'neck_ring' => 'Neck Ring',
     'date_of_closure' => 'Date of Closure',
 
 

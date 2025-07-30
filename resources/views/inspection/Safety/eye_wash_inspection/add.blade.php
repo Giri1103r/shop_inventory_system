@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'Water Quality')
+@section('title', 'Monthly Eye Wash Inspection')
 @section('pageurl', admin_url('safety/eye-wash-inspection/monthly/list'))
 @section('content')
     <div class="clearfix"></div>
@@ -219,18 +219,11 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location[1]" id="location"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Location</option>
-                                                            @foreach ($locations as $location)
-                                                                <option value="{{ encryptId($location->id) }}"
-                                                                    {{ old('location.1') == encryptId($location->id) ? 'selected' : '' }}>
-                                                                    {{ $location->location_name }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[1]" id = "exact_location"
+                                                            class="form-control" value="{{ old('exact_location.1') }}">
                                                     </div>
-                                                    @error('location.1')
+                                                    @error('exact_location.1')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
@@ -565,7 +558,7 @@
                         "condition[1]": {
                             required: true,
                         },
-                        "location[1]": {
+                        "exact_location[1]": {
                             required: true,
                         },
                         "resource_code[1]": {
@@ -618,8 +611,8 @@
                         "temperature[1]": {
                             required: "Please Select the Temperature",
                         },
-                        "location[1]": {
-                            required: "Please Select The Location",
+                        "exact_location[1]": {
+                            required: "Please Enter The Exact Location",
                         },
                         "condition[1]": {
                             required: "Please add the condition of the Eye wash inspection",
@@ -733,11 +726,10 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location[${form_set_count}]" id="location[${form_set_count}]"
-                                                            class=" form-control single-select location-select" style="width: 100%">
-                                                            <option value="">Select Location</option>
-                                                        </select>
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                         <input type="text" name="exact_location[${form_set_count}]"
+                                                            id = "exact_location[${form_set_count}]" class="form-control"
+                                                            value="{{ old('location.1') }}">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -867,15 +859,12 @@
 
                     let newFormSetElement = $(newFormSet); // Convert string to jQuery object
 
-                    let locationSelect = newFormSetElement.find('select[name^="location"]');
-                    GetLocations(locationSelect); // Now this will work correctly
-
                     $('.form-wrapper').append(newFormSetElement);
 
-                    $("select[name='location[" + form_set_count + "]']").rules('add', {
+                    $("input[name='exact_location[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please select the location',
+                            required: 'Please enter the Exact location',
                         }
                     });
 
@@ -991,23 +980,6 @@
                 });
             });
 
-            function GetLocations(selectElement) {
-                $.ajax({
-                    type: "GET",
-                    url: "{{ admin_url('safety/eye-wash-inspection/monthly/get/locations') }}",
-                    success: function(response) {
-                        console.log(response);
-                        if (response.length > 0) {
-                            let options = `<option value="">Select Location</option>`;
-                            response.forEach(location => {
-                                options +=
-                                    `<option value="${location.id}">${location.location_name}</option>`;
-                            });
-                            $(selectElement).html(options).trigger('change');
-                        }
-                    }
-                });
-            }
 
             function updatePageIndices() {
                 $('.form-wrapper .form-set').each(function(index) {
@@ -1016,7 +988,7 @@
                     $(this).find("input[name^='sr_no']").val(newSerialNumber);
 
                     $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
-                    $(this).find('select[name^="location"]').attr('name', 'location[' + idx + ']');
+                    $(this).find('input[name^="exact_location"]').attr('name', 'exact_location[' + idx + ']');
                     $(this).find('input[name^="resource_code"]').attr('name', 'resource_code[' + idx + ']');
                     $(this).find('select[name^="condition"]').attr('name', 'condition[' + idx + ']');
                     $(this).find('input[name^="value"]').attr('name', 'value[' + idx + ']');

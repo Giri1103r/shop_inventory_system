@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Water Quality | KARAM</title>
+    <title>Monthly Eye Wash Inspection | KARAM</title>
 
     <style>
         .badge {
@@ -166,7 +166,7 @@
                     <th colspan="6" style="border: 1px solid black; text-align: center;">
                         <h3 style="margin: 0;">
                             <b>MONTHLY SAFETY SHOWER CUM EYE WASH INSPECTION CHECKLIST
-                              </b>
+                            </b>
                         </h3>
                     </th>
                     <th colspan="3" style="border: 1px solid black; padding: 0;">
@@ -215,7 +215,7 @@
                 <tr>
                     <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">SR. NO.
                     </th>
-                    <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">LOCATION
+                    <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">Exact LOCATION
                     </th>
                     <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">RESOURCE
                         CODE</th>
@@ -234,7 +234,7 @@
                     <th style="border: 2px solid black; padding: 6px; background-color: #eee;">FOOT PEDAL VALVE</th>
                     <th style="border: 2px solid black; padding: 6px; background-color: #eee;">EYEWASH HEADS</th>
                     <th style="border: 2px solid black; padding: 6px; background-color: #eee;">RECEPTACLE</th>
-                    <th style="border: 2px solid black; padding: 6px; background-color: #eee;">QUALITY</th>
+                    <th style="border: 2px solid black; padding: 6px; background-color: #eee;">WATER QUALITY</th>
                     <th style="border: 2px solid black; padding: 6px; background-color: #eee;">PRESSURE</th>
                     <th style="border: 2px solid black; padding: 6px; background-color: #eee;">TEMPERATURE (15–35°C)
                     </th>
@@ -243,26 +243,28 @@
                 {{-- Data Row --}}
                 <tr>
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->sr_no }}</td>
-                    <td style="border: 2px solid black; padding: 6px;">{{ getLocationName($details->location) }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">{{ $details->location }}</td>
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->resource_code }}</td>
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->value }}</td>
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->hand_free_stay_open_value }}</td>
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->foot_pedal_value }}</td>
-                    <td style="border: 2px solid black; padding: 6px;">{{ $details->eyewash_heads_value == 1 ? 'OK' : "NOT Ok" }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">
+                        {{ $details->eyewash_heads_value == 1 ? 'OK' : 'NOT Ok' }}</td>
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->receptacle }}</td>
                     <td style="border: 2px solid black; padding: 6px;">
-                        @if ($details->quality == 'GOOD')
+                        @if ($details->water == GOOD)
                             Good
-                        @elseif($details->quality == 'FAIR')
+                        @elseif ($details->water == FAIR)
                             Fair
-                        @elseif($details->quality == 'POOR')
+                        @elseif ($details->water == POOR)
                             Poor
                         @else
-                            Unknown
+                            Not specified
                         @endif
                     </td>
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->pressure }}</td>
-                    <td style="border: 2px solid black; padding: 6px;">{{ $details->temperature == "1" ? 'ABNORMAL' : 'NORMAL'  }}</td>
+                    <td style="border: 2px solid black; padding: 6px;">
+                        {{ $details->temperature == '1' ? 'ABNORMAL' : 'NORMAL' }}</td>
                     <td style="border: 2px solid black; padding: 6px;">{{ $details->remarks }}</td>
                 </tr>
                 @php

@@ -134,7 +134,7 @@
                                                             class="form-label">{{ __('inspection.identification_no') }}</label>
                                                         <input type="text" name="identification_no[1]"
                                                             id = "identification_no" class="form-control identification_no"
-                                                            value="{{ forkliftInspection() }}" readonly>
+                                                            value="{{ forkliftInspection() }}" >
 
                                                     </div>
                                                 </div>
@@ -763,8 +763,8 @@
             function updateCurrentPageIndices() {
                 $('.form-wrapper-current .form-set-current').each(function(index) {
                     let idx = index + 1;
-                    let newSerialNumber = 'FORKLIFT-INS-' + ('000000' + idx).slice(-6);
-                    $(this).find("input[name^='identification_no']").val(newSerialNumber);
+                    // let newSerialNumber = 'FORKLIFT-INS-' + ('000000' + idx).slice(-6);
+                    // $(this).find("input[name^='identification_no']").val(newSerialNumber);
 
                     $(this).find('input[name^="identification_no"]').attr('name', 'identification_no[' + idx + ']');
                     $(this).find('select[name^="department"]').attr('name', 'department[' + idx + ']');

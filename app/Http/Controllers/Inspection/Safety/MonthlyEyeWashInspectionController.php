@@ -22,7 +22,7 @@ use App\Models\Inspection\Safety\SafetyStatusLog;
 use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Safety\EyeWashInspectionDetails;
 use App\Models\Inspection\Safety\MonthlyEyeWashInspection;
-
+use Mpdf\Tag\Details;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
@@ -153,7 +153,7 @@ class MonthlyEyeWashInspectionController extends Controller
                                     </a>';
                             return $btn;
                         })
-                        ->rawColumns(['action', 'created_date', 'date_of_inspection', 'next_due','created_by', 'status', 'inspection_status', 'issue_date'])
+                        ->rawColumns(['action', 'created_date', 'date_of_inspection', 'next_due', 'created_by', 'status', 'inspection_status', 'issue_date'])
                         ->setFilteredRecords($data['filter_records'])
                         ->setTotalRecords($data['total_records'])
                         ->skipPaging()
@@ -217,7 +217,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 'unit_id' => 'required',
                 'frequency_id' => 'required',
                 'sr_no.*' => 'required',
-                'location.*' => 'required',
+                'exact_location.*' => 'required',
                 'resource_code.*' => 'required',
                 'condition.*' => 'required',
                 'value.*' => 'required',
@@ -237,7 +237,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 'shift_id.required' => 'Shift is required',
                 'next_due.required' => 'Next due date is required',
                 'unit_id.required' => 'Unit is required',
-                'location.*.required' => 'Location is required',
+                'exact_location.*.required' => 'Exact Location is required',
                 'resource_code.*.required' => 'Resource code is required',
                 'condition.*.required' => 'Condition is required',
                 'value.*.required' => 'Valve is required',
@@ -265,14 +265,14 @@ class MonthlyEyeWashInspectionController extends Controller
 
             $ehsOfficer = GetEHSOfficer();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'Water Quality Inspection';
+            $mailsubject = 'Monthly Eye Wash Inspection Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Water Quality Inspection",
+                    'message' => "Fire Associate create the Monthly Eye Wash Inspection Inspection",
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
                     'id' => $inspection_id,
                     'module' => 1,
@@ -283,12 +283,12 @@ class MonthlyEyeWashInspectionController extends Controller
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Water Quality Inspection';
+            $title = 'Fire Associate create the Monthly Eye Wash Inspection Inspection';
             foreach ($ehsOfficers as $user) {
                 $email_id = getUseremail($user);
                 $url = admin_url('safety/eyewash/monthly/verification/verification/' . encryptId($inspection_id) . '/ehs');
                 $details = array(
-                    'safety_type' => 'Water Quality Inspection',
+                    'safety_type' => 'Monthly Eye Wash Inspection Inspection',
                     'email' => $email_id,
                     'mail_subject' => $mailsubject,
                     'title' => $title,
@@ -311,7 +311,6 @@ class MonthlyEyeWashInspectionController extends Controller
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         } catch (Exception $ex) {
             report($ex);
-
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         }
@@ -402,7 +401,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $userIds = [
                 'users' => $inspection_details->created_by,
             ];
-         $mailsubject = 'Water Quality Inspection';
+            $mailsubject = 'Monthly Eye Wash Inspection Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -464,7 +463,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 'users' => $ehsOfficers,
             ];
 
-         $mailsubject = 'Water Quality Inspection';
+            $mailsubject = 'Monthly Eye Wash Inspection Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -535,7 +534,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $users = $inspection_details->created_by;
                 $to_status = EHS_OFFICER_REJECTED;
             }
-         $mailsubject = 'Water Quality Inspection';
+            $mailsubject = 'Monthly Eye Wash Inspection Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -609,7 +608,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $users = $inspection_details->created_by;
                 $to_status = L1_MANAGER_REJECTED;
             }
-         $mailsubject = 'Water Quality Inspection';
+            $mailsubject = 'Monthly Eye Wash Inspection Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -679,10 +678,9 @@ class MonthlyEyeWashInspectionController extends Controller
                 $web_link =   admin_url('safety/eye-wash-inspection/monthly/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = L2_MANAGER_REJECTED;
                 $users = array_merge([$inspection_details->created_by], [$inspection_details->verified_by], [$inspection_details->l1_manager_verified_by]);
-
             }
 
-         $mailsubject = 'Water Quality Inspection';
+            $mailsubject = 'Monthly Eye Wash Inspection Inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
                 'module_type' => 3,
@@ -778,7 +776,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 }
 
                 $sheet->mergeCells("C{$startRow}:K" . ($startRow + 2));
-                $sheet->setCellValue("C{$startRow}", 'Water Quality INSPECTION CHECKLIST .');
+                $sheet->setCellValue("C{$startRow}", 'Monthly Eye Wash Inspection INSPECTION CHECKLIST .');
                 $sheet->getStyle("C{$startRow}:K" . ($startRow + 2))->applyFromArray([
                     'font' => ['bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -823,7 +821,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $sheet->mergeCells("E{$startRow}:I{$startRow}")->setCellValue("E{$startRow}", 'Unit:- ' . getUnitname($eye_wash->unit));
                 $sheet->mergeCells("J{$startRow}:M{$startRow}")->setCellValue("J{$startRow}", 'Frequency:- ' . getFrequencyname($eye_wash->frequency));
 
-                $sheet->getStyle("A" . ($startRow-1) . ":M{$startRow}")->applyFromArray([
+                $sheet->getStyle("A" . ($startRow - 1) . ":M{$startRow}")->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -832,7 +830,7 @@ class MonthlyEyeWashInspectionController extends Controller
 
                 $headerStart = $startRow;
                 $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 2))->setCellValue("A{$headerStart}", 'SR. NO');
-                $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 2))->setCellValue("B{$headerStart}", 'LOCATION');
+                $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 2))->setCellValue("B{$headerStart}", 'Exact LOCATION');
                 $sheet->mergeCells("C{$headerStart}:D" . ($headerStart + 2))->setCellValue("C{$headerStart}", 'RESOURCE CODE');
 
                 $sheet->mergeCells("E{$headerStart}:L{$headerStart}")->setCellValue("E{$headerStart}", 'CHECK ITEMS');
@@ -844,7 +842,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 $sheet->setCellValue("G" . ($headerStart + 2), 'FOOT PEDAL VALVE');
                 $sheet->setCellValue("H" . ($headerStart + 2), 'Eye Wash & Head Shower');
                 $sheet->setCellValue("I" . ($headerStart + 2), 'RECEPTACLE');
-                $sheet->setCellValue("J" . ($headerStart + 2), 'QUALITY');
+                $sheet->setCellValue("J" . ($headerStart + 2), 'Water QUALITY');
                 $sheet->setCellValue("K" . ($headerStart + 2), 'PRESSURE');
                 $sheet->setCellValue("L" . ($headerStart + 2), 'TEMPERATURE');
 
@@ -861,16 +859,26 @@ class MonthlyEyeWashInspectionController extends Controller
                 $sr = 1;
                 foreach ($inspection_data as $detail) {
                     $sheet->setCellValue("A{$startRow}", $sr);
-                    $sheet->setCellValue("B{$startRow}", getLocationname($detail['location']) ?? '');
+                    $sheet->setCellValue("B{$startRow}", ($detail['location']) ?? '');
                     $sheet->mergeCells("C{$startRow}:D{$startRow}")->setCellValue("C{$startRow}", $detail['resource_code'] ?? '');
                     $sheet->setCellValue("E{$startRow}", $detail['value'] ?? '');
                     $sheet->setCellValue("F{$startRow}", $detail['hand_free_stay_open_value'] ?? '');
                     $sheet->setCellValue("G{$startRow}", $detail['foot_pedal_value'] ?? '');
                     $sheet->setCellValue("H{$startRow}", $detail['eyewash_heads_value'] == '1' ? "OK" : "NOT OK");
                     $sheet->setCellValue("I{$startRow}", $detail['receptacle'] ?? '');
-                    $sheet->setCellValue("J{$startRow}", $detail['quality'] ?? '');
+                    $qualityLabel = '';
+
+                    if ($detail['water'] == GOOD) {
+                        $qualityLabel = 'Good';
+                    } elseif ($detail['water'] == FAIR) {
+                        $qualityLabel = 'Fair';
+                    } elseif ($detail['water'] == POOR) {
+                        $qualityLabel = 'Poor';
+                    }
+
+                    $sheet->setCellValue("J{$startRow}", $qualityLabel);
                     $sheet->setCellValue("K{$startRow}", $detail['pressure'] ?? '');
-                    $sheet->setCellValue("L{$startRow}", $detail['temperature']  == '1' ? "ABNORMAL" : 'NORMAL'  );
+                    $sheet->setCellValue("L{$startRow}", $detail['temperature']  == '1' ? "ABNORMAL" : 'NORMAL');
                     $sheet->setCellValue("M{$startRow}", $detail['remarks'] ?? '');
 
                     $sheet->getStyle("A{$startRow}:M{$startRow}")->applyFromArray([
@@ -882,7 +890,7 @@ class MonthlyEyeWashInspectionController extends Controller
                     $sr++;
                 }
 
-                $signatureRowStart = $startRow ;
+                $signatureRowStart = $startRow;
                 $sheet->getRowDimension($signatureRowStart)->setRowHeight(80);
 
                 $sheet->mergeCells("A{$signatureRowStart}:E{$signatureRowStart}");
@@ -954,7 +962,6 @@ class MonthlyEyeWashInspectionController extends Controller
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
-
         } catch (\Exception $e) {
             report($e);
             Session::flash('error', 'Something went wrong!');
@@ -1015,9 +1022,9 @@ class MonthlyEyeWashInspectionController extends Controller
                 $inspection_details = $this->eye_wash->selectOne($id);
                 $inspection = $this->eye_wash_details->GetDetails($inspection_details->id);
                 $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
-                $approved_by = GetSafetySignature( $inspection_details->approved_by, $inspection_details->id, EYE_WASH_INSPECTION);
-                $verified_by = GetSafetySignature( $inspection_details->verified_by, $inspection_details->id,EYE_WASH_INSPECTION);
-                $checked_by = GetSafetySignature( $inspection_details->created_by,$inspection_details->id, EYE_WASH_INSPECTION);
+                $approved_by = GetSafetySignature($inspection_details->approved_by, $inspection_details->id, EYE_WASH_INSPECTION);
+                $verified_by = GetSafetySignature($inspection_details->verified_by, $inspection_details->id, EYE_WASH_INSPECTION);
+                $checked_by = GetSafetySignature($inspection_details->created_by, $inspection_details->id, EYE_WASH_INSPECTION);
 
                 $document_no = $this->document_reference->selectUsingName('MonthlyEyeWashInspection');
 
@@ -1026,7 +1033,7 @@ class MonthlyEyeWashInspectionController extends Controller
                     'status_log' => $status_log,
                     'inspection_details' => $inspection_details,
                     'inspection' => $inspection,
-                    'pagetitle' => "Water Quality Inspection",
+                    'pagetitle' => "Monthly Eye Wash Inspection Inspection",
                     'document_no' => $document_no,
                     // 'approved_by' => $approved_by,
                     // 'verified_by' => $verified_by,
@@ -1051,7 +1058,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
-            $filename = "Water Quality Inspection.pdf";
+            $filename = "Monthly Eye Wash Inspection Inspection.pdf";
             return $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
@@ -1076,7 +1083,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $verified_by_signature = GetSafetySignature($eye_wash->verified_by, $eye_wash->id, EYE_WASH_INSPECTION);
             $approved_by_signature = GetSafetySignature($eye_wash->approved_by, $eye_wash->id, EYE_WASH_INSPECTION);
 
-                foreach (range('A', 'M') as $col) {
+            foreach (range('A', 'M') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
             for ($i = 1; $i <= 200; $i++) {
@@ -1098,7 +1105,7 @@ class MonthlyEyeWashInspectionController extends Controller
 
             $sheet->mergeCells('A1:B3');
             $sheet->mergeCells('C1:K3');
-            $sheet->setCellValue('C1', 'Water Quality INSPECTION CHECKLIST .');
+            $sheet->setCellValue('C1', 'Monthly Eye Wash Inspection INSPECTION CHECKLIST .');
             $sheet->getStyle('C1:K3')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
@@ -1145,7 +1152,7 @@ class MonthlyEyeWashInspectionController extends Controller
             ]);
 
             $sheet->mergeCells('A6:A8')->setCellValue('A6', 'SR. NO');
-            $sheet->mergeCells('B6:B8')->setCellValue('B6', 'LOCATION');
+            $sheet->mergeCells('B6:B8')->setCellValue('B6', 'Exact LOCATION');
             $sheet->mergeCells('C6:D8')->setCellValue('C6', 'RESOURCE CODE');
 
             $sheet->mergeCells('E6:L6')->setCellValue('E6', 'CHECK ITEMS');
@@ -1157,7 +1164,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $sheet->setCellValue('G8', 'FOOT PEDAL VALVE');
             $sheet->setCellValue('H8', 'Eye Wash & Head Shower');
             $sheet->setCellValue('I8', 'RECEPTACLE');
-            $sheet->setCellValue('J8', 'QUALITY');
+            $sheet->setCellValue('J8', 'Water QUALITY');
             $sheet->setCellValue('K8', 'PRESSURE');
             $sheet->setCellValue('L8', 'TEMPERATURE');
 
@@ -1173,7 +1180,7 @@ class MonthlyEyeWashInspectionController extends Controller
             $sr = 1;
             foreach ($inspection_data as $detail) {
                 $sheet->setCellValue("A{$row}", $sr);
-                $sheet->setCellValue("B{$row}", getLocationname($detail['location']) ?? '');
+                $sheet->setCellValue("B{$row}", ($detail['location']) ?? '');
                 $sheet->mergeCells("C{$row}:D{$row}")->setCellValue("C{$row}", $detail['resource_code'] ?? '');
 
                 $sheet->setCellValue("E{$row}", $detail['value'] ?? '');
@@ -1182,10 +1189,20 @@ class MonthlyEyeWashInspectionController extends Controller
                 $sheet->setCellValue("H{$row}", $detail['eyewash_heads_value'] == '1' ? "OK" : 'NOT OK');
                 $sheet->setCellValue("I{$row}", $detail['receptacle'] ?? '');
 
-                $sheet->setCellValue("J{$row}", $detail['quality'] ?? '');
+                $qualityLabel = '';
+
+                if ($detail['water'] == GOOD) {
+                    $qualityLabel = 'Good';
+                } elseif ($detail['water'] == FAIR) {
+                    $qualityLabel = 'Fair';
+                } elseif ($detail['water'] == POOR) {
+                    $qualityLabel = 'Poor';
+                }
+
+                $sheet->setCellValue("J{$row}", $qualityLabel);
 
                 $sheet->setCellValue("K{$row}", $detail['pressure'] ?? '');
-                $sheet->setCellValue("L{$row}", $detail['temperature'] == '1' ? "ABNORMAL" : 'NORMAL' );
+                $sheet->setCellValue("L{$row}", $detail['temperature'] == '1' ? "ABNORMAL" : 'NORMAL');
                 $sheet->setCellValue("M{$row}", $detail['remarks'] ?? '');
 
                 $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([
@@ -1210,7 +1227,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 ],
             ]);
 
-            if ($eye_wash->created_by){
+            if ($eye_wash->created_by) {
                 // $drawing = new Drawing();
                 // $drawing->setName('Signature');
                 // $drawing->setDescription('Prepared By');
@@ -1235,7 +1252,7 @@ class MonthlyEyeWashInspectionController extends Controller
                 ],
             ]);
 
-            if ($eye_wash->verified_by){
+            if ($eye_wash->verified_by) {
                 // $drawing = new Drawing();
                 // $drawing->setName('Signature');
                 // $drawing->setDescription('Verified By');

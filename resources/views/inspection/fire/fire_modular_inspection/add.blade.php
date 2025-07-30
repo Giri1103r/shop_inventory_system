@@ -225,18 +225,11 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location[1]" id="location"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select {{ __('inspection.location') }}
-                                                            </option>
-                                                            @foreach ($locations as $location)
-                                                                <option value="{{ encryptId($location->id) }}"
-                                                                    {{ old('location') == encryptId($location->id) ? 'selected' : '' }}>
-                                                                    {{ $location->location_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        @error('location.1')
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[1]"
+                                                            id = "exact_location" class="form-control"
+                                                            value="{{ old('exact_location.1') }}">
+                                                        @error('exact_location.1')
                                                             <div class="error">{{ $message }}</div>
                                                         @enderror
                                                     </div>
@@ -513,7 +506,7 @@
                             required: true,
                             maxlength: 30,
                         },
-                        "location[1]": {
+                        "exact_location[1]": {
                             required: true,
                         },
                         "department[1]": {
@@ -609,6 +602,9 @@
                             minlength: "Minimum Characters should be 3",
                             maxlength: "Maximum Characters should not exceed 300",
                         },
+                        "exact_location[1]": {
+                            required: "Please add Exact Location",
+                        },
                         device_image: {
                             required: "Please upload an image.",
                             filesize: "File size should not exceed 15MB",
@@ -692,17 +688,10 @@
                                                  <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location[${form_set_count}]" id="location[${form_set_count}]"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select {{ __('inspection.location') }}
-                                                            </option>
-                                                            @foreach ($locations as $location)
-                                                                <option value="{{ encryptId($location->id) }}"
-                                                                    {{ old('location') == encryptId($location->id) ? 'selected' : '' }}>
-                                                                    {{ $location->location_name }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[${form_set_count}]"
+                                                            id = "exact_location" class="form-control"
+                                                            value="{{ old('exact_location.1') }}">
                                                         @error('location.1')
                                                             <div class="error">{{ $message }}</div>
                                                         @enderror
@@ -841,7 +830,7 @@
                         }
                     });
 
-                    $("input[name='location[" + form_set_count + "]']").rules('add', {
+                    $("input[name='exact_location[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
                             required: 'Please Enter the Location',
@@ -959,6 +948,7 @@
 
                     $(this).find('select[name^="department"]').attr('name', 'department[' + idx + ']');
                     $(this).find('input[name^="resource_code"]').attr('name', 'resource_code[' + idx + ']');
+                    $(this).find('input[name^="exact_location"]').attr('name', 'exact_location[' + idx + ']');
                     $(this).find('input[name^="types_of_equipment"]').attr('name', 'types_of_equipment[' + idx + ']');
                     $(this).find('input[name^="capacity_of_equipment"]').attr('name', 'capacity_of_equipment[' + idx +
                         ']');

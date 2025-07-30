@@ -92,9 +92,13 @@ class GembaWalk extends Model
         }
 
         if ($request->has('unit_id') && $request->unit_id) {
-
             $query = $query->where('masters_unit.id',  decryptId($request->unit_id));
         }
+
+        if ($request->has('ehs_officer') && $request->ehs_officer) {
+            $query = $query->where('inspection_gemba_walk.created_by',  decryptId($request->ehs_officer));
+        }
+
         if ($request->has('unit_name') && $request->unit_name) {
 
             $query = $query->where('masters_unit.unit_name', $request->unit_name);
@@ -423,6 +427,10 @@ class GembaWalk extends Model
 
             $formattedDate = DBdateformat($request->date);
             $query = $query->whereDate('inspection_gemba_walk.date', $formattedDate);
+        }
+
+        if ($request->has('ehs_officer') && $request->ehs_officer) {
+            $query = $query->where('inspection_gemba_walk.created_by',  decryptId($request->ehs_officer));
         }
 
         if ($request->has('inspection_status') && $request->inspection_status) {

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Water Quality | KARAM</title>
+    <title>Monthly Eye Wash Inspection | KARAM</title>
 
     <style>
         .badge {
@@ -111,7 +111,8 @@
         .table-container {
             padding: 20px;
         }
-        .page-break{
+
+        .page-break {
             page-break-before: always;
         }
     </style>
@@ -126,7 +127,7 @@
                 </td>
                 <td border="0"
                     style="width:50%;float:right;text-align:right;font-size: 24px;font-weight:bold;font-family: Georgia, serif;">
-                    Water Quality </td>
+                    Monthly Eye Wash Inspection </td>
             </tr>
         </table>
     </htmlpageheader>
@@ -152,7 +153,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Water Quality
+                    Monthly Eye Wash Inspection
                 </td>
             </tr>
         </table>
@@ -199,7 +200,7 @@
             <tr>
                 <td
                     style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                    Water Quality Details
+                    Monthly Eye Wash Inspection Details
                 </td>
             </tr>
         </table>
@@ -212,27 +213,31 @@
                     INSPECTION:</strong> {{ Displaydateformat($inspection_details->date_of_inspection) ?? '' }}</td>
             <td colspan="3" style="border: 1px solid black; padding: 6px; background-color: #ddd;">
                 <strong>LOCATION:</strong>
-                {{ getLocationName($inspection_details->location) ?? '' }}</td>
+                {{ getLocationName($inspection_details->location) ?? '' }}
+            </td>
             <td colspan="3" style="border: 1px solid black; padding: 6px; background-color: #ddd;"><strong>NEXT DUE
                     ON:</strong>
                 {{ Displaydateformat($inspection_details->next_due) ?? '' }}</td>
             <td colspan="3" style="border: 1px solid black; padding: 6px; background-color: #ddd;">
                 <strong>UNIT:</strong>
-                {{ getUnitName($inspection_details->unit) ?? '' }}</td>
+                {{ getUnitName($inspection_details->unit) ?? '' }}
+            </td>
         </tr>
         <tr>
             <td colspan="6" style="border: 1px solid black; padding: 6px; background-color: #ddd;">
                 <strong>SHIFT:</strong>
-                {{ GetShiftName($inspection_details->shift) ?? '' }}</td>
+                {{ GetShiftName($inspection_details->shift) ?? '' }}
+            </td>
             <td colspan="6" style="border: 1px solid black; padding: 6px; background-color: #ddd;">
                 <strong>FREQUENCY:</strong>
-                {{ getFrequencyName($inspection_details->frequency) ?? '' }}</td>
+                {{ getFrequencyName($inspection_details->frequency) ?? '' }}
+            </td>
         </tr>
 
         <tr>
             <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">SR. NO.
             </th>
-            <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">LOCATION
+            <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">Exact LOCATION
             </th>
             <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">RESOURCE
                 CODE</th>
@@ -251,7 +256,7 @@
             <th style="border: 2px solid black; padding: 6px; background-color: #eee;">FOOT PEDAL VALVE</th>
             <th style="border: 2px solid black; padding: 6px; background-color: #eee;">EYEWASH HEADS</th>
             <th style="border: 2px solid black; padding: 6px; background-color: #eee;">RECEPTACLE</th>
-            <th style="border: 2px solid black; padding: 6px; background-color: #eee;">QUALITY</th>
+            <th style="border: 2px solid black; padding: 6px; background-color: #eee;">WATER QUALITY</th>
             <th style="border: 2px solid black; padding: 6px; background-color: #eee;">PRESSURE</th>
             <th style="border: 2px solid black; padding: 6px; background-color: #eee;">TEMPERATURE (15–35°C)
             </th>
@@ -260,18 +265,28 @@
         @foreach ($inspection as $details)
             <tr>
                 <td style="border: 2px solid black; padding: 6px;">{{ $details->sr_no }}</td>
-                <td style="border: 2px solid black; padding: 6px;">{{ getLocationName($details->location) }}</td>
+                <td style="border: 2px solid black; padding: 6px;">{{ $details->location }}</td>
                 <td style="border: 2px solid black; padding: 6px;">{{ $details->resource_code }}</td>
                 <td style="border: 2px solid black; padding: 6px;">{{ $details->value }}</td>
                 <td style="border: 2px solid black; padding: 6px;">{{ $details->hand_free_stay_open_value }}</td>
                 <td style="border: 2px solid black; padding: 6px;">{{ $details->foot_pedal_value }}</td>
-                <td style="border: 2px solid black; padding: 6px;">{{ $details->eyewash_heads_value == 1 ? 'OK' : "NOT Ok" }}</td>
+                <td style="border: 2px solid black; padding: 6px;">
+                    {{ $details->eyewash_heads_value == 1 ? 'OK' : 'NOT Ok' }}</td>
                 <td style="border: 2px solid black; padding: 6px;">{{ $details->receptacle }}</td>
                 <td style="border: 2px solid black; padding: 6px;">
-                    {{ $details->quality }}
+                    @if ($details->water == GOOD)
+                        Good
+                    @elseif ($details->water == FAIR)
+                        Fair
+                    @elseif ($details->water == POOR)
+                        Poor
+                    @else
+                        Not specified
+                    @endif
                 </td>
                 <td style="border: 2px solid black; padding: 6px;">{{ $details->pressure }}</td>
-                <td style="border: 2px solid black; padding: 6px;">{{ $details->temperature == "1" ? 'ABNORMAL' : 'NORMAL'  }}</td>
+                <td style="border: 2px solid black; padding: 6px;">
+                    {{ $details->temperature == '1' ? 'ABNORMAL' : 'NORMAL' }}</td>
                 <td style="border: 2px solid black; padding: 6px;">{{ $details->remarks }}</td>
             </tr>
         @endforeach
@@ -450,7 +465,7 @@
 
 
     @if (isset($inspection_details->level_one_manager_remarks))
-        <div style="width:100%;" >
+        <div style="width:100%;">
             <table style="width:100%;">
                 <tr>
                     <td
