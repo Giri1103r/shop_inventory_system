@@ -312,10 +312,10 @@
                                                                 {{ __('inspection.eyewash_heads') }}</option>
                                                             <option value="{{ encryptId(OK) }}"
                                                                 {{ old('eyewash_heads.1') == encryptId(OK) ? 'selected' : '' }}>
-                                                                OK</option>
+                                                                Ok</option>
                                                             <option value="{{ encryptId(NOT_OK) }}"
                                                                 {{ old('eyewash_heads.1') == encryptId(NOT_OK) ? 'selected' : '' }}>
-                                                                NOT OK</option>
+                                                                Not Ok</option>
                                                         </select>
                                                     </div>
                                                     @error('eyewash_heads.1')

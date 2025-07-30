@@ -92,89 +92,123 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        {{-- @php
-                                            $signature = GetSafetySignature(
-                                                $inspection_details->created_by,
-                                                $inspection_details->id,
-                                                SAFETY_WALK_OBSERVATION,
-                                            );
-                                        @endphp --}}
-                                        {{-- @if (isset($signature))
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label"
-                                                        style="display: block;">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                        style="width: 100px; margin-top: -10px;" />
-                                                </div>
-                                            </div>
-                                        @endif --}}
+
                                     </div>
                                     <hr>
-                                    @foreach ($inspection as $details)
-                                        <div class="form-wrapper">
-                                            <div class="row mt-4 form-set">
-                                                <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Safety Walk Observation</h4>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.sr_no') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $loop->iteration }}
-                                                        </div>
+
+                                    <div class="form-wrapper">
+                                        <div class="row mt-4 form-set">
+                                            <div class="card-header-inner p-2">
+                                                <h4 class="text-white">Safety Walk Observation</h4>
+                                            </div>
+
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.location') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getLocationName($inspection_details->location_id) }}
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.location') }}</label>
-                                                        <div class="view_data">
-                                                            {{ getLocationName($details->location) }}
-                                                        </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.exact_location') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection_details->excat_location }}
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.exact_location') }}</label>
-                                                        <div class="view_data">
-                                                            {{ ($details->exact_location) }}
-                                                        </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.date_of_observation') }}</label>
+                                                    <div class="view_data">
+                                                        {{ Displaydateformat($inspection_details->observation_date) }}
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.date_of_observation') }}</label>
-                                                        <div class="view_data">
-                                                            {{ Displaydateformat($details->observation_date) }}
-                                                        </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.observation') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection_details->observation }}
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.observation') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $details->observation }}
-                                                        </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.recomended_action') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection_details->recomended_action }}
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.recomended_action') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $details->recomended_action }}
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            </div>
 
 
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.employee') }}</label>
+                                                    <div class="view_data">
+                                                        {{ getUsername($inspection_details->responsible_persion) }}
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label ">{{ __('inspection.observation_status') }}</label>
+                                                    <div class="view_data">
+                                                        @if ($inspection_details->observation_status == 1)
+                                                            Active
+                                                        @elseif($inspection_details->observation_status == 0)
+                                                            Deactive
+                                                        @else
+                                                            Unknown
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.remarks') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection_details->remarks }}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            @php
+                                                $images = GetSafetyWalkImage($inspection_details->id);
+                                            @endphp
+
+                                            <div class="col-md-4 mb-2">
+                                                @if ($images !== false)
+                                                    <label class="form-label"
+                                                        style="display: block;">{{ __('inspection.image') }}</label>
+                                                    <a href="{{ admin_url($images) }}" target="_blank">
+                                                        <img src="{{ admin_url($images) }}" style="width: 100px;" />
+                                                    </a>
+                                                @endif
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    @if (
+                                        $inspection_details->observation_status == SAFETY_WALK_EHS_OFFICER_PENDING ||
+                                            $inspection_details->observation_status == SAFETY_WALK_EHS_OFFICER_APPROVED ||
+                                            $inspection_details->observation_status == SAFETY_WALK_EHS_OFFICER_REJECTED)
+                                        <div>
+                                            <div class="card-header-inner p-2">
+                                                <h4 class="text-white">Action Required</h4>
+                                            </div>
+                                            <div class="row">
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.employee') }}</label>
+                                                        <label class="form-label ">Responsible Person</label>
                                                         <div class="view_data">
-                                                            {{ getUsername($details->responsibility) }}
+                                                            {{ getUsername($inspection_details->observer_person) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -183,22 +217,7 @@
                                                         <label
                                                             class="form-label ">{{ __('inspection.date_of_compliance') }}</label>
                                                         <div class="view_data">
-                                                            {{ Displaydateformat($details->date_of_compliance) }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.observation_status') }}</label>
-                                                        <div class="view_data">
-                                                            @if ($details->observation_status == 1)
-                                                                Active
-                                                            @elseif($details->observation_status == 0)
-                                                                Deactive
-                                                            @else
-                                                                Unknown
-                                                            @endif
+                                                            {{ displaydateformat($inspection_details->date_of_compilance) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -206,76 +225,45 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label ">{{ __('inspection.remarks') }}</label>
                                                         <div class="view_data">
-                                                            {{ $details->remarks }}
+                                                            {{ $inspection_details->observer_remarks }}
                                                         </div>
                                                     </div>
                                                 </div>
-                                                @php
-                                                    $images = GetSafetyWalkImage($details->id);
-                                                @endphp
-
-                                                <div class="col-md-4 mb-2">
-                                                    @if ($images !== false)
-                                                        <label class="form-label "
-                                                            style="display: block;">{{ __('inspection.image') }}</label>
-                                                        <img src="{{ admin_url($images) }}" style="width: 100px;" />
-                                                    @endif
-                                                </div>
                                             </div>
                                         </div>
-                                    @endforeach
-                                    @if (isset($inspection_details->approval_remarks))
-                                        <div class="card-header-inner p-2">
-                                            <h4 class="text-white">EHS Officer Approval</h4>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label ">{{ __('inspection.ehs_officer_name') }}</label>
-                                                    <div class="view_data">
-                                                        {{ getUserName($inspection_details->updated_by) }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                    <div class="view_data">
-                                                        {{ Displaydateformat($inspection_details->updated_at) }}
-                                                    </div>
-                                                </div>
-                                            </div>
+                                    @endif
 
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.status') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $inspection_details->observation_status == 3 ? 'Approved' : 'Rejected' }}
-                                                    </div>
-                                                </div>
+                                    @if (
+                                        $inspection_details->observation_status == SAFETY_WALK_EHS_OFFICER_APPROVED ||
+                                            $inspection_details->observation_status == SAFETY_WALK_EHS_OFFICER_REJECTED)
+                                        <div>
+                                            <div class="card-header-inner p-2">
+                                                <h4 class="text-white">EHS Officer Approval</h4>
                                             </div>
-                                            {{-- @php
-                                                $signature = GetSafetySignature(
-                                                    $inspection_details->updated_by,
-                                                    $inspection_details->id,
-                                                    SAFETY_WALK_OBSERVATION,
-                                                );
-                                            @endphp --}}
-                                            {{-- @if (isset($signature))
+                                            <div class="row">
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label"
-                                                            style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
+                                                        <label class="form-label ">Approver Name</label>
+                                                        <div class="view_data">
+                                                            {{ getUsername($inspection_details->approver_id) }}
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            @endif --}}
-                                            <div class="form-group form-input">
-                                                <label class="form-label ">{{ __('inspection.remarks') }}</label>
-                                                <div class="view_data">
-                                                    {{ $inspection_details->approval_remarks }}
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">Approved Date</label>
+                                                        <div class="view_data">
+                                                            {{ displaydateformat($inspection_details->approver_date) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label class="form-label ">Remarks</label>
+                                                        <div class="view_data">
+                                                            {{ $inspection_details->approval_remarks }}
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -305,8 +293,10 @@
                                                             @foreach ($status_log as $log)
                                                                 <tr>
                                                                     <td>{{ $loop->iteration }}</td>
-                                                                    <td>{{ getSafetyObservationStatus($log->from_status) }}</td>
-                                                                    <td>{{ getSafetyObservationStatus($log->to_status) }}</td>
+                                                                    <td>{{ getSafetyWalkStatus($log->from_status) }}
+                                                                    </td>
+                                                                    <td>{{ getSafetyWalkStatus($log->to_status) }}
+                                                                    </td>
                                                                     <td>{{ $log->remarks ?? 'N/A' }}</td>
                                                                     <td>{{ getUserName($log->approved_by) ? getUserName($log->approved_by) : '-' }}
                                                                     </td>

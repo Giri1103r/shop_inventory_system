@@ -49,6 +49,7 @@ return [
     'status' => 'Status',
     'update_status' => 'Update Status',
     'action' => 'Action',
+    'on-process' => 'On Process',
     'date' => 'Date',
     'employee_or_worker_code' => 'Employee / Worker Code',
     'employee_or_worker_name' => 'Employee / Worker Name',
@@ -72,7 +73,7 @@ return [
     'approve' => 'Approve',
     'approved_by' => 'Approved By',
     'approve_or_reject'=> 'Approve / Rejected By',
-    
+
     'approve_success_msg' => 'Approved Successfully!!!',
     'approve_reject_msg' => 'Rejected Successfully!!!',
     'updated_success_msg' => 'Updated Successfully!!!',

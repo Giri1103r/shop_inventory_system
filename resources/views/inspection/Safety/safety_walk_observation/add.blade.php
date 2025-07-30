@@ -185,7 +185,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location[1]" id="location[1]"
+                                                        <select name="location[1]" id="location"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Location</option>
                                                             @foreach ($locations as $location)
@@ -246,7 +246,6 @@
                                                 </div>
                                                 <div class="form-input col-md-4 mb-2">
                                                     <label class="form-label require">Image</label>
-                                                    <input type="hidden" name="checklist_file[1]" value="">
                                                     <input type="file" name="checklist_file[1]" id="checklist_file"
                                                         class="form-control form-control-sm"
                                                         accept="image/jpeg, image/png" placeholder="Upload a new image">
@@ -263,7 +262,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.recomended_action') }}</label>
                                                         <input type="text" name="recomended_action[1]"
-                                                            id = "unit_of_measurement" class="form-control"
+                                                            id = "recomended_action" class="form-control"
                                                             value="{{ old('recomended_action.1') }}">
                                                         @error('recomended_action.1')
                                                             <div class="error">{{ $message }}</div>
@@ -274,7 +273,7 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.employee') }}</label>
-                                                        <select name="emp_id[1]" id="emp_id[1]"
+                                                        <select name="emp_id[1]" id="emp_id"
                                                             class="form-control single-select emp_id" style="width: 100%">
                                                             <option value="">Select Employee Name</option>
                                                         </select>
@@ -283,23 +282,12 @@
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.date_of_compliance') }}</label>
-                                                        <input type="text" name="date_of_compliance[1]"
-                                                            class="form-control date_of_compliance"
-                                                            value="{{ old('date_of_compliance.1') }}">
-                                                    </div>
-                                                    @error('date_of_compliance.1')
-                                                        <div class="error">{{ $message }}</div>
-                                                    @enderror
-                                                </div>
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.observation_status') }}</label>
-                                                        <select name="observation_status[1]" id="observation_status[1]"
+                                                        <select name="observation_status[1]" id="observation_status"
                                                             class=" form-control single-select" style="width: 100%">
                                                             <option value="">Select Observation Status</option>
                                                             <option value="{{ encryptId(1) }}"
@@ -700,7 +688,7 @@
                                                     </div>
                                                 </div>
                                                 <div class="form-input col-md-4 mb-2">
-                                                    <label class="form-label">Image</label>
+                                                    <label class="form-label require">Image</label>
                                                     <input type="file" name="checklist_file[${form_set_count}]" id="checklist_file[${form_set_count}]"
                                                         class="form-control form-control-sm"  accept="image/jpeg, image/png"
                                                         placeholder="Enter the image">
@@ -713,7 +701,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.recomended_action') }}</label>
                                                         <input type="text" name="recomended_action[${form_set_count}]"
-                                                            id = "unit_of_measurement[${form_set_count}]" class="form-control">
+                                                            id = "recomended_action[${form_set_count}]" class="form-control">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -724,15 +712,6 @@
                                                             class="form-control single-select emp_id" style="width: 100%">
                                                             <option value="">Select Employee Name</option>
                                                         </select>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label require">{{ __('inspection.date_of_compliance') }}</label>
-                                                        <input type="text" name="date_of_compliance[${form_set_count}]"  id="date_of_compliance[${form_set_count}]"
-                                                             class="form-control date_of_compliance">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -772,21 +751,21 @@
 
                 $('.form-wrapper-current').append(newFormCurrentSetElement);
 
-                $("select[name='location[" + form_set_current_count + "]']").rules('add', {
+                $("select[name='location[" + form_set_count + "]']").rules('add', {
                     required: true,
                     messages: {
                         required: 'Please select the Location',
                     }
                 });
 
-                $("select[name='emp_id[" + form_set_current_count + "]']").rules('add', {
+                $("select[name='emp_id[" + form_set_count + "]']").rules('add', {
                     required: true,
                     messages: {
                         required: 'Please select the Responsible Person',
                     }
                 });
 
-                $("input[name='checklist_file[" + form_set_current_count + "]']").rules('add', {
+                $("input[name='checklist_file[" + form_set_count + "]']").rules('add', {
                     required: true,
                     filesize: 15728640,
                     messages: {
@@ -795,7 +774,7 @@
                     }
                 });
 
-                $("input[name='observation[" + form_set_current_count + "]']").rules('add', {
+                $("input[name='observation[" + form_set_count + "]']").rules('add', {
                     required: true,
                     uniqueItemCode: true,
                     minlength: 3,
@@ -806,7 +785,7 @@
                         maxlength: "Maximum character should not exceed the 100",
                     }
                 });
-                $("input[name='exact_location[" + form_set_current_count + "]']").rules('add', {
+                $("input[name='exact_location[" + form_set_count + "]']").rules('add', {
                     required: true,
                     minlength: 3,
                     maxlength: 255,
@@ -816,14 +795,14 @@
                         maxlength: "Maximum character should not exceed the 255",
                     }
                 });
-                $("input[name='date_of_observation[" + form_set_current_count + "]']").rules('add', {
+                $("input[name='date_of_observation[" + form_set_count + "]']").rules('add', {
                     required: true,
                     uniqueItemCode: true,
                     messages: {
                         required: 'Please Select the Observation Date',
                     }
                 });
-                $("input[name='recomended_action[" + form_set_current_count + "]']").rules('add', {
+                $("input[name='recomended_action[" + form_set_count + "]']").rules('add', {
                     required: true,
                     minlength: 3,
                     maxlength: 100,
@@ -835,21 +814,21 @@
                 });
 
 
-                $("input[name='date_of_compliance[" + form_set_current_count + "]']").rules('add', {
+                $("input[name='date_of_compliance[" + form_set_count + "]']").rules('add', {
                     required: true,
                     messages: {
                         required: 'Please Select the Date of Compliance',
                     }
                 });
 
-                $("select[name='observation_status[" + form_set_current_count + "]']").rules('add', {
+                $("select[name='observation_status[" + form_set_count + "]']").rules('add', {
                     required: true,
                     messages: {
                         required: 'Please Select the Observation Status',
                     }
                 });
 
-                $("textarea[name='remarks[" + form_set_current_count + "]']").rules('add', {
+                $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
 
                     minlength: 3,
                     maxlength: 600,
@@ -926,24 +905,53 @@
                 $('.form-wrapper-current .form-set-current').each(function(index) {
                     let idx = index + 1;
                     let newSerialNumber = 'CURRENT-OBS-' + ('000000' + idx).slice(-6);
+
                     $(this).find("input[name^='sr_no']").val(newSerialNumber);
+                    $(this).find('input[name^="sr_no"]')
+                        .attr('name', 'sr_no[' + idx + ']')
+                        .attr('id', 'sr_no[' + idx + ']');
 
-                    $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
-                    $(this).find('select[name^="location"]').attr('name', 'location[' + idx + ']');
-                    $(this).find('input[name^="date_of_observation"]').attr('name', 'date_of_observation[' + idx + ']');
-                    $(this).find('input[name^="observation"]').attr('name', 'observation[' + idx + ']');
-                    $(this).find('select[name^="recomended_action"]').attr('name', 'recomended_action[' + idx + ']');
-                    $(this).find('input[name^="date_of_compliance"]').attr('name', 'date_of_compliance[' + idx +
-                        ']');
-                    $(this).find('input[name^="exact_location"]').attr('name', 'exact_location[' + idx +
-                        ']');
-                    $(this).find('input[name^="observation_status"]').attr('name', 'observation_status[' + idx +
-                        ']');
-                    $(this).find('textarea[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
+                    $(this).find('select[name^="location"]')
+                        .attr('name', 'location[' + idx + ']')
+                        .attr('id', 'location[' + idx + ']');
 
+                    $(this).find('input[name^="exact_location"]')
+                        .attr('name', 'exact_location[' + idx + ']')
+                        .attr('id', 'exact_location[' + idx + ']');
+
+                    $(this).find('input[name^="date_of_observation"]')
+                        .attr('name', 'date_of_observation[' + idx + ']')
+                        .attr('id', 'date_of_observation[' + idx + ']');
+
+                    $(this).find('input[name^="observation"]')
+                        .attr('name', 'observation[' + idx + ']')
+                        .attr('id', 'observation[' + idx + ']');
+
+                    $(this).find('input[name^="recomended_action"]')
+                        .attr('name', 'recomended_action[' + idx + ']')
+                        .attr('id', 'recomended_action[' + idx + ']');
+
+                    $(this).find('select[name^="emp_id"]')
+                        .attr('name', 'emp_id[' + idx + ']')
+                        .attr('id', 'emp_id[' + idx + ']');
+
+                    $(this).find('input[name^="checklist_file"]')
+                        .attr('name', 'checklist_file[' + idx + ']')
+                        .attr('id', 'checklist_file[' + idx + ']');
+
+                    $(this).find('select[name^="observation_status"]')
+                        .attr('name', 'observation_status[' + idx + ']')
+                        .attr('id', 'observation_status[' + idx + ']');
+
+                    $(this).find('textarea[name^="remarks"]')
+                        .attr('name', 'remarks[' + idx + ']')
+                        .attr('id', 'remarks[' + idx + ']');
+
+                    // Re-init Select2 after replacing select fields
                     $(this).find('select').select2();
                 });
             }
+
 
 
 
