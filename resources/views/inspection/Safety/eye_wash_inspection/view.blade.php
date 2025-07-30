@@ -139,7 +139,7 @@
                                                         <label
                                                             class="form-label ">{{ __('inspection.location') }}</label>
                                                         <div class="view_data">
-                                                            {{ getLocationName($details->location) }}
+                                                            {{ ($details->location) }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -231,15 +231,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label ">{{ __('inspection.quality') }}</label>
-                                                        <div class="view_data">
-                                                            {{ $details->quality }}
-                                                        </div>
-                                                    </div>
-                                                </div>
+
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -258,6 +250,7 @@
                                                         </div>
                                                     </div>
                                                 </div>
+                                                {{-- @dd($details); --}}
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label

@@ -45,7 +45,7 @@ class EyeWashInspectionDetails extends Model
         $request = request();
 
         $sr_no = $request->sr_no ?? [];
-        $location = $request->location ?? [];
+        $exact_location = $request->exact_location ?? [];
         $resource_code = $request->resource_code ?? [];
         $condition = $request->condition ?? [];
         $value = $request->value ?? [];
@@ -63,7 +63,7 @@ class EyeWashInspectionDetails extends Model
             $data = [
                 'inspection_id' => $id,
                 'sr_no' => $sr_no_value,
-                'location' => isset($location[$index]) ? decryptId($location[$index]) : null,
+                'location' => isset($exact_location[$index]) ? ($exact_location[$index]) : null,
                 'receptacle' => $receptacle[$index] ?? null,
                 'resource_code' => $resource_code[$index] ?? null,
                 'inspection_condition' => isset($condition[$index]) ? decryptId($condition[$index]) : null,
