@@ -48,6 +48,20 @@
                                                 </select>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Safety Officer</label>
+                                                <select name="ehs_officer" id="ehs_officer" style="width: 100%"
+                                                    class="form-control single-select">
+                                                    <option value="">Select the Safety Officer</option>
+                                                    @foreach ($ehs_officers as $ehs_officer)
+                                                        <option value="{{ encryptId($ehs_officer->login_id) }}">
+                                                            {{ $ehs_officer->emp_name }}
+                                                        </option>
+                                                    @endforeach
+                                                </select>
+                                            </div>
+                                        </div>
 
                                         <div class="col-md-4 mb-3 form-input">
                                             <label for="inspection_status"
@@ -140,7 +154,7 @@
                                         <th>Shift</th>
                                         <th>{{ __('common.unit') }}</th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{ __('common.created_by') }}</th>
+                                        <th>Safety Officer</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -269,6 +283,7 @@
                             d.to_date = $('#to_date').val();
                             d.unit_name = $("#unit_name").val();
                             d.unit_id = $("#unit_id").val();
+                            d.ehs_officer = $("#ehs_officer").val();
 
                         },
                         error: function(xhr, error, code) {
@@ -346,8 +361,9 @@
                                         var shift = $('#shift').val();
                                         var from_date = $('#from_date').val();
                                         var to_date = $('#to_date').val();
-                                        var unit_name = $('#unit_name').val();
+                                        var unit_name = $('#unit_name').val() ?? "";
                                         var unit_id = $('#unit_id').val();
+                                        var ehs_officer = $('#ehs_officer').val();
 
 
                                         $(".dt-button").removeClass('processing');
@@ -362,8 +378,8 @@
                                             '&to_date=' + to_date +
                                             '&shift=' + shift +
                                             '&unit_name=' + unit_name +
+                                            '&ehs_officer=' + ehs_officer +
                                             '&unit_id=' + unit_id
-
 
                                     }
                                 },
@@ -379,8 +395,9 @@
                                         var shift = $('#shift').val();
                                         var from_date = $('#from_date').val();
                                         var to_date = $('#to_date').val();
-                                        var unit_name = $('#unit_name').val();
                                         var unit_id = $('#unit_id').val();
+                                        var unit_name = $('#unit_name').val() ?? "";
+                                        var ehs_officer = $('#ehs_officer').val();
 
 
                                         $(".dt-button").removeClass('processing');
@@ -395,8 +412,8 @@
                                             '&to_date=' + to_date +
                                             '&shift=' + shift +
                                             '&unit_name=' + unit_name +
+                                            '&ehs_officer=' + ehs_officer +
                                             '&unit_id=' + unit_id
-
                                     }
                                 },
                             ]

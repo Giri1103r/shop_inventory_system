@@ -425,8 +425,6 @@ class Employee extends Model
         return $list;
     }
 
-
-
     public function getEmployeefulldata()
     {
         return Employee::all();
@@ -435,6 +433,16 @@ class Employee extends Model
     public function getEmployeeList()
     {
         return  $this->select('id', 'emp_name')->where('status', 1)->get();
+    }
+
+    public function getEmployeeBasedOnRole(...$role_ids)
+    {
+        $query = $this->query();
+        foreach ($role_ids as $role_id) {
+            $query->orWhereRaw('FIND_IN_SET(?, user_role)', [$role_id]);
+        }
+        $users = $query->get();
+        return $users;
     }
     protected static function booted()
     {

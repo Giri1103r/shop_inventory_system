@@ -22,7 +22,7 @@ use App\Models\Inspection\Safety\SafetyStatusLog;
 use App\Models\Inspection\Safety\SignatureUpload;
 use App\Models\Inspection\Safety\EyeWashInspectionDetails;
 use App\Models\Inspection\Safety\MonthlyEyeWashInspection;
-
+use Mpdf\Tag\Details;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
@@ -310,7 +310,6 @@ class MonthlyEyeWashInspectionController extends Controller
             Session::flash('success', 'Monthly Eye Wash Inspection Added Successfully');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/eye-wash-inspection/monthly/list'));
@@ -831,7 +830,7 @@ class MonthlyEyeWashInspectionController extends Controller
 
                 $headerStart = $startRow;
                 $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 2))->setCellValue("A{$headerStart}", 'SR. NO');
-                $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 2))->setCellValue("B{$headerStart}", 'LOCATION');
+                $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 2))->setCellValue("B{$headerStart}", 'Exact LOCATION');
                 $sheet->mergeCells("C{$headerStart}:D" . ($headerStart + 2))->setCellValue("C{$headerStart}", 'RESOURCE CODE');
 
                 $sheet->mergeCells("E{$headerStart}:L{$headerStart}")->setCellValue("E{$headerStart}", 'CHECK ITEMS');
@@ -1153,7 +1152,7 @@ class MonthlyEyeWashInspectionController extends Controller
             ]);
 
             $sheet->mergeCells('A6:A8')->setCellValue('A6', 'SR. NO');
-            $sheet->mergeCells('B6:B8')->setCellValue('B6', 'LOCATION');
+            $sheet->mergeCells('B6:B8')->setCellValue('B6', 'Exact LOCATION');
             $sheet->mergeCells('C6:D8')->setCellValue('C6', 'RESOURCE CODE');
 
             $sheet->mergeCells('E6:L6')->setCellValue('E6', 'CHECK ITEMS');

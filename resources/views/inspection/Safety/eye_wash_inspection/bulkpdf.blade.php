@@ -215,7 +215,7 @@
                 <tr>
                     <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">SR. NO.
                     </th>
-                    <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">LOCATION
+                    <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">Exact LOCATION
                     </th>
                     <th rowspan="2" style="border: 2px solid black; padding: 6px; background-color: #ddd;">RESOURCE
                         CODE</th>
