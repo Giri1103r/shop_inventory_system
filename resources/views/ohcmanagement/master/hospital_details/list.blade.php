@@ -20,6 +20,9 @@
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
                             href="{{ admin_url('ohc/hospital-details/add') }}">Add</x-button-add>
                         {{-- @endif --}}
+                         {{-- @if (CheckUserPermission('import')) --}}
+                        {{-- <x-button-import href="{{ admin_url('ohc/hospital-details/import') }}"></x-button-import> --}}
+                        {{-- @endif --}}
 
                     </div>
 
