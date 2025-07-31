@@ -1,5 +1,5 @@
 @extends('admin.layouts.admin')
-@section('title', 'First Aider Location Edit')
+@section('title', 'First Aider Location')
 @section('pageurl', admin_url('ohc/first-aid-location/list'))
 
 

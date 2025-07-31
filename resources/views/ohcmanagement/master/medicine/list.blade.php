@@ -22,6 +22,9 @@
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
                             href="{{ admin_url('ohc/medicine/add') }}">Add</x-button-add>
                         {{-- @endif --}}
+                        {{-- @if (CheckUserPermission('import')) --}}
+                        {{-- <x-button-import href="{{ admin_url('ohc/medicine/import') }}"></x-button-import> --}}
+                        {{-- @endif --}}
 
                     </div>
 
@@ -31,13 +34,14 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="medicine" class="form-label">{{ __('ohc_management.medicine_name') }}</label>
+                                            <label for="medicine"
+                                                class="form-label">{{ __('ohc_management.medicine_name') }}</label>
                                             <input type="text" name="medicine" id="medicine" class="form-control"
                                                 placeholder="Medicine Name">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">{{__('common.from_date')}}</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.from_date') }}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -48,7 +52,7 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">{{__('common.to_date')}}</label>
+                                            <label for="emp_name" class="form-label ">{{ __('common.to_date') }}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -69,7 +73,8 @@
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="status" class="form-label">{{__('ohc_management.approve_status')}}</label>
+                                            <label for="status"
+                                                class="form-label">{{ __('ohc_management.approve_status') }}</label>
                                             <select name="approve_status" id="approve_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
@@ -98,12 +103,12 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{__('ohc_management.medicine_name')}}</th>
-                                        <th>{{__('ohc_management.pack')}}</th>
-                                        <th>{{__('ohc_management.threshold_limit')}}</th>
+                                        <th>{{ __('ohc_management.medicine_name') }}</th>
+                                        <th>{{ __('ohc_management.pack') }}</th>
+                                        <th>{{ __('ohc_management.threshold_limit') }}</th>
                                         <th>{{ __('common.status') }}</th>
-                                        <th>{{__('ohc_management.remarks')}}</th>
-                                        <th>{{__('ohc_management.approve_status')}}</th>
+                                        <th>{{ __('ohc_management.remarks') }}</th>
+                                        <th>{{ __('ohc_management.approve_status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th data-priority="1">{{ __('common.action') }}</th>
@@ -159,7 +164,7 @@
                 serverSide: true,
                 searching: true,
                 ordering: true,
-                scrollX:true,
+                scrollX: true,
                 dom: 'Bfrtip',
                 layout: {
                     top2Start: 'buttons',

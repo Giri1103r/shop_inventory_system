@@ -17,7 +17,11 @@
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
                             href="{{ admin_url('ohc/certified-first-aider/add') }}">Add</x-button-add>
+                            {{-- @endif --}}
+                        {{-- @if (CheckUserPermission('import')) --}}
+                            {{-- <x-button-import href="{{ admin_url('ohc/certified-first-aider/import') }}"></x-button-import> --}}
                         {{-- @endif --}}
+
 
                     </div>
 

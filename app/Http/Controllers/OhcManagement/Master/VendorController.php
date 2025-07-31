@@ -12,6 +12,7 @@ use App\Models\Master\Department;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportvendorJob;
+use App\Jobs\Ohc\ImportVendorjob as OhcImportVendorjob;
 use App\Models\OhcManagement\Master\Vendor;
 use Illuminate\Support\Facades\Auth;
 use Exception;
@@ -384,6 +385,90 @@ class VendorController extends Controller
 
             report($ex);
             Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/vendor/list'));
+        }
+    }
+
+
+    public function Import(Request $request)
+    {
+        $data = array();
+        return view('ohcmanagement.master.vendor.import', $data);
+    }
+    public function ImportSubmit(Request $request)
+    {
+        try {
+            $file = $request->file('vendor_upload');
+
+            $rules = [
+                'vendor_upload' => 'required',
+            ];
+            $messages = [
+                'vendor_upload.required' => 'Please upload a file',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+
+            if ($file != null) {
+
+                $uploadpath = 'public/uploads/vendor';
+
+                $folderPath = public_path('uploads/vendor');
+
+                if (!File::exists($folderPath)) {
+
+                    File::makeDirectory($folderPath, 0755, true);
+                }
+
+                $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
+
+                $fileName = $file->getClientOriginalName();
+                $fileSize = $file->getSize();
+
+                $fileExt = $file->getClientOriginalExtension();
+
+                $file->move($uploadpath, $filenewname);
+
+                $path = $uploadpath . "/" . $filenewname;
+                $user_id = Auth::id();
+
+                $insert_data = array(
+                    'upload_type' => 1,
+                    'upload_status' => 0,
+                    'file_name' => $filenewname,
+                    'file_orgname' => $fileName,
+                    'file_path' => $path,
+                    'file_size' => $fileSize,
+                    'file_extension' => $fileExt,
+                    'created_by' => $user_id,
+                );
+
+                $insert_id =  $this->uploadlog->create($insert_data)->id;
+
+
+
+                $details = [
+                    "user_id" => $user_id,
+                    "log_id" => $insert_id,
+                    "path" => $path,
+                ];
+
+                dispatch(new OhcImportVendorjob($details));
+                // dispatch((new OhcImportVendorjob($details))->onQueue('vendor'));
+            }
+
+            $insert_data['log_id'] = $insert_id;
+            $insert_data['Uploded_by'] = Auth::user()->toArray();
+
+            Session::flash('success', __('file uploaded sucessfully'));
+            return redirect(admin_url('ohc/vendor/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', __('file upload failed'));
             return redirect(admin_url('ohc/vendor/list'));
         }
     }
