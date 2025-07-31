@@ -440,6 +440,7 @@
                 $(document).on('click', '#resetform', function() {
                     $('#formsearch .single-select').val('');
                     $('#formsearch .single-select').trigger('change');
+                    localStorage.removeItem('searchData');
                     setTimeout(function() {
                         table.draw();
                     }, 150);
