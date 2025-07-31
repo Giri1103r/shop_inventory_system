@@ -123,7 +123,7 @@
                                         <div class="form-wrapper">
                                             <div class="row mt-4 form-set">
                                                 <div class="card-header-inner p-2">
-                                                    <h4 class="text-white">Water Quality Checklist</h4>
+                                                    <h4 class="text-white">Monthly Eye Wash InspectionChecklist</h4>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">

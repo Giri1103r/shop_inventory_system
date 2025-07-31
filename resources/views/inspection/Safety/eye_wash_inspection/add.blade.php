@@ -196,7 +196,7 @@
                                         <hr>
                                         <div class="form-wrapper">
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white ms-2">Water Quality Checklist</h4>
+                                                <h4 class="text-white ms-2">Monthly Eye Wash InspectionChecklist</h4>
                                                 <button class="btn btn-primary add-row mb-2 " type="button"
                                                     id="add-row"
                                                     style="margin-left: 10px;  margin-right: 10px; width: 84px;">
