@@ -153,6 +153,7 @@ class ForkLiftInspectionController extends Controller
                 'date_of_compliance.*' => 'required',
                 'observation_status.*' => 'required',
                 'remarks.*' => 'required',
+                'exact_location.*' => 'required',
                 'emp_id.*' => 'required',
 
 
@@ -169,6 +170,7 @@ class ForkLiftInspectionController extends Controller
                 'observation.*' => 'Observation is Required',
                 'corrective_action.*' => 'Coreective and Preventive Action is Required',
                 'date_of_compliance.*' => 'Date of Compliance is Required',
+                'exact_location.*' => 'Exact Location is Required',
                 'observation_status.*' => 'Observation Status is Required',
                 'emp_id.*' => 'Employee is Required',
                 'remarks.*' => 'Remarks is Required',
@@ -367,7 +369,6 @@ class ForkLiftInspectionController extends Controller
 
     public function ExportExcel(Request $request)
     {
-
         try {
             $allData = $this->forklift->exportdata();
 
@@ -415,11 +416,19 @@ class ForkLiftInspectionController extends Controller
                 ];
 
                 foreach ($labelMap as [$labelCell, $label, $data]) {
-                    $dataCell = str_replace('I', 'J', $labelCell);
-                    $sheet->setCellValue($labelCell, $label);
-                    $sheet->setCellValue($dataCell, $data);
+                    preg_match('/\d+/', $labelCell, $matches);
+                    $labelRow = $matches[0];
 
-                    $sheet->getStyle("{$labelCell}:{$dataCell}")->applyFromArray([
+                    $labelCol = "I{$labelRow}";
+                    $dataStartCol = "J{$labelRow}";
+                    $dataEndCol = "K{$labelRow}";
+                    $mergeRange = "{$dataStartCol}:{$dataEndCol}";
+
+                    $sheet->mergeCells($mergeRange);
+                    $sheet->setCellValue($labelCol, $label);
+                    $sheet->setCellValue($dataStartCol, $data);
+
+                    $sheet->getStyle("I{$labelRow}:K{$labelRow}")->applyFromArray([
                         'font' => ['bold' => true],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -430,9 +439,9 @@ class ForkLiftInspectionController extends Controller
                 $row += 3;
 
                 $inspection_date = $firstData->inspection_date ? Displaydateformat($firstData->inspection_date) : 'Date Not Available';
-                $sheet->mergeCells("A{$row}:J{$row}");
+                $sheet->mergeCells("A{$row}:K{$row}");
                 $sheet->setCellValue("A{$row}", "Date of Inspection:- " . $inspection_date);
-                $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'wrapText' => true,
@@ -443,20 +452,21 @@ class ForkLiftInspectionController extends Controller
                     'A' => 'SR.NO',
                     'B' => 'DEPARTMENT',
                     'C' => 'UNIT',
-                    'D' => 'IDENTIFICATION NUMBER/SERIAL NUMBER',
-                    'E' => 'OBSERVATION',
-                    'F' => 'CORRECTIVE AND PREVENTIVE ACTION',
-                    'G' => 'RESPONSIBILITY',
-                    'H' => 'DATE OF COMPLIANCE',
-                    'I' => 'STATUS',
-                    'J' => 'REMARK',
+                    'D' => 'EXACT LOCATION',
+                    'E' => 'IDENTIFICATION NUMBER/SERIAL NUMBER',
+                    'F' => 'OBSERVATION',
+                    'G' => 'CORRECTIVE AND PREVENTIVE ACTION',
+                    'H' => 'RESPONSIBILITY',
+                    'I' => 'DATE OF COMPLIANCE',
+                    'J' => 'STATUS',
+                    'K' => 'REMARK',
                 ];
                 foreach ($headers as $col => $text) {
                     $sheet->setCellValue("{$col}{$row}", $text);
                     $sheet->getColumnDimension($col)->setAutoSize(true);
                 }
 
-                $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -470,16 +480,17 @@ class ForkLiftInspectionController extends Controller
                     $sheet->setCellValue("A{$row}", $sr++);
                     $sheet->setCellValue("B{$row}", getDepartment($detail['department_id'] ?? ''));
                     $sheet->setCellValue("C{$row}", getUnitname($detail['unit_id'] ?? ''));
-                    $sheet->setCellValue("D{$row}", $detail['identification_no'] ?? '');
-                    $sheet->setCellValue("E{$row}", $detail['observation'] ?? '');
-                    $sheet->setCellValue("F{$row}", $detail['correction_preventive_action'] ?? '');
-                    $sheet->setCellValue("G{$row}", getUsername($detail['responsibility'] ?? ''));
-                    $sheet->setCellValue("H{$row}", DBdateformat($detail['date_of_compliance'] ?? ''));
+                    $sheet->setCellValue("D{$row}", $detail['exact_location'] ?? '');
+                    $sheet->setCellValue("E{$row}", $detail['identification_no'] ?? '');
+                    $sheet->setCellValue("F{$row}", $detail['observation'] ?? '');
+                    $sheet->setCellValue("G{$row}", $detail['correction_preventive_action'] ?? '');
+                    $sheet->setCellValue("H{$row}", getUsername($detail['responsibility'] ?? ''));
+                    $sheet->setCellValue("I{$row}", DBdateformat($detail['date_of_compliance'] ?? ''));
                     $status = ($detail['observation_status'] ?? '') == 1 ? 'Open' : 'Closed';
-                    $sheet->setCellValue("I{$row}", $status);
-                    $sheet->setCellValue("J{$row}", $detail['remarks'] ?? '');
+                    $sheet->setCellValue("J{$row}", $status);
+                    $sheet->setCellValue("K{$row}", $detail['remarks'] ?? '');
 
-                    $sheet->getStyle("A{$row}:J{$row}")->applyFromArray([
+                    $sheet->getStyle("A{$row}:K{$row}")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         'wrapText' => true,
@@ -490,9 +501,6 @@ class ForkLiftInspectionController extends Controller
 
                 $signatureRowStart = $row;
                 $sheet->getRowDimension($signatureRowStart)->setRowHeight(20);
-
-                // $prepared_by_signature = GetSafetySignature($detail->checked_by, $detail->safety_id, FORKLIFT_INSPECTION);
-                // $verified_by_signature = GetSafetySignature($detail->verified_by, $detail->safety_id, FORKLIFT_INSPECTION);
 
                 $preparedBy = getUsername($firstData->created_by);
                 $preparedByText = !empty($preparedBy) ? $preparedBy : "Inspection has not been prepared yet";
@@ -508,43 +516,15 @@ class ForkLiftInspectionController extends Controller
                 ]);
                 $sheet->setCellValue("A{$signatureRowStart}", "Prepared By: " . $preparedByText);
 
-                $sheet->mergeCells("F{$signatureRowStart}:J{$signatureRowStart}");
-                $sheet->getStyle("F{$signatureRowStart}:J{$signatureRowStart}")->applyFromArray([
+                $sheet->mergeCells("F{$signatureRowStart}:K{$signatureRowStart}");
+                $sheet->getStyle("F{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                     'wrapText' => true,
                 ]);
                 $sheet->setCellValue("F{$signatureRowStart}", "Verified By: " . $verifiedByText);
 
-
-                // if (file_exists($prepared_by_signature)) {
-                //     $drawing = new Drawing();
-                //     $drawing->setName('Prepared By Signature');
-                //     $drawing->setPath($prepared_by_signature);
-                //     $drawing->setCoordinates("D{$signatureRowStart}");
-                //     $drawing->setOffsetX(5);
-                //     $drawing->setOffsetY(5);
-                //     $drawing->setHeight(40);
-                //     $drawing->setWorksheet($sheet);
-                // } else {
-                //     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nSignature not available");
-                // }
-
-
-                // if (file_exists($verified_by_signature)) {
-                //     $drawing = new Drawing();
-                //     $drawing->setName('Verified By Signature');
-                //     $drawing->setPath($verified_by_signature);
-                //     $drawing->setCoordinates("G{$signatureRowStart}");
-                //     $drawing->setOffsetX(5);
-                //     $drawing->setOffsetY(5);
-                //     $drawing->setHeight(40);
-                //     $drawing->setWorksheet($sheet);
-                // } else {
-                //     $sheet->setCellValue("F{$signatureRowStart}", "Verified By:Signature not available");
-                // }
-
-                $sheet->getStyle("A{$startRow}:P{$row}")->applyFromArray([
+                $sheet->getStyle("A{$startRow}:K    {$row}")->applyFromArray([
                     'borders' => [
                         'top'    => ['borderStyle' => Border::BORDER_THICK],
                         'bottom' => ['borderStyle' => Border::BORDER_THICK],
@@ -567,6 +547,7 @@ class ForkLiftInspectionController extends Controller
             return redirect(admin_url('safety/forklift-inspection/list'));
         }
     }
+
 
     public function ExportPdf(Request $request)
     {
@@ -665,13 +646,11 @@ class ForkLiftInspectionController extends Controller
             $current_month_inspection = $this->observation_details->GetDetails($inspection_details->id);
             $document_no = $this->document_reference->selectOne($inspection_details->document_reference_id);
 
-            // $prepared_by_signature = GetSafetySignature($inspection_details->created_by, $inspection_details->id, FORKLIFT_INSPECTION);
-            // $verified_by_signature = GetSafetySignature($inspection_details->updated_by, $inspection_details->id, FORKLIFT_INSPECTION);
-
             $sheet->mergeCells("A1:C3");
             $sheet->getStyle("A1:C3")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
             ]);
+
             $logoPath = public_path('assets/images/logo-dark.png');
             if (file_exists($logoPath)) {
                 $drawing = new Drawing();
@@ -685,7 +664,7 @@ class ForkLiftInspectionController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            foreach (range('A', 'J') as $col) {
+            foreach (range('A', 'K') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(false);
                 $sheet->getColumnDimension($col)->setWidth(25);
                 $sheet->getStyle($col)->getAlignment()->setWrapText(true);
@@ -706,22 +685,33 @@ class ForkLiftInspectionController extends Controller
             ];
 
             foreach ($labelMap as [$labelCell, $label, $data]) {
-                $dataCell = str_replace('I', 'J', $labelCell);
-                $sheet->setCellValue($labelCell, $label);
-                $sheet->setCellValue($dataCell, $data);
+                preg_match('/\d+/', $labelCell, $matches);
+                $row = $matches[0];
 
-                $sheet->getStyle("$labelCell:$dataCell")->applyFromArray([
+                $labelCol = "I$row";
+                $dataStartCol = "J$row";
+                $dataEndCol = "K$row";
+                $dataMergeRange = "$dataStartCol:$dataEndCol";
+
+                $sheet->mergeCells($dataMergeRange);
+                $sheet->setCellValue($labelCol, $label);
+                $sheet->setCellValue($dataStartCol, $data);
+
+                $sheet->getStyle("I$row:K$row")->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
-                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_LEFT, 'vertical' => Alignment::VERTICAL_CENTER],
+                    'alignment' => [
+                        'horizontal' => Alignment::HORIZONTAL_LEFT,
+                        'vertical' => Alignment::VERTICAL_CENTER
+                    ],
                     'wrapText' => true,
                 ]);
             }
 
             $inspection_date = $inspection_details->inspection_date ? Displaydateformat($inspection_details->inspection_date) : 'Date Not Available';
-            $sheet->mergeCells("A4:J4");
+            $sheet->mergeCells("A4:K4");
             $sheet->setCellValue("A4", "Date of Inspection:- " . $inspection_date);
-            $sheet->getStyle("A4:J4")->applyFromArray([
+            $sheet->getStyle("A4:K4")->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'wrapText' => true,
@@ -731,18 +721,19 @@ class ForkLiftInspectionController extends Controller
                 'A5' => 'SR.NO',
                 'B5' => 'DEPARTMENT',
                 'C5' => 'UNIT',
-                'D5' => 'IDENTIFICATION NUMBER/SERIAL NUMBER',
-                'E5' => 'OBSERVATION',
-                'F5' => 'CORRECTIVE AND PREVENTIVE ACTION',
-                'G5' => 'RESPONSIBILITY',
-                'H5' => 'DATE OF COMPLIANCE',
-                'I5' => 'STATUS',
-                'J5' => 'REMARK',
+                'D5' => 'EXACT LOCATION',
+                'E5' => 'IDENTIFICATION NUMBER/SERIAL NUMBER',
+                'F5' => 'OBSERVATION',
+                'G5' => 'CORRECTIVE AND PREVENTIVE ACTION',
+                'H5' => 'RESPONSIBILITY',
+                'I5' => 'DATE OF COMPLIANCE',
+                'J5' => 'STATUS',
+                'K5' => 'REMARK',
             ];
             foreach ($headers as $cell => $text) {
                 $sheet->setCellValue($cell, $text);
             }
-            $sheet->getStyle("A5:J5")->applyFromArray([
+            $sheet->getStyle("A5:K5")->applyFromArray([
                 'font' => ['bold' => true],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -751,23 +742,23 @@ class ForkLiftInspectionController extends Controller
 
             $sheet->getRowDimension(5)->setRowHeight(40);
 
-
             $row = 6;
             $sr = 1;
             foreach ($current_month_inspection as $detail) {
                 $sheet->setCellValue("A$row", $sr);
                 $sheet->setCellValue("B$row", getDepartment($detail['department_id'] ?? ''));
                 $sheet->setCellValue("C$row", getUnitname($detail['unit_id'] ?? ''));
-                $sheet->setCellValue("D$row", $detail['identification_no'] ?? '');
-                $sheet->setCellValue("E$row", $detail['observation'] ?? '');
-                $sheet->setCellValue("F$row", $detail['correction_preventive_action'] ?? '');
-                $sheet->setCellValue("G$row", getUsername($detail['responsibility'] ?? ''));
-                $sheet->setCellValue("H$row", DBdateformat($detail['date_of_compliance'] ?? ''));
+                $sheet->setCellValue("D$row", ($detail['exact_location'] ?? ''));
+                $sheet->setCellValue("E$row", $detail['identification_no'] ?? '');
+                $sheet->setCellValue("F$row", $detail['observation'] ?? '');
+                $sheet->setCellValue("G$row", $detail['correction_preventive_action'] ?? '');
+                $sheet->setCellValue("H$row", getUsername($detail['responsibility'] ?? ''));
+                $sheet->setCellValue("I$row", DBdateformat($detail['date_of_compliance'] ?? ''));
                 $status = ($detail['observation_status'] ?? '') == 1 ? 'Open' : 'Closed';
-                $sheet->setCellValue("I{$row}", $status);
-                $sheet->setCellValue("J$row", $detail['remarks'] ?? '');
+                $sheet->setCellValue("J{$row}", $status);
+                $sheet->setCellValue("K$row", $detail['remarks'] ?? '');
 
-                $sheet->getStyle("A$row:J$row")->applyFromArray([
+                $sheet->getStyle("A$row:K$row")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'wrapText' => true,
@@ -777,7 +768,7 @@ class ForkLiftInspectionController extends Controller
                 $row++;
             }
 
-            foreach (range('A', 'J') as $col) {
+            foreach (range('A', 'K') as $col) {
                 $maxLength = 0;
                 foreach (range(5, $row) as $r) {
                     $cellValue = $sheet->getCell("{$col}{$r}")->getValue();
@@ -792,11 +783,7 @@ class ForkLiftInspectionController extends Controller
             $sheet->mergeCells("A{$signatureRowStart}:E{$signatureRowStart}");
             $sheet->getStyle("A{$signatureRowStart}:E{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-
-                    'wrapText' => true,
-                ],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'wrapText' => true],
             ]);
 
             $preparedBy = getUsername($inspection_details->created_by);
@@ -807,46 +794,13 @@ class ForkLiftInspectionController extends Controller
             $verifiedByText = !empty($verifiedBy) ? $verifiedBy : "Inspection has not been verified yet";
             $sheet->setCellValue("F{$signatureRowStart}", "Verified By:" . $verifiedByText);
 
-
-            $sheet->mergeCells("F{$signatureRowStart}:J{$signatureRowStart}");
-            $sheet->getStyle("F{$signatureRowStart}:J{$signatureRowStart}")->applyFromArray([
+            $sheet->mergeCells("F{$signatureRowStart}:K{$signatureRowStart}");
+            $sheet->getStyle("F{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => [
-                    'horizontal' => Alignment::HORIZONTAL_CENTER,
-
-                    'wrapText' => true,
-                ],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'wrapText' => true],
             ]);
-            // if (file_exists($prepared_by_signature)) {
-            //     $drawing = new Drawing();
-            //     $drawing->setName('Signature');
-            //     $drawing->setDescription('Prepared By');
-            //     $drawing->setPath($prepared_by_signature);
-            //     $drawing->setCoordinates("D{$signatureRowStart}");
-            //     $drawing->setOffsetX(5);
-            //     $drawing->setOffsetY(5);
-            //     $drawing->setHeight(40);
-            //     $drawing->setWorksheet($sheet);
-            // } else {
-            //     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nSignature not available");
-            // }
-
-            // if (file_exists($verified_by_signature)) {
-            //     $drawing = new Drawing();
-            //     $drawing->setName('Signature');
-            //     $drawing->setDescription('Verified By');
-            //     $drawing->setPath($verified_by_signature);
-            //     $drawing->setCoordinates("G{$signatureRowStart}");
-            //     $drawing->setOffsetX(5);
-            //     $drawing->setOffsetY(5);
-            //     $drawing->setHeight(40);
-            //     $drawing->setWorksheet($sheet);
-            // } else {
-            //     $sheet->setCellValue("F{$signatureRowStart}", "Verified By:\nSignature not available");
-            // }
 
             $row++;
-
 
             $fileName = 'Forklift_Inspection.xlsx';
             $filePath = storage_path("app/public/$fileName");

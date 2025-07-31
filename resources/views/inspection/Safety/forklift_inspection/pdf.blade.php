@@ -196,6 +196,8 @@
                     </th>
                     <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">UNIT
                     </th>
+                    <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">EXACT LOCATION
+                    </th>
                     <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">
                         IDENTIFICATION
                         NUMBER/SERIAL NUMBER
@@ -229,6 +231,7 @@
                         </td>
                         <td style="border: 2px solid black; padding: 8px;">
                             {{ getUnitname($detail->unit_id) }}</td>
+                        <td style="border: 2px solid black; padding: 8px;">{{ $detail->exact_location }}</td>
                         <td style="border: 2px solid black; padding: 8px;">{{ $detail->identification_no }}</td>
                         <td style="border: 2px solid black; padding: 8px;">{{ $detail->observation }}</td>
 
@@ -265,13 +268,13 @@
                     );
                 @endphp --}}
                 <tr>
-                    <td colspan="5"
+                    <td colspan="6"
                         style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                         {{-- <img src="{{ admin_url($prepared_by_signature) }}" alt="Checked By Signature"
                             style="height: 50px;"> --}}
                         <div>Checked & Prepared By: {{ getUsername($detail->checked_by) }}</div>
                     </td>
-                    <td colspan="5"
+                    <td colspan="6"
                         style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                         @if ($detail->verified_by != null)
                             {{-- <img src="{{ admin_url($verified_by_signature) }}" alt="Verified By Signature"

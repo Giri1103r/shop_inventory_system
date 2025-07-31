@@ -225,7 +225,7 @@
 
     <tr style="background-color: #ddd;">
         <th rowspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">SL</th>
-        <th rowspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">LOCATION</th>
+        <th rowspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">EXACT LOCATION</th>
         <th rowspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">HYDRANT NO.</th>
         <th colspan="9" style="border: 1px solid black; padding: 6px; text-align: center;">CHECK ITEMS</th>
         <th rowspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">REMARKS</th>
@@ -252,7 +252,7 @@
     @foreach ($group as $detail)
         <tr>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $loop->iteration }}</td>
-            <td style="border: 1px solid black; padding: 6px;">{{ getLocationname($detail->location_check_id) }}</td>
+            <td style="border: 1px solid black; padding: 6px;">{{ ($detail->location_check_id) }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->hydrant_no }}</td>
 
             <td style="border: 1px solid black; padding: 6px; text-align: center;">

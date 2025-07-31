@@ -16,10 +16,12 @@ class CertifiedFireFighter extends Model
         'id',
         'doc_no_id',
         'fire_id',
+        'exact_location',
         'sr_no',
         'emp_name',
         'department_id',
         'unit_id',
+        'exact_location',
         'emp_code',
         'emp_phone',
         'emp_status',
@@ -47,12 +49,14 @@ class CertifiedFireFighter extends Model
         $emp_code = $request->emp_code;
         $emp_phone = $request->emp_phone;
         $emp_status = $request->emp_status;
+        $exact_location = $request->exact_location;
 
         foreach ($sr_no as $index => $srNo) {
             $data = [
                 'doc_no_id' => decryptId($request->docNo_id),
                 'fire_id' => $fireId,
                 'sr_no' => $srNo,
+                'exact_location' => $exact_location[$index],
                 'unit_id' => decryptId($unit_id[$index]),
                 'department_id' => decryptId($department_id[$index]),
                 'emp_name' => decryptId($emp_name[$index]),

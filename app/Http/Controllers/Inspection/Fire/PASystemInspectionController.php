@@ -822,7 +822,7 @@ class PASystemInspectionController extends Controller
                 $headerStart = $headerInfoRow;
 
                 $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 1))->setCellValue("A{$headerStart}", "SL");
-                $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 1))->setCellValue("B{$headerStart}", "LOCATION");
+                $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 1))->setCellValue("B{$headerStart}", "EXACT LOCATION");
                 $sheet->mergeCells("C{$headerStart}:I{$headerStart}")->setCellValue("C{$headerStart}", "CHECK ITEMS");
 
                 $sheet->setCellValue("C" . ($headerStart + 1), "UNIT");
@@ -846,7 +846,7 @@ class PASystemInspectionController extends Controller
 
                 foreach ($groupedDetails as $detail) {
                     $sheet->setCellValue("A{$dataRow}", $sr);
-                    $sheet->setCellValue("B{$dataRow}", getLocationname($detail['location'] ?? ''));
+                    $sheet->setCellValue("B{$dataRow}", ($detail['location'] ?? ''));
                     $sheet->setCellValue("C{$dataRow}", getUnitname($detail['unit'] ?? ''));
 
                     $audioQuality = $detail['audio_quality'] ?? '';
@@ -1187,7 +1187,7 @@ class PASystemInspectionController extends Controller
             }
 
             $sheet->mergeCells("A4:D4")->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($pa_system->date_of_inspection));
-            $sheet->mergeCells("E4:H4")->setCellValue("E4", "Location :- " . getLocationname($pa_system->location));
+            $sheet->mergeCells("E4:H4")->setCellValue("E4", "Exact Location :- " . ($pa_system->location));
             $sheet->mergeCells("I4:K4")->setCellValue("I4", "Shift:- " . getShift($pa_system->shift));
             $sheet->mergeCells("A5:D5")->setCellValue("A5", "Next Due date:- " . Displaydateformat($pa_system->next_due));
             $sheet->mergeCells("E5:H5")->setCellValue("E5", "Unit:- " . getUnitname($pa_system->unit));

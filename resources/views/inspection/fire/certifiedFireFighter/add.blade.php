@@ -129,6 +129,17 @@
                                                     </select>
                                                 </div>
 
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[1]" id = "exact_location"
+                                                            class="form-control exact_location"
+                                                            placeholder="Exact Location">
+
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-md-4 mb-2 form-input">
                                                     <label class=" form-label require">Employee Name</label>
                                                     <select name="emp_name[1]"
@@ -212,6 +223,9 @@
                         "emp_status[1]": {
                             required: true,
                         },
+                        "exact_location[1]": {
+                            required: true,
+                        },
 
                     },
                     messages: {
@@ -227,6 +241,9 @@
                         },
                         "emp_status[1]": {
                             required: "Please Select The Employee Status",
+                        },
+                        "exact_location[1]": {
+                            required: "Please enter the Exact Location",
                         },
 
 
@@ -315,6 +332,19 @@
                                                 </div>
 
 
+<div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[${form_set_count}]"
+                                                            id = "exact_location[${form_set_count}]"
+                                                            class="form-control exact_location"
+                                                            placeholder="Exact Location"
+                                                            >
+
+                                                    </div>
+                                                </div>
+
                                                 <div class="col-md-4 mb-2 form-input">
                                                     <label class=" form-label require">Employee Name</label>
                                                     <select name="emp_name[${form_set_count}]"
@@ -381,16 +411,19 @@
                 $("select[name='emp_status[" + form_set_count + "]']").rules('add', {
                     required: true,
                     messages: {
-                        required: 'Please select the Employee Stat',
+                        required: 'Please select the Employee Status',
                     }
                 });
-
+                $("input[name='exact_location[" + form_set_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please Enter the Exact Location',
+                    }
+                });
 
                 serial_number++;
                 form_set_count++;
                 updatePageIndices();
-
-
             });
 
 
@@ -556,10 +589,8 @@
                 $(this).find('select[name^="emp_name"]').attr('name', 'emp_name[' + idx + ']');
                 $(this).find('input[name^="emp_code"]').attr('name', 'emp_code[' + idx + ']');
                 $(this).find('input[name^="emp_phone"]').attr('name', 'emp_phone[' + idx + ']');
+                $(this).find('input[name^="exact_location"]').attr('name', 'exact_location[' + idx + ']');
                 $(this).find('select[name^="emp_status"]').attr('name', 'emp_status[' + idx + ']');
-
-
-
 
 
                 $(this).find('select').select2();

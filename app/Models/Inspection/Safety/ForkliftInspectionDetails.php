@@ -17,6 +17,7 @@ class ForkliftInspectionDetails extends Model
         'department_id',
         'unit_id',
         'identification_no',
+        'exact_location',
         'observation',
         'correction_preventive_action',
         'responsibility',
@@ -51,6 +52,7 @@ class ForkliftInspectionDetails extends Model
         $date_of_compliance = $request->date_of_compliance;
         $observation_status = $request->observation_status;
         $remarks = $request->remarks;
+        $exact_location = $request->exact_location;
 
 
         foreach ($department as $index => $sr_no_value) {
@@ -59,6 +61,7 @@ class ForkliftInspectionDetails extends Model
                 'department_id' => decryptId($department[$index]),
                 'unit_id' =>  decryptId($unit[$index]),
                 'identification_no' => $identification_no[$index],
+                'exact_location' => $exact_location[$index],
                 'observation' => $observation[$index],
                 'correction_preventive_action' => ($corrective_action[$index]),
                 'responsibility' => ($emp_id[$index]),

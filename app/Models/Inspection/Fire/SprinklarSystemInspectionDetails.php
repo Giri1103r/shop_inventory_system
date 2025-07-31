@@ -16,6 +16,7 @@ class SprinklarSystemInspectionDetails extends Model
         'id',
         'inspection_id',
         'department',
+        'exact_location',
         'resource_code',
         'quantity',
         'water_leakage',
@@ -23,7 +24,7 @@ class SprinklarSystemInspectionDetails extends Model
         'qbd',
         'condition_of_flow_meter',
         'main_isolation',
-        'drain_condition',  
+        'drain_condition',
         'remarks',
         'created_by',
         'updated_by',
@@ -48,6 +49,7 @@ class SprinklarSystemInspectionDetails extends Model
         $request = request();
 
         $sr_no = $request->sr_no;
+        $exact_location = $request->exact_location;
         $department = $request->department;
         $resource_code = $request->resource_code;
         $quantity = $request->quantity;
@@ -58,13 +60,14 @@ class SprinklarSystemInspectionDetails extends Model
         $main_isolation = $request->main_isolation;
         $drain_condition = $request->drain_condition;
         $remarks = $request->remarks;
-        
+
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'inspection_id' => $id,
                 'sr_no' => $sr_no_value,
                 'department' => decryptId($department[$index]),
                 'resource_code' => $resource_code[$index],
+                'exact_location' => $exact_location[$index],
                 'quantity' => $quantity[$index],
                 'water_leakage' => decryptId($water_leakage[$index]),
                 'painting' => decryptId($painting[$index]),
@@ -95,7 +98,7 @@ class SprinklarSystemInspectionDetails extends Model
         $main_isolation = $request->main_isolation;
         $drain_condition = $request->drain_condition;
         $remarks = $request->remarks;
-        
+
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'inspection_id' => $id,

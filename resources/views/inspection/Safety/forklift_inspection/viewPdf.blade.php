@@ -212,6 +212,8 @@
                 </th>
                 <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">UNIT
                 </th>
+                <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">EXACT LOCATION
+                </th>
                 <th rowspan="2" style="border: 2px solid black; padding: 8px; background-color: #ddd;">IDENTIFICATION
                     NUMBER/SERIAL NUMBER
                 </th>
@@ -240,6 +242,8 @@
                     </td>
                     <td style="border: 2px solid black; padding: 8px;">
                         {{ getUnitname($detail->unit_id) }}</td>
+                    <td style="border: 2px solid black; padding: 8px;">
+                        {{ ($detail->exact_location) }}</td>
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->identification_no }}</td>
                     <td style="border: 2px solid black; padding: 8px;">{{ $detail->observation }}</td>
 
@@ -274,12 +278,12 @@
                 );
             @endphp --}}
             <tr>
-                <td colspan="5"
+                <td colspan="6"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
 
                     <div>Checked & Prepared By: {{ getUsername($inspection_details->created_by) }}</div>
                 </td>
-                <td colspan="5"
+                <td colspan="6"
                     style="border: 2px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
                     @if ($inspection_details->updated_by != null)
                         <div>Verified By: {{ getUsername($inspection_details->updated_by) }}</div>

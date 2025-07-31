@@ -188,9 +188,9 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label">{{ __('inspection.location') }}</label>
+                                                        <label class="form-label">{{ __('inspection.exact_location') }}</label>
                                                         <div class="view_data">
-                                                            {{ getLocationname($details->location) }}
+                                                            {{ ($details->location) }}
                                                         </div>
                                                     </div>
                                                 </div>

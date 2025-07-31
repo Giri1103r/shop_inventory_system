@@ -134,7 +134,7 @@
                                                             class="form-label">{{ __('inspection.identification_no') }}</label>
                                                         <input type="text" name="identification_no[1]"
                                                             id = "identification_no" class="form-control identification_no"
-                                                            value="{{ forkliftInspection() }}" >
+                                                            value="{{ forkliftInspection() }}">
 
                                                     </div>
                                                 </div>
@@ -172,6 +172,16 @@
                                                         @error('department.1')
                                                             <div class="error">{{ $message }}</div>
                                                         @enderror
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[1]"
+                                                            id = "exact_location" class="form-control exact_location"
+                                                            placeholder="Exact Location">
+
                                                     </div>
                                                 </div>
 
@@ -246,8 +256,7 @@
                                                 </div>
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label
-                                                            class="form-label">{{ __('inspection.remarks') }}</label>
+                                                        <label class="form-label">{{ __('inspection.remarks') }}</label>
                                                         <textarea name="remarks[1]" id="remarks" class="form-control" style="resize: none;">{{ old('remarks.1') }}</textarea>
 
                                                     </div>
@@ -362,6 +371,9 @@
                             "emp_id[1]": {
                                 required: true,
                             },
+                            "exact_location[1]": {
+                                required: true,
+                            },
 
                             "date_of_compliance[1]": {
                                 required: true,
@@ -401,9 +413,9 @@
                             "unit[1]": {
                                 required: "Unit is required",
                             },
-                            // "identification_no[1]": {
-                            //     required: "Identification Number is required",
-                            // },
+                            "exact_location[1]": {
+                                required: "Exact Location is required",
+                            },
                             "observation[1]": {
                                 required: "Observation is required",
                                 minlength: "Minimum Characters should be 3",
@@ -519,7 +531,7 @@
                                                         <label
                                                             class="form-label">{{ __('inspection.identification_no') }}</label>
                                                         <input type="text" name="identification_no[${form_set_count}]"
-                                                            id = "identification_no[${form_set_count}]" class="form-control identification_no" value="${newSerialNumber}">
+                                                            id = "identification_no[${form_set_count}]" class="form-control identification_no select2" value="${newSerialNumber}">
                                                     </div>
                                                 </div>
 
@@ -528,7 +540,7 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.unit') }}</label>
                                                         <select name="unit[${form_set_count}]" id="unit[${form_set_count}]"
-                                                            class=" form-control single-select unit" style="width: 100%">
+                                                            class=" form-control single-select unit select2" style="width: 100%">
                                                             <option value="">Select Unit</option>
                                                         </select>
                                                     </div>
@@ -538,9 +550,21 @@
                                                         <label
                                                             class="form-label require">{{ __('inspection.department') }}</label>
                                                         <select name="department[${form_set_count}]" id="department[${form_set_count}]"
-                                                            class=" form-control single-select department-select" style="width: 100%">
+                                                            class=" form-control single-select department-select select2" style="width: 100%">
                                                             <option value="">Select department</option>
                                                         </select>
+                                                    </div>
+                                                </div>
+                                                  <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[${form_set_count}]"
+                                                            id = "exact_location[${form_set_count}]"
+                                                            class="form-control exact_location"
+                                                            placeholder="Exact Location"
+                                                            >
+
                                                     </div>
                                                 </div>
 
@@ -624,6 +648,8 @@
                     }
                 });
 
+                
+
                 $(".unit").rules('add', {
                     required: true,
                     messages: {
@@ -652,7 +678,7 @@
                 });
 
 
-               $("select[name='emp_id[" + form_set_current_count + "]']").rules('add', {
+                $("select[name='emp_id[" + form_set_current_count + "]']").rules('add', {
                     required: true,
                     messages: {
                         required: 'Please Select the Employee',
@@ -663,6 +689,12 @@
                     required: true,
                     messages: {
                         required: 'Please Select the Date of Compliance',
+                    }
+                });
+                $("input[name='exact_location[" + form_set_current_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please enter the Exact Location',
                     }
                 });
 
@@ -768,12 +800,13 @@
 
                     $(this).find('input[name^="identification_no"]').attr('name', 'identification_no[' + idx + ']');
                     $(this).find('select[name^="department"]').attr('name', 'department[' + idx + ']');
-                    $(this).find('input[name^="unit"]').attr('name', 'unit[' + idx + ']');
+                    $(this).find('select[name^="unit"]').attr('name', 'unit[' + idx + ']');
                     $(this).find('input[name^="observation"]').attr('name', 'observation[' + idx + ']');
-                    $(this).find('select[name^="corrective_action"]').attr('name', 'corrective_action[' + idx + ']');
+                    $(this).find('input[name^="corrective_action"]').attr('name', 'corrective_action[' + idx + ']');
                     $(this).find('input[name^="date_of_compliance"]').attr('name', 'date_of_compliance[' + idx + ']');
-                    $(this).find('input[name^="observation_status"]').attr('name', 'observation_status[' + idx + ']');
-                    $(this).find('input[name^="emp_id"]').attr('name', 'emp_id[' + idx +
+                    $(this).find('input[name^="exact_location"]').attr('name', 'exact_location[' + idx + ']');
+                    $(this).find('select[name^="observation_status"]').attr('name', 'observation_status[' + idx + ']');
+                    $(this).find('select[name^="emp_id"]').attr('name', 'emp_id[' + idx +
                         ']');
                     $(this).find('input[name^="remarks"]').attr('name', 'remarks[' + idx + ']');
 

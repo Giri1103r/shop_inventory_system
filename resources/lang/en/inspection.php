@@ -185,7 +185,7 @@ return [
     'discharge_horn' => 'Discharge Horn',
 
     // Isolation Valve Inspection
-    'location_isv' => 'Location Of ISV',
+    'location_isv' => 'Exact Location',
     'size_isv' => 'Size Of ISV (mm)',
     'wheel_operation' => 'Wheel Operation',
     'leakage' => 'Leakage',

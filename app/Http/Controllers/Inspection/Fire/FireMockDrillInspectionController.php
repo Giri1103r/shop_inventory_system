@@ -185,7 +185,6 @@ class FireMockDrillInspectionController extends Controller
             $department = $this->department->getdepartment();
             $document_no = $this->document_reference->selectUsingName('FireMockDrillObservation');
 
-
             $data = array(
                 'locations' => $location,
                 'units' => $unit,
@@ -752,19 +751,18 @@ class FireMockDrillInspectionController extends Controller
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
-            foreach (range('A', 'L') as $col) {
+            foreach (range('A', 'M') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 
             for ($i = 1; $i <= 200; $i++) {
                 $sheet->getRowDimension($i)->setRowHeight(25);
             }
+
             $row = 1;
 
             foreach ($allData as $groupedDetails) {
-
                 $inspection_detail = $groupedDetails->first();
-
                 $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
 
                 $prepared_by_signature = GetFireSignature($inspection_detail->checked_by, $inspection_detail->fire_id, DETECTOR_INSPECTION);
@@ -773,7 +771,6 @@ class FireMockDrillInspectionController extends Controller
 
                 $titleRow = $row;
 
-                // Logo
                 $logoPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($logoPath)) {
                     $drawing = new Drawing();
@@ -803,28 +800,32 @@ class FireMockDrillInspectionController extends Controller
                 ]);
 
                 $sheet->setCellValue("K{$titleRow}", "Doc. No.");
+                $sheet->mergeCells("L{$titleRow}:M{$titleRow}");
                 $sheet->setCellValue("L{$titleRow}", $document_no->doc_no ?? '');
 
                 $sheet->setCellValue("K" . ($titleRow + 1), "Issue Dt.");
+                $sheet->mergeCells("L" . ($titleRow + 1) . ":M" . ($titleRow + 1));
                 $sheet->setCellValue("L" . ($titleRow + 1), Displaydateformat($document_no->issue_date ?? ''));
 
                 $sheet->setCellValue("K" . ($titleRow + 2), "Rev. & Dt.");
+                $sheet->mergeCells("L" . ($titleRow + 2) . ":M" . ($titleRow + 2));
                 $sheet->setCellValue("L" . ($titleRow + 2), $document_no->rev_dt ?? '');
 
-                $sheet->getStyle("K{$titleRow}:L" . ($titleRow + 2))->applyFromArray([
+                $sheet->getStyle("K{$titleRow}:M" . ($titleRow + 2))->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                $headerRow = $titleRow + 3;
 
+                $headerRow = $titleRow + 3;
                 $headers = [
                     'SL. NO.',
                     'OBSERVATION',
                     'DATE OF OBSERVATION',
                     'SHIFT',
                     'UNIT',
+                    'EXACT LOCATION',
                     'RECOMMENDED CORRECTIVE & PREVENTIVE ACTION',
                     'ACTION TAKEN ',
                     'RESPONSIBILITY',
@@ -858,15 +859,16 @@ class FireMockDrillInspectionController extends Controller
                     $sheet->setCellValue("C{$dataRow}", Displaydateformat($detail['date_of_observation']) ?? '');
                     $sheet->setCellValue("D{$dataRow}", getShift($detail['shift_id']) ?? '');
                     $sheet->setCellValue("E{$dataRow}", getUnitname($detail['unit_id']) ?? '');
-                    $sheet->setCellValue("F{$dataRow}", $detail['capa_remarks'] ?? '');
-                    $sheet->setCellValue("G{$dataRow}", $detail['action_taken'] ?? '');
-                    $sheet->setCellValue("H{$dataRow}", getUsername($detail['emp_id']) ?? '');
-                    $sheet->setCellValue("I{$dataRow}", Displaydateformat($detail['date_of_compliance']) ?? '');
-                    $sheet->setCellValue("J{$dataRow}", $detail['date_of_clousure'] ? Displaydateformat($detail['date_of_clousure']) : 'The Action was not Completed');
-                    $sheet->setCellValue("K{$dataRow}", $detail->status == '1' ? 'Active' : 'InActive');
-                    $sheet->setCellValue("L{$dataRow}", $detail['remarks'] ?? '');
+                    $sheet->setCellValue("F{$dataRow}", $detail['exact_location'] ?? '');
+                    $sheet->setCellValue("G{$dataRow}", $detail['capa_remarks'] ?? '');
+                    $sheet->setCellValue("H{$dataRow}", $detail['action_taken'] ?? '');
+                    $sheet->setCellValue("I{$dataRow}", getUsername($detail['emp_id']) ?? '');
+                    $sheet->setCellValue("J{$dataRow}", Displaydateformat($detail['date_of_compliance']) ?? '');
+                    $sheet->setCellValue("K{$dataRow}", $detail['date_of_clousure'] ? Displaydateformat($detail['date_of_clousure']) : 'The Action was not Completed');
+                    $sheet->setCellValue("L{$dataRow}", $detail->status == '1' ? 'Active' : 'InActive');
+                    $sheet->setCellValue("M{$dataRow}", $detail['remarks'] ?? '');
 
-                    $sheet->getStyle("A{$dataRow}:L{$dataRow}")->applyFromArray([
+                    $sheet->getStyle("A{$dataRow}:M{$dataRow}")->applyFromArray([
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
@@ -878,53 +880,33 @@ class FireMockDrillInspectionController extends Controller
                 $signatureRowStart = $dataRow;
                 $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
 
-                $preparedBy = getUsername($inspection_detail->created_by);
-                $verifiedBy = getUsername($inspection_detail->updated_by);
-                $approvedBy = getUsername($inspection_detail->approved_by);
-
-                $preparedBy = !empty($preparedBy) ? $preparedBy : "INSPECTION HAS NOT BEEN PREPARED YET";
-                $verifiedBy = !empty($verifiedBy) ? $verifiedBy : "INSPECTION HAS NOT BEEN VERIFIED YET";
-                $approvedBy = !empty($approvedBy) ? $approvedBy : "INSPECTION HAS NOT BEEN APPROVED YET";
+                $preparedBy = getUsername($inspection_detail->created_by) ?: "INSPECTION HAS NOT BEEN PREPARED YET";
+                $verifiedBy = getUsername($inspection_detail->updated_by) ?: "INSPECTION HAS NOT BEEN VERIFIED YET";
+                $approvedBy = getUsername($inspection_detail->approved_by) ?: "INSPECTION HAS NOT BEEN APPROVED YET";
 
                 $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
                 $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_CENTER,
-                        'wrapText' => true,
-                    ],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                 ]);
                 $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:$preparedBy");
 
                 $sheet->mergeCells("E{$signatureRowStart}:H{$signatureRowStart}");
                 $sheet->getStyle("E{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_CENTER,
-                        'wrapText' => true,
-                    ],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                 ]);
                 $sheet->setCellValue("E{$signatureRowStart}", "Verified By:$verifiedBy");
 
-                $sheet->mergeCells("I{$signatureRowStart}:L{$signatureRowStart}");
-                $sheet->getStyle("I{$signatureRowStart}:L{$signatureRowStart}")->applyFromArray([
+                $sheet->mergeCells("I{$signatureRowStart}:M{$signatureRowStart}");
+                $sheet->getStyle("I{$signatureRowStart}:M{$signatureRowStart}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                    'alignment' => [
-                        'horizontal' => Alignment::HORIZONTAL_CENTER,
-                        'vertical' => Alignment::VERTICAL_CENTER,
-                        'wrapText' => true,
-                    ],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
                 ]);
                 $sheet->setCellValue("I{$signatureRowStart}", "Approved By:$approvedBy");
 
-                $approvedBy = getUsername($inspection_detail->approved_by);
-                $approvedBy = !empty($approvedBy) ? $approvedBy : "INSPECTION HAS NOT BEEN APPROVED YET";
-                $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\n" . $approvedBy);
-
                 $lastRow = $signatureRowStart;
-                $sheet->getStyle("A{$titleRow}:L{$lastRow}")->applyFromArray([
+                $sheet->getStyle("A{$titleRow}:M{$lastRow}")->applyFromArray([
                     'borders' => [
                         'outline' => [
                             'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THICK,
@@ -936,15 +918,13 @@ class FireMockDrillInspectionController extends Controller
                 $row = $signatureRowStart + 6;
             }
 
-
             $writer = new Xlsx($spreadsheet);
-            $filename = 'Fire Mock Drill Observation .xlsx';
+            $filename = 'Fire Mock Drill Observation.xlsx';
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header("Content-Disposition: attachment; filename=\"$filename\"");
             header('Cache-Control: max-age=0');
             $writer->save('php://output');
         } catch (\Exception $e) {
-
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/detector-inspection/list'));
@@ -1065,7 +1045,7 @@ class FireMockDrillInspectionController extends Controller
             $verified_by_signature = GetFireSignature($fire_mock_drill->updated_by, $fire_mock_drill->id, FIRE_MOCK_DRILL_INSPECION);
             $approved_by_signature = GetFireSignature($fire_mock_drill->approved_by, $fire_mock_drill->id, FIRE_MOCK_DRILL_INSPECION);
 
-            foreach (range('A', 'L') as $col) {
+            foreach (range('A', 'M') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
             }
 
@@ -1073,7 +1053,6 @@ class FireMockDrillInspectionController extends Controller
                 $sheet->getRowDimension($i)->setRowHeight(25);
             }
 
-            // Add logo image
             $logoPath = public_path('assets/images/logo-dark.png');
             if (file_exists($logoPath)) {
                 $drawing = new Drawing();
@@ -1101,18 +1080,15 @@ class FireMockDrillInspectionController extends Controller
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
             ]);
 
-            $row = 1;
-
             $labelMap = [
-
-                'K1' => ['value' => 'Doc. No.', 'valueCell' => 'L1', 'data' => $document_no->doc_no],
-                'K2' => ['value' => 'Issue Dt.', 'valueCell' => 'L2', 'data' => Displaydateformat($document_no->issue_date)],
-                'K3' => ['value' => 'Rev. & Dt.', 'valueCell' => 'L3', 'data' => $document_no->rev_dt],
-
+                'K1' => ['value' => 'Doc. No.', 'valueCell' => 'L1', 'merge' => 'L1:M1', 'data' => $document_no->doc_no],
+                'K2' => ['value' => 'Issue Dt.', 'valueCell' => 'L2', 'merge' => 'L2:M2', 'data' => Displaydateformat($document_no->issue_date)],
+                'K3' => ['value' => 'Rev. & Dt.', 'valueCell' => 'L3', 'merge' => 'L3:M3', 'data' => $document_no->rev_dt],
             ];
 
             foreach ($labelMap as $labelCell => $info) {
                 $sheet->setCellValue($labelCell, $info['value']);
+                $sheet->mergeCells($info['merge']);
                 $sheet->setCellValue($info['valueCell'], $info['data']);
 
                 $sheet->getStyle($labelCell)->applyFromArray([
@@ -1121,14 +1097,12 @@ class FireMockDrillInspectionController extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 ]);
 
-                $sheet->getStyle($info['valueCell'])->applyFromArray([
+                $sheet->getStyle($info['merge'])->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 ]);
             }
-
-
 
             $headers = [
                 'SL. NO.',
@@ -1136,14 +1110,14 @@ class FireMockDrillInspectionController extends Controller
                 'DATE OF OBSERVATION',
                 'SHIFT',
                 'UNIT',
+                'EXACT LOCATION',
                 'RECOMMENDED CORRECTIVE & PREVENTIVE ACTION',
-                'ACTION TAKEN ',
+                'ACTION TAKEN',
                 'RESPONSIBILITY',
                 'TARGET DATE OF COMPLIANCE',
                 'DATE OF CLOSURE',
                 'STATUS',
                 'REMARK',
-
             ];
 
             $col = 'A';
@@ -1160,21 +1134,21 @@ class FireMockDrillInspectionController extends Controller
             $row = 5;
             $sr = 1;
             foreach ($inspection_data as $detail) {
-
                 $sheet->setCellValue("A{$row}", $sr);
                 $sheet->setCellValue("B{$row}", $detail['observation'] ?? '');
                 $sheet->setCellValue("C{$row}", Displaydateformat($detail['date_of_observation']) ?? '');
                 $sheet->setCellValue("D{$row}", getShift($detail['shift_id']) ?? '');
                 $sheet->setCellValue("E{$row}", getUnitname($detail['unit_id']) ?? '');
-                $sheet->setCellValue("F{$row}", $detail['capa_remarks'] ?? '');
-                $sheet->setCellValue("G{$row}", $detail['action_taken'] ?? '');
-                $sheet->setCellValue("H{$row}", getUsername($detail['emp_id']) ?? '');
-                $sheet->setCellValue("I{$row}", Displaydateformat($detail['date_of_compliance']) ?? '');
-                $sheet->setCellValue("J{$row}", $detail['date_of_clousure'] ? Displaydateformat($detail['date_of_clousure']) : 'The Action was not Completed');
-                $sheet->setCellValue("K{$row}", $detail->status == '1' ? 'Active' : 'InActive');
-                $sheet->setCellValue("L{$row}", $detail['remarks'] ?? '');
+                $sheet->setCellValue("F{$row}", $detail['exact_location'] ?? '');
+                $sheet->setCellValue("G{$row}", $detail['capa_remarks'] ?? '');
+                $sheet->setCellValue("H{$row}", $detail['action_taken'] ?? '');
+                $sheet->setCellValue("I{$row}", getUsername($detail['emp_id']) ?? '');
+                $sheet->setCellValue("J{$row}", Displaydateformat($detail['date_of_compliance']) ?? '');
+                $sheet->setCellValue("K{$row}", $detail['date_of_clousure'] ? Displaydateformat($detail['date_of_clousure']) : 'The Action was not Completed');
+                $sheet->setCellValue("L{$row}", $detail->status == '1' ? 'Active' : 'InActive');
+                $sheet->setCellValue("M{$row}", $detail['remarks'] ?? '');
 
-                $sheet->getStyle("A{$row}:L{$row}")->applyFromArray([
+                $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
@@ -1182,7 +1156,6 @@ class FireMockDrillInspectionController extends Controller
                 $sr++;
                 $row++;
             }
-
 
             $signatureRow = $row;
             $sheet->getRowDimension($signatureRow)->setRowHeight(20);
@@ -1205,13 +1178,12 @@ class FireMockDrillInspectionController extends Controller
             ]);
             $sheet->setCellValue("E{$signatureRow}", "Verified By: " . (!empty($verifiedBy) ? $verifiedBy : "INSPECTION HAS NOT BEEN VERIFIED YET"));
 
-            $sheet->mergeCells("I{$signatureRow}:L{$signatureRow}");
-            $sheet->getStyle("I{$signatureRow}:L{$signatureRow}")->applyFromArray([
+            $sheet->mergeCells("I{$signatureRow}:M{$signatureRow}");
+            $sheet->getStyle("I{$signatureRow}:M{$signatureRow}")->applyFromArray([
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
             ]);
             $sheet->setCellValue("I{$signatureRow}", "Approved By: " . (!empty($approvedBy) ? $approvedBy : "INSPECTION HAS NOT BEEN APPROVED YET"));
-
 
             $writer = new Xlsx($spreadsheet);
             $fileName = 'Fire Mock Drill Observation.xlsx';
@@ -1220,7 +1192,6 @@ class FireMockDrillInspectionController extends Controller
 
             return response()->download($filePath)->deleteFileAfterSend(true);
         } catch (\Exception $e) {
-
             report($e);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('fire/fire-extinguisher/cartridge/list'));

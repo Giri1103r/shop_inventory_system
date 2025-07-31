@@ -228,20 +228,10 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location_check_id[1]" id="location_check_id[1]"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select {{ __('inspection.location') }}
-                                                            </option>
-                                                            @foreach ($locations as $location)
-                                                                <option value="{{ encryptId($location->id) }}"
-                                                                    {{ old('location_check_id') == encryptId($location->id) ? 'selected' : '' }}>
-                                                                    {{ $location->location_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        @error('location_check_id')
-                                                            <div class="error">{{ $message }}</div>
-                                                        @enderror
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[1]"
+                                                            id = "exact_location" class="form-control exact_location"
+                                                            placeholder="Exact Location">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -624,6 +614,9 @@
                         "location_check_id[1]": {
                             required: true,
                         },
+                        "exact_location[1]": {
+                            required: true,
+                        },
                         "hydrant_no[1]": {
                             required: true,
                         },
@@ -717,6 +710,9 @@
                         },
                         'location_check_id[1]': {
                             required: "Please Select the Location",
+                        },
+                        'exact_location[1]': {
+                            required: "Please Enter the Exact Location",
                         },
                         "hydrant_no[1]": {
                             required: "Please Add the hydrant No",
@@ -823,23 +819,15 @@
                     var newFormSet = `
                         <div class="row mt-4 form-set">
 
-                                                <div class="col-md-4 mb-2">
+                                               <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location_check_id[${form_set_count}]" id="location_check_id[${form_set_count}]"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select {{ __('inspection.location') }}
-                                                            </option>
-                                                            @foreach ($locations as $location)
-                                                                <option value="{{ encryptId($location->id) }}"
-                                                                    {{ old('location_check_id') == encryptId($location->id) ? 'selected' : '' }}>
-                                                                    {{ $location->location_name }}</option>
-                                                            @endforeach
-                                                        </select>
-                                                        @error('location_check_id')
-                                                            <div class="error">{{ $message }}</div>
-                                                        @enderror
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[${form_set_count}]"
+                                                            id = "exact_location[${form_set_count}]"
+                                                            class="form-control exact_location"
+                                                            placeholder="Exact Location"
+                                                            >
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -1091,6 +1079,12 @@
                             required: 'Please Select the Location',
                         }
                     });
+                    $("input[name='exact_location[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Please enter the Exact Location',
+                        }
+                    });
 
                     $("select[name='lugs[" + form_set_count + "]']").rules('add', {
                         required: true,
@@ -1254,6 +1248,7 @@
                     let idx = index + 1;
 
                     $(this).find('select[name^="location_check_id"]').attr('name', 'location_check_id[' + idx + ']');
+                    $(this).find('input[name^="exact_location"]').attr('name', 'location_check_id[' + idx + ']');
                     $(this).find('input[name^="hydrant_no"]').attr('name', 'hydrant_no[' + idx + ']');
                     $(this).find('select[name^="lugs"]').attr('name', 'lugs[' + idx + ']');
                     $(this).find('select[name^="rubber_washer"]').attr('name', 'rubber_washer[' + idx + ']');

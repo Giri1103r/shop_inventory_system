@@ -253,7 +253,7 @@
                 <th rowspan="3" style="border: 1px solid black; padding: 8px;">SL</th>
                 <th rowspan="3" style="border: 1px solid black; padding: 8px;">FIRE POINT NO.</th>
                 <th rowspan="3" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
-                <th rowspan="3" style="border: 1px solid black; padding: 8px;">LOCATION</th>
+                <th rowspan="3" style="border: 1px solid black; padding: 8px;">Exact LOCATION</th>
                 <th colspan="8" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
                 <th rowspan="3" style="border: 1px solid black; padding: 8px;">REMARKS</th>
             </tr>
@@ -286,7 +286,7 @@
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ GetDeptName($details->department) }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ getLocationname($details->location) }}</td>
+                        {{ ($details->location) }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ getExtinguisherTypeName($details->type) }}
                     </td>

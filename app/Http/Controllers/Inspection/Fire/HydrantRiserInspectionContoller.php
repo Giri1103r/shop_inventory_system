@@ -244,7 +244,7 @@ class HydrantRiserInspectionContoller extends Controller
                 'unit_id' => 'required',
                 'frequency_id' => 'required',
 
-                'location_check_id.*' => 'required',
+                'exact_location.*' => 'required',
                 'hydrant_no.*' => 'required',
                 'lugs.*' => 'required',
                 'rubber_washer.*' => 'required',
@@ -271,7 +271,7 @@ class HydrantRiserInspectionContoller extends Controller
                 'next_due.required' => 'Next Due Date is required.',
                 'unit_id.required' => 'Unit is required.',
                 'frequency_id.required' => 'Frequency is required.',
-                'exact_location.required' => 'Exact Location is required.',
+                'exact_location.*required' => 'Exact Location is required.',
 
                 'location_check_id.*.required' => 'Location Check is required.',
                 'hydrant_no.*.required' => 'Hydrant No is required.',
@@ -888,7 +888,7 @@ class HydrantRiserInspectionContoller extends Controller
                 $headerStart = $headerInfoRow;
 
                 $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 2))->setCellValue("A{$headerStart}", "SL");
-                $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 2))->setCellValue("B{$headerStart}", "LOCATION");
+                $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 2))->setCellValue("B{$headerStart}", "EXACT LOCATION");
                 $sheet->mergeCells("C{$headerStart}:C" . ($headerStart + 2))->setCellValue("C{$headerStart}", "HYDRANT NO.");
 
                 $sheet->mergeCells("D{$headerStart}:L{$headerStart}")->setCellValue("D{$headerStart}", "CHECK ITEMS");
@@ -921,7 +921,7 @@ class HydrantRiserInspectionContoller extends Controller
 
                 foreach ($groupedDetails as $detail) {
                     $sheet->setCellValue("A{$dataRow}", $sr);
-                    $sheet->setCellValue("B{$dataRow}", getLocationname($detail['location_check_id'] ?? ''));
+                    $sheet->setCellValue("B{$dataRow}", ($detail['location_check_id'] ?? ''));
                     $sheet->setCellValue("C{$dataRow}", $detail['hydrant_no'] ?? '');
                     $sheet->setCellValue("D{$dataRow}", ($detail['lugs_id'] ?? '') === '1' ? 'Present' : 'Missing');
                     $sheet->setCellValue("E{$dataRow}", ($detail['rubber_washer'] ?? '') === '1' ? 'Intact' : 'Damaged');
@@ -1262,7 +1262,7 @@ class HydrantRiserInspectionContoller extends Controller
 
             // Table headers
             $sheet->mergeCells("A6:A8")->setCellValue("A6", "SL");
-            $sheet->mergeCells("B6:B8")->setCellValue("B6", "LOCATION");
+            $sheet->mergeCells("B6:B8")->setCellValue("B6", "EXACT LOCATION");
             $sheet->mergeCells("C6:C8")->setCellValue("C6", "HYDRANT NO.");
             $sheet->mergeCells("D6:K6")->setCellValue("D6", "CHECK ITEMS");
             $sheet->mergeCells("D7:I7")->setCellValue("D7", "CONDITION OF LANDING VALVE");
@@ -1288,7 +1288,7 @@ class HydrantRiserInspectionContoller extends Controller
             $sr = 1;
             foreach ($inspection_data as $detail) {
                 $sheet->setCellValue("A$row", $sr);
-                $sheet->setCellValue("B$row", getLocationname($detail['location_check_id'] ?? ''));
+                $sheet->setCellValue("B$row", ($detail['location_check_id'] ?? ''));
                 $sheet->setCellValue("C$row", $detail['hydrant_no'] ?? '');
                 $sheet->setCellValue("D$row", ($detail['lugs_id'] ?? '') === '1' ? 'Present' : 'Missing');
                 $sheet->setCellValue("E$row", ($detail['rubber_washer'] ?? '') === '1' ? 'Intact' : 'Damaged');

@@ -230,6 +230,9 @@
                     style="border: 1px solid black; padding: 10px; text-align: center; background-color: #d9d9d9;">UNIT
                 </th>
                 <th rowspan="1"
+                    style="border: 1px solid black; padding: 10px; text-align: center; background-color: #d9d9d9;">EXACT LOCAITON
+                </th>
+                <th rowspan="1"
                     style="border: 1px solid black; padding: 10px; text-align: center; background-color: #f2f2f2;">
                     RECOMMENDED & PREVENTIVE ACTION</th>
                 <th rowspan="1"
@@ -264,6 +267,8 @@
                     {{ getShiftname($details->shift_id) }}</td>
                 <td style="border: 1px solid black; padding: 10px; text-align: center;">
                     {{ getUnitname($details->unit_id) }}</td>
+                <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                    {{ ($details->exact_location) }}</td>
                 <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->capa_remarks }}
                 </td>
                 <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->action_taken }}
@@ -302,7 +307,7 @@
                     @endif
                 </div>
             </td>
-            <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+            <td colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">
                 <div class="view_data">
                     @if (!empty($forklift_details->approved_by))
                         {{-- <img src="{{ admin_url($approved_by) }}" alt=""

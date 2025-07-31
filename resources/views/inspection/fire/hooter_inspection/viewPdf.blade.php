@@ -253,6 +253,7 @@
         <tr style="background-color: #ddd;">
             <th rowspan="2" style="border: 1px solid black; padding: 8px;">SR. NO</th>
             <th rowspan="2" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
+            <th rowspan="2" style="border: 1px solid black; padding: 8px;">EXACT LOCATION</th>
             <th rowspan="2" style="border: 1px solid black; padding: 8px;">RESOURCE CODE</th>
             <th colspan="5" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
             <th rowspan="2" style="border: 1px solid black; padding: 8px;">REMARK</th>
@@ -270,6 +271,7 @@
             <tr>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->sr_no }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ GetDeptName($details->department) }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ ($details->exact_location) }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->resource_code }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->quantity }}</td>
                 <td style="border: 1px solid black; padding: 8px;">
@@ -345,7 +347,7 @@
                     @endif
                 </div>
             </td>
-            <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+            <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
                 <div class="view_data">
                     @if (!empty($forklift_details->verified_by))
                         <p style="margin: 0;">Verified By:- {{ getUsername($forklift_details->verified_by) }}</p>
@@ -354,7 +356,7 @@
                     @endif
                 </div>
             </td>
-            <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+            <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
                 <div class="view_data">
                     @if (!empty($forklift_details->approved_by))
                         <p style="margin: 0;">Approved By:- {{ getUsername($forklift_details->approved_by) }}</p>

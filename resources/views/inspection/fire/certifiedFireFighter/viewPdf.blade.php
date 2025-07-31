@@ -212,6 +212,7 @@
                 <th colspan="2" style="border: 1px solid black; padding: 8px;">SL</th>
                 <th colspan="2" style="border: 1px solid black; padding: 8px;">UNIT</th>
                 <th colspan="2" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
+                <th colspan="2" style="border: 1px solid black; padding: 8px;">EXACT LOCATION</th>
                 <th colspan="2" style="border: 1px solid black; padding: 8px;"> EMPLOYEE NAME</th>
                 <th colspan="2" style="border: 1px solid black; padding: 8px;">EMP CODE</th>
                 <th colspan="2" style="border: 1px solid black; padding: 8px;">CONTACT NUMBER</th>
@@ -228,6 +229,9 @@
                     </td>
                     <td colspan="2" style="border: 1px solid black; padding: 8px;">
                         {{ GetDeptName($details->department_id) }}
+                    </td>
+                    <td colspan="2" style="border: 1px solid black; padding: 8px;">
+                        {{ ($details->exact_location) }}
                     </td>
                     <td colspan="2" style="border: 1px solid black; padding: 8px;">
                         {{ getEmployeename($details->emp_name) }}</td>

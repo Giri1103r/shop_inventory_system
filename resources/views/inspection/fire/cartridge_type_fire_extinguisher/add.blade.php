@@ -189,7 +189,7 @@
                                         <div class="form-wrapper">
                                             <div class="card-header-inner d-flex justify-content-between">
                                                 <h4 class="text-white ms-2">
-                                                  Cartridge Type Fire Extinguisher Inspection Checklist</h4>
+                                                    Cartridge Type Fire Extinguisher Inspection Checklist</h4>
                                                 <button class="btn btn-primary add-row mb-2 " type="button"
                                                     id="add-row"
                                                     style="margin-left: 10px;  margin-right: 10px; width: 84px;">
@@ -233,17 +233,11 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location[1]" id="location"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select {{ __('inspection.location') }}
-                                                            </option>
-                                                            @foreach ($locations as $location)
-                                                                <option value="{{ encryptId($location->id) }}"
-                                                                    {{ old('location_id') == encryptId($location->id) ? 'selected' : '' }}>
-                                                                    {{ $location->location_name }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[1]"
+                                                            id = "exact_location" class="form-control exact_location"
+                                                            placeholder="Exact Location">
+
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -364,7 +358,7 @@
 
                                                     </div>
                                                 </div>
- <div class="col-md-2 text-right  mt-4">
+                                                <div class="col-md-2 text-right  mt-4">
                                                     <button class="btn btn-danger remove-row" type="button"
                                                         style="margin:10px;"><i class="fa fa-trash"></i></button>
 
@@ -455,7 +449,7 @@
                 });
 
 
-               var toDatepicker = flatpickr("#next_due", {
+                var toDatepicker = flatpickr("#next_due", {
                     dateFormat: "d-m-Y",
                 });
 
@@ -557,6 +551,10 @@
                             required: true,
                             noSpaces: true,
                         },
+                        "exact_location[1]": {
+                            required: true,
+                            noSpaces: true,
+                        },
                         "remarks[1]": {
                             required: true,
                             noSpaces: true,
@@ -596,6 +594,9 @@
                         },
                         unit_id: {
                             required: "Unit is required",
+                        },
+                        exact_location: {
+                            required: "Exact Location is required",
                         },
                         'fire_point_no[1]': {
                             required: "Please Enter the Fire Point Number",
@@ -726,22 +727,18 @@
                                 </div>
                             </div>
 
-                             <div class="col-md-4 mb-2">
-                                <div class="form-group form-input">
-                                    <label
-                                        class="form-label require">{{ __('inspection.location') }}</label>
-                                    <select name="location[${form_set_count}]" id="location-${form_set_count}"
-                                        class=" form-control single-select" style="width: 100%">
-                                        <option value="">Select {{ __('inspection.location') }}
-                                        </option>
-                                        @foreach ($locations as $location)
-                                            <option value="{{ encryptId($location->id) }}"
-                                                {{ old('location_id') == encryptId($location->id) ? 'selected' : '' }}>
-                                                {{ $location->location_name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
+                            <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[${form_set_count}]"
+                                                            id = "exact_location[${form_set_count}]"
+                                                            class="form-control exact_location"
+                                                            placeholder="Exact Location"
+                                                            >
+
+                                                    </div>
+                                                </div>
                             <div class="col-md-4 mb-2">
                                 <div class="form-group form-input">
                                     <label
@@ -910,10 +907,10 @@
                         }
                     });
 
-                    $("select[name='location[" + form_set_count + "]']").rules('add', {
+                    $("input[name='exact_location[" + form_set_count + "]']").rules('add', {
                         required: true,
                         messages: {
-                            required: 'Please Select the Location',
+                            required: 'Please Enter the Exact Location',
                         }
                     });
 
@@ -1126,6 +1123,7 @@
                     let newSerialNumber = 'CTFE-' + ('000000' + idx).slice(-6);
                     $(this).find("input[name^='sr_no']").val(newSerialNumber);
                     $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
+                    $(this).find('input[name^="exact_location"]').attr('name', 'exact_location[' + idx + ']');
                     $(this).find('input[name^="fire_point_no"]').attr('name', 'fire_point_no[' + idx + ']');
                     $(this).find('select[name^="department"]').attr('name', 'department[' + idx + ']');
                     $(this).find('select[name^="location"]').attr('name', 'location[' + idx + ']');

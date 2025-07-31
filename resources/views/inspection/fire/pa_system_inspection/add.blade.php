@@ -205,15 +205,11 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
-                                                        <select name="location[1]" id="location_id_1"
-                                                            class=" form-control single-select" style="width: 100%">
-                                                            <option value="">Select Location</option>
-                                                            @foreach ($locations as $location)
-                                                                <option value="{{ encryptId($location->id) }}">
-                                                                    {{ $location->location_name }}</option>
-                                                            @endforeach
-                                                        </select>
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[1]"
+                                                            id = "exact_location" class="form-control exact_location"
+                                                            placeholder="Exact Location">
+
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -488,13 +484,16 @@
                         "operation[1]": {
                             required: true,
                         },
+                        "exact_location[1]": {
+                            required: true,
+                        },
                         "location[1]": {
                             required: true,
                         },
                         "unit[1]": {
                             required: true,
                         },
-                        
+
                         device_image: {
                             required: true,
                             filesize: 15728640,
@@ -536,6 +535,9 @@
                         },
                         "audio_quality[1]": {
                             required: "Please select the Audio Quality",
+                        },
+                        "exact_location[1]": {
+                            required: "Please Enter the Exact Location",
                         },
                         "mic_condition[1]": {
                             required: "Please select the Mic Condition",
@@ -628,16 +630,18 @@
                                 </div>
                             </div>
 
-                            <div class="col-md-4 mb-2">
-                                <div class="form-group form-input">
-                                    <label
-                                        class="form-label require">{{ __('inspection.location') }}</label>
-                                    <select name="location[${form_set_count}]" id="location-${form_set_count}"
-                                        class=" form-control single-select" style="width: 100%">
-                                        <option value="">Select Location</option>
-                                    </select>
-                                </div>
-                            </div>
+                           <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[${form_set_count}]"
+                                                            id = "exact_location[${form_set_count}]"
+                                                            class="form-control exact_location"
+                                                            placeholder="Exact Location"
+                                                            >
+
+                                                    </div>
+                                                </div>
                             <div class="col-md-4 mb-2">
                                 <div class="form-group form-input">
                                     <label class="form-label require">{{ __('inspection.unit') }}</label>
@@ -791,6 +795,12 @@
                             required: 'Serial number is required',
                         }
                     });
+                    $("input[name='exact_location[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Exact Location is Required',
+                        }
+                    });
 
                     $("select[name='location[" + form_set_count + "]']").rules('add', {
                         required: true,
@@ -925,7 +935,7 @@
                     $(this).find("input[name^='sr_no']").val(newSerialNumber);
 
                     $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
-                    $(this).find('select[name^="location"]').attr('name', 'location[' + idx + ']');
+                    $(this).find('input[name^="exact_location"]').attr('name', 'exact_location[' + idx + ']');
                     $(this).find('select[name^="unit"]').attr('name', 'unit[' + idx + ']');
                     $(this).find('select[name^="audio_quality"]').attr('name', 'audio_quality[' + idx + ']');
                     $(this).find('select[name^="mic_condition"]').attr('name', 'mic_condition[' + idx + ']');
