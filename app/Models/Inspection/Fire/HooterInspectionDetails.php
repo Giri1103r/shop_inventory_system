@@ -16,6 +16,7 @@ class HooterInspectionDetails extends Model
         'id',
         'inspection_id',
         'department',
+        'exact_location',
         'sr_no',
         'resource_code',
         'quantity',
@@ -55,6 +56,7 @@ class HooterInspectionDetails extends Model
         $auditbility = $request->auditbility ?? [];
         $remarks = $request->remarks;
         $resource_code = $request->resource_code;
+        $exact_location = $request->exact_location;
 
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
@@ -63,6 +65,7 @@ class HooterInspectionDetails extends Model
                 'resource_code' => $resource_code[$index],
                 'department' => decryptId($department[$index]),
                 'remarks' => $remarks[$index],
+                'exact_location' => $exact_location[$index],
                 'condition_of_hooter' => $check_items[$index],
                 'quantity' => $quantity[$index],
                 'blinking_light' => isset($blinking_light[$index]) && $blinking_light[$index] === 'YES' ? 1 : 0,

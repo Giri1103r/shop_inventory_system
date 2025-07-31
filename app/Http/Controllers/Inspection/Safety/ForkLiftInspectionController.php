@@ -524,7 +524,7 @@ class ForkLiftInspectionController extends Controller
                 ]);
                 $sheet->setCellValue("F{$signatureRowStart}", "Verified By: " . $verifiedByText);
 
-                $sheet->getStyle("A{$startRow}:K{$row}")->applyFromArray([
+                $sheet->getStyle("A{$startRow}:K    {$row}")->applyFromArray([
                     'borders' => [
                         'top'    => ['borderStyle' => Border::BORDER_THICK],
                         'bottom' => ['borderStyle' => Border::BORDER_THICK],

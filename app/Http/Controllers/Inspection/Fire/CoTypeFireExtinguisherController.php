@@ -253,7 +253,7 @@ class CoTypeFireExtinguisherController extends Controller
                 'frequency_id' => 'required',
                 'fire_point_no.*' => 'required',
                 'department.*' => 'required',
-                'location.*' => 'required',
+                'exact_location.*' => 'required',
                 'type.*' => 'required',
                 'capacity.*' => 'required',
                 'quantity.*' => 'required',
@@ -277,7 +277,7 @@ class CoTypeFireExtinguisherController extends Controller
                 'unit_id.required' => 'Unit is required.',
                 'fire_point_no.*.required' => 'Fire Point No is required.',
                 'department.*.required' => 'Department is required.',
-                'location.*.required' => 'Location is required.',
+                'exact_location.*.required' => 'Exact Location is required.',
                 'type.*.required' => 'Fire Type is required.',
                 'capacity.*.required' => 'capacity is required.',
                 'quantity.*.required' => 'quantity is required.',
@@ -902,7 +902,7 @@ class CoTypeFireExtinguisherController extends Controller
                     $sheet->setCellValue("A{$row}", $sr++);
                     $sheet->setCellValue("B{$row}", $detail['fire_point_no']);
                     $sheet->mergeCells("C{$row}:D{$row}")->setCellValue("C{$row}", getDepartment($detail['department']));
-                    $sheet->mergeCells("E{$row}:F{$row}")->setCellValue("E{$row}", getLocationname($detail['location']));
+                    $sheet->mergeCells("E{$row}:F{$row}")->setCellValue("E{$row}", ($detail['location']));
                     $sheet->setCellValue("G{$row}", getExtinguisherTypeName($detail['extinguisher_type']));
                     $sheet->setCellValue("H{$row}", $detail['capacity']);
                     $sheet->setCellValue("I{$row}", $detail['quantity']);
@@ -1228,7 +1228,7 @@ class CoTypeFireExtinguisherController extends Controller
             }
 
             $sheet->mergeCells("A4:E4")->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($co_type->inspection_date));
-            $sheet->mergeCells("F4:L4")->setCellValue("F4", "Location :- " . getLocationname($co_type->location));
+            $sheet->mergeCells("F4:L4")->setCellValue("F4", "Location :- " . ($co_type->location));
             $sheet->mergeCells("M4:O4")->setCellValue("M4", "Shift:- " . getShift($co_type->shift));
             $sheet->mergeCells("A5:E5")->setCellValue("A5", "Next Due date:- " . Displaydateformat($co_type->next_due));
             $sheet->mergeCells("F5:L5")->setCellValue("F5", "Unit:- " . getUnitname($co_type->unit));

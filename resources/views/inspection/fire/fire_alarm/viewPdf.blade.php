@@ -254,6 +254,7 @@
         <tr style="background-color: #ddd;">
             <th rowspan="2" style="border: 1px solid black; padding: 8px;">SR. NO</th>
             <th rowspan="2" style="border: 1px solid black; padding: 8px;">DEPARTMENT</th>
+            <th rowspan="2" style="border: 1px solid black; padding: 8px;">EXACT LOCATION</th>
             <th rowspan="2" style="border: 1px solid black; padding: 8px;">RESOURCE CODE</th>
             <th rowspan="2" style="border: 1px solid black; padding: 8px;">QUANTITY</th>
             <th colspan="4" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
@@ -270,6 +271,7 @@
             <tr>
                 <td style="border: 1px solid black; padding: 6px;">{{ $details->sr_no }}</td>
                 <td style="border: 1px solid black; padding: 6px;">{{ GetDeptName($details->department) }}</td>
+                <td style="border: 1px solid black; padding: 6px;">{{ ($details->exact_location) }}</td>
                 <td style="border: 1px solid black; padding: 6px;">{{ $details->resource_code }}</td>
                 <td style="border: 1px solid black; padding: 6px;">{{ $details->quantity }}</td>
 
@@ -320,7 +322,7 @@
                     @endif
                 </div>
             </td>
-            <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+            <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
                 <div>
                     @if (!empty($forklift_details->verified_by))
                         {{-- <img src="{{ admin_url($verified_by) }}" alt="" style="max-height: 60px; display: block; margin: 0 auto 5px;"> --}}
@@ -330,7 +332,7 @@
                     @endif
                 </div>
             </td>
-            <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+            <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
                 <div>
                     @if (!empty($forklift_details->approved_by))
                         {{-- <img src="{{ admin_url($approved_by) }}" alt="" style="max-height: 60px; display: block; margin: 0 auto 5px;"> --}}

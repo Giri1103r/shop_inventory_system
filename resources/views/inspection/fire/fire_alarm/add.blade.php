@@ -189,8 +189,6 @@
                                                 </button>
                                             </div>
                                             <div class="row mt-4 form-set">
-
-
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -212,6 +210,16 @@
                                                                     {{ $department->department_name }}</option>
                                                             @endforeach
                                                         </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[1]"
+                                                            id = "exact_location" class="form-control exact_location"
+                                                            placeholder="Exact Location">
+
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -466,6 +474,9 @@
                         "department[1]": {
                             required: true,
                         },
+                        "exact_location[1]": {
+                            required: true,
+                        },
                         "resource_code[1]": {
                             required: true,
                             uniqueItemCode: true,
@@ -554,6 +565,9 @@
 
                         "department[1]": {
                             required: "Please select the department",
+                        },
+                        "exact_location[1]": {
+                            required: "Please Enter the Exact Location",
                         },
 
                         "quantity[1]": {
@@ -664,6 +678,18 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[${form_set_count}]"
+                                                            id = "exact_location[${form_set_count}]"
+                                                            class="form-control exact_location"
+                                                            placeholder="Exact Location"
+                                                            >
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
                                                             class="form-label require">{{ __('inspection.resource_code') }}</label>
                                                         <input type="text" name="resource_code[${form_set_count}]"
                                                             id = "resource_code" class="form-control" value="">
@@ -767,6 +793,12 @@
                         required: true,
                         messages: {
                             required: 'Please select the department',
+                        }
+                    });
+                    $("input[name='exact_location[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Please Enter the Exact Location',
                         }
                     });
 
@@ -937,6 +969,7 @@
 
                     $(this).find("input[name^='sr_no']").val(newSerialNumber);
                     $(this).find("input[name^='sr_no']").attr('name', 'sr_no[' + idx + ']');
+                    $(this).find("input[name^='exact_location']").attr('name', 'exact_location[' + idx + ']');
                     $(this).find("select[name^='department']").attr('name', 'department[' + idx + ']');
                     $(this).find("input[name^='resource_code']").attr('name', 'resource_code[' + idx + ']');
                     $(this).find("input[name^='quantity']").attr('name', 'quantity[' + idx + ']');

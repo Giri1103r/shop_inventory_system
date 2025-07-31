@@ -100,17 +100,15 @@
                                         {{-- Current Month Observation --}}
                                         <div class="form-wrapper-current">
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white ms-2"> {{ __('inspection.fire_mock_drill_observation') }}</h4>
-                                                <button class="btn btn-primary add-row mb-2 " type="button" id="add-row-current"
+                                                <h4 class="text-white ms-2">
+                                                    {{ __('inspection.fire_mock_drill_observation') }}</h4>
+                                                <button class="btn btn-primary add-row mb-2 " type="button"
+                                                    id="add-row-current"
                                                     style="margin-left: 10px;  margin-right: 10px; width: 84px;">
                                                     Add
                                                 </button>
                                             </div>
                                             <div class="row mt-4 form-set-current">
-
-
-
-
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -152,6 +150,15 @@
                                                                     {{ $unit->unit_name }}</option>
                                                             @endforeach
                                                         </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[1]"
+                                                            id = "exact_location" class="form-control exact_location"
+                                                            placeholder="Exact Location">
                                                     </div>
                                                 </div>
                                                 <div class="col-md-4 mb-2">
@@ -313,6 +320,9 @@
                             "emp_id[1]": {
                                 required: true,
                             },
+                            "exact_location[1]": {
+                                required: true,
+                            },
 
                             "date_of_compliance[1]": {
                                 required: true,
@@ -367,6 +377,9 @@
                             },
                             "emp_id[1]": {
                                 required: "Employee is required",
+                            },
+                            "exact_location[1]": {
+                                required: "Exact location is required",
                             },
                             "date_of_compliance[1]": {
                                 required: "Date of Compliance is required",
@@ -509,6 +522,18 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[${form_set_current_count}]"
+                                                            id = "exact_location[${form_set_current_count}]"
+                                                            class="form-control exact_location"
+                                                            placeholder="Exact Location"
+                                                            >
+
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
                                                             class="form-label require">{{ __('inspection.corrective_action') }}</label>
                                                         <textarea type="text" name="corrective_action[${form_set_current_count}]" id = "corrective_action" class="form-control"></textarea>
                                                     </div>
@@ -616,6 +641,12 @@
                     required: true,
                     messages: {
                         required: 'Please Select the Observation Date',
+                    }
+                });
+                $("input[name='exact_location[" + form_set_current_count + "]']").rules('add', {
+                    required: true,
+                    messages: {
+                        required: 'Please Enter the Exact Location',
                     }
                 });
 
@@ -737,7 +768,8 @@
                     $(this).find('input[name^="observation"]').attr('name', 'observation[' + idx + ']');
                     $(this).find('select[name^="corrective_action"]').attr('name', 'corrective_action[' + idx + ']');
                     $(this).find('input[name^="date_of_compliance"]').attr('name', 'date_of_compliance[' + idx + ']');
-                    $(this).find('input[name^="observation_status"]').attr('name', 'observation_status[' + idx + ']');
+                    $(this).find('input[name^="exact_location"]').attr('name', 'exact_location[' + idx + ']');
+                    $(this).find('select[name^="observation_status"]').attr('name', 'observation_status[' + idx + ']');
                     $(this).find('input[name^="emp_id"]').attr('name', 'emp_id[' + idx +
                         ']');
                     $(this).find('input[name^="remarks"]').attr('name', 'remarks[' + idx + ']');

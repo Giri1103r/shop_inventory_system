@@ -220,7 +220,7 @@
 
             <tr style="background-color: #ddd;">
                 <th style="border: 1px solid black; padding: 8px;" rowspan="2">SR. NO</th>
-                <th style="border: 1px solid black; padding: 8px;" rowspan="2">LOCATION
+                <th style="border: 1px solid black; padding: 8px;" rowspan="2">EXACT LOCATION
                 </th>
                 <th style="border: 1px solid black; padding: 8px;" colspan="7">CHECK ITEMS
                 </th>
@@ -248,7 +248,7 @@
                     <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ $loop->iteration }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
-                        {{ getLocationname($details->location) }}</td>
+                        {{ ($details->location) }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center; font-weight: bold;">
                         {{ getUnitname($details->unit) }}
                     </td>

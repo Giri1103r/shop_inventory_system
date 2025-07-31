@@ -54,7 +54,7 @@ class CartridgeTypeFireExtinguisherDetails extends Model
         $sr_no = $request->sr_no;
         $fire_point_no = $request->fire_point_no;
         $department = $request->department;
-        $location = $request->location;
+        $location = $request->exact_location;
         $type = $request->type;
         $capacity = $request->capacity;
         $quantity = $request->quantity;
@@ -72,7 +72,7 @@ class CartridgeTypeFireExtinguisherDetails extends Model
                 'sr_no' => $sr_no_value,
                 'fire_point_no' => $fire_point_no[$index],
                 'department' => decryptId($department[$index]),
-                'location' => decryptId($location[$index]),
+                'location' => ($location[$index]),
                 'type' => decryptId($type[$index]),
                 'capacity' => $capacity[$index],
                 'quantity' => $quantity[$index],

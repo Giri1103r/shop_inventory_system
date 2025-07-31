@@ -215,6 +215,15 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[1]"
+                                                            id = "exact_location" class="form-control exact_location"
+                                                            placeholder="Exact Location">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
                                                             class="form-label require">{{ __('inspection.resource_code') }}</label>
                                                         <input type="text" name="resource_code[1]"
                                                             id = "resource_code" class="form-control" value="">
@@ -408,7 +417,7 @@
                     location.reload();
                 });
 
-                 var toDatepicker = flatpickr("#next_due", {
+                var toDatepicker = flatpickr("#next_due", {
                     dateFormat: "d-m-Y",
                 });
 
@@ -484,6 +493,9 @@
                             required: true,
                         },
                         "department[1]": {
+                            required: true,
+                        },
+                        "exact_location[1]": {
                             required: true,
                         },
                         "resource_code[1]": {
@@ -569,6 +581,9 @@
                         },
                         "department[1]": {
                             required: "Please add the Department",
+                        },
+                        "exact_location[1]": {
+                            required: "Please enter the exact Location",
                         },
                         "resource_code[1]": {
                             required: "Please add the resource code",
@@ -685,6 +700,19 @@
                                                                 </select>
                                                             </div>
                                                         </div>
+
+<div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
+                                                        <label
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                        <input type="text" name="exact_location[${form_set_count}]"
+                                                            id = "exact_location[${form_set_count}]"
+                                                            class="form-control exact_location"
+                                                            placeholder="Exact Location"
+                                                            >
+
+                                                    </div>
+                                                </div>project/list
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
@@ -849,6 +877,12 @@
                             number: 'Quantity must be a valid number',
                         }
                     });
+                    $("input[name='exact_location[" + form_set_count + "]']").rules('add', {
+                        required: true,
+                        messages: {
+                            required: 'Please enter the Exact Location',
+                        }
+                    });
 
                     $("select[name='water_leakage[" + form_set_count + "]']").rules('add', {
                         required: true,
@@ -1000,9 +1034,10 @@
                 $('.form-wrapper .form-set').each(function(index) {
                     let idx = index + 1;
                     let newSerialNumber = 'FEX-' + ('000000' + idx).slice(-6);
-
+                    
                     $(this).find("input[name^='sr_no']").val(newSerialNumber);
                     $(this).find("input[name^='sr_no']").attr('name', 'sr_no[' + idx + ']');
+                    $(this).find("input[name^='exact_location']").attr('name', 'exact_location[' + idx + ']');
                     $(this).find("select[name^='department']").attr('name', 'department[' + idx + ']');
                     $(this).find("input[name^='resource_code']").attr('name', 'resource_code[' + idx + ']');
                     $(this).find("input[name^='quantity']").attr('name', 'quantity[' + idx + ']');

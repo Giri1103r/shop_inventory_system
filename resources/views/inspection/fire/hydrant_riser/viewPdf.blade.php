@@ -264,7 +264,7 @@
         <!-- Main Table Header -->
         <tr>
             <th rowspan="3" style="border: 1px solid black; padding: 8px;">SL</th>
-            <th rowspan="3" style="border: 1px solid black; padding: 8px;">LOCATION</th>
+            <th rowspan="3" style="border: 1px solid black; padding: 8px;">EXACT LOCATION</th>
             <th rowspan="3" style="border: 1px solid black; padding: 8px;">HYDRANT NO.</th>
             <th colspan="8" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
             <th rowspan="3" style="border: 1px solid black; padding: 8px;">APPROACH</th>
@@ -290,7 +290,7 @@
         @foreach ($inspection as $details)
             <tr>
                 <td style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ getLocationname($details->location_check_id) }}
+                <td style="border: 1px solid black; padding: 8px;">{{ ($details->location_check_id) }}
                 </td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->hydrant_no }}</td>
 

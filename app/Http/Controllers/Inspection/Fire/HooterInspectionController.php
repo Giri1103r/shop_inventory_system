@@ -251,6 +251,7 @@ class HooterInspectionController extends Controller
                 'check_items.*' => 'required',
                 'quantity.*' => 'required',
                 'remarks.*' => 'required',
+                'exact_location.*' => 'required',
             ];
 
             $messages = [
@@ -264,6 +265,7 @@ class HooterInspectionController extends Controller
                 'department.*.required' => 'Department is required',
                 'resource_code.*.required' => 'Resource code is required',
                 'check_items.*.required' => 'Condition of the hooter is required',
+                'exact_location.*.required' => 'Exact Location is required',
                 'quantity.*.required' => 'Quantity is required',
                 'remarks.*.required' => 'Remarks is required',
             ];
@@ -1031,13 +1033,9 @@ class HooterInspectionController extends Controller
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
-            $inspection         = $this->hooter->selectOne($id);
-            $inspection_data    = $this->hooter_details->GetDetails($inspection->id);
-            $document_no        = $this->document_reference->selectOne($inspection->document_reference_id);
-
-            $prepared_by_signature = GetFireSignature($inspection->created_by, $inspection->id, HOOTER_INSPECTION);
-            $verified_by_signature = GetFireSignature($inspection->verified_by, $inspection->id, HOOTER_INSPECTION);
-            $approved_by_signature = GetFireSignature($inspection->approved_by, $inspection->id, HOOTER_INSPECTION);
+            $inspection = $this->hooter->selectOne($id);
+            $inspection_data = $this->hooter_details->GetDetails($inspection->id);
+            $document_no = $this->document_reference->selectOne($inspection->document_reference_id);
 
             foreach (range('A', 'L') as $col) {
                 $sheet->getColumnDimension($col)->setAutoSize(true);
@@ -1061,94 +1059,87 @@ class HooterInspectionController extends Controller
             }
 
             $sheet->mergeCells('A1:B3');
-            $sheet->mergeCells("C1:I3");
+            $sheet->mergeCells("C1:J3");
             $sheet->setCellValue("C1", "HOOTER  INSPECTION CHECKLIST");
-            $sheet->getStyle("C1:I3")->applyFromArray([
-                'font'       => ['bold' => true, 'size' => 14],
-                'alignment'  => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-                'borders'    => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            $sheet->getStyle("C1:J3")->applyFromArray([
+                'font' => ['bold' => true, 'size' => 14],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
             ]);
             $sheet->getStyle('A1:B3')->applyFromArray([
-                'alignment'  => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                'borders'    => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
+                'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
             ]);
 
             $labelMap = [
-                'J1' => ['value' => 'Doc. No.',     'valueCell' => 'K1', 'data' => $document_no->doc_no],
-                'J2' => ['value' => 'Issue Dt.',    'valueCell' => 'K2', 'data' => Displaydateformat($document_no->issue_date)],
-                'J3' => ['value' => 'Rev. & Dt.',   'valueCell' => 'K3', 'data' => $document_no->rev_dt],
+                'K1' => ['value' => 'Doc. No.', 'valueCell' => 'L1', 'data' => $document_no->doc_no],
+                'K2' => ['value' => 'Issue Dt.', 'valueCell' => 'L2', 'data' => Displaydateformat($document_no->issue_date)],
+                'K3' => ['value' => 'Rev. & Dt.', 'valueCell' => 'L3', 'data' => $document_no->rev_dt],
             ];
 
             foreach ($labelMap as $labelCell => $info) {
                 $sheet->setCellValue($labelCell, $info['value']);
                 $sheet->setCellValue($info['valueCell'], $info['data']);
-
                 $sheet->getStyle($labelCell)->applyFromArray([
-                    'font'      => ['bold' => true],
+                    'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 ]);
                 $sheet->getStyle($info['valueCell'])->applyFromArray([
-                    'font'      => ['bold' => true],
+                    'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
-                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 ]);
             }
 
             $sheet->mergeCells("A4:D4")->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($inspection->date_of_inspection));
             $sheet->mergeCells("E4:H4")->setCellValue("E4", "Location :- " . getLocationname($inspection->location));
-            $sheet->mergeCells("I4:K4")->setCellValue("I4", "Shift:- " . getShift($inspection->shift));
+            $sheet->mergeCells("I4:L4")->setCellValue("I4", "Shift:- " . getShift($inspection->shift));
             $sheet->mergeCells("A5:D5")->setCellValue("A5", "Next Due date:- " . Displaydateformat($inspection->next_due));
             $sheet->mergeCells("E5:H5")->setCellValue("E5", "Unit:- " . getUnitname($inspection->unit));
-            $sheet->mergeCells("I5:K5")->setCellValue("I5", "Frequency:- " . getFrequencyname($inspection->frequency));
-            $sheet->getStyle("A4:K5")->applyFromArray([
-                'font'      => ['bold' => true],
-                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            $sheet->mergeCells("I5:L5")->setCellValue("I5", "Frequency:- " . getFrequencyname($inspection->frequency));
+            $sheet->getStyle("A4:L5")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
             $sheet->mergeCells("A6:A7")->setCellValue("A6", "SR.NO");
             $sheet->mergeCells("B6:B7")->setCellValue("B6", "DEPARTMENT");
-            $sheet->mergeCells("C6:C7")->setCellValue("C6", "RESOURCE CODE");
-            $sheet->mergeCells("D6:H6")->setCellValue("D6", "CHECK ITEMS");
-            $sheet->setCellValue("D7", "QUANTITY");
-            $sheet->setCellValue("E7", "BLINKING LIGHT");
-            $sheet->setCellValue("F7", "CONNECTION");
-            $sheet->setCellValue("G7", "AUDIOBILITY");
-            $sheet->setCellValue("H7", "CONDITION OF HOOTER");
-            $sheet->mergeCells("I6:K7")->setCellValue("I6", "REMARKS");
+            $sheet->mergeCells("C6:C7")->setCellValue("C6", "EXACT LOCATION");
+            $sheet->mergeCells("D6:D7")->setCellValue("D6", "RESOURCE CODE");
+            $sheet->mergeCells("E6:I6")->setCellValue("E6", "CHECK ITEMS");
+            $sheet->setCellValue("E7", "QUANTITY");
+            $sheet->setCellValue("F7", "BLINKING LIGHT");
+            $sheet->setCellValue("G7", "CONNECTION");
+            $sheet->setCellValue("H7", "AUDIOBILITY");
+            $sheet->setCellValue("I7", "CONDITION OF HOOTER");
+            $sheet->mergeCells("J6:L7")->setCellValue("J6", "REMARKS");
 
-            $sheet->getStyle("A6:K7")->applyFromArray([
-                'font'      => ['bold' => true],
-                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            $sheet->getStyle("A6:L7")->applyFromArray([
+                'font' => ['bold' => true],
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
             $row = 8;
-            $sr  = 1;
+            $sr = 1;
+            $statusMap = [YES => 'YES', 0 => 'NO'];
+
             foreach ($inspection_data as $detail) {
                 $sheet->setCellValue("A$row", $sr);
                 $sheet->setCellValue("B$row", GetDeptName($detail['department'] ?? ''));
-                $sheet->setCellValue("C$row", $detail['resource_code'] ?? '');
+                $sheet->setCellValue("C$row", $detail['exact_location'] ?? '');
+                $sheet->setCellValue("D$row", $detail['resource_code'] ?? '');
+                $sheet->setCellValue("E$row", $statusMap[$detail['quantity'] ?? ''] ?? $detail['quantity'] ?? '');
+                $sheet->setCellValue("F$row", $statusMap[$detail['blinking_light'] ?? ''] ?? $detail['blinking_light'] ?? '');
+                $sheet->setCellValue("G$row", $detail['connection'] ?? '');
+                $sheet->setCellValue("H$row", $statusMap[$detail['audiobility'] ?? ''] ?? $detail['audiobility'] ?? '');
+                $sheet->setCellValue("I$row", $statusMap[$detail['condition_of_hooter'] ?? ''] ?? $detail['condition_of_hooter'] ?? '');
+                $sheet->mergeCells("J$row:L$row")->setCellValue("J$row", $detail['remarks'] ?? '');
 
-                $quantity            = $detail['quantity'] ?? '';
-                $blinking_light      = $detail['blinking_light'] ?? '';
-                $connection          = $detail['connection'] ?? '';
-                $audiobility         = $detail['audiobility'] ?? '';
-                $condition_of_hooter = $detail['condition_of_hooter'] ?? '';
-                $remark              = $detail['remarks'] ?? '';
-
-                $statusMap = [YES => 'YES', 0 => 'NO'];
-
-                $sheet->setCellValue("D$row", $statusMap[$quantity] ?? $quantity);
-                $sheet->setCellValue("E$row", $statusMap[$blinking_light] ?? $blinking_light);
-                $sheet->setCellValue("F$row", $connection);
-                $sheet->setCellValue("G$row", $statusMap[$audiobility] ?? $audiobility);
-                $sheet->setCellValue("H$row", $statusMap[$condition_of_hooter] ?? $condition_of_hooter);
-                $sheet->mergeCells("I$row:K$row")->setCellValue("I$row", $remark);
-
-                $sheet->getStyle("A$row:K$row")->applyFromArray([
-                    'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                $sheet->getStyle("A$row:L$row")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
@@ -1159,108 +1150,36 @@ class HooterInspectionController extends Controller
             $signatureRowStart = $row;
             $sheet->getRowDimension($signatureRowStart)->setRowHeight(30);
 
-            // Prepared By
+            $preparedBy = getUsername($inspection->created_by);
+            $verifiedBy = getUsername($inspection->verified_by);
+            $approvedBy = getUsername($inspection->approved_by);
+
             $sheet->mergeCells("A{$signatureRowStart}:D{$signatureRowStart}");
-            $sheet->getStyle("A{$signatureRowStart}:D{$signatureRowStart}")->applyFromArray([
-                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-            ]);
-
-             $richText = new RichText();
-                $name = getUsername($inspection->created_by);
-
-                if (!empty($name)) {
-                    $richText->createTextRun("Prepared By :" . $name)->getFont()->setBold(true);
-                } else {
-                    $richText->createTextRun("Inspection has not been Prepared Yet")->getFont()->setBold(true);
-                }
-
-                $sheet->getCell("A{$signatureRowStart}")->setValue($richText);
-
-            // if (file_exists($prepared_by_signature)) {
-            //     $drawing = new Drawing();
-            //     $drawing->setName('Signature');
-            //     $drawing->setDescription('Prepared By');
-            //     $drawing->setPath($prepared_by_signature);
-            //     $drawing->setCoordinates("C{$signatureRowStart}");
-            //     $drawing->setOffsetX(5);
-            //     $drawing->setOffsetY(5);
-            //     $drawing->setHeight(40);
-            //     $drawing->setWorksheet($sheet);
-            //     $sheet->setCellValue("A{$signatureRowStart}", "\n\n\nPrepared By:\n" . getUsername($inspection->created_by));
-            // } else {
-            //     $sheet->setCellValue("A{$signatureRowStart}", "Prepared By:\nInspection not yet started");
-            // }
-
-            // Verified By
             $sheet->mergeCells("E{$signatureRowStart}:H{$signatureRowStart}");
-            $sheet->getStyle("E{$signatureRowStart}:H{$signatureRowStart}")->applyFromArray([
-                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-            ]);
+            $sheet->mergeCells("I{$signatureRowStart}:L{$signatureRowStart}");
 
-             $richText = new RichText();
-                $name = getUsername($inspection->verified_by);
+            foreach (['A', 'E', 'I'] as $col) {
+                $sheet->getStyle("{$col}{$signatureRowStart}:" . chr(ord($col) + 3) . "{$signatureRowStart}")->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                    'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
+                ]);
+            }
 
-                if (!empty($name)) {
-                    $richText->createTextRun("Verified By :" . $name)->getFont()->setBold(true);
-                } else {
-                    $richText->createTextRun("Inspection has not been Verified Yet")->getFont()->setBold(true);
-                }
+            $richPrepared = new RichText();
+            $richPrepared->createTextRun("Prepared By : " . ($preparedBy ?: 'Inspection has not been Prepared Yet'))->getFont()->setBold(true);
+            $sheet->getCell("A{$signatureRowStart}")->setValue($richPrepared);
 
-                $sheet->getCell("E{$signatureRowStart}")->setValue($richText);
+            $richVerified = new RichText();
+            $richVerified->createTextRun("Verified By : " . ($verifiedBy ?: 'Inspection has not been Verified Yet'))->getFont()->setBold(true);
+            $sheet->getCell("E{$signatureRowStart}")->setValue($richVerified);
 
-            // if (file_exists($verified_by_signature)) {
-            //     $drawing = new Drawing();
-            //     $drawing->setName('Signature');
-            //     $drawing->setDescription('Verified By');
-            //     $drawing->setPath($verified_by_signature);
-            //     $drawing->setCoordinates("G{$signatureRowStart}");
-            //     $drawing->setOffsetX(5);
-            //     $drawing->setOffsetY(5);
-            //     $drawing->setHeight(40);
-            //     $drawing->setWorksheet($sheet);
-            //     $sheet->setCellValue("E{$signatureRowStart}", "\n\n\nVerified By:\n" . getUsername($inspection->updated_by));
-            // } else {
-            //     $sheet->setCellValue("E{$signatureRowStart}", "Verified By:\nInspection not yet completed");
-            // }
+            $richApproved = new RichText();
+            $richApproved->createTextRun("Approved By : " . ($approvedBy ?: 'Inspection has not been Approved Yet'))->getFont()->setBold(true);
+            $sheet->getCell("I{$signatureRowStart}")->setValue($richApproved);
 
-            // Approved By
-            $sheet->mergeCells("I{$signatureRowStart}:K{$signatureRowStart}");
-            $sheet->getStyle("I{$signatureRowStart}:K{$signatureRowStart}")->applyFromArray([
-                'borders'   => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true],
-            ]);
-             $richText = new RichText();
-                $name = getUsername($inspection->approved_by);
-
-                if (!empty($name)) {
-                    $richText->createTextRun("Approved By :" . $name)->getFont()->setBold(true);
-                } else {
-                    $richText->createTextRun("Inspection has not been Approved Yet")->getFont()->setBold(true);
-                }
-
-                $sheet->getCell("I{$signatureRowStart}")->setValue($richText);
-
-
-            // if (file_exists($approved_by_signature)) {
-            //     $drawing = new Drawing();
-            //     $drawing->setName('Signature');
-            //     $drawing->setDescription('Approved By');
-            //     $drawing->setPath($approved_by_signature);
-            //     $drawing->setCoordinates("J{$signatureRowStart}");
-            //     $drawing->setOffsetX(5);
-            //     $drawing->setOffsetY(5);
-            //     $drawing->setHeight(40);
-            //     $drawing->setWorksheet($sheet);
-            //     $sheet->setCellValue("I{$signatureRowStart}", "\n\n\nApproved By:\n" . getUsername($inspection->approved_by));
-            // } else {
-            //     $sheet->setCellValue("I{$signatureRowStart}", "Approved By:\nApproval pending");
-            // }
-
-            $writer   = new Xlsx($spreadsheet);
+            $writer = new Xlsx($spreadsheet);
             $fileName = 'Hooter Inspection.xlsx';
-            $filePath = storage_path("app/public/$fileName");
+            $filePath = storage_path("app/public/{$fileName}");
             $writer->save($filePath);
 
             return response()->download($filePath)->deleteFileAfterSend(true);
@@ -1270,6 +1189,8 @@ class HooterInspectionController extends Controller
             return redirect(admin_url('fire/hooter-inspection/list'));
         }
     }
+
+
 
 
     public function ExportPdf(Request $request)

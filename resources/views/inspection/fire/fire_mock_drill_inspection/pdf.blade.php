@@ -204,6 +204,7 @@
         </th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">SHIFT</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">UNIT</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">EXACT LOCATION</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">RECOMENDED AND
             PREVENTIVE ACTION</th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="1">ACTION TAKEN</th>
@@ -228,6 +229,8 @@
                 {{ getShiftname($details->shift_id) }}</td>
             <td style="border: 1px solid black; padding: 10px; text-align: center;">
                 {{ getUnitname($details->unit_id) }}</td>
+            <td style="border: 1px solid black; padding: 10px; text-align: center;">
+                {{ ($details->exact_location) }}</td>
             <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->capa_remarks }}
             </td>
             <td style="border: 1px solid black; padding: 10px; text-align: center;">{{ $details->action_taken }}
@@ -272,7 +275,7 @@
                 @endif
             </div>
         </td>
-        <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+        <td colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->approved_by))
                     {{-- <img src="{{ admin_url($approved_by) }}" alt=""

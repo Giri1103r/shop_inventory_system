@@ -13,6 +13,7 @@ class FireMockDrillInspectionDetails extends Model
         'id',
         'inspection_id',
         'observation',
+        'exact_location',
         'date_of_observation',
         'shift_id',
         'unit_id',
@@ -41,7 +42,7 @@ class FireMockDrillInspectionDetails extends Model
     {
         $request = request();
 
-        
+
 
         $observation = $request->observation;
         $date_of_observation = $request->date_of_observation;
@@ -53,6 +54,7 @@ class FireMockDrillInspectionDetails extends Model
         $date_of_compliance = $request->date_of_compliance;
         $observation_status = $request->observation_status;
         $remarks = $request->remarks;
+        $exact_location = $request->exact_location;
 
 
         foreach ($observation as $index => $observation) {
@@ -63,6 +65,7 @@ class FireMockDrillInspectionDetails extends Model
                 'shift_id' => decryptId($shift[$index]),
                 'unit_id' =>  decryptId($unit[$index]),
                 'capa_remarks' => $corrective_action[$index],
+                'exact_location' => $exact_location[$index],
                 'action_taken' => $action_taken[$index],
                 'emp_id' => ($emp_id[$index]),
                 'date_of_compliance' => DBdateformat($date_of_compliance[$index]),

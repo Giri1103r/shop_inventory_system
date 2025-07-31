@@ -18,6 +18,7 @@ class FireAlarmInspectionDetails extends Model
         'sr_no',
         'resource_code',
         'department',
+        'exact_location',
         'quantity',
         'glass',
         'hammer',
@@ -53,15 +54,17 @@ class FireAlarmInspectionDetails extends Model
         $hammer = $request->hammer;
         $mannual_call_point = $request->mannual_call_point;
         $approach = $request->approach;
+        $exact_location = $request->exact_location;
         $glass = $request->glass;
         $remarks = $request->remarks;
-        
+
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'inspection_id' => $id,
                 'sr_no' => $sr_no_value,
                 'department' => decryptId($department[$index]),
                 'resource_code' => $resource_code[$index],
+                'exact_location' => $exact_location[$index],
                 'quantity' => $quantity[$index],
                 'glass' => decryptId($glass[$index]),
                 'hammer' => decryptId($hammer[$index]),
@@ -88,7 +91,7 @@ class FireAlarmInspectionDetails extends Model
         $approach = $request->approach;
         $glass = $request->glass;
         $remarks = $request->remarks;
-        
+
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'inspection_id' => $id,

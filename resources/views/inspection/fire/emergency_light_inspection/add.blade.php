@@ -206,7 +206,7 @@
                                                         <tr>
                                                             <th>{{ __('inspection.sr_no') }}</th>
                                                             <th>{{ __('inspection.department') }}</th>
-                                                            <th>{{ __('inspection.location') }}</th>
+                                                            <th>{{ __('inspection.exact_location') }}</th>
                                                             <th>{{ __('inspection.emergency_light_number') }}</th>
                                                             <th>{{ __('inspection.condition_of_light') }}</th>
                                                             <th>{{ __('inspection.type_of_light') }}</th>
@@ -978,7 +978,7 @@
                     });
 
                     $("textarea[name='remarks[" + emergency_light_count + "]']").rules('add', {
-                       
+
                         minlength: 3,
                         maxlength: 600,
                         messages: {
@@ -1037,6 +1037,7 @@
                     $(this).find("input[name^='sr_no']").val(newSerialNumber);
 
                     $(this).find('input[name^="sr_no"]').attr('name', 'sr_no[' + idx + ']');
+                    $(this).find('input[name^="exact_location"]').attr('name', 'exact_location[' + idx + ']');
                     $(this).find('select[name^="department"]').attr('name', 'department[' + idx + ']');
                     $(this).find('select[name^="condition_of_light"]').attr('name', 'condition_of_light[' + idx + ']');
                     $(this).find('select[name^="type_of_light"]').attr('name', 'type_of_light[' + idx + ']');

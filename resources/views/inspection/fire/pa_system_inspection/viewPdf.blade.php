@@ -251,7 +251,7 @@
             <tr>
                 <th rowspan="2" style="border: 1px solid black; padding: 8px;">SL</th>
                 <th rowspan="2" style="border: 1px solid black; padding: 8px;">FIRE POINT NO.</th>
-                <th rowspan="2" style="border: 1px solid black; padding: 8px;">LOCATION</th>
+                <th rowspan="2" style="border: 1px solid black; padding: 8px;">EXACT LOCATION</th>
                 <th colspan="7" style="border: 1px solid black; padding: 8px;">CHECK ITEMS</th>
                 <th rowspan="2" style="border: 1px solid black; padding: 8px;">REMARK</th>
             </tr>
@@ -273,7 +273,7 @@
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $loop->iteration }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $details->sr_no }}</td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ getLocationname($details->location) }}
+                        {{ ($details->location) }}
                     </td>
                     <td style="border: 1px solid black; padding: 8px; text-align: center;">
                         {{ getUnitname($details->unit) }}

@@ -257,7 +257,10 @@
                 </th>
                 <th rowspan="2"
                     style="border: 2px solid black; padding: 10px; text-align: center; background-color: #bbb;">
-                    DEPARTMENT/ LOCATION</th>
+                    DEPARTMENT</th>
+                <th rowspan="2"
+                    style="border: 2px solid black; padding: 10px; text-align: center; background-color: #bbb;">
+                    EXACT LOCATION</th>
                 <th rowspan="2"
                     style="border: 2px solid black; padding: 10px; text-align: center; background-color: #bbb;">QUANTITY
                 </th>
@@ -293,6 +296,7 @@
                     </td>
                     <td style="border: 2px solid black; padding: 10px; text-align: center;">
                         {{ GetDeptName($details->department) }}</td>
+                    <td style="border: 2px solid black; padding: 10px; text-align: center;">{{ $details->exact_location }}
                     <td style="border: 2px solid black; padding: 10px; text-align: center;">{{ $details->quantity }}
                     </td>
                     <td style="border: 2px solid black; padding: 10px; text-align: center;">
@@ -355,7 +359,7 @@
                         @endif
                     </div>
                 </td>
-                <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                <td colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">
                     <div class="view_data">
                         @if (!empty($forklift_details->verified_by))
                             {{-- <img src="{{ admin_url($verified_by) }}" alt=""
@@ -366,7 +370,7 @@
                         @endif
                     </div>
                 </td>
-                <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
+                <td colspan="5" style="border: 1px solid black; padding: 6px; text-align: center;">
                     <div class="view_data">
                         @if (!empty($forklift_details->approved_by))
                             {{-- <img src="{{ admin_url($approved_by) }}" alt=""

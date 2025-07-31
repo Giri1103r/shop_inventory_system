@@ -245,7 +245,7 @@ class FireExtinguisherController extends Controller
                 'frequency_id' => 'required',
                 'sr_no.*' => 'required',
                 'department.*' => 'required',
-                'location.*' => 'required',
+                'exact_location.*' => 'required',
                 'description.*' => 'required',
                 'type.*' => 'required',
                 'capacity.*' => 'required',
@@ -267,7 +267,7 @@ class FireExtinguisherController extends Controller
                 'next_due.required' => 'Next due date is required',
                 'unit_id.required' => 'Unit is required',
                 'department.*.required' => 'Department is required',
-                'location.*.required' => 'Location is required',
+                'exact_location.*.required' => 'Exact Location is required',
                 'description.*.required' => 'Description is required',
                 'type.*.required' => 'Fire Extinguisher Type is required',
                 'capacity.*.required' => 'Capacity is required',
@@ -865,7 +865,7 @@ class FireExtinguisherController extends Controller
                 $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 1))->setCellValue("A{$headerStart}", "SR.NO");
                 $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 1))->setCellValue("B{$headerStart}", "FIRE POINT NO");
                 $sheet->mergeCells("C{$headerStart}:C" . ($headerStart + 1))->setCellValue("C{$headerStart}", "DEPARTMENT");
-                $sheet->mergeCells("D{$headerStart}:D" . ($headerStart + 1))->setCellValue("D{$headerStart}", "LOCATION");
+                $sheet->mergeCells("D{$headerStart}:D" . ($headerStart + 1))->setCellValue("D{$headerStart}", "EXACT LOCATION");
                 $sheet->mergeCells("E{$headerStart}:J{$headerStart}")->setCellValue("E{$headerStart}", "CHECK ITEMS");
 
                 $sheet->setCellValue("E" . ($headerStart + 1), "TYPE");
@@ -893,7 +893,7 @@ class FireExtinguisherController extends Controller
                     $sheet->setCellValue("A$dataRow", $sr);
                     $sheet->setCellValue("B$dataRow", $detail['fire_point_no'] ?? '');
                     $sheet->setCellValue("C$dataRow", GetDeptName($detail['department'] ?? ''));
-                    $sheet->setCellValue("D$dataRow", getLocationName($detail['location']) ?? '');
+                    $sheet->setCellValue("D$dataRow", ($detail['location']) ?? '');
                     $sheet->setCellValue("E$dataRow", getExtinguisherTypeName($detail['type']) ?? '');
                     $sheet->setCellValue("F$dataRow", $detail['capacity'] ?? '');
                     $sheet->setCellValue("G$dataRow", $detail['quantity'] ?? '');
@@ -1192,7 +1192,7 @@ class FireExtinguisherController extends Controller
             }
 
             $sheet->mergeCells("A4:D4")->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($inspection->date_of_inspection));
-            $sheet->mergeCells("E4:I4")->setCellValue("E4", "Location :- " . getLocationname($inspection->location));
+            $sheet->mergeCells("E4:I4")->setCellValue("E4", "Exact Location :- " . ($inspection->location));
             $sheet->mergeCells("J4:M4")->setCellValue("J4", "Shift:- " . getShift($inspection->shift));
             $sheet->mergeCells("A5:D5")->setCellValue("A5", "Next Due date:- " . Displaydateformat($inspection->next_due));
             $sheet->mergeCells("E5:I5")->setCellValue("E5", "Unit:- " . getUnitname($inspection->unit));
@@ -1206,7 +1206,7 @@ class FireExtinguisherController extends Controller
             $sheet->mergeCells("A6:A7")->setCellValue("A6", "SR.NO");
             $sheet->mergeCells("B6:B7")->setCellValue("B6", "FIRE POINT NO");
             $sheet->mergeCells("C6:C7")->setCellValue("C6", "DEPARTMENT");
-            $sheet->mergeCells("D6:D7")->setCellValue("D6", "LOCATION");
+            $sheet->mergeCells("D6:D7")->setCellValue("D6", "EXACT LOCATION");
             $sheet->mergeCells("E6:J6")->setCellValue("E6", "CHECK ITEMS");
 
             $sheet->setCellValue("E7", "TYPE");
@@ -1232,7 +1232,7 @@ class FireExtinguisherController extends Controller
                 $sheet->setCellValue("A$row", $sr);
                 $sheet->setCellValue("B$row", $detail['fire_point_no'] ?? '');
                 $sheet->setCellValue("C$row", GetDeptName($detail['department'] ?? ''));
-                $sheet->setCellValue("D$row", getLocationName($detail['location']) ?? '');
+                $sheet->setCellValue("D$row", ($detail['location']) ?? '');
                 $sheet->setCellValue("E$row", getExtinguisherTypeName($detail['type']) ?? '');
                 $sheet->setCellValue("F$row", $detail['capacity'] ?? '');
                 $sheet->setCellValue("G$row", $detail['quantity'] ?? '');

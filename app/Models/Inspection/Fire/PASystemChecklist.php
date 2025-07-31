@@ -47,7 +47,7 @@ class PASystemChecklist extends Model
         $request = request();
 
         $sr_no = $request->sr_no ?? [];
-        $location = $request->location ?? [];
+        $exact_location = $request->exact_location ?? [];
         $unit = $request->unit ?? [];
         $audio_quality = $request->audio_quality ?? [];
         $mic_condition = $request->mic_condition ?? [];
@@ -62,7 +62,7 @@ class PASystemChecklist extends Model
                 'fire_pa_system_id' => $id,
                 'sr_no' => $sr_no_value,
                 'unit' => decryptId($unit[$index]),
-                'location' => decryptId($location[$index]),
+                'location' => ($exact_location[$index]),
                 'audio_quality' => decryptId($audio_quality[$index]),
                 'mic_condition' => decryptId($mic_condition[$index]),
                 'mic_quantity' => $mic_quantity[$index],

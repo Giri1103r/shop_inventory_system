@@ -148,6 +148,14 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
+                                                        <label class="form-label ">{{ __('inspection.exact_location') }}</label>
+                                                        <div class="view_data">
+                                                            {{ ($details->exact_location) }}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 mb-2">
+                                                    <div class="form-group form-input">
                                                         <label
                                                             class="form-label ">{{ __('inspection.corrective_action') }}</label>
                                                         <div class="view_data">
@@ -298,7 +306,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            
+
                                             @if (isset($inspection->capa_recomendation))
                                                 <div class="col-md-12 mb-2">
                                                     <div class="form-group form-input">

@@ -52,7 +52,7 @@ class HydrantRiserInspectionDetails extends Model
     {
         $request = request();
 
-        $location = $request->location_check_id;
+        $exact_location = $request->exact_location;
         $hydrant_no = $request->hydrant_no;
         $lugs = $request->lugs;
         $rubber_washer = $request->rubber_washer;
@@ -67,10 +67,10 @@ class HydrantRiserInspectionDetails extends Model
         $approach = $request->approach;
         $remarks = $request->remarks;
 
-        foreach ($location as $index => $location_id) {
+        foreach ($exact_location as $index => $location_id) {
             $data = [
                 'inspection_id' => $id,
-                'location_check_id' => decryptId($location_id),
+                'location_check_id' => ($exact_location),
                 'hydrant_no' => $hydrant_no[$index],
                 'lugs_id' => decryptId($lugs[$index]),
                 'rubber_washer' => decryptId($rubber_washer[$index]),

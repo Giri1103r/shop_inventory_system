@@ -253,7 +253,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
                 'frequency_id' => 'required',
                 'fire_point_no.*' => 'required',
                 'department.*' => 'required',
-                'location.*' => 'required',
+                'exact_location.*' => 'required',
                 'type.*' => 'required',
                 'capacity.*' => 'required',
                 'quantity.*' => 'required',
@@ -278,7 +278,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
                 'unit_id.required' => 'Unit is required.',
                 'fire_point_no.*.required' => 'Fire Point No is required.',
                 'department.*.required' => 'Department is required.',
-                'location.*.required' => 'Location is required.',
+                'exact_location.*.required' => 'Location is required.',
                 'type.*.required' => 'Fire Type is required.',
                 'capacity.*.required' => 'capacity is required.',
                 'quantity.*.required' => 'quantity is required.',
@@ -918,7 +918,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
                 $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 2))->setCellValue("A{$headerStart}", "SR. NO");
                 $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 2))->setCellValue("B{$headerStart}", "FIRE POINT NO.");
                 $sheet->mergeCells("C{$headerStart}:D" . ($headerStart + 2))->setCellValue("C{$headerStart}", "DEPARTMENT");
-                $sheet->mergeCells("E{$headerStart}:F" . ($headerStart + 2))->setCellValue("E{$headerStart}", "LOCATION");
+                $sheet->mergeCells("E{$headerStart}:F" . ($headerStart + 2))->setCellValue("E{$headerStart}", "EXACT LOCATION");
                 $sheet->mergeCells("G{$headerStart}:O{$headerStart}")->setCellValue("G{$headerStart}", "CHECK ITEMS");
                 $sheet->mergeCells("P{$headerStart}:P" . ($headerStart + 2))->setCellValue("P{$headerStart}", "REMARK");
 
@@ -953,7 +953,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
                     $sheet->setCellValue("A{$dataRow}", $sr);
                     $sheet->setCellValue("B{$dataRow}", $detail['fire_point_no'] ?? '');
                     $sheet->mergeCells("C{$dataRow}:D{$dataRow}")->setCellValue("C{$dataRow}", getDepartment($detail['department']) ?? '');
-                    $sheet->mergeCells("E{$dataRow}:F{$dataRow}")->setCellValue("E{$dataRow}", getLocationname($detail['location']) ?? '');
+                    $sheet->mergeCells("E{$dataRow}:F{$dataRow}")->setCellValue("E{$dataRow}", ($detail['location']) ?? '');
                     $sheet->setCellValue("G{$dataRow}", getExtinguisherTypeName($detail['extinguisher_type']) ?? '');
                     $sheet->setCellValue("H{$dataRow}", $detail['capacity'] ?? '');
                     $sheet->setCellValue("I{$dataRow}", $detail['quantity'] ?? '');
@@ -1253,7 +1253,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
             $sheet->mergeCells("A6:A8")->setCellValue("A6", "SR. NO");
             $sheet->mergeCells("B6:B8")->setCellValue("B6", "FIRE POINT NO.");
             $sheet->mergeCells("C6:D8")->setCellValue("C6", "DEPARTMENT");
-            $sheet->mergeCells("E6:F8")->setCellValue("E6", "LOCATION");
+            $sheet->mergeCells("E6:F8")->setCellValue("E6", "Exact LOCATION");
 
             $sheet->mergeCells("G6:O6")->setCellValue("G6", "CHECK ITEMS");
 
@@ -1286,7 +1286,7 @@ class CartridgeTypeFireExtinguisherController extends Controller
                 $sheet->setCellValue("A{$row}", $sr);
                 $sheet->setCellValue("B{$row}", $detail['fire_point_no'] ?? '');
                 $sheet->mergeCells("C{$row}:D{$row}")->setCellValue("C{$row}", getDepartment($detail['department']) ?? '');
-                $sheet->mergeCells("E{$row}:F{$row}")->setCellValue("E{$row}", getLocationname($detail['location']) ?? '');
+                $sheet->mergeCells("E{$row}:F{$row}")->setCellValue("E{$row}", ($detail['location']) ?? '');
                 $sheet->setCellValue("G{$row}", getExtinguisherTypeName($detail['type']) ?? '');
                 $sheet->setCellValue("H{$row}", $detail['capacity'] ?? '');
                 $sheet->setCellValue("I{$row}", $detail['quantity'] ?? '');

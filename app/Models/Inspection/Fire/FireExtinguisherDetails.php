@@ -52,7 +52,7 @@ class FireExtinguisherDetails extends Model
         $sr_no = $request->sr_no;
         $department = $request->department;
         $description = $request->description;
-        $location = $request->location;
+        $exact_location = $request->exact_location;
         $quantity = $request->quantity;
         $type = $request->type;
         $capacity = $request->capacity;
@@ -68,7 +68,7 @@ class FireExtinguisherDetails extends Model
                 'sr_no' => $sr_no_value,
                 'description' => $description[$index],
                 'department' => decryptId($department[$index]),
-                'location' => decryptId($location[$index]),
+                'location' => ($exact_location[$index]),
                 'remarks' => $remarks[$index],
                 'type' => decryptId($type[$index]),
                 'quantity' => $quantity[$index],

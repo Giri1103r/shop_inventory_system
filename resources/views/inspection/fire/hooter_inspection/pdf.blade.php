@@ -224,6 +224,7 @@
     <tr style="background-color: #ddd;">
         <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">SR. NO</th>
         <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">DEPARTMENT</th>
+        <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">EXACT LOCATION</th>
         <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">RESOURCE CODE</th>
         <th rowspan="2" style="border: 1px solid black; padding: 6px; text-align: center;">QUANTITY</th>
         <th colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">CHECK ITEMS</th>
@@ -241,6 +242,7 @@
         <tr>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->sr_no }}</td>
             <td style="border: 1px solid black; padding: 6px;">{{ GetDeptName($detail->department) }}</td>
+            <td style="border: 1px solid black; padding: 6px;">{{ ($detail->exact_location) }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->resource_code }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">{{ $detail->quantity }}</td>
             <td style="border: 1px solid black; padding: 6px; text-align: center;">
@@ -317,7 +319,7 @@
                 @endif
             </div>
         </td>
-        <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+        <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->verified_by))
                     <p style="margin: 0;">Verified By:- {{ getUsername($first->verified_by) }}
@@ -327,7 +329,7 @@
                 @endif
             </div>
         </td>
-        <td colspan="3" style="border: 1px solid black; padding: 6px; text-align: center;">
+        <td colspan="4" style="border: 1px solid black; padding: 6px; text-align: center;">
             <div class="view_data">
                 @if (!empty($first->approved_by))
                     <p style="margin: 0;">Approved By:- {{ getUsername($first->approved_by) }}

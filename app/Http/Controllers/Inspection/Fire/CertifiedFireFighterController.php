@@ -139,6 +139,7 @@ class CertifiedFireFighterController extends Controller
                 'emp_code' => 'required',
                 'emp_phone' => 'required',
                 'emp_status' => 'required',
+                'exact_location.*' => 'required',
 
             ];
 
@@ -151,6 +152,7 @@ class CertifiedFireFighterController extends Controller
                 'emp_code.required'                 => "Employee Code is required.",
                 'emp_phone.required'                => "Contact Number is required.",
                 'emp_status.required'               => "Status is required.",
+                'exact_location.*required'          => "Exact Location is required.",
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -249,7 +251,7 @@ class CertifiedFireFighterController extends Controller
 
             $currentRow = 1;
 
-            foreach ($certified_fire_fighters as $groupIndex => $group) {
+            foreach ($certified_fire_fighters as $group) {
                 $leftLogoPath = public_path('assets/images/logo-dark.png');
                 if (file_exists($leftLogoPath)) {
                     $leftDrawing = new Drawing();
@@ -304,16 +306,16 @@ class CertifiedFireFighterController extends Controller
 
                 foreach ($labelMap as $info) {
                     $rowNum = $currentRow + $info['rowOffset'];
-                    $sheet->setCellValue("L{$rowNum}", $info['label']);
-                    $sheet->setCellValue("M{$rowNum}", $info['value']);
+                    $sheet->mergeCells("L{$rowNum}:M{$rowNum}")->setCellValue("L{$rowNum}", $info['label']);
+                    $sheet->mergeCells("N{$rowNum}:O{$rowNum}")->setCellValue("N{$rowNum}", $info['value']);
 
-                    $sheet->getStyle("L{$rowNum}")->applyFromArray([
+                    $sheet->getStyle("L{$rowNum}:M{$rowNum}")->applyFromArray([
                         'font' => ['bold' => true, 'size' => 11],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                     ]);
 
-                    $sheet->getStyle("M{$rowNum}")->applyFromArray([
+                    $sheet->getStyle("N{$rowNum}:O{$rowNum}")->applyFromArray([
                         'font' => ['size' => 11],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
@@ -326,18 +328,17 @@ class CertifiedFireFighterController extends Controller
                 $sheet->mergeCells("A{$headerRow1}:A{$headerRow2}")->setCellValue("A{$headerRow1}", 'SR. NO');
                 $sheet->mergeCells("B{$headerRow1}:C{$headerRow2}")->setCellValue("B{$headerRow1}", 'Unit');
                 $sheet->mergeCells("D{$headerRow1}:E{$headerRow2}")->setCellValue("D{$headerRow1}", 'Department');
-                $sheet->mergeCells("F{$headerRow1}:G{$headerRow2}")->setCellValue("F{$headerRow1}", 'Employee Name');
-                $sheet->mergeCells("H{$headerRow1}:I{$headerRow2}")->setCellValue("H{$headerRow1}", 'Employee Code');
-                $sheet->mergeCells("J{$headerRow1}:K{$headerRow2}")->setCellValue("J{$headerRow1}", 'Contact Number');
+                $sheet->mergeCells("F{$headerRow1}:G{$headerRow2}")->setCellValue("F{$headerRow1}", 'Exact Location');
+                $sheet->mergeCells("H{$headerRow1}:I{$headerRow2}")->setCellValue("H{$headerRow1}", 'Employee Name');
+                $sheet->mergeCells("J{$headerRow1}:K{$headerRow2}")->setCellValue("J{$headerRow1}", 'Employee Code');
+                $sheet->mergeCells("L{$headerRow1}:M{$headerRow2}")->setCellValue("L{$headerRow1}", 'Contact Number');
+                $sheet->mergeCells("N{$headerRow1}:O{$headerRow2}")->setCellValue("N{$headerRow1}", 'Status');
 
-                $sheet->mergeCells("L{$headerRow1}:M{$headerRow2}")->setCellValue("L{$headerRow1}", 'Status');
-
-                $sheet->getStyle("A{$headerRow1}:M{$headerRow2}")->applyFromArray([
+                $sheet->getStyle("A{$headerRow1}:O{$headerRow2}")->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
-
 
                 $row = $currentRow + 5;
                 $sr = 1;
@@ -346,17 +347,17 @@ class CertifiedFireFighterController extends Controller
                     $sheet->setCellValue("A{$row}", $sr);
                     $sheet->mergeCells("B{$row}:C{$row}")->setCellValue("B{$row}", getUnitname($fire_fighter->unit_id) ?? '');
                     $sheet->mergeCells("D{$row}:E{$row}")->setCellValue("D{$row}", getDepartment($fire_fighter->department_id) ?? '');
-                    $sheet->mergeCells("F{$row}:G{$row}")->setCellValue("F{$row}", getEmployeename($fire_fighter->emp_name) ?? '');
-                    $sheet->mergeCells("H{$row}:I{$row}")->setCellValue("H{$row}", $fire_fighter->emp_code ?? '');
-                    $sheet->mergeCells("J{$row}:K{$row}")->setCellValue("J{$row}", $fire_fighter->emp_phone ?? '');
-                    $sheet->mergeCells("L{$row}:M{$row}")->setCellValue("L{$row}", $fire_fighter->emp_status == 1 ? 'Active' : 'Not-Active');
+                    $sheet->mergeCells("F{$row}:G{$row}")->setCellValue("F{$row}", $fire_fighter->exact_location ?? '');
+                    $sheet->mergeCells("H{$row}:I{$row}")->setCellValue("H{$row}", getEmployeename($fire_fighter->emp_name) ?? '');
+                    $sheet->mergeCells("J{$row}:K{$row}")->setCellValue("J{$row}", $fire_fighter->emp_code ?? '');
+                    $sheet->mergeCells("L{$row}:M{$row}")->setCellValue("L{$row}", $fire_fighter->emp_phone ?? '');
+                    $sheet->mergeCells("N{$row}:O{$row}")->setCellValue("N{$row}", $fire_fighter->emp_status == 1 ? 'Active' : 'Not-Active');
 
                     $statusColor = $fire_fighter->emp_status == 1 ? '00B050' : 'FF0000';
-                    $sheet->getStyle("L{$row}:M{$row}")->getFont()->getColor()->setARGB($statusColor);
+                    $sheet->getStyle("N{$row}:O{$row}")->getFont()->getColor()->setARGB($statusColor);
 
-                    $sheet->getStyle("A{$row}:M{$row}")->getAlignment()->setWrapText(true);
-
-                    $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([
+                    $sheet->getStyle("A{$row}:O{$row}")->getAlignment()->setWrapText(true);
+                    $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     ]);
@@ -364,7 +365,6 @@ class CertifiedFireFighterController extends Controller
                     $row++;
                     $sr++;
                 }
-
 
                 $currentRow = $row + 4;
             }
@@ -480,7 +480,6 @@ class CertifiedFireFighterController extends Controller
     public function generalExcel(Request $request)
     {
         try {
-
             $id = decryptId($request->id);
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
@@ -514,6 +513,7 @@ class CertifiedFireFighterController extends Controller
                 $leftDrawing->setHeight(60);
                 $leftDrawing->setWorksheet($sheet);
             }
+
             $sheet->mergeCells('A1:C3');
             $sheet->getStyle('A1:C3')->applyFromArray([
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -543,24 +543,26 @@ class CertifiedFireFighterController extends Controller
                 'borders' => ['outline' => ['borderStyle' => Border::BORDER_THIN]],
             ]);
 
-
             $labelMap = [
-                'L1' => ['label' => 'Doc. No.', 'valueCell' => 'M1', 'value' => $document_no->doc_no ?? ''],
-                'L2' => ['label' => 'Issue Dt.', 'valueCell' => 'M2', 'value' => Displaydateformat($document_no->issue_date) ?? ''],
-                'L3' => ['label' => 'Rev. & Dt.', 'valueCell' => 'M3', 'value' => $document_no->rev_dt ?? ''],
+                '1' => ['label' => 'Doc. No.', 'value' => $document_no->doc_no ?? ''],
+                '2' => ['label' => 'Issue Dt.', 'value' => Displaydateformat($document_no->issue_date) ?? ''],
+                '3' => ['label' => 'Rev. & Dt.', 'value' => $document_no->rev_dt ?? ''],
             ];
 
-            foreach ($labelMap as $labelCell => $info) {
-                $sheet->setCellValue($labelCell, $info['label']);
-                $sheet->setCellValue($info['valueCell'], $info['value']);
+            foreach ($labelMap as $row => $info) {
+                $labelCellRange = "L{$row}:M{$row}";
+                $valueCellRange = "N{$row}:O{$row}";
 
-                $sheet->getStyle($labelCell)->applyFromArray([
+                $sheet->mergeCells($labelCellRange)->setCellValue("L{$row}", $info['label']);
+                $sheet->mergeCells($valueCellRange)->setCellValue("N{$row}", $info['value']);
+
+                $sheet->getStyle($labelCellRange)->applyFromArray([
                     'font' => ['bold' => true, 'size' => 11],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
                 ]);
 
-                $sheet->getStyle($info['valueCell'])->applyFromArray([
+                $sheet->getStyle($valueCellRange)->applyFromArray([
                     'font' => ['size' => 11],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_DOUBLE]],
@@ -568,17 +570,17 @@ class CertifiedFireFighterController extends Controller
             }
 
 
+
             $sheet->mergeCells('A4:A5')->setCellValue('A4', 'SR. NO');
             $sheet->mergeCells('B4:C5')->setCellValue('B4', 'Unit');
             $sheet->mergeCells('D4:E5')->setCellValue('D4', 'Department');
-            $sheet->mergeCells('F4:G5')->setCellValue('F4', 'Employee Name');
-            $sheet->mergeCells('H4:I5')->setCellValue('H4', 'Employee Code');
-            $sheet->mergeCells('J4:K5')->setCellValue('J4', 'Contact Number');
-            $sheet->mergeCells('L4:M5')->setCellValue('L4', 'Status');
+            $sheet->mergeCells('F4:G5')->setCellValue('F4', 'Exact Location');
+            $sheet->mergeCells('H4:I5')->setCellValue('H4', 'Employee Name');
+            $sheet->mergeCells('J4:K5')->setCellValue('J4', 'Employee Code');
+            $sheet->mergeCells('L4:M5')->setCellValue('L4', 'Contact Number');
+            $sheet->mergeCells('N4:O5')->setCellValue('N4', 'Status');
 
-
-
-            $sheet->getStyle('A4:M5')->applyFromArray([
+            $sheet->getStyle('A4:O5')->applyFromArray([
                 'font' => ['bold' => true],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -591,29 +593,23 @@ class CertifiedFireFighterController extends Controller
                 $sheet->setCellValue("A{$row}", $sr);
                 $sheet->mergeCells("B{$row}:C{$row}")->setCellValue("B{$row}", getUnitname($certified_fire_fighter['unit_id']) ?? '');
                 $sheet->mergeCells("D{$row}:E{$row}")->setCellValue("D{$row}", getDepartment($certified_fire_fighter['department_id']) ?? '');
-                $sheet->mergeCells("F{$row}:G{$row}")->setCellValue("F{$row}", getEmployeename($certified_fire_fighter['emp_name']) ?? '');
-                $sheet->mergeCells("H{$row}:I{$row}")->setCellValue("H{$row}", $certified_fire_fighter['emp_code'] ?? '');
-                $sheet->mergeCells("J{$row}:K{$row}")->setCellValue("J{$row}", $certified_fire_fighter['emp_phone'] ?? '');
+                $sheet->mergeCells("F{$row}:G{$row}")->setCellValue("F{$row}", $certified_fire_fighter['exact_location'] ?? '');
+                $sheet->mergeCells("H{$row}:I{$row}")->setCellValue("H{$row}", getEmployeename($certified_fire_fighter['emp_name']) ?? '');
+                $sheet->mergeCells("J{$row}:K{$row}")->setCellValue("J{$row}", $certified_fire_fighter['emp_code'] ?? '');
+                $sheet->mergeCells("L{$row}:M{$row}")->setCellValue("L{$row}", $certified_fire_fighter['emp_phone'] ?? '');
 
-
-
-                $sheet->mergeCells("L{$row}:M{$row}")
-                    ->setCellValue("L{$row}", ($certified_fire_fighter['emp_status'] == 1 ? 'Active' : 'Not-Active'));
+                $sheet->mergeCells("N{$row}:O{$row}")
+                    ->setCellValue("N{$row}", ($certified_fire_fighter['emp_status'] == 1 ? 'Active' : 'Not-Active'));
 
                 $statusColor = ($certified_fire_fighter['emp_status'] == 1) ? '00B050' : 'FF0000';
+                $sheet->getStyle("N{$row}:O{$row}")->getFont()->getColor()->setARGB($statusColor);
 
-                $sheet->getStyle("L{$row}:M{$row}")->getFont()->getColor()->setARGB($statusColor);
-
-                $sheet->getStyle("L{$row}:M{$row}")
-                    ->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER)
-                    ->setVertical(Alignment::VERTICAL_CENTER);
-
-
-                $sheet->getStyle("A{$row}:M{$row}")->applyFromArray([
+                $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
-                $sheet->getStyle("A{$row}:M{$row}")->getAlignment()->setWrapText(true);
+
+                $sheet->getStyle("A{$row}:O{$row}")->getAlignment()->setWrapText(true);
                 $row++;
                 $sr++;
             }
@@ -630,6 +626,7 @@ class CertifiedFireFighterController extends Controller
             return redirect(admin_url('fire/certified-fire-fighter/list'));
         }
     }
+
 
     public function employeedetails(Request $request)
     {

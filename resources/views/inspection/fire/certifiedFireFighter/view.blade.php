@@ -108,28 +108,34 @@
                                             @foreach ($certifiedFireDataList as $certifiedFireData)
                                                 <div class="row lesson_learned_row" style="margin-top: 20px;">
 
-                                                    <div class="col-md-4 form-input">
+                                                    <div class="col-md-4 form-input mb-3">
                                                         <label class="form-label">SR NO</label>
                                                         <div class="view_data">
                                                             {{ $certifiedFireData->sr_no ?? '-' }}
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-md-4 form-input">
+                                                    <div class="col-md-4 form-input mb-3">
                                                         <label for="" class="form-label">Unit</label>
                                                         <div class="view_data">
                                                             {{ getUnitname($certifiedFireData->unit_id) }}
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-md-4 form-input">
+                                                    <div class="col-md-4 form-input mb-3">
                                                         <label for="" class="form-label">Department</label>
                                                         <div class="view_data">
                                                             {{ $certifiedFireData->department_name ?? '-' }}
                                                         </div>
                                                     </div>
+                                                    <div class="col-md-4 form-input mb-3">
+                                                        <label for="" class="form-label">{{__('inspection.exact_location')}}</label>
+                                                        <div class="view_data">
+                                                            {{ $certifiedFireData->exact_location ?? '-' }}
+                                                        </div>
+                                                    </div>
 
-                                                    <div class="col-md-4  mt-2 form-input">
+                                                    <div class="col-md-4  mb-3 form-input">
                                                         <label for="" class="form-label">Employee Name</label>
                                                         <div class="view_data">
                                                             {{ getEmployeename(!empty($certifiedFireData->emp_name) ? $certifiedFireData->emp_name : '-') }}
@@ -137,20 +143,20 @@
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-md-4 form-input mt-2">
+                                                    <div class="col-md-4 form-input mb-3">
                                                         <label class="form-label">Emp Code</label>
                                                         <div class="view_data">
                                                             {{ $certifiedFireData->emp_code ?? '-' }}
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-md-4 form-input mt-2">
+                                                    <div class="col-md-4 form-input mb-3">
                                                         <label class="form-label">Contact Number</label>
                                                         <div class="view_data">
                                                             {{ $certifiedFireData->emp_phone ?? '-' }}
                                                         </div>
                                                     </div>
-                                                    <div class="col-md-4 form-input mt-2">
+                                                    <div class="col-md-4 form-input mb-3">
                                                         <label class="form-label">Status</label>
                                                         <div class="view_data">
                                                             {{ $certifiedFireData->emp_status == 1 ? 'Active' : 'Not Active' }}
