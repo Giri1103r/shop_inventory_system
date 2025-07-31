@@ -72,6 +72,16 @@
 
                                         </div>
                                         <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">Safety Walk Taken By</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <select name="emp_id" id="emp_id"
+                                                    class="form-control single-select emp_id" style="width: 100%">
+                                                    <option value="">Select Employee Name</option>
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                        <div class="col-md-4 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">From Date</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
@@ -98,11 +108,14 @@
                                             <select name="observation_status" id="observation_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId('1') }}">Waiting For Responsible Person Action</option>
-                                                <option value="{{ encryptId('2') }}">Waiting For EHS Officer Approval</option>
-                                                <option value="{{ encryptId('3') }}">Approved by EHS Officer</option>
+                                                <option value="{{ encryptId('1') }}">Waiting For Responsible Person Action
+                                                </option>
+                                                <option value="{{ encryptId('2') }}">Waiting For EHS Officer Approval
+                                                </option>
+                                                <option value="{{ encryptId('3') }}">Closed</option>
                                                 <option value="{{ encryptId('4') }}">Rejected by EHS Officer</option>
-                                                <option value="{{ encryptId('5') }}">Waiting for the Re-verification of Responsible Person</option>
+                                                <option value="{{ encryptId('5') }}">Waiting for the Re-verification of
+                                                    Responsible Person</option>
 
                                             </select>
                                         </div>
@@ -131,6 +144,7 @@
                                         <th>{{ __('inspection.unit') }}</th>
                                         <th>{{ __('inspection.month') }}</th>
                                         <th>{{ __('common.status') }}</th>
+                                        <th>Safety Walk Taken By</th>
                                         <th>{{ __('common.created_date') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
@@ -151,6 +165,54 @@
             $(document).ready(function() {
                 var firstTh = $('.datatable-list thead th:first');
                 firstTh.removeClass('sorting_asc');
+
+                $('#emp_id').select2({
+                    ajax: {
+                        url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        }
+                    },
+                    minimumInputLength: 1,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
+                });
+
+                const savedData = localStorage.getItem('searchData');
+                if (savedData) {
+                    const searchValues = JSON.parse(savedData);
+
+                    for (let key in searchValues) {
+                        const $element = $(`[name="${key}"]`);
+                        const value = searchValues[key];
+
+                        if ($element.is(':checkbox')) {
+                            $element.prop('checked', value === 'on' || value === true);
+                        } else if ($element.is(':radio')) {
+                            $(`input[name="${key}"][value="${value}"]`).prop('checked', true);
+                        } else {
+                            $element.val(value);
+                        }
+
+                        if ($element.is('select') || $element.hasClass('select2')) {
+                            $element.trigger('change');
+                        }
+                    }
+                }
             });
 
             flatpickr("#inspection_date", {
@@ -178,6 +240,8 @@
                 dateFormat: "d-m-Y",
 
             });
+
+
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
@@ -213,6 +277,7 @@
                         data: function(d) {
                             d.inspection_date = $('#inspection_date').val();
                             d.shift = $('#shift').val();
+                            d.emp_id = $('#emp_id').val();
                             d.unit = $('#unit').val();
                             d.month = $('#month').val();
                             d.observation_status = $('#observation_status').val();
@@ -248,11 +313,16 @@
                             data: 'month',
                             name: 'month',
                         },
+
                         {
                             data: 'observation_status',
                             name: 'observation_status',
                         },
-                           {
+                        {
+                            data: 'safety_walk_taken_by',
+                            name: 'safety_walk_taken_by',
+                        },
+                        {
                             data: 'inspection_created_at',
                             name: 'inspection_created_at',
                         },
@@ -287,6 +357,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
                                         inspection_date = $('#inspection_date').val();
                                         shift = $('#shift').val();
+                                        emp_id = $('#emp_id').val();
                                         unit = $('#unit').val();
                                         month = $('#month').val();
                                         var from_date = $('#from_date').val();
@@ -299,6 +370,7 @@
                                             "{{ admin_url('safety/safety-walk-observation/export/pdf') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
+                                            '&emp_id=' + emp_id +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
                                             '&from_date=' + from_date +
@@ -314,6 +386,7 @@
                                         var searchValue = $('#datatable-list_filter input').val();
 
                                         inspection_date = $('#inspection_date').val();
+                                        emp_id = $('#emp_id').val();
                                         shift = $('#shift').val();
                                         unit = $('#unit').val();
                                         month = $('#month').val();
@@ -326,6 +399,7 @@
                                             "{{ admin_url('safety/safety-walk-observation/export/excel') }}" +
                                             '?search=' + searchValue +
                                             '&inspection_date=' + inspection_date +
+                                            '&emp_id=' + emp_id +
                                             '&shift=' + shift +
                                             '&unit=' + unit +
                                             '&from_date=' + from_date +
@@ -350,10 +424,19 @@
                     $('.buttons-page-length').find('span').text(text);
                 });
 
-                $(document).on('click', '#searchform', function() {
+                $(document).on('click', '#searchform', function(e) {
                     table.draw();
-                });
+                    e.preventDefault();
+                    const form = document.getElementById('formsearch');
 
+                    const formData = new FormData(form);
+                    const searchValues = {};
+
+                    formData.forEach((value, key) => {
+                        searchValues[key] = value;
+                    });
+                    localStorage.setItem('searchData', JSON.stringify(searchValues));
+                });
                 $(document).on('click', '#resetform', function() {
                     $('#formsearch .single-select').val('');
                     $('#formsearch .single-select').trigger('change');

@@ -758,7 +758,8 @@ class SafetyGalleryInsepctionController extends Controller
                 $currentRow += 3;
 
                 $sheet->mergeCells("A$currentRow:G$currentRow")->setCellValue("A$currentRow", "DATE OF INSPECTION :- " . Displaydateformat($inspection->date_of_inspection));
-                $sheet->mergeCells("H$currentRow:P$currentRow")->setCellValue("H$currentRow", "LOCATION :- " . getLocationname($inspection->location));
+                $sheet->mergeCells("H$currentRow:L$currentRow")->setCellValue("H$currentRow", "LOCATION :- " . getLocationname($inspection->location));
+                $sheet->mergeCells("M$currentRow:P$currentRow")->setCellValue("H$currentRow", "EXACT LOCATION :- " . ($inspection->excat_location));
                 $sheet->getStyle("A$currentRow:P$currentRow")->applyFromArray([
                     'font' => ['bold' => true],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -1024,7 +1025,7 @@ class SafetyGalleryInsepctionController extends Controller
                 $drawing->setWorksheet($sheet);
             }
 
-            $sheet->mergeCells("D1:H3")->setCellValue("D1", "Safety Gallery Inspection CHECKLIST .");
+            $sheet->mergeCells("D1:H3")->setCellValue("D1", "Safety Gallery Inspection .");
             $sheet->getStyle("D1")->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14],
                 'alignment' => [
@@ -1049,7 +1050,8 @@ class SafetyGalleryInsepctionController extends Controller
             ]);
 
             $sheet->mergeCells("A4:F4")->setCellValue("A4", "DATE OF INSPECTION :- " . Displaydateformat($forklift->date_of_inspection));
-            $sheet->mergeCells("G4:M4")->setCellValue("G4", "LOCATION :- " . getLocationname($forklift->location));
+            $sheet->mergeCells("G4:I4")->setCellValue("G4", "LOCATION :- " . getLocationname($forklift->location));
+            $sheet->mergeCells("J4:M4")->setCellValue("J4", "EXACT lOCATION :- " . ($forklift->excat_location));
             $sheet->mergeCells("A5:F5")->setCellValue("A5", "RESOURCE CODE :- " . ($forklift->resource_code));
             $sheet->mergeCells("G5:M5")->setCellValue("G5", "UNIT :- " . getUnitname($forklift->unit ?? '-'));
 

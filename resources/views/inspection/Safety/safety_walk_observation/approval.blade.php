@@ -165,9 +165,21 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.employee') }}</label>
+                                                    @php
+                                                        $person = explode(
+                                                            ',',
+                                                            $inspection_details->responsible_persion,
+                                                        );
+                                                    @endphp
+
                                                     <div class="view_data">
-                                                        {{ getUsername($inspection_details->responsible_persion) }}
+                                                        @foreach ($person as $personId)
+                                                            {{ getUsername($personId) }}@if (!$loop->last)
+                                                                ,
+                                                            @endif
+                                                        @endforeach
                                                     </div>
+
                                                 </div>
                                             </div>
 
@@ -234,8 +246,8 @@
                                                 <div class="col-md-4 form-group form-input mb-2">
                                                     <label
                                                         class="form-label ">{{ __('inspection.date_of_compliance') }}</label>
-                                                    <input type="text" name="responsible_person_date" value="{{ today() }}"
-                                                        id = "responsible_person_date" class="form-control" readonly>
+                                                    <input type="text" name="responsible_person_date"
+                                                        id = "responsible_person_date" class="form-control">
                                                 </div>
 
 
@@ -349,7 +361,9 @@
 @stop
 @push('script')
     <script>
-       
+        flatpickr(".responsible_person_date", {
+            dateFormat: "d-m-Y",
+        });
         // first approval
         $('#firstapproval').validate({
             rules: {

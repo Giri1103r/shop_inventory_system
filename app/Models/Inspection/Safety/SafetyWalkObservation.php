@@ -78,7 +78,7 @@ class SafetyWalkObservation extends Model
             $query->where('inspection_safety_walk_observation.created_by', Auth::user()->id);
         } else {
             $query->where(function ($q) {
-                $q->where('inspection_safety_walk_observation.responsible_persion', Auth::id())
+                $q->whereRaw("FIND_IN_SET(?, inspection_safety_walk_observation.responsible_persion)", [Auth::id()])
                     ->orWhere('inspection_safety_walk_observation.created_by', Auth::id());
             });
         }
@@ -97,6 +97,10 @@ class SafetyWalkObservation extends Model
         }
         if (isset($request->month) && $request->month) {
             $query = $query->where('inspection_safety_walk_observation.month', 'LIKE', '%' . $request->month . '%');
+        }
+        if (isset($request->emp_id) && $request->emp_id) {
+
+            $query = $query->where('inspection_safety_walk_observation.created_by', $request->emp_id);
         }
         if (isset($request->inspection_date) && $request->inspection_date) {
             $query = $query->whereDate('inspection_safety_walk_observation.date', '=', DBdateformat($request->inspection_date));
@@ -187,7 +191,7 @@ class SafetyWalkObservation extends Model
                 'location_id' => decryptId($location[$index]),
                 'observation' => $observation[$index],
                 'recomended_action' => $recomended_action[$index],
-                'responsible_persion' => $responsibility[$index],
+                'responsible_persion' => is_array($responsibility[$index]) ? implode(',', $responsibility[$index]) : $responsibility[$index],
                 'observing_status' => decryptId($observation_status[$index]),
                 'observation_date' => DBdateformat($date_of_observation[$index]),
                 'remarks' => $remarks[$index],
@@ -243,7 +247,7 @@ class SafetyWalkObservation extends Model
             $query->where('inspection_safety_walk_observation.created_by', Auth::user()->id);
         } else {
             $query->where(function ($q) {
-                $q->where('inspection_safety_walk_observation.responsible_persion', Auth::id())
+                $q->whereRaw("FIND_IN_SET(?, inspection_safety_walk_observation.responsible_persion)", [Auth::id()])
                     ->orWhere('inspection_safety_walk_observation.created_by', Auth::id());
             });
         }
@@ -262,7 +266,10 @@ class SafetyWalkObservation extends Model
         if (isset($request->shift) && $request->shift) {
             $query = $query->where('inspection_safety_walk_observation.shift_id', decryptId($request->shift));
         }
+        if (isset($request->emp_id) && $request->emp_id) {
 
+            $query = $query->where('inspection_safety_walk_observation.created_by', $request->emp_id);
+        }
         if ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_safety_walk_observation.created_at', '>=', $startDate);

@@ -142,7 +142,9 @@
                                                     @endforeach
                                                 </tbody>
                                             </table>
-                                        </div>
+
+
+
 
                                         <hr>
                                         <div class="submit-button" style="text-align: right;">
@@ -167,6 +169,7 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
+
             $(document).ready(function() {
                 $('#resetform').on('click', function(e) {
                     e.preventDefault();

@@ -150,9 +150,18 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{ __('inspection.employee') }}</label>
+                                                    @php
+                                                        $person = explode(',', $inspection_details->responsible_persion);
+                                                    @endphp
+
                                                     <div class="view_data">
-                                                        {{ getUsername($inspection_details->responsible_persion) }}
+                                                        @foreach ($person as $personId)
+                                                            {{ getUsername($personId) }}@if (!$loop->last)
+                                                                ,
+                                                            @endif
+                                                        @endforeach
                                                     </div>
+
                                                 </div>
                                             </div>
 

@@ -19,6 +19,7 @@ class SafetyGalleryInspection extends Model
         'location',
         'unit',
         'resource_code',
+        'excat_location',
         'sr_no',
         'description',
         'remarks',
@@ -152,7 +153,7 @@ class SafetyGalleryInspection extends Model
     {
 
         $request = request();
-       
+
         $responses = $request->checklist;
         foreach ($responses as $index => $respones) {
             foreach ($respones as $question => $value) {
@@ -171,6 +172,7 @@ class SafetyGalleryInspection extends Model
             'location' => decryptId($request->location_id),
             'unit' => decryptId($request->unit_id),
             'resource_code' => $request->resource_code,
+            'excat_location' => $request->excat_location,
             'created_by' => Auth::id(),
             'responses' => $respones,
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,

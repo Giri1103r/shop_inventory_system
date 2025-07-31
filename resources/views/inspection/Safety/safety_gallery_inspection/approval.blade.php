@@ -78,6 +78,14 @@
                                     </div>
                                     <div class="col-md-4 mb-2">
                                         <div class="form-group form-input">
+                                            <label class="form-label ">{{ __('inspection.exact_location') }}</label>
+                                            <div class="view_data">
+                                                {{ (isset($inspection_details->excat_location) ? $inspection_details->excat_location : '') }}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4 mb-2">
+                                        <div class="form-group form-input">
                                             <label class="form-label ">{{ __('inspection.resource_code') }}</label>
                                             <div class="view_data">
                                                 {{ isset($inspection_details->resource_code) ? $inspection_details->resource_code : '' }}

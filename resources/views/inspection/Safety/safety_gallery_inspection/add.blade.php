@@ -82,13 +82,13 @@
                                                         class="form-label require">{{ __('inspection.inspection_date') }}</label>
 
 
-                                                          <div class="input-group date form-input  custom-height">
-                                                     <input type="text" name="inspection_date" id = "inspection_date"
-                                                        class="form-control" value="{{ old('inspection_date') }}">
-                                                    <div class="input-group-addon input-group-text">
-                                                        <span class="fa fa-calendar"></span>
+                                                    <div class="input-group date form-input  custom-height">
+                                                        <input type="text" name="inspection_date" id = "inspection_date"
+                                                            class="form-control" value="{{ old('inspection_date') }}">
+                                                        <div class="input-group-addon input-group-text">
+                                                            <span class="fa fa-calendar"></span>
+                                                        </div>
                                                     </div>
-                                                </div>
                                                     @error('inspection_date')
                                                         <div class="error">{{ $message }}</div>
                                                     @enderror
@@ -141,23 +141,22 @@
                                                     @enderror
                                                 </div>
                                             </div>
-                                            {{-- <div class="col-md-4 form-group form-input mb-2">
-                                                @if (isset(Auth::user()->signature_upload))
-                                                    <label class="form-label"
-                                                        style="display: block; ">{{ __('inspection.signature') }}</label>
-                                                    <img src="{{ admin_url(Auth::user()->signature_upload) }}"
-                                                        alt="Signature Upload" style="width: 150px; margin-top:-10px">
-                                                @else
-                                                    <div class="form-input col-md-12 mb-2">
-                                                        <label class="form-label require">Signature</label>
-                                                        <input type="file" name="signature_image"
-                                                            id="signature_upload" class="form-control form-control-sm"
-                                                            accept="image/*" placeholder="Enter the image">
-                                                        <small>Allowed file types: jpg, jpeg, png</small>
-                                                        <div id="signature_upload" class="text-danger"></div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.exact_location') }}</label>
+
+                                                    <div class="input-group date form-input  custom-height">
+                                                        <input type="text" name="excat_location"
+                                                            id = "excat_location" class="form-control"
+                                                            value="{{ old('excat_location') }}">
+
                                                     </div>
-                                                @endif
-                                            </div> --}}
+                                                    @error('inspection_date')
+                                                        <div class="error">{{ $message }}</div>
+                                                    @enderror
+                                                </div>
+                                            </div>
                                             {{-- <div class=""> --}}
                                             <table class="container p-5">
                                                 <thead>

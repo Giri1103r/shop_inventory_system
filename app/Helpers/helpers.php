@@ -2480,7 +2480,7 @@ if (!function_exists('getMonth')) {
             } else if ($id == SAFETY_WALK_EHS_OFFICER_REJECTED) {
                 return "Rejected by EHS Officer ";
             } else if ($id == SAFETY_WALK_EHS_OFFICER_APPROVED) {
-                return "Approved by EHS Officer ";
+                return "Closed ";
             }else if ($id == SAFETY_WALK_EHS_OFFICER_ON_PROCESS) {
                 return "Waiting for the Re-verification of Responsible Person";
             }  else {

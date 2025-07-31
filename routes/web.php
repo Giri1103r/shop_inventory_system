@@ -141,6 +141,7 @@ use App\Http\Controllers\{SettingsController, LocalizationController, TestContro
 use App\Http\Controllers\Inspection\Environment\DgSetStackEmissionMonitoringController;
 use App\Http\Controllers\OhcManagement\Opd\FirstAidController as OpdFirstAidController;
 use App\Http\Controllers\Admin\{LoginController, NotificationController, AdminController, BlockedController};
+use App\Http\Controllers\Inspection\Fire\Master\FireExtinguisherTypeController;
 use App\Http\Controllers\KPI\LeadingLaggingDashboardController;
 use App\Http\Controllers\Master\{PpeTypeController, PpeTypeMasterController, UserLogController, UserPermissionController, UploadLogController, UserController, UserRoleController};
 
@@ -1412,6 +1413,25 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('export/excel', [FireExtinguisherController::class, 'ExportExcel']);
                     Route::GET('export/excel/{id}', [FireExtinguisherController::class, 'GeneralExcel']);
                     Route::GET('export/pdf', [FireExtinguisherController::class, 'ExportPDF']);
+                });
+
+
+                Route::group(['prefix' => 'master/fire_extinguisher-type'], function () {
+                    Route::get('/list', [FireExtinguisherTypeController::class, 'index']);
+                    Route::post('/list', [FireExtinguisherTypeController::class, 'index']);
+                    Route::get('/add', [FireExtinguisherTypeController::class, 'add']);
+                    Route::post('/add/submit', [FireExtinguisherTypeController::class, 'store']);
+                    Route::get('/edit/{id}', [FireExtinguisherTypeController::class, 'edit']);
+                    Route::post('/edit/submit', [FireExtinguisherTypeController::class, 'update']);
+                    Route::get('/view/{id}', [FireExtinguisherTypeController::class, 'view']);
+                    Route::post('/delete', [FireExtinguisherTypeController::class, 'delete']);
+                    Route::get('/export/excel', [FireExtinguisherTypeController::class, 'exportExcel']);
+                    Route::get('/export/pdf', [FireExtinguisherTypeController::class, 'exportPdf']);
+                    Route::get('/sampledownload', [FireExtinguisherTypeController::class, 'DownloadSample']);
+                    Route::get('/import', [FireExtinguisherTypeController::class, 'import']);
+                    Route::post('/import/submit', [FireExtinguisherTypeController::class, 'importSubmit']);
+                    Route::post('/status', [FireExtinguisherTypeController::class, 'statusChange']);
+                    Route::post('/unique', [FireExtinguisherTypeController::class, 'Uniquecheck']);
                 });
 
                 Route::group(['prefix' => 'isolating-valve-inspection'], function () {

@@ -141,7 +141,7 @@
                                                 <div class="form-group form-input">
                                                     <label
                                                         class="form-label require">{{ __('inspection.safety_walk_taken_by') }}</label>
-                                                    <input type="text" value="{{ getUserName(Auth::id()) }}"
+                                                    <input type="text" value="{{ getusername(Auth::id()) }}"
                                                         name="safety_walk_taken_by" class="form-control" readonly>
                                                     <input type="text" hidden name="safety_walk_taken_by"
                                                         value="{{ encryptId(Auth::id()) }}">
@@ -273,8 +273,9 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.employee') }}</label>
-                                                        <select name="emp_id[1]" id="emp_id"
-                                                            class="form-control single-select emp_id" style="width: 100%">
+                                                        <select name="emp_id[1][]" id="emp_id"
+                                                            class="form-control single-select emp_id" style="width: 100%"
+                                                            multiple>
                                                             <option value="">Select Employee Name</option>
                                                         </select>
                                                     </div>
@@ -584,31 +585,39 @@
                     });
                 });
 
-                $('.emp_id').select2({
-                    ajax: {
-                        url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(params) {
-                            return {
-                                search: params.term
-                            };
+                function initSelect2ForEmp(selector) {
+                    $(selector).select2({
+                        ajax: {
+                            url: '{{ admin_url('ohc/safety-petty-logbook/employeeid') }}',
+                            dataType: 'json',
+                            delay: 250,
+                            data: function(params) {
+                                return {
+                                    search: params.term
+                                };
+                            },
+                            processResults: function(data) {
+                                return {
+                                    results: $.map(data, function(item) {
+                                        return {
+                                            id: item.id,
+                                            text: item.text
+                                        };
+                                    })
+                                };
+                            }
                         },
-                        processResults: function(data) {
-                            return {
-                                results: $.map(data, function(item) {
-                                    return {
-                                        id: item.id,
-                                        text: item.text
-                                    };
-                                })
-                            };
-                        }
-                    },
-                    minimumInputLength: 1,
-                    dropdownCssClass: 'form-control',
-                    selectionCssClass: 'form-control'
+                        minimumInputLength: 1,
+                        dropdownCssClass: 'form-control',
+                        selectionCssClass: 'form-control'
+                    });
+                }
+
+                // On page load
+                $(document).ready(function() {
+                    initSelect2ForEmp('.emp_id');
                 });
+
 
             });
             let form_set_count = 2;
@@ -708,8 +717,8 @@
                                                     <div class="form-group form-input">
                                                         <label
                                                             class="form-label require">{{ __('inspection.employee') }}</label>
-                                                       <select name="emp_id[${form_set_count}]" id="emp_id[${form_set_count}]"
-                                                            class="form-control single-select emp_id" style="width: 100%">
+                                                       <select name="emp_id[${form_set_count}][]" id="emp_id[${form_set_count}]"
+                                                            class="form-control single-select emp_id" style="width: 100%" multiple>
                                                             <option value="">Select Employee Name</option>
                                                         </select>
                                                     </div>
@@ -932,7 +941,7 @@
                         .attr('id', 'recomended_action[' + idx + ']');
 
                     $(this).find('select[name^="emp_id"]')
-                        .attr('name', 'emp_id[' + idx + ']')
+                        .attr('name', 'emp_id[' + idx + '][]')
                         .attr('id', 'emp_id[' + idx + ']');
 
                     $(this).find('input[name^="checklist_file"]')
