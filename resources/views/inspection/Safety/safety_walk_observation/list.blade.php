@@ -98,9 +98,11 @@
                                             <select name="observation_status" id="observation_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId('1') }}">Observation Pending</option>
-                                                <option value="{{ encryptId('3') }}">Observation Approved</option>
-                                                <option value="{{ encryptId('2') }}">Observation Rejected</option>
+                                                <option value="{{ encryptId('1') }}">Waiting For Responsible Person Action</option>
+                                                <option value="{{ encryptId('2') }}">Waiting For EHS Officer Approval</option>
+                                                <option value="{{ encryptId('3') }}">Approved by EHS Officer</option>
+                                                <option value="{{ encryptId('4') }}">Rejected by EHS Officer</option>
+                                                <option value="{{ encryptId('5') }}">Waiting for the Re-verification of Responsible Person</option>
 
                                             </select>
                                         </div>

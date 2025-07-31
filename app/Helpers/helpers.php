@@ -2469,6 +2469,26 @@ if (!function_exists('getMonth')) {
         }
     }
 
+
+    if (!function_exists('getSafetyWalkStatus')) {
+        function getSafetyWalkStatus($id)
+        {
+            if ($id == RESPONSIBLE_PERSON_APPROVAL_PENDING) {
+                return "Waiting For Responsible Person Action";
+            } else if ($id == SAFETY_WALK_EHS_OFFICER_PENDING) {
+                return "Waiting For EHS Officer Approval";
+            } else if ($id == SAFETY_WALK_EHS_OFFICER_REJECTED) {
+                return "Rejected by EHS Officer ";
+            } else if ($id == SAFETY_WALK_EHS_OFFICER_APPROVED) {
+                return "Approved by EHS Officer ";
+            }else if ($id == SAFETY_WALK_EHS_OFFICER_ON_PROCESS) {
+                return "Waiting for the Re-verification of Responsible Person";
+            }  else {
+                return "Inspection Creation";
+            }
+        }
+    }
+
     if (!function_exists('getForkLiftInspectionStatus')) {
         function getForkLiftInspectionStatus($id)
         {

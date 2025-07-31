@@ -295,6 +295,14 @@ class AppServiceProvider extends ServiceProvider
         defined('NURSING_OFFICER_SUBMITTED_THE_CHECKLIST') or define('NURSING_OFFICER_SUBMITTED_THE_CHECKLIST', 2);
         defined('NURSING_OFFICER_REJECTED') or define('NURSING_OFFICER_REJECTED', 3);
 
+        // safety walk observation
+
+        defined('RESPONSIBLE_PERSON_APPROVAL_PENDING') or define('RESPONSIBLE_PERSON_APPROVAL_PENDING', 1);
+        defined('SAFETY_WALK_EHS_OFFICER_PENDING') or define('SAFETY_WALK_EHS_OFFICER_PENDING', 2);
+        defined('SAFETY_WALK_EHS_OFFICER_APPROVED') or define('SAFETY_WALK_EHS_OFFICER_APPROVED', 3);
+        defined('SAFETY_WALK_EHS_OFFICER_REJECTED') or define('SAFETY_WALK_EHS_OFFICER_REJECTED', 4);
+        defined('SAFETY_WALK_EHS_OFFICER_ON_PROCESS') or define('SAFETY_WALK_EHS_OFFICER_ON_PROCESS', 5);
+
 
         // INSPECTION OHC
         defined('OHC_CREATION') or define('OHC_CREATION', 1);

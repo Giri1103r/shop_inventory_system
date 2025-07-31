@@ -18,10 +18,24 @@ class SafetyWalkObservation extends Model
         'document_reference_id',
         'date',
         'shift_id',
+        'excat_location',
+        'location_id',
+        'observation_date',
+        'image',
+        'observation',
+        'recomended_action',
+        'responsible_persion',
+        'observing_status',
+        'date_of_compilance',
+        'observer_remarks',
+        'observer_date',
+        'approver_date',
+        'remarks',
         'month',
         'unit',
         'safety_walk_taken_by',
         'approval_remarks',
+        'observer_person',
         'observation_status',
         'status',
         'trash',
@@ -59,9 +73,14 @@ class SafetyWalkObservation extends Model
                 $query->orWhereRaw('month LIKE "%' . $search . '%"');
             });
         }
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || CheckUserRole(ROLE_EHS_OFFICER)) {
         } elseif (in_array(ROLE_INSPECTION_CREATOR, $userRole)) {
             $query->where('inspection_safety_walk_observation.created_by', Auth::user()->id);
+        } else {
+            $query->where(function ($q) {
+                $q->where('inspection_safety_walk_observation.responsible_persion', Auth::id())
+                    ->orWhere('inspection_safety_walk_observation.created_by', Auth::id());
+            });
         }
         if ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
@@ -141,18 +160,46 @@ class SafetyWalkObservation extends Model
     public function store()
     {
         $request = request();
-        $data = array(
-            'document_reference_id' => decryptId($request->document_reference_id),
-            'date' => DBdateformat($request->inspection_date),
-            'month' => $request->month,
-            'safety_walk_taken_by' => decryptId($request->safety_walk_taken_by),
-            'unit' => decryptId($request->unit),
-            'created_by' => Auth::id(),
-            'shift_id' => decryptId($request->shift_id),
-            'observation_status' => OBSERVATION_PENDING,
-        );
 
-        return $this->create($data);
+        $location = $request->location;
+        $exact_location = $request->exact_location;
+        $observation = $request->observation;
+        $recomended_action = $request->recomended_action;
+        $responsibility = $request->emp_id;
+        $date_of_compliance = $request->date_of_compliance;
+        $observation_status = $request->observation_status;
+        $remarks = $request->remarks;
+        $date_of_observation = $request->date_of_observation;
+
+
+        foreach ($location as $index => $sr_no_value) {
+            $data = array(
+                'document_reference_id' => decryptId($request->document_reference_id),
+                'date' => DBdateformat($request->inspection_date),
+                'month' => $request->month,
+                'safety_walk_taken_by' => decryptId($request->safety_walk_taken_by),
+                'unit' => decryptId($request->unit),
+                'created_by' => Auth::id(),
+                'shift_id' => decryptId($request->shift_id),
+                'observation_status' => RESPONSIBLE_PERSON_APPROVAL_PENDING,
+                'sr_no' => $sr_no_value,
+                'excat_location' => $exact_location[$index],
+                'location_id' => decryptId($location[$index]),
+                'observation' => $observation[$index],
+                'recomended_action' => $recomended_action[$index],
+                'responsible_persion' => $responsibility[$index],
+                'observing_status' => decryptId($observation_status[$index]),
+                'observation_date' => DBdateformat($date_of_observation[$index]),
+                'remarks' => $remarks[$index],
+                'created_by' => Auth::id(),
+            );
+            $data =  $this->create($data);
+            $safetyFiles = new SafetyWalkObservationFile();
+            $safetyFiles->store($data->id, $index, $request->checklist_file);
+            $submittedData[] = $data;
+        }
+
+        return $submittedData;
     }
 
     public function store_api()
@@ -177,12 +224,12 @@ class SafetyWalkObservation extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('inspection_safety_walk_observation.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_safety_walk_observation.id as safety_id', 'inspection_safety_walk_observation.created_by as checked_by', 'inspection_safety_walk_observation.updated_by as verified_by', 'inspection_safety_walk_observation_details.*')
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $query = $this->select('inspection_safety_walk_observation.*', 'inspection_shift_option.*', 'masters_unit.*', 'inspection_safety_walk_observation.id as inspection_id', 'inspection_safety_walk_observation.created_at as inspection_created_at')
             ->leftJoin('inspection_shift_option', 'inspection_safety_walk_observation.shift_id', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_safety_walk_observation.unit', '=', 'masters_unit.id')
-            ->leftJoin('inspection_safety_walk_observation_details', 'inspection_safety_walk_observation.id', '=', 'inspection_safety_walk_observation_details.safety_walk_observation_id')
             ->leftJoin('inspection_static_docno', 'inspection_safety_walk_observation.document_reference_id', '=', 'inspection_static_docno.id');
-
         if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
             $search = $request->search['value'];
             $query = $query->where(function ($query) use ($search) {
@@ -191,7 +238,15 @@ class SafetyWalkObservation extends Model
                 $query->orWhereRaw('month LIKE "%' . $search . '%"');
             });
         }
-
+        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || CheckUserRole(ROLE_EHS_OFFICER)) {
+        } elseif (in_array(ROLE_INSPECTION_CREATOR, $userRole)) {
+            $query->where('inspection_safety_walk_observation.created_by', Auth::user()->id);
+        } else {
+            $query->where(function ($q) {
+                $q->where('inspection_safety_walk_observation.responsible_persion', Auth::id())
+                    ->orWhere('inspection_safety_walk_observation.created_by', Auth::id());
+            });
+        }
         if (isset($request->month) && $request->month) {
             $query = $query->where('inspection_safety_walk_observation.month', 'LIKE', '%' . $request->month . '%');
         }
@@ -256,27 +311,33 @@ class SafetyWalkObservation extends Model
         return $last_month_record;
     }
 
-    public function approvalSubmit($id, $status, $remarks)
+    public function approvalSubmit($id, $date, $remarks)
     {
         $request = Request();
-        if ($status == 1) {
-            $update_array = [
-                'updated_by' => Auth::id(),
-                'observation_status' => OBSERVATION_APPROVED,
-                'approval_remarks' => $remarks,
 
-            ];
-        } else {
-            $update_array = [
-                'updated_by' => Auth::id(),
-                'observation_status' => OBSERVATION_REJECTED,
-                'approval_remarks' => $remarks,
+        $update_array = array(
+            'date_of_compilance' => DBdateformat($date),
+            'observer_remarks' => $remarks,
+            'observer_person' => Auth::id(),
+            'observation_status' => SAFETY_WALK_EHS_OFFICER_PENDING,
+        );
 
-            ];
-        }
         $this->where('id', $id)->update($update_array);
     }
 
+    public function ehsapproval($id, $status, $remarks, $date)
+    {
+        $request = Request();
+
+        $update_array = array(
+            'approver_date' => $date,
+            'approval_remarks' => $remarks,
+            'approver_id' => Auth::id(),
+            'observation_status' => $status,
+        );
+
+        $this->where('id', $id)->update($update_array);
+    }
     protected static function booted()
     {
         static::addGlobalScope(new TrashScope('inspection_safety_walk_observation'));

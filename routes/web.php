@@ -1249,7 +1249,8 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::get('export/excel', [SafetyWalkObservationController::class, 'exportExcel']);
                     Route::get('export/pdf', [SafetyWalkObservationController::class, 'exportPdf']);
                     Route::get('exportViewPdf/{id}', [SafetyWalkObservationController::class, 'exportViewPdf']);
-                    Route::post('verify/submit', [SafetyWalkObservationController::class, 'approvalSubmit']);
+                    Route::post('verify/submit', [SafetyWalkObservationController::class, 'firstapproval']);
+                    Route::post('approval/submit', [SafetyWalkObservationController::class, 'finalapproval']);
                     Route::GET('generalExcel/{id}', [SafetyWalkObservationController::class, 'generalExcel']);
                 });
 
