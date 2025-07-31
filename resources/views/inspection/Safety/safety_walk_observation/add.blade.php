@@ -472,7 +472,7 @@
                                 maxlength: 600,
                             },
 
-                            "emp_id[1]": {
+                            "emp_id[1][]": {
                                 required: true,
                             }
 
@@ -555,8 +555,8 @@
                                 filesize: "File size must be less than 15MB."
                             },
 
-                            "emp_id[1]": {
-                                required: "Employee is required",
+                            "emp_id[1][]": {
+                                required: "Please select the Responsible Person",
                             }
 
                         },
@@ -767,7 +767,7 @@
                     }
                 });
 
-                $("select[name='emp_id[" + form_set_count + "]']").rules('add', {
+                $("select[name='emp_id[" + form_set_count + "][]']").rules('add', {
                     required: true,
                     messages: {
                         required: 'Please select the Responsible Person',
