@@ -93,7 +93,16 @@
                                     <b>Responsible Person</b>
                                 </td>
                                 <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
-                                    valign="top"> {{ getUsername($details['data']->responsible_persion) }}</td>
+                                    valign="top">
+                                    @php
+                                        $person = explode(',', $details['data']->responsible_persion);
+                                    @endphp
+
+                                    @foreach ($person as $personId)
+                                        {{ getUsername($personId) }}@if (!$loop->last)
+                                            ,
+                                        @endif
+                                </td>
                             @endif
                         </tr>
 

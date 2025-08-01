@@ -300,7 +300,7 @@ class PpeRequestController extends Controller
         $location = null;
         if ($employee && $employee->location) {
             $location = $this->location->select('id', 'location_name')
-                ->where('id', $employee->company)
+                ->where('id', $employee->location)
                 ->where('status', '1')
                 ->first();
         }

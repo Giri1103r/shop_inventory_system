@@ -301,6 +301,7 @@ class CronController extends Controller
 
                     if (!empty($data)) {
                         $work = $this->worktemp->store($data);
+                        dd($work);
                         return response()->json(['message' => 'Data saved successfully.']);
                     } else {
                         return response()->json(['message' => 'No data found in API response.']);

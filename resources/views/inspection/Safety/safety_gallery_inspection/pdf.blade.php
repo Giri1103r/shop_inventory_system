@@ -165,7 +165,7 @@
                     <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px; height:50px;">
                 </th>
                 <th colspan="6" style="border:1px solid black; text-align: center;">
-                    <h3><b>{{__('title.safety_gallery')}}</b></h3>
+                    <h3><b>{{ __('title.safety_gallery') }}</b></h3>
                 </th>
                 <th colspan="3" style="border:1px solid black;">
                     <table style="width:100%; border-collapse: collapse;">
@@ -188,14 +188,18 @@
             </tr>
 
             <tr>
-                <th colspan="6"
+                <th colspan="4"
                     style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
                     DATE OF INSPECTION: {{ Displaydateformat($details->date_of_inspection) ?? 'N/A' }}
                 </th>
 
-                <th colspan="6"
+                <th colspan="4"
                     style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
                     RESOURCE CODE: {{ $details->resource_code ?? 'N/A' }}
+                </th>
+                <th colspan="4"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    EXACT LOCATION: {{ $details->excat_location ?? 'N/A' }}
                 </th>
             </tr>
 

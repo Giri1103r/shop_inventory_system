@@ -304,7 +304,7 @@
                         <td colspan="2"
                             style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
 
-                            <div>Checked & Prepared By: {{ getUsername($detail->created_by) }}</div>
+                            <div>Checked & Prepared By: {{ getUsername($detail->safety_walk_taken_by) }}</div>
                         </td>
                         <td colspan="4"
                             style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">

@@ -111,7 +111,8 @@
         .table-container {
             padding: 20px;
         }
-        .page-break{
+
+        .page-break {
             page-break-before: always;
         }
     </style>
@@ -176,6 +177,34 @@
             <td width="2%" style="padding:5px;">:</td>
             <td width="48%" style="padding:5px;">
                 {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Location</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getLocationname(isset($forklift_details->location) ? $forklift_details->location : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Unit</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getUnitname(isset($forklift_details->unit) ? $forklift_details->unit : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Resource Code</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ getUnitname(isset($forklift_details->resource_code) ? $forklift_details->resource_code : '') }}
+            </td>
+        </tr>
+        <tr>
+            <td width="50%" style="padding:5px;"><b>Exact Location</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($forklift_details->excat_location) ? $forklift_details->excat_location : '' }}
             </td>
         </tr>
         <tr>
