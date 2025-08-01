@@ -363,6 +363,7 @@
     <script>
         flatpickr("#responsible_person_date", {
             dateFormat: "d-m-Y",
+            minDate: new Date(),
         });
         // first approval
         $('#firstapproval').validate({
