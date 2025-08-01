@@ -361,7 +361,7 @@
 @stop
 @push('script')
     <script>
-        flatpickr(".responsible_person_date", {
+        flatpickr("#responsible_person_date", {
             dateFormat: "d-m-Y",
         });
         // first approval
