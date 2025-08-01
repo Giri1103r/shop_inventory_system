@@ -266,8 +266,8 @@
                                                             <option value="">Select Type</option>
                                                             @foreach ($types as $type)
                                                                 <option value="{{ encryptId($type->id) }}"
-                                                                    {{ old('type.1') == encryptId($department->id) ? 'selected' : '' }}>
-                                                                    {{ $type->name }}</option>
+                                                                    {{ old('type.1') == encryptId($type->id) ? 'selected' : '' }}>
+                                                                    {{ $type->fire_extinguisher_name	 }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -802,8 +802,8 @@
                                                             <option value="">Select Type</option>
                                                             @foreach ($types as $type)
                                                                 <option value="{{ encryptId($type->id) }}"
-                                                                    {{ old('type.1') == encryptId($department->id) ? 'selected' : '' }}>
-                                                                    {{ $type->name }}</option>
+                                                                    {{ old('type.1') == encryptId($type->id) ? 'selected' : '' }}>
+                                                                    {{ $type->fire_extinguisher_name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>

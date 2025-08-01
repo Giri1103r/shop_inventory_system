@@ -92,7 +92,6 @@ class FireExtinguisherType extends Model
         $request = request();
 
         $insert_array = array(
-            'fire_extinguisher_id' => $request->fire_extinguisher_id,
             'fire_extinguisher_name' => $request->fire_extinguisher_name,
             'created_by' => Auth::id()
         );
@@ -150,15 +149,15 @@ class FireExtinguisherType extends Model
             $search = $request->search;
 
             $query =  $query->Where(function ($query) use ($search) {
-                $query->orWhere('company_id', 'LIKE', '%' . $search . '%')
-                    ->orWhere('company_name', 'LIKE', '%' . $search . '%');
+                $query->orWhere('fire_extinguisher_id', 'LIKE', '%' . $search . '%')
+                    ->orWhere('fire_extinguisher_name', 'LIKE', '%' . $search . '%');
             });
         }
-        if ($request->has('company_id') && $request->company_id) {
-            $query = $query->where('company_id', 'LIKE', '%' . $request->company_id . '%');
+        if ($request->has('fire_extinguisher_id') && $request->fire_extinguisher_id) {
+            $query = $query->where('fire_extinguisher_id', 'LIKE', '%' . $request->fire_extinguisher_id . '%');
         }
-        if ($request->has('company_name') && $request->company_name) {
-            $query = $query->where('company_name', 'LIKE', '%' . $request->company_name . '%');
+        if ($request->has('fire_extinguisher_name') && $request->fire_extinguisher_name) {
+            $query = $query->where('fire_extinguisher_name', 'LIKE', '%' . $request->fire_extinguisher_name . '%');
         }
         if ($request->has('status') && $request->status) {
 
@@ -212,7 +211,6 @@ class FireExtinguisherType extends Model
         static::addGlobalScope(new TrashScope('inspection_fire_fire_extinguisher_type'));
 
         static::created(function ($model) {
-
             $uniqueId = 'FET-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
             $model->update(['fire_extinguisher_id' => $uniqueId]);
         });

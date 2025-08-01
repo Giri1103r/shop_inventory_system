@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Inspection\Fire\Master;
 
 use Exception;
 use App\Http\Controllers\Controller;
+use App\Jobs\ImportFireExtinguisherTypejob;
 use App\Models\Inspection\Fire\FireExtinguisherType;
 use App\Models\UploadLog;
 use Illuminate\Http\Request;
@@ -61,12 +62,12 @@ class FireExtinguisherTypeController extends Controller
                         })
                         ->addColumn('action', function ($row) {
                             $btn = '';
-                            if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('company/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
-                            }
-                            if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('company/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
-                            }
+                            // if (CheckUserPermission('view')) {
+                            $btn = '<a href="' . admin_url('fire/master/fire_extinguisher-type/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            // }
+                            // if (CheckUserPermission('edit')) {
+                            $btn .= '<a href="' . admin_url('fire/master/fire_extinguisher-type/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            // }
 
                             return $btn;
                         })
@@ -89,9 +90,7 @@ class FireExtinguisherTypeController extends Controller
 
     public function Add(Request $request)
     {
-
         try {
-
             $data = array();
             return view('inspection.fire.master.fire_extinguisher_type.add', $data);
         } catch (Exception $ex) {
@@ -106,7 +105,6 @@ class FireExtinguisherTypeController extends Controller
             $rules = [
                 'fire_extinguisher_id' => 'required',
                 'fire_extinguisher_name' => 'required',
-
             ];
             $messages = [
                 'fire_extinguisher_id.required' => 'Please enter Fire Extinguisher Type ID',
@@ -121,10 +119,7 @@ class FireExtinguisherTypeController extends Controller
 
             try {
 
-
-                $company = $this->fireExtinguisherType->store();
-
-
+                $fireextinguisher = $this->fireExtinguisherType->store();
                 Session::flash('success', 'Your data has been created successfully!');
             } catch (Exception $ex) {
                 report($ex);
@@ -184,7 +179,7 @@ class FireExtinguisherTypeController extends Controller
                 'fire_extinguisher_name' => 'required',
 
             ];
-             $messages = [
+            $messages = [
                 'fire_extinguisher_id.required' => 'Please enter Fire Extinguisher Type ID',
                 'fire_extinguisher_name.required' => 'Please enter Fire Extinguisher Type Name',
 
@@ -249,13 +244,13 @@ class FireExtinguisherTypeController extends Controller
     public function ImportSubmit(Request $request)
     {
         try {
-            $file = $request->file('company_upload');
+            $file = $request->file('file_upload');
 
             $rules = [
-                'company_upload' => 'required',
+                'file_upload' => 'required',
             ];
             $messages = [
-                'company_upload.required' => 'Please upload a file',
+                'file_upload.required' => 'Please upload a file',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -266,12 +261,11 @@ class FireExtinguisherTypeController extends Controller
 
             if ($file != null) {
 
-                $uploadpath = 'public/uploads/company';
+                $uploadpath = 'public/uploads/fire/master/fire_extinguisher_type';
 
-                $folderPath = public_path('uploads/company');
+                $folderPath = public_path('uploads/fire/master/fire_extinguisher_type');
 
                 if (!File::exists($folderPath)) {
-
                     File::makeDirectory($folderPath, 0755, true);
                 }
 
@@ -308,18 +302,18 @@ class FireExtinguisherTypeController extends Controller
                     "path" => $path,
                 ];
 
-                // dispatch(new ImportCompanyJob($details));
-                // dispatch((new ImportCompanyJob($details))->onQueue('company'));
+                dispatch(new ImportFireExtinguisherTypejob($details));
+                // dispatch((new ImportFireExtinguisherTypejob($details))->onQueue('fireextinguishertype'));
             }
 
             $insert_data['log_id'] = $insert_id;
             $insert_data['Uploded_by'] = Auth::user()->toArray();
 
-            Session::flash('success', __('Company uploaded sucessfully'));
+            Session::flash('success', __('Fire Extinguisher Type sucessfully'));
             return redirect(admin_url('fire/master/fire_extinguisher-type/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', __('Company upload failed'));
+            Session::flash('error', __('Fire Extinguisher Type failed'));
             return redirect(admin_url('fire/master/fire_extinguisher-type/list'));
         }
     }
@@ -336,10 +330,8 @@ class FireExtinguisherTypeController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Company ID',
-                'Company Name',
-                'Short Name',
-                'Address',
+                'Fire Extinguisher Type ID',
+                'Fire Extinguisher Type',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -350,10 +342,8 @@ class FireExtinguisherTypeController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->company_id;
-                $export[] =  $data->company_name;
-                $export[] =  $data->short_name;
-                $export[] =  $data->address;
+                $export[] =  $data->fire_extinguisher_id;
+                $export[] =  $data->fire_extinguisher_name;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -363,7 +353,7 @@ class FireExtinguisherTypeController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Company Master.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('Fire Extinguisher Type.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -387,10 +377,8 @@ class FireExtinguisherTypeController extends Controller
 
             $header = [
                 __("common.sno"),
-                'Company ID',
-                'Company Name',
-                'Short Name',
-                'Address',
+                'Fire Extinguisher Type ID',
+                'Fire Extinguisher Type',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -399,7 +387,7 @@ class FireExtinguisherTypeController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Company Details",
+                'pagetitle' => "Fire Extinguisher Type Details",
             );
 
             $property = [
@@ -421,7 +409,7 @@ class FireExtinguisherTypeController extends Controller
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Company Master.pdf";
+            $filename = "Fire Extinguisher.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
@@ -432,7 +420,7 @@ class FireExtinguisherTypeController extends Controller
     public function DownloadSample(Request $request)
     {
 
-        $filedetails =  exportsamplefile('company');
+        $filedetails =  exportsamplefile('fire_extinguisher_type');
 
         $filePath = $filedetails->sample_file;
         $customFileName = $filedetails->file_name;

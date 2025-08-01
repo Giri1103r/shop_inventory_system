@@ -14,14 +14,14 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
-                        @if (CheckUserPermission('import'))
+                        {{-- @if (CheckUserPermission('import')) --}}
                             <x-button-import href="{{ admin_url('fire/master/fire_extinguisher-type/import') }}"></x-button-import>
-                        @endif
+                        {{-- @endif --}}
 
-                        @if (CheckUserPermission('add'))
+                        {{-- @if (CheckUserPermission('add')) --}}
                             <x-button-add dataId="" class="add btn btn-primary ms-1"
                                 href="{{ admin_url('fire/master/fire_extinguisher-type/add') }}">Add</x-button-add>
-                        @endif
+                        {{-- @endif --}}
 
                     </div>
 
@@ -38,7 +38,7 @@
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="fire_extinguisher_name" class="form-label">Fire Extinguisher Type</label>
                                             <input type="text" name="fire_extinguisher_name" id="fire_extinguisher_name" class="form-control"
-                                                placeholder="Company Name">
+                                                placeholder="Fire Extinguisher Type">
                                         </div>
 
                                         <div class="col-md-3 mb-3 form-input">
@@ -200,7 +200,7 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     fire_extinguisher_id = $('#fire_extinguisher_id').val();
                                     fire_extinguisher_name = $('#fire_extinguisher_name').val();
-                            
+
                                     status = $('#status').val();
 
                                     $(".dt-button").removeClass('processing');
@@ -267,12 +267,12 @@
                 var id = $(this).data('id');
                 var types = $(this).data('type');
                 if (types == 1) {
-                    var title = '{{ __('Do You want to In-Activate Company Details') }}';
+                    var title = '{{ __('Do You want to In-Activate Fire Extinguisher Type Details') }}';
                     var text = '{{ __('common.inactive') }}';
                     var btncolor = '#dc3545'
 
                 } else {
-                    var title = '{{ __('Do You want to Activate Company Details') }}';
+                    var title = '{{ __('Do You want to Activate Fire Extinguisher Type Details') }}';
                     var text = '{{ __('common.active') }}';
                     var btncolor = '#7ddc35'
                 }
@@ -340,7 +340,7 @@
                 var id = $(this).data('id');
                 var login_id = $(this).data('login_id');
 
-                var title = '{{ __('Do You want to Delete Company Details') }}';
+                var title = '{{ __('Do You want to Delete Fire Extinguisher Type Details') }}';
                 var text = '{{ __('common.delete') }}';
                 var btncolor = '#dc3545'
 
@@ -399,7 +399,7 @@
                                     Swal.fire({
                                         icon: 'error',
                                         title: 'Error',
-                                        text: 'Company Deletion Failed: Module Dependencies Exist.',
+                                        text: 'Fire Extinguisher Type Deletion Failed: Module Dependencies Exist.',
                                     });
                                 } else {
                                     $.notify(data.responseJSON.msg, "error");

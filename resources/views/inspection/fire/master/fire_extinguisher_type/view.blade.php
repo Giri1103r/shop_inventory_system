@@ -34,7 +34,7 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">Company Details</h4>
+                                        <h4 class="text-white">Fire Extinguisher Type</h4>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -46,7 +46,7 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Fire Extinguisher Type Name') }}</label>
+                                        <label class="form-label view_label">{{ __('Fire Extinguisher Type ') }}</label>
                                         <div class="view_data">
                                             {{ isset($fireExtinguisherType->fire_extinguisher_name) ? $fireExtinguisherType->fire_extinguisher_name : '' }}
                                         </div>
