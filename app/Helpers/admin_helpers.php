@@ -53,6 +53,7 @@ use App\Models\OhcManagement\UserMedicineRequisition;
 use App\Models\Inspection\Fire\FireMockDrillInspection;
 use App\Models\Inspection\Safety\SafetyWalkObservation;
 use App\Models\Inspection\Fire\DailyFireHouseInspection;
+use App\Models\Inspection\Fire\FireExtinguisherType;
 use App\Models\Inspection\Ohc\HealthInstrumentCalibration;
 use App\Models\OhcManagement\Master\CertifiedFirstAider;
 
@@ -367,6 +368,11 @@ if (!function_exists('getsequence')) {
                 $count = HealthInstrumentCalibration::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'HEALTH-' . getautogen($count);
+                break;
+            case 'FireExtinguisher':
+                $count = FireExtinguisherType::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'FET-' . getautogen($count);
                 break;
             case 'IncidentRandomID':
                 $maxNumber = IncidentBodyParts::withoutGlobalScopes()

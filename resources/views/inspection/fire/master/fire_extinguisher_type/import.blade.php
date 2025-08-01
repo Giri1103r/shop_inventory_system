@@ -38,8 +38,8 @@
                                         @csrf
                                         <div class="row">
                                             <div class="mb-3 col-md-6 form-input">
-                                                <label class="form-label required">Fire Extinguisher type File</label>
-                                                <input type="file" name="fire_extinguisher_upload" class="form-control"
+                                                <label class="form-label require">Fire Extinguisher type File</label>
+                                                <input type="file" name="file_upload" class="form-control"
                                                     placeholder="">
                                             </div>
                                         </div>
@@ -78,14 +78,14 @@
             $('#fireExtinguisher').validate({
                 rules: {
 
-                    fire_extinguisher_upload: {
+                    file_upload: {
                         required: true,
                         extension: "xlsx",
                         filesize: 5242880,
                     },
                 },
                 messages: {
-                    fire_extinguisher_upload: {
+                    file_upload: {
                         required: "Please upload a file",
                         extension: "Please upload an Excel file (.xlsx)",
                     },

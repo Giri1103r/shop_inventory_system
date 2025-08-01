@@ -263,7 +263,7 @@
             </tr>
             <tr>
                 <th style="border: 1px solid black; padding: 8px;">TYPE</th>
-                <th style="border: 1px solid black; padding: 8px;">CAPACITY</th>
+                <th style="border: 1px solid black; padding: 8px;">CAPACITY(KG)</th>
                 <th style="border: 1px solid black; padding: 8px;">QUANTITY</th>
                 <th style="border: 1px solid black; padding: 8px;">CYLINDER PRESSURE</th>
                 <th style="border: 1px solid black; padding: 8px;">DISCHARGE TUBE</th>

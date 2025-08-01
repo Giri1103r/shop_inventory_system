@@ -19,6 +19,7 @@ class FireExtinguisher extends Model
         'shift',
         'next_due',
         'observation',
+        'observation_reason',
         'unit',
         'frequency',
         'checked_by',
@@ -225,13 +226,15 @@ class FireExtinguisher extends Model
             'location' => decryptId($request->location_id),
             'shift' => decryptId($request->shift_id),
             'next_due' => DBdateformat($request->next_due),
-            'observation' => decryptId($request->observation),
+            'observation' => ($request->observation),
+            'observation_reason' => ($request->observationreason),
             'unit' => decryptId($request->unit_id),
             'frequency' => decryptId($request->frequency_id),
             'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
             'created_by' => Auth::id(),
             'checked_by' => Auth::id(),
         );
+
 
         return $this->create($data);
     }

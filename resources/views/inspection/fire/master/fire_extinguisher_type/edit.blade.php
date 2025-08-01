@@ -34,7 +34,7 @@
                                     <form method="POST" id="fireExtinguisher" action="{{ admin_url('fire/master/fire_extinguisher-type/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
-                                            value="{{ encryptId($company->id) }}">
+                                            value="{{ encryptId($fireExtinguisherType->id) }}">
 
                                         <div class="row">
                                             <div class="col-md-4">

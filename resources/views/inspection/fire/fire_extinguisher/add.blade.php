@@ -266,8 +266,8 @@
                                                             <option value="">Select Type</option>
                                                             @foreach ($types as $type)
                                                                 <option value="{{ encryptId($type->id) }}"
-                                                                    {{ old('type.1') == encryptId($department->id) ? 'selected' : '' }}>
-                                                                    {{ $type->name }}</option>
+                                                                    {{ old('type.1') == encryptId($type->id) ? 'selected' : '' }}>
+                                                                    {{ $type->fire_extinguisher_name	 }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -278,7 +278,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.capacity') }}</label>
+                                                            class="form-label require">{{ __('inspection.capacity_kg') }}</label>
                                                         <input type="number" name="capacity[1]" id = "capacity"
                                                             class="form-control" value="{{ old('capacity.1') }}">
                                                     </div>
@@ -386,17 +386,21 @@
                                                 </div>
                                                 <div class="mb-2">
                                                     <label class="me-3">
-                                                        <input type="radio" name="observation"
-                                                            value="{{ encryptId(1) }}" class="validate-radio-required">
+                                                        <input type="radio" name="observation" class="observation"
+                                                            value="{{ 1 }}" class="validate-radio-required">
                                                         Yes
                                                     </label>
                                                     <label>
-                                                        <input type="radio" name="observation"
-                                                            value="{{ encryptId(2) }}" class="validate-radio-required">
+                                                        <input type="radio" name="observation" class="observation"
+                                                            value="{{ 2 }}" class="validate-radio-required">
                                                         No
                                                     </label>
                                                 </div>
                                             </div>
+                                        </div>
+                                        <div class="mb-3 observation-div" style="display: none;">
+                                            <label for="observation" class="form-label require">Observation</label>
+                                            <textarea class="form-control" id="observation" rows="3" name="observationreason"></textarea>
                                         </div>
 
                                         <div class="submit-button" style="text-align: right;">
@@ -422,6 +426,16 @@
     @push('script')
         <script type="text/javascript" nonce="projectcab">
             // location based unit
+
+            $('.observation').on('change', function() {
+                var observation = $(this).val();
+                if (observation == 1) {
+                    $('.observation-div').slideDown();
+                } else {
+                    $('.observation-div').slideUp();
+                }
+
+            })
 
             $(document).on('change', '#location_id', function() {
                 var locationId = $(this).val();
@@ -547,8 +561,7 @@
                         },
                         "remarks[1]": {
                             required: true,
-                            minlength: 3,
-                            maxlength: 300,
+
                             noSpaces: true,
                         },
                         "type[1]": {
@@ -571,8 +584,7 @@
                         },
                         "approach[1]": {
                             required: true,
-                            minlength: 3,
-                            maxlength: 300,
+
                             noSpaces: true,
                         },
                         "safety_pin[1]": {
@@ -587,6 +599,9 @@
                             filesize: 15728640,
                         },
                         observation: {
+                            required: true,
+                        },
+                        observationreason: {
                             required: true,
                         },
                         signature_image: {
@@ -645,8 +660,6 @@
                         },
                         "remarks[1]": {
                             required: "Please add remarks",
-                            minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 300",
                         },
                         "exact_location[1]": {
                             required: "Please Enter the Exact Location",
@@ -656,9 +669,6 @@
                         },
                         "approach[1]": {
                             required: "Please fill this field",
-                            minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 300",
-
                         },
                         "discharge_tube[1]": {
                             required: "Please Select the status of Discharge tube"
@@ -688,6 +698,9 @@
                         },
                         observation: {
                             required: "Please add observation",
+                        },
+                        observationreason: {
+                            required: "Please add Reason",
                         },
 
 
@@ -789,8 +802,8 @@
                                                             <option value="">Select Type</option>
                                                             @foreach ($types as $type)
                                                                 <option value="{{ encryptId($type->id) }}"
-                                                                    {{ old('type.1') == encryptId($department->id) ? 'selected' : '' }}>
-                                                                    {{ $type->name }}</option>
+                                                                    {{ old('type.1') == encryptId($type->id) ? 'selected' : '' }}>
+                                                                    {{ $type->fire_extinguisher_name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -798,7 +811,7 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.capacity') }}</label>
+                                                            class="form-label require">{{ __('inspection.capacity_kg') }}</label>
                                                         <input type="number" name="capacity[${form_set_count}]" id = "capacity-${form_set_count}"
                                                             class="form-control">
                                                     </div>
@@ -967,25 +980,19 @@
 
                     $("textarea[name='approach[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength: 3,
-                        maxlength: 300,
+
                         noSpaces: true,
                         messages: {
                             required: 'Please specify the approach details',
-                            minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 300",
+
                         }
                     });
 
                     $("textarea[name='remarks[" + form_set_count + "]']").rules('add', {
                         required: true,
-                        minlength: 3,
-                        maxlength: 300,
                         noSpaces: true,
                         messages: {
                             required: 'Please add remarks',
-                            minlength: "Minimum Characters should be 3",
-                            maxlength: "Maximum Characters should not exceed 300",
                         }
                     });
 

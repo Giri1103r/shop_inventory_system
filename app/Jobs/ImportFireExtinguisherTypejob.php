@@ -19,7 +19,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Master\Company;
 use Illuminate\Support\Facades\Session;
 
-class ImportFireExtinguisherTypejob implements ShouldQueue
+class ImportFireExtinguisherTypejob
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -71,7 +71,7 @@ class ImportFireExtinguisherTypejob implements ShouldQueue
 
                 if (
                     trim($row[0]) !== 'SNo' ||
-                    trim($row[1]) !== 'Fire Extinguisher Type' 
+                    trim($row[1]) !== 'Fire Extinguisher Type'
 
                 ) {
                     $cond_error_datas[] = [

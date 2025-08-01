@@ -22,7 +22,7 @@ return [
     'frequency' => 'Frequency',
     'identification_no' => 'Identification/Serial No.',
     'forklift_type' => 'Forklift Type',
-    'capacity' => 'Capacity',
+    'capacity_kg' => 'Capacity(KG)',
     'monthly_forklift_inspection' => 'Monthly ForkLift Inspection',
     'ehs_officer_verify' => 'EHS Verification',
     'capa_action' => 'CAPA Action',
