@@ -311,7 +311,7 @@ class FireExtinguisherController extends Controller
                     'id' => $id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($id). '/ehs'),
+                'web_link' =>  admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($id) . '/ehs'),
                 'assigned_user' => array_to_string($ehsOfficers),
                 'created_by' => Auth::id(),
             );
@@ -341,12 +341,10 @@ class FireExtinguisherController extends Controller
             ];
             $this->statusLog->create($insert_array);
             Session::flash('success', 'Your data added successfully');
-            if ($inspection->observation == 1) {
-                return redirect(admin_url('fire/checklist-observation/add/' . encryptId($inspection_type) . '/' . encryptId($id)));
-            } else {
-                return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
-            }
+
+            return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire_extinguisher-inspection/list'));
@@ -420,7 +418,7 @@ class FireExtinguisherController extends Controller
             $inspection_details = $this->fire_extinguisher->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'Fire Extinguisher Inspection Approved Successfully';
-                $web_link =   admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($inspection_details->id). '/capa');
+                $web_link =   admin_url('fire/fire_extinguisher-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = INSPECTION_APPROVED;
             } else {
                 $message = 'Inspection Recommended for the CAPA Action';

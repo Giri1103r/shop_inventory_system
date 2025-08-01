@@ -162,6 +162,15 @@
 
                                                 </div>
                                             </div>
+                                            @if (isset($request->observation_reason))
+                                                <div class="form-group form-input">
+                                                    <label class="form-label ">{{ __('inspection.obs') }}</label>
+                                                    <div class="view_data">
+                                                        {{ $inspection->observation_reason }}
+                                                    </div>
+
+                                                </div>
+                                            @endif
                                         </div>
                                     </div>
                                     <hr>
@@ -184,9 +193,10 @@
 
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.exact_location') }}</label>
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.exact_location') }}</label>
                                                         <div class="view_data">
-                                                            {{ ($details->location) }}
+                                                            {{ $details->location }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -212,7 +222,8 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label ">{{ __('inspection.capacity') }}</label>
+                                                        <label
+                                                            class="form-label ">{{ __('inspection.capacity_kg') }}</label>
                                                         <div class="view_data">
                                                             {{ $details->capacity }}
                                                         </div>
