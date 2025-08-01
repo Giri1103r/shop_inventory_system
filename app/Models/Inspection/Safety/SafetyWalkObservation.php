@@ -73,20 +73,29 @@ class SafetyWalkObservation extends Model
                 $query->orWhereRaw('month LIKE "%' . $search . '%"');
             });
         }
+
         if (
+            in_array(ROLE_SUPERADMIN, $userRole)
+        ) {
+
+            $query->orderBy('inspection_safety_walk_observation.id', 'DESC');
+        } elseif (
             in_array(ROLE_ADMIN, $userRole) ||
-            in_array(ROLE_SUPERADMIN, $userRole) ||
             in_array(ROLE_EHS_OFFICER, $userRole)
         ) {
 
+            $query->orderBy('inspection_safety_walk_observation.id', 'DESC');
         } elseif (in_array(ROLE_INSPECTION_CREATOR, $userRole)) {
+
             $query->where('inspection_safety_walk_observation.created_by', Auth::id());
         } else {
+         
             $query->where(function ($q) {
                 $q->whereRaw("FIND_IN_SET(?, inspection_safety_walk_observation.responsible_persion)", [Auth::id()])
                     ->orWhere('inspection_safety_walk_observation.created_by', Auth::id());
             });
         }
+
         if ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_safety_walk_observation.created_at', '>=', $startDate);
@@ -120,33 +129,7 @@ class SafetyWalkObservation extends Model
             $query = $query->where('inspection_safety_walk_observation.shift_id', decryptId($request->shift));
         }
 
-        if (isset($request->order) && count($request->order) > 0) {
-            $columnName = $request->order[0]['column'];
-            $columnorder = $request->order[0]['dir'];
-            switch ($columnName) {
-                case "revision_data":
-                    $query->orderBy('inspection_safety_walk_observation.revision_data', $columnorder);
-                    break;
-                case "issue_date":
-                    $query = $query->orderBy('inspection_safety_walk_observation.issue_date', $columnorder);
-                    break;
-                case "doc_no":
-                    $query = $query->orderBy('inspection_safety_walk_observation.doc_no', $columnorder);
-                    break;
-                case "inspection_status":
-                    $query = $query->orderBy('inspection_safety_walk_observation.inspection_status', $columnorder);
-                    break;
-                case "created_by":
-                    $query = $query->orderBy('inspection_safety_walk_observation.created_by', $columnorder);
-                    break;
-                case "created_date":
-                    $query = $query->orderBy('inspection_safety_walk_observation.created_at', $columnorder);
-                    break;
-                default:
-                    $query = $query->orderBy('inspection_safety_walk_observation.id', 'DESC');
-                    break;
-            }
-        }
+
 
         $data_count = $query;
         $total_records = $data_count->count();

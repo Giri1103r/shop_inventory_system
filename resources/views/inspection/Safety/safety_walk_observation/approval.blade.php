@@ -325,7 +325,8 @@
                                                 </div>
                                                 <div class="col-md-4 form-group form-input mb-2">
                                                     <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                    <input type="text" name="date" value="{{ today() }}"
+                                                    <input type="text" name="date" value="{{ now()->format('d-m-Y') }}"
+
                                                         id = "date" class="form-control" readonly>
                                                 </div>
 
