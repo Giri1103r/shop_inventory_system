@@ -34,7 +34,7 @@
 
                                 <div class="basic-form">
                                     <form method="POST" id="firstaiderimport" enctype="multipart/form-data"
-                                        action="{{ admin_url('company/import/submit') }}">
+                                        action="{{ admin_url('ohc/first-aid-location/import/submit') }}">
                                         @csrf
                                         <div class="row">
                                             <div class="mb-3 col-md-6 form-input">

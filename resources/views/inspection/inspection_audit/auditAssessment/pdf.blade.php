@@ -286,7 +286,18 @@
             @endif
 
 
+            <tr>
+                <th colspan="12"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    Total Score: {{ $details->total_score ?? 'N/A' }}
+                </th>
 
+                <th colspan="12"
+                    style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                    Obtained Score: {{ $details->obtained_score ?? 'N/A' }} /
+                    {{ $details->total_score ?? 'N/A' }}
+                </th>
+            </tr>
 
         </table>
 

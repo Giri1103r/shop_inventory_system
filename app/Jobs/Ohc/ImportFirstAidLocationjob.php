@@ -16,11 +16,11 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use App\Models\Master\Company;
+use App\Models\OhcManagement\Master\HospitalDetails;
 use App\Models\OhcManagement\Master\Vendor;
 use Illuminate\Support\Facades\Session;
 
-// class ImportVendorjob implements ShouldQueue
-class ImportVendorjob
+class ImportFirstAidLocationjob implements ShouldQueue
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
@@ -60,10 +60,9 @@ class ImportVendorjob
         foreach ($xlsx->rows() as $row) {
 
 
-
             // Check if it's the first row (header row)
             if ($i == 1) {
-                if (count($row) === 4) {
+                if (count($row) == 5) {
                 } else {
                     $error_data = array(
                         'upload_id' => $this->details['log_id'],
@@ -76,78 +75,108 @@ class ImportVendorjob
                 }
                 if (
                     trim($row[0]) != 'SNo' ||
-                    trim($row[1]) != 'Vendor Name' ||
-                    trim($row[2]) != 'License Number' ||
-                    trim($row[3]) != 'Address'
-                ) {
-                    $error_data = array(
-                        'upload_id' => $this->details['log_id'],
-                        'line_no' => $i,
-                        'error' => 'Header Column Name Not Match',
-                    );
-                    $cond_error_datas[] = $error_data;
+                    trim($row[1]) != 'Unit Name' ||
+                    trim($row[2]) != 'Department Name' ||
+                    trim($row[3]) != 'Excat Location' ||
+                    trim($row[4]) != 'Station Master (Employee id)'
+                    ) {
+                        $error_data = array(
+                            'upload_id' => $this->details['log_id'],
+                            'line_no' => $i,
+                            'error' => 'Header Column Name Not Match',
+                        );
+                        $cond_error_datas[] = $error_data;
+                        $i++;
+                        continue;
+                    }
+                    // Move to the next row after processing the header
                     $i++;
                     continue;
                 }
-                // Move to the next row after processing the header
-                $i++;
-                continue;
-            }
+
 
             // Trim and assign column values to variables
             $sno = trim($row[0]);
-            $vendorName = trim($row[1]);
-            $LicenseNumber = trim($row[2]);
-            $VendorAddress = trim($row[3]);
+            $hospitalName = trim($row[1]);
+            $mobileNumber = trim($row[2]);
+            $telNumber = trim($row[3]);
+            $hospitalAddress = trim($row[4]);
 
             // Validate column data
-            if ($vendorName == '') {
+            if ($hospitalName == '') {
                 $error_data = array(
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
-                    'error' => 'Vendor name is missing',
+                    'error' => 'Hospital name is missing',
                 );
                 $cond_error_datas[] = $error_data;
                 $i++;
                 continue;
             }
 
-            // Check if vendor already exists
-            $VendorExit = Vendor::where('vendor_name', $vendorName)->get();
-            if ($VendorExit->isNotEmpty()) {
+            // Check if hospital already exists
+            $hospitalDetailsExist = HospitalDetails::where('hospital_name', $hospitalName)->get();
+            if ($hospitalDetailsExist->isNotEmpty()) {
                 $error_data = array(
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
-                    'error' => 'Vendor Name Already Exist',
+                    'error' => 'Hospital Name Already Exist',
                 );
                 $cond_error_datas[] = $error_data;
                 $i++;
                 continue;
             }
 
-            if ($LicenseNumber == '') {
+            if ($mobileNumber == '') {
                 $error_data = array(
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
-                    'error' => 'License Number is missing',
+                    'error' => 'Mobile Number is missing',
                 );
                 $cond_error_datas[] = $error_data;
                 $i++;
                 continue;
             }
 
-            $licenseExist = Vendor::where('license_no', $LicenseNumber)->get();
-            if ($licenseExist->isNotEmpty()) {
-                $error_data = array(
+            $mobilenoExist = HospitalDetails::where('mobile_no', $mobileNumber)->get();
+
+            // Check: Mobile already exists
+            if ($mobilenoExist->isNotEmpty()) {
+                $error_data = [
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
-                    'error' => 'License Number Already Exist',
-                );
+                    'error' => 'Mobile Number Already Exist',
+                ];
                 $cond_error_datas[] = $error_data;
                 $i++;
                 continue;
             }
-            if ($VendorAddress == '') {
+
+            // Check: Mobile number should be exactly 10 digits
+            if (!preg_match('/^\d{10}$/', $mobileNumber)) {
+                $error_data = [
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Mobile number must be exactly 10 digits',
+                ];
+                $cond_error_datas[] = $error_data;
+                $i++;
+                continue;
+            }
+
+            // Check: Telephone number should be 7 to 15 digits only
+            if (!preg_match('/^\d{7,15}$/', $telNumber)) {
+                $error_data = [
+                    'upload_id' => $this->details['log_id'],
+                    'line_no' => $i,
+                    'error' => 'Telephone number must be between 7 to 15 digits',
+                ];
+                $cond_error_datas[] = $error_data;
+                $i++;
+                continue;
+            }
+
+            if ($hospitalAddress == '') {
                 $error_data = array(
                     'upload_id' => $this->details['log_id'],
                     'line_no' => $i,
@@ -160,14 +189,15 @@ class ImportVendorjob
 
             // Prepare data for insertion
             $data = array(
-                'vendor_name' => $vendorName,
-                'license_no' => $LicenseNumber,
-                'address' => $VendorAddress,
+                'hospital_name' => $hospitalName,
+                'mobile_no' => $mobileNumber,
+                'tel_no' => $telNumber,
+                'address' => $hospitalAddress,
                 'created_by' => $this->details['user_id']
             );
 
 
-            Vendor::create($data);
+            HospitalDetails::create($data);
 
             // Increment the counter
             $i++;

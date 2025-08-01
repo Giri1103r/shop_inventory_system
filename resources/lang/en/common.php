@@ -84,6 +84,9 @@ return [
 
     'created_msg' => 'Your Data has been Created Successfully!',
     'updated_msg' => 'Your Data has been Updated Successfully!',
+    'file_upload_success_msg'=>'File Uploaded Succefully!',
+    'file_upload_fails_msg'=>'File Uploads Failed!',
+
 
 
     //Error

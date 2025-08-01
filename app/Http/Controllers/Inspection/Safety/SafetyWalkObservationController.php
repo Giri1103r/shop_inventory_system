@@ -192,7 +192,7 @@ class SafetyWalkObservationController extends Controller
     {
         try {
             $safety_walk_observations = $this->safety_walk->Store();
-            // dd( $safety_walk_observations);
+            // dd( $request->all());
 
             foreach ($safety_walk_observations as $details) {
 

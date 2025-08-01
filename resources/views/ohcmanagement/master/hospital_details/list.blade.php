@@ -14,15 +14,15 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
-
+                        {{-- @if (CheckUserPermission('import')) --}}
+                        {{-- <x-button-import href="{{ admin_url('ohc/hospital-details/import') }}"></x-button-import> --}}
+                        {{-- @endif --}}
 
                         {{-- @if (CheckUserPermission('add')) --}}
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
                             href="{{ admin_url('ohc/hospital-details/add') }}">Add</x-button-add>
                         {{-- @endif --}}
-                         {{-- @if (CheckUserPermission('import')) --}}
-                        {{-- <x-button-import href="{{ admin_url('ohc/hospital-details/import') }}"></x-button-import> --}}
-                        {{-- @endif --}}
+
 
                     </div>
 
@@ -33,14 +33,15 @@
                                     <div class="row">
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="hospital_name" class="form-label ">{{__('ohc_management.hospital_name')}}</label>
-                                            <input name="hospital_name" id="hospital_name" class="form-control form-control-sm"
-                                              >
+                                            <label for="hospital_name"
+                                                class="form-label ">{{ __('ohc_management.hospital_name') }}</label>
+                                            <input name="hospital_name" id="hospital_name"
+                                                class="form-control form-control-sm">
                                         </div>
 
 
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="from_date" class="form-label ">{{__('common.from_date')}}</label>
+                                            <label for="from_date" class="form-label ">{{ __('common.from_date') }}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -51,7 +52,7 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="to_date" class="form-label ">{{__('common.to_date')}}</label>
+                                            <label for="to_date" class="form-label ">{{ __('common.to_date') }}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -92,10 +93,10 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{__('ohc_management.hospital_name')}}</th>
-                                        <th>{{__('ohc_management.mobile_no')}}</th>
-                                        <th>{{__('ohc_management.tel_no')}}</th>
-                                        <th>{{__('ohc_management.address')}}</th>
+                                        <th>{{ __('ohc_management.hospital_name') }}</th>
+                                        <th>{{ __('ohc_management.mobile_no') }}</th>
+                                        <th>{{ __('ohc_management.tel_no') }}</th>
+                                        <th>{{ __('ohc_management.address') }}</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -150,7 +151,7 @@
                 serverSide: true,
                 searching: true,
                 ordering: true,
-                scrollX:true,
+                scrollX: true,
                 dom: 'Bfrtip',
                 ajax: {
                     url: "{{ admin_url('ohc/hospital-details/list') }}",
@@ -242,7 +243,7 @@
                                     var status = $('#status').val();
                                     window.location.href =
                                         "{{ admin_url('ohc/hospital-details/export/pdf') }}?search=" +
-                                        searchValue+
+                                        searchValue +
                                         '&hospital_name=' + hospital_name +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
@@ -260,7 +261,7 @@
                                     var status = $('#status').val();
                                     window.location.href =
                                         "{{ admin_url('ohc/hospital-details/export/excel') }}?search=" +
-                                        searchValue+
+                                        searchValue +
                                         '&hospital_name=' + hospital_name +
                                         '&from_date=' + from_date +
                                         '&to_date=' + to_date +
@@ -275,6 +276,7 @@
                     }
                 ]
             });
+
             function showToast(icon, message) {
                 const Toast = Swal.mixin({
                     toast: true,

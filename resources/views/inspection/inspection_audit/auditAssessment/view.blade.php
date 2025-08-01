@@ -133,6 +133,23 @@
                                     @else
                                         <p>No Data is Available</p>
                                     @endif
+
+                                    <div class="mb-3 col-md-4 mt-2 form-input">
+                                        <label class="form-label view_label">Total Score</label>
+                                        <div class="view_data">
+                                            {{ isset($audit_assessment->total_score) ? $audit_assessment->total_score : '' }}
+
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 mt-2 form-input">
+                                        <label class="form-label view_label">Obtained Score</label>
+                                        <div class="view_data">
+                                            {{ isset($audit_assessment->obtained_score) ? $audit_assessment->obtained_score : '' }}
+                                            /
+                                            {{ isset($audit_assessment->total_score) ? $audit_assessment->total_score : '' }}
+
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -14,6 +14,7 @@ use App\Models\Master\Department;
 use App\Models\User;
 use App\Models\UploadLog;
 use App\Jobs\ImportmedicineJob;
+use App\Jobs\Ohc\ImportHospitaljob;
 use App\Mail\Ohc\MedicineApprovalEmail;
 use App\Mail\Ohc\MedicineRequestEmail;
 use App\Mail\Ohc\MedicineStockRequestEmail;
@@ -431,5 +432,100 @@ class HospitalDetailsController extends Controller
             Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('ohc/hospital-details/list'));
         }
+    }
+
+    public function Import(Request $request)
+    {
+        $data = array();
+        return view('ohcmanagement.master.hospital_details.import', $data);
+    }
+    public function ImportSubmit(Request $request)
+    {
+        try {
+            $file = $request->file('hospital_upload');
+
+            $rules = [
+                'hospital_upload' => 'required',
+            ];
+            $messages = [
+                'hospital_upload.required' => 'Please upload a file',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+
+            if ($file != null) {
+
+                $uploadpath = 'public/uploads/hospital';
+
+                $folderPath = public_path('uploads/hospital');
+
+                if (!File::exists($folderPath)) {
+
+                    File::makeDirectory($folderPath, 0755, true);
+                }
+
+                $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
+
+                $fileName = $file->getClientOriginalName();
+                $fileSize = $file->getSize();
+
+                $fileExt = $file->getClientOriginalExtension();
+
+                $file->move($uploadpath, $filenewname);
+
+                $path = $uploadpath . "/" . $filenewname;
+                $user_id = Auth::id();
+
+                $insert_data = array(
+                    'upload_type' => 1,
+                    'upload_status' => 0,
+                    'file_name' => $filenewname,
+                    'file_orgname' => $fileName,
+                    'file_path' => $path,
+                    'file_size' => $fileSize,
+                    'file_extension' => $fileExt,
+                    'created_by' => $user_id,
+                );
+
+                $insert_id =  $this->uploadlog->create($insert_data)->id;
+
+
+
+                $details = [
+                    "user_id" => $user_id,
+                    "log_id" => $insert_id,
+                    "path" => $path,
+                ];
+
+                dispatch(new ImportHospitaljob($details));
+                // dispatch((new OhcImportVendorjob($details))->onQueue('vendor'));
+            }
+
+            $insert_data['log_id'] = $insert_id;
+            $insert_data['Uploded_by'] = Auth::user()->toArray();
+
+            Session::flash('success',  __('common.file_upload_success_msg'));
+            return redirect(admin_url('ohc/hospital-details/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error',  __('common.file_upload_fails_msg'));
+            return redirect(admin_url('ohc/hospital-details/list'));
+        }
+    }
+
+    public function DownloadSample(Request $request)
+    {
+
+        $filedetails =  exportsamplefile('hospital');
+
+        $filePath = $filedetails->sample_file;
+        $customFileName = $filedetails->file_name;
+
+        //return Response::download($filePath, $customFileName);
+        return redirect(url($filePath));
     }
 }

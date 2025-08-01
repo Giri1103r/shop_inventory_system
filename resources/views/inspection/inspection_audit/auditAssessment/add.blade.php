@@ -143,16 +143,28 @@
                                                 </tbody>
                                             </table>
 
+                                            <div class="col-md-4 mt-2 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Total Score</label>
+                                                    <input type="text" name="total_score" id = "total_score"
+                                                        class="form-control" readonly>
+                                                </div>
+                                            </div>
 
-
-
-                                        <hr>
-                                        <div class="submit-button" style="text-align: right;">
-                                            <x-button-submit class="submit"></x-button-submit>
-                                            <x-button-reset class="submit"></x-button-reset>
-                                            <x-button-cancel
-                                                href="{{ admin_url('audit/assessment/list') }}"></x-button-cancel>
-                                        </div>
+                                            <div class="col-md-4 mt-2 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Obtained Score</label>
+                                                    <input type="text" name="obtained_score" id = "obtained_score"
+                                                        class="form-control" readonly>
+                                                </div>
+                                            </div>
+                                            <hr>
+                                            <div class="submit-button" style="text-align: right;">
+                                                <x-button-submit class="submit"></x-button-submit>
+                                                <x-button-reset class="submit"></x-button-reset>
+                                                <x-button-cancel
+                                                    href="{{ admin_url('audit/assessment/list') }}"></x-button-cancel>
+                                            </div>
 
                                     </form>
                                 </div>
@@ -169,6 +181,37 @@
 
     @push('script')
         <script type="text/javascript" nonce="projectcab">
+            $(document).ready(function() {
+                function calculateScore() {
+                    let totalQuestions = $('input[type=radio][value="Yes"]')
+                    .length;
+                    let obtainedScore = 0;
+
+
+                    let groupedQuestions = {};
+                    $('input[type=radio]').each(function() {
+                        let name = $(this).attr('name');
+                        groupedQuestions[name] = true;
+                    });
+
+                    let totalScore = Object.keys(groupedQuestions).length * 5;
+
+                    $.each(groupedQuestions, function(name) {
+                        let selected = $('input[name="' + name + '"]:checked').val();
+                        if (selected === 'YES') {
+                            obtainedScore += 5;
+                        }
+                    });
+
+                    $('#total_score').val(totalScore);
+                    $('#obtained_score').val(obtainedScore);
+                }
+
+
+                calculateScore();
+                $(document).on('change', 'input[type=radio]', calculateScore);
+            });
+
 
             $(document).ready(function() {
                 $('#resetform').on('click', function(e) {

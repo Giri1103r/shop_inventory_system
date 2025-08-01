@@ -73,9 +73,14 @@ class SafetyWalkObservation extends Model
                 $query->orWhereRaw('month LIKE "%' . $search . '%"');
             });
         }
-        if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || CheckUserRole(ROLE_EHS_OFFICER)) {
+        if (
+            in_array(ROLE_ADMIN, $userRole) ||
+            in_array(ROLE_SUPERADMIN, $userRole) ||
+            in_array(ROLE_EHS_OFFICER, $userRole)
+        ) {
+
         } elseif (in_array(ROLE_INSPECTION_CREATOR, $userRole)) {
-            $query->where('inspection_safety_walk_observation.created_by', Auth::user()->id);
+            $query->where('inspection_safety_walk_observation.created_by', Auth::id());
         } else {
             $query->where(function ($q) {
                 $q->whereRaw("FIND_IN_SET(?, inspection_safety_walk_observation.responsible_persion)", [Auth::id()])
