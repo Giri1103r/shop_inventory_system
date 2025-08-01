@@ -170,9 +170,9 @@
                                                     <label
                                                         class="form-label ">{{ __('inspection.observation_status') }}</label>
                                                     <div class="view_data">
-                                                        @if ($inspection_details->observation_status == 1)
+                                                        @if ($inspection_details->observing_status == 1)
                                                             Active
-                                                        @elseif($inspection_details->observation_status == 0)
+                                                        @elseif($inspection_details->observing_status == 0)
                                                             Deactive
                                                         @else
                                                             Unknown

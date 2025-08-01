@@ -89,7 +89,7 @@ class SafetyWalkObservation extends Model
 
             $query->where('inspection_safety_walk_observation.created_by', Auth::id());
         } else {
-         
+
             $query->where(function ($q) {
                 $q->whereRaw("FIND_IN_SET(?, inspection_safety_walk_observation.responsible_persion)", [Auth::id()])
                     ->orWhere('inspection_safety_walk_observation.created_by', Auth::id());
@@ -325,7 +325,7 @@ class SafetyWalkObservation extends Model
         $request = Request();
 
         $update_array = array(
-            'approver_date' => $date,
+            'approver_date' => DBdateformat($date),
             'approval_remarks' => $remarks,
             'approver_id' => Auth::id(),
             'observation_status' => $status,
