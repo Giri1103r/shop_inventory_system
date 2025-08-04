@@ -48,7 +48,7 @@ class HoseReelHoseDetails extends Model
         $request = request();
 
         $sr_no = $request->sr_no;
-        $location = $request->location;
+        $location = $request->exact_location;
         $department = $request->department;
         $length = $request->length;
         $nozzle = $request->nozzle;
@@ -57,18 +57,18 @@ class HoseReelHoseDetails extends Model
         $flow = $request->flow;
         $approach = $request->approach;
         $remarks = $request->remarks;
-        
+
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'inspection_id' => $id,
                 'sr_no' => $sr_no_value,
-                'location' => decryptId($location[$index]),
+                'location' => ($location[$index]),
                 'department' => decryptId($department[$index]),
                 'length' => $length[$index],
                 'status_of_hose' => decryptId($status_of_hose[$index]),
                 'nozzle' => decryptId($nozzle[$index]),
                 'hose' => decryptId($hose[$index]),
-                'flow' => decryptId($flow[$index]),    
+                'flow' => decryptId($flow[$index]),
                 'remarks' => $remarks[$index],
                 'approach' => $approach[$index],
                 'created_by' => Auth::id(),
@@ -92,7 +92,7 @@ class HoseReelHoseDetails extends Model
         $flow = $request->flow;
         $approach = $request->approach;
         $remarks = $request->remarks;
-        
+
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'inspection_id' => $id,
@@ -103,7 +103,7 @@ class HoseReelHoseDetails extends Model
                 'status_of_hose' => $status_of_hose[$index],
                 'nozzle' => $nozzle[$index],
                 'hose' => $hose[$index],
-                'flow' => $flow[$index],    
+                'flow' => $flow[$index],
                 'remarks' => $remarks[$index],
                 'approach' => $approach[$index],
                 'created_by' => Auth::id(),

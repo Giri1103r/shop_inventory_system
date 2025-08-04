@@ -222,7 +222,7 @@
     <!-- Column Headers -->
     <tr>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">SR. NO</th>
-        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">LOCATION</th>
+        <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">EXACT LOCATION</th>
         <th colspan="7" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">CHECK ITEMS
         </th>
         <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">REMARK</th>

@@ -241,10 +241,9 @@ class HoseReelHoseController extends Controller
                 'next_due' => 'required',
                 'unit_id' => 'required',
                 'frequency_id' => 'required',
-
                 'sr_no.*' => 'required',
                 'department.*' => 'required',
-                'location.*' => 'required',
+                'exact_location.*' => 'required',
                 'length.*' => 'required',
                 'nozzle.*' => 'required',
                 'hose.*' => 'required',
@@ -260,10 +259,9 @@ class HoseReelHoseController extends Controller
                 'next_due.required' => 'Next due date is required',
                 'unit_id.required' => 'Unit is required',
                 'frequency_id.required' => 'Frequency is required',
-
                 'sr_no.*.required' => 'Serial number is required',
                 'department.*.required' => 'Department is required',
-                'location.*.required' => 'Location is required',
+                'exact_location.*.required' => 'Exact Location is required',
                 'length.*.required' => 'Length is required',
                 'nozzle.*.required' => 'Condition of the nozzle is required',
                 'hose.*.required' => 'Condition of the hose is required',
@@ -859,7 +857,7 @@ class HoseReelHoseController extends Controller
 
                 $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 1))->setCellValue("A{$headerStart}", "SR.NO");
                 $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 1))->setCellValue("B{$headerStart}", "DEPARTMENT");
-                $sheet->mergeCells("C{$headerStart}:C" . ($headerStart + 1))->setCellValue("C{$headerStart}", "LOCATION");
+                $sheet->mergeCells("C{$headerStart}:C" . ($headerStart + 1))->setCellValue("C{$headerStart}", "EXACT LOCATION");
                 $sheet->mergeCells("D{$headerStart}:H{$headerStart}")->setCellValue("D{$headerStart}", "CHECK ITEMS");
 
                 $sheet->setCellValue("D" . ($headerStart + 1), "LENGTH");
@@ -884,7 +882,7 @@ class HoseReelHoseController extends Controller
                 foreach ($groupedDetails as $detail) {
                     $sheet->setCellValue("A$dataRow", $sr);
                     $sheet->setCellValue("B$dataRow", GetDeptName($detail['department'] ?? ''));
-                    $sheet->setCellValue("C$dataRow", getLocationname($detail['location']) ?? '');
+                    $sheet->setCellValue("C$dataRow", ($detail['location']) ?? '');
 
                     $length = $detail['length'] ?? '';
                     $nozzle = $detail['nozzle'] ?? '';
@@ -1214,7 +1212,7 @@ class HoseReelHoseController extends Controller
 
             $sheet->mergeCells("A6:A7")->setCellValue("A6", "SR.NO");
             $sheet->mergeCells("B6:B7")->setCellValue("B6", "DEPARTMENT");
-            $sheet->mergeCells("C6:C7")->setCellValue("C6", "LOCATION");
+            $sheet->mergeCells("C6:C7")->setCellValue("C6", "EXACT LOCATION");
             $sheet->mergeCells("D6:H6")->setCellValue("D6", "CHECK ITEMS");
             $sheet->setCellValue("D7", "LENGTH");
             $sheet->setCellValue("E7", "NOZZLE CONDITION");
@@ -1235,7 +1233,7 @@ class HoseReelHoseController extends Controller
             foreach ($inspection_data as $detail) {
                 $sheet->setCellValue("A$row", $sr);
                 $sheet->setCellValue("B$row", GetDeptName($detail['department'] ?? ''));
-                $sheet->setCellValue("C$row", getLocationname($detail['location']) ?? '');
+                $sheet->setCellValue("C$row", ($detail['location']) ?? '');
 
                 $length = $detail['length'] ?? '';
                 $nozzle = $detail['nozzle'] ?? '';

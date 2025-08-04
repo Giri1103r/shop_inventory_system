@@ -48,7 +48,7 @@ class HoseBoxInspectionDetails extends Model
         $request = request();
 
         $sr_no = $request->sr_no;
-        $location = $request->location;
+        $location = $request->exact_location;
         $hose_box_no = $request->hose_box_no;
         $quantity = $request->quantity;
         $branch_quantity = $request->branch_quantity;
@@ -57,18 +57,18 @@ class HoseBoxInspectionDetails extends Model
         $hose_box_key = $request->hose_box_key;
         $approach = $request->approach;
         $remarks = $request->remarks;
-        
+
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'inspection_id' => $id,
                 'sr_no' => $sr_no_value,
-                'location' => decryptId($location[$index]),
+                'location' => ($location[$index]),
                 'hose_box_no' => $hose_box_no[$index],
                 'quantity' => $quantity[$index],
                 'branch_quantity' => $branch_quantity[$index],
                 'hose_types' => decryptId($hose_types[$index]),
                 'hose_box_key' => decryptId($hose_box_key[$index]),
-                'condition' => decryptId($condition[$index]),    
+                'condition' => decryptId($condition[$index]),
                 'remarks' => $remarks[$index],
                 'approach' => $approach[$index],
                 'created_by' => Auth::id(),
@@ -92,7 +92,7 @@ class HoseBoxInspectionDetails extends Model
         $hose_box_key = $request->hose_box_key;
         $approach = $request->approach;
         $remarks = $request->remarks;
-        
+
         foreach ($sr_no as $index => $sr_no_value) {
             $data = array(
                 'inspection_id' => $id,
@@ -103,7 +103,7 @@ class HoseBoxInspectionDetails extends Model
                 'branch_quantity' => $branch_quantity[$index],
                 'hose_types' => $hose_types[$index],
                 'hose_box_key' => $hose_box_key[$index],
-                'condition' => $condition[$index],    
+                'condition' => $condition[$index],
                 'remarks' => $remarks[$index],
                 'approach' => $approach[$index],
                 'created_by' => Auth::id(),

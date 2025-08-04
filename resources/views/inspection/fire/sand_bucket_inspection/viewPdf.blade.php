@@ -258,7 +258,7 @@
 
         <tr>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">SR. NO</th>
-            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">LOCATION</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">EXACT LOCATION</th>
             <th colspan="7" style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;">CHECK ITEMS
             </th>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2;" rowspan="3">REMARK</th>
@@ -282,7 +282,7 @@
         @foreach ($inspection as $details)
             <tr>
                 <td style="border: 1px solid black; padding: 8px;">{{ $loop->iteration }}</td>
-                <td style="border: 1px solid black; padding: 8px;">{{ getLocationname($details->location) }}</td>
+                <td style="border: 1px solid black; padding: 8px;">{{ ($details->location) }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->fire_bucket_stand_no }}</td>
                 <td style="border: 1px solid black; padding: 8px;">{{ $details->fire_bucket_no }}</td>
 

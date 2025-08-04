@@ -46,7 +46,7 @@ class SandBucketInspectionDetails extends Model
     {
         $request = request();
 
-        $location = $request->location;
+        $location = $request->exact_location;
         $fire_sand_bucket_stand_no = $request->fire_sand_bucket_stand_no;
         $fire_sand_bucket_no = $request->fire_sand_bucket_no;
         $condition = $request->condition;
@@ -57,10 +57,11 @@ class SandBucketInspectionDetails extends Model
         $remarks = $request->remarks;
 
 
+
         foreach ($location as $index => $location) {
             $data = array(
                 'inspection_id' => $id,
-                'location' => decryptId($location),
+                'location' => ($location),
                 'fire_bucket_stand_no' => ($fire_sand_bucket_stand_no[$index]),
                 'fire_bucket_no' => ($fire_sand_bucket_no[$index]),
                 'condition' => decryptId($condition[$index]),
@@ -71,6 +72,7 @@ class SandBucketInspectionDetails extends Model
                 'remarks' => $remarks[$index],
                 'created_by' => Auth::id(),
             );
+
             $this->create($data);
         }
     }
