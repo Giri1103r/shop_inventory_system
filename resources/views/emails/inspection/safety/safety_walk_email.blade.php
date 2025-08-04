@@ -102,6 +102,7 @@
                                         {{ getUsername($personId) }}@if (!$loop->last)
                                             ,
                                         @endif
+                                    @endforeach
                                 </td>
                             @endif
                         </tr>

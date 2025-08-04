@@ -21,6 +21,8 @@ class AuditAssessment extends Model
         'shift_id',
         'floor_executive',
         'checklist',
+        'total_score',
+        'obtained_score',
         'status',
         'trash',
         'created_by',
@@ -118,6 +120,8 @@ class AuditAssessment extends Model
             'shift_id' => decryptId($request->shift_id),
             'floor_executive' => decryptId($request->floor_executive),
             'checklist' => json_encode($request->checklist, true),
+            'total_score' => ($request->total_score),
+            'obtained_score' => ($request->obtained_score),
             'created_by' => Auth::id(),
         ];
         return self::create($insert_array);

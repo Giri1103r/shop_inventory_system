@@ -1938,6 +1938,19 @@ if (!function_exists('getMonth')) {
         }
     }
 
+     if (!function_exists('GetAdmin')) {
+        function GetAdmin()
+        {
+            $data = User::whereRaw('FIND_IN_SET(' . ROLE_ADMIN . ', role)')->where('status', 1)->where('trash', 'NO')->get();
+
+            if (count($data) != 0) {
+                return $data;
+            }
+
+            return false;
+        }
+    }
+
     if (!function_exists('GetLevelOneManager')) {
         function GetLevelOneManager()
         {

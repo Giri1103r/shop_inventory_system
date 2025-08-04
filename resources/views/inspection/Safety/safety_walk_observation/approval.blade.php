@@ -188,9 +188,9 @@
                                                     <label
                                                         class="form-label ">{{ __('inspection.observation_status') }}</label>
                                                     <div class="view_data">
-                                                        @if ($inspection_details->observation_status == 1)
+                                                        @if ($inspection_details->observing_status == 1)
                                                             Active
-                                                        @elseif($inspection_details->observation_status == 0)
+                                                        @elseif($inspection_details->observing_status == 0)
                                                             Deactive
                                                         @else
                                                             Unknown
@@ -325,7 +325,8 @@
                                                 </div>
                                                 <div class="col-md-4 form-group form-input mb-2">
                                                     <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                    <input type="text" name="date" value="{{ today() }}"
+                                                    <input type="text" name="date" value="{{ now()->format('d-m-Y') }}"
+
                                                         id = "date" class="form-control" readonly>
                                                 </div>
 
@@ -361,8 +362,9 @@
 @stop
 @push('script')
     <script>
-        flatpickr(".responsible_person_date", {
+        flatpickr("#responsible_person_date", {
             dateFormat: "d-m-Y",
+            minDate: new Date(),
         });
         // first approval
         $('#firstapproval').validate({

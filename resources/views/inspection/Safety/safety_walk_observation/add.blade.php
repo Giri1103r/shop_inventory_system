@@ -859,7 +859,7 @@
 
 
                 current_serial_number++;
-                form_set_current_count++;
+                form_set_count++;
                 updateCurrentPageIndices();
 
                 $('.emp_id').select2({

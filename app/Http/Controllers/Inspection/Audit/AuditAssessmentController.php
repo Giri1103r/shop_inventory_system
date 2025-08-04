@@ -120,7 +120,7 @@ class AuditAssessmentController extends Controller
         $toDate = $request->toDate;
         $data = array(
             'checklist_types' => $checklist_types,
-             'fromdate' => $fromdate,
+            'fromdate' => $fromdate,
             'toDate' => $toDate,
             'companyId' => $companyId,
 
@@ -426,10 +426,25 @@ class AuditAssessmentController extends Controller
 
                     $inspectionRow++;
                 }
+                $ScoreRow =  $inspectionRow;
+                $sheet->mergeCells("A" . ($ScoreRow) . ":J" . ($ScoreRow));
+                $richText1 = new RichText();
+                $richText1->createTextRun('TOTAL SCORE:- ')->getFont()->setBold(true);
+                $richText1->createText($audit_assessment->total_score);
+                $sheet->getCell("A" . ($ScoreRow))->setValue($richText1);
 
+                $sheet->mergeCells("K" . $ScoreRow . ":S" . $ScoreRow);
+                $richText2 = new RichText();
+                $richText2->createTextRun('OBTAINED SCORE:- ')->getFont()->setBold(true);
+                $richText2->createText($audit_assessment->obtained_score . ' / ' . $audit_assessment->total_score);
+                $sheet->getCell("K" . $ScoreRow)->setValue($richText2);
 
+                $range = "A$ScoreRow:S" . ($ScoreRow);
+                $sheet->getStyle($range)->applyFromArray([
+                    'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                ]);
 
-                $row =  $inspectionRow + 2;
+                $row =  $ScoreRow + 2;
             }
             $filename = 'Audit_Assesment.xlsx';
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -726,8 +741,23 @@ class AuditAssessmentController extends Controller
 
                 $inspectionRow++;
             }
+            $ScoreRow =  $inspectionRow;
+            $sheet->mergeCells("A" . ($ScoreRow) . ":J" . ($ScoreRow));
+            $richText1 = new RichText();
+            $richText1->createTextRun('TOTAL SCORE:- ')->getFont()->setBold(true);
+            $richText1->createText($audit_assessment->total_score);
+            $sheet->getCell("A" . ($ScoreRow))->setValue($richText1);
 
+            $sheet->mergeCells("K" . $ScoreRow . ":S" . $ScoreRow);
+            $richText2 = new RichText();
+            $richText2->createTextRun('OBTAINED SCORE:- ')->getFont()->setBold(true);
+            $richText2->createText($audit_assessment->obtained_score . ' / ' . $audit_assessment->total_score);
+            $sheet->getCell("K" . $ScoreRow)->setValue($richText2);
 
+            $range = "A$ScoreRow:S" . ($ScoreRow);
+            $sheet->getStyle($range)->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            ]);
             $filename = 'Audit_Assesment.xlsx';
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header("Content-Disposition: attachment; filename=\"$filename\"");

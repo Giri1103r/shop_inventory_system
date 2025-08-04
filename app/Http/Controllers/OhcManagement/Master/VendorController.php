@@ -464,11 +464,11 @@ class VendorController extends Controller
             $insert_data['log_id'] = $insert_id;
             $insert_data['Uploded_by'] = Auth::user()->toArray();
 
-            Session::flash('success', __('file uploaded sucessfully'));
+            Session::flash('success',  __('common.file_upload_success_msg'));
             return redirect(admin_url('ohc/vendor/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', __('file upload failed'));
+            Session::flash('error',  __('common.file_upload_fails_msg'));
             return redirect(admin_url('ohc/vendor/list'));
         }
     }
