@@ -244,7 +244,7 @@ class HoseBoxController extends Controller
                 'frequency_id' => 'required',
 
                 'sr_no.*' => 'required',
-                'location.*' => 'required',
+                'exact_location.*' => 'required',
                 'hose_box_no.*' => 'required',
                 'hose_types.*' => 'required',
                 'quantity.*' => 'required',
@@ -265,7 +265,7 @@ class HoseBoxController extends Controller
                 'frequency_id.required' => 'Frequency is required',
 
                 'sr_no.*.required' => 'Serial number is required',
-                'location.*.required' => 'Hose box location is required',
+                'exact_location.*.required' => 'Exact Location is required',
                 'hose_box_no.*.required' => 'Hose Box No is required',
                 'hose_types.*.required' => 'Hose Type is required',
                 'quantity.*.required' => 'Quantity is required',
@@ -864,7 +864,7 @@ class HoseBoxController extends Controller
                 $headerStart = $headerInfoRow;
 
                 $sheet->mergeCells("A{$headerStart}:A" . ($headerStart + 1))->setCellValue("A{$headerStart}", "SR.NO");
-                $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 1))->setCellValue("B{$headerStart}", "LOCATION");
+                $sheet->mergeCells("B{$headerStart}:B" . ($headerStart + 1))->setCellValue("B{$headerStart}", "EXACT LOCATION");
                 $sheet->mergeCells("C{$headerStart}:C" . ($headerStart + 1))->setCellValue("C{$headerStart}", "HOSE BOX NO");
                 $sheet->mergeCells("D{$headerStart}:H{$headerStart}")->setCellValue("D{$headerStart}", "CHECK ITEMS");
 
@@ -889,7 +889,7 @@ class HoseBoxController extends Controller
 
                 foreach ($groupedDetails as $detail) {
                     $sheet->setCellValue("A$dataRow", $sr);
-                    $sheet->setCellValue("B$dataRow", getLocationname($detail['location'] ?? ''));
+                    $sheet->setCellValue("B$dataRow", ($detail['location'] ?? ''));
                     $sheet->setCellValue("C$dataRow", $detail['hose_box_no'] ?? '');
 
                     $hose_Types = $detail['hose_types'] ?? '';
@@ -1215,7 +1215,7 @@ class HoseBoxController extends Controller
             ]);
 
             $sheet->mergeCells("A6:A7")->setCellValue("A6", "SR.NO");
-            $sheet->mergeCells("B6:B7")->setCellValue("B6", "LOCATION");
+            $sheet->mergeCells("B6:B7")->setCellValue("B6", "EXACT LOCATION");
             $sheet->mergeCells("C6:C7")->setCellValue("C6", "HOSE BOX NO");
             $sheet->mergeCells("D6:H6")->setCellValue("D6", "CHECK ITEMS");
             $sheet->setCellValue("D7", "TYPE OF HOSE");
@@ -1236,7 +1236,7 @@ class HoseBoxController extends Controller
             $sr  = 1;
             foreach ($inspection_data as $detail) {
                 $sheet->setCellValue("A$row", $sr);
-                $sheet->setCellValue("B$row", getLocationname($detail['location'] ?? ''));
+                $sheet->setCellValue("B$row", ($detail['location'] ?? ''));
                 $sheet->setCellValue("C$row", $detail['hose_box_no'] ?? '');
 
                 $hose_Types = $detail['hose_types'] ?? '';

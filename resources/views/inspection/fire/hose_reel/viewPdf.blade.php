@@ -251,7 +251,7 @@
             <tr>
                 <th rowspan="2" title="sr_no" style="border: 1px solid black; padding: 5px;">SR. NO.</th>
                 <th rowspan="2" title="department" style="border: 1px solid black; padding: 5px;">DEPARTMENT</th>
-                <th rowspan="2" title="location" style="border: 1px solid black; padding: 5px;">LOCATION</th>
+                <th rowspan="2" title="location" style="border: 1px solid black; padding: 5px;">EXACT LOCATION</th>
                 {{-- <th rowspan="2" title="length" style="border: 1px solid black; padding: 5px;">LENGTH</th> --}}
                 <th colspan="5" style="border: 1px solid black; padding: 5px;">CHECK ITEMS</th>
                 <th rowspan="2" title="approach" style="border: 1px solid black; padding: 5px;">APPROACH</th>
@@ -270,7 +270,7 @@
                 <tr>
                     <td style="border: 1px solid black; padding: 5px;">{{ $details->sr_no }}</td>
                     <td style="border: 1px solid black; padding: 5px;">{{ getDeptName($details->department) }}</td>
-                    <td style="border: 1px solid black; padding: 5px;">{{ getLocationName($details->location) }}</td>
+                    <td style="border: 1px solid black; padding: 5px;">{{ ($details->location) }}</td>
                     <td style="border: 1px solid black; padding: 5px;">{{ $details->length }}</td>
                     <td style="border: 1px solid black; padding: 5px;">
                         @if ($details->nozzle == GOOD)

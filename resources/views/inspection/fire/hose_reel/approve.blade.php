@@ -179,9 +179,9 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label
-                                                            class="form-label require">{{ __('inspection.location') }}</label>
+                                                            class="form-label require">{{ __('inspection.exact_location') }}</label>
                                                         <div class="view_data">
-                                                            {{ getLocationName($details->location) }}
+                                                            {{ ($details->location) }}
                                                         </div>
                                                     </div>
                                                 </div>

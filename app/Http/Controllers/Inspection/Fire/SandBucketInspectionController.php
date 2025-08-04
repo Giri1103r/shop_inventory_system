@@ -249,7 +249,7 @@ class SandBucketInspectionController extends Controller
                 'next_due' => 'required',
                 'unit_id' => 'required',
                 'frequency_id' => 'required',
-                'location.*' => 'required',
+                'exact_location.*' => 'required',
                 'fire_sand_bucket_stand_no.*' => 'required',
                 'fire_sand_bucket_no.*' => 'required',
                 'condition.*' => 'required',
@@ -268,7 +268,7 @@ class SandBucketInspectionController extends Controller
                 'next_due.required' => 'Next Due Date is required.',
                 'unit_id.required' => 'Unit is required.',
                 'frequency_id.required' => 'Frequency is required.',
-                'location.*.required' => 'Department is required.',
+                'exact_location.*.required' => 'Exact Location is required.',
                 'fire_sand_bucket_stand_no.*.required' => 'Resource Code is required.',
                 'fire_sand_bucket_no.*.required' => 'Fire Sand Bucket Number is required.',
                 'condition.*.required' => 'Condition is required.',
@@ -337,8 +337,8 @@ class SandBucketInspectionController extends Controller
                 return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
             }
         } catch (Exception $ex) {
+            dd($ex);
             report($ex);
-
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('fire/fire-sand-bucket-inspection/list'));
         }
@@ -841,7 +841,7 @@ class SandBucketInspectionController extends Controller
                 $row++;
 
                 $sheet->mergeCells("A{$row}:A" . ($row + 2))->setCellValue("A{$row}", 'SR. NO');
-                $sheet->mergeCells("B{$row}:B" . ($row + 2))->setCellValue("B{$row}", 'LOCATION');
+                $sheet->mergeCells("B{$row}:B" . ($row + 2))->setCellValue("B{$row}", 'EXACT LOCATION');
                 $sheet->mergeCells("C{$row}:I{$row}")->setCellValue("C{$row}", 'CHECK ITEMS');
                 $sheet->mergeCells("J{$row}:K" . ($row + 2))->setCellValue("J{$row}", 'REMARK');
 
@@ -875,7 +875,7 @@ class SandBucketInspectionController extends Controller
                 foreach ($inspection_data as $detail) {
 
                     $sheet->setCellValue("A{$row}", $sr);
-                    $sheet->setCellValue("B{$row}", getLocationname($detail['location']) ?? '');
+                    $sheet->setCellValue("B{$row}", ($detail['location']) ?? '');
                     $sheet->setCellValue("C{$row}", $detail['fire_bucket_stand_no'] ?? '');
                     $sheet->setCellValue("D{$row}", $detail['fire_bucket_no'] ?? '');
                     $sheet->setCellValue("E{$row}", $statusMap[$detail['fire_bucket_condition']] ?? ($detail['fire_bucket_condition'] ?? ''));
@@ -1123,7 +1123,7 @@ class SandBucketInspectionController extends Controller
             ]);
 
             $sheet->mergeCells('A6:A8')->setCellValue('A6', 'SR. NO');
-            $sheet->mergeCells('B6:B8')->setCellValue('B6', 'LOCATION');
+            $sheet->mergeCells('B6:B8')->setCellValue('B6', 'EXACT LOCATION');
             $sheet->mergeCells('C6:I6')->setCellValue('C6', 'CHECK ITEMS');
             $sheet->mergeCells('J6:K8')->setCellValue('J6', 'REMARK');
 
@@ -1147,7 +1147,7 @@ class SandBucketInspectionController extends Controller
             $sr = 1;
             foreach ($inspection_data as $detail) {
                 $sheet->setCellValue("A$row", $sr);
-                $sheet->setCellValue("B$row", getLocationname($detail['location'] ?? ''));
+                $sheet->setCellValue("B$row", ($detail['location'] ?? ''));
                 $sheet->setCellValue("C$row", $detail['fire_bucket_stand_no'] ?? '');
 
                 $fireBucket = $detail['fire_bucket_condition'] ?? '';

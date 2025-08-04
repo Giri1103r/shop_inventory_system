@@ -248,7 +248,7 @@
 
         <tr>
             <td rowspan="2" style="text-align: center; font-weight: bold;">SR NO.</td>
-            <td rowspan="2" style="text-align: center; font-weight: bold;">LOCATION</td>
+            <td rowspan="2" style="text-align: center; font-weight: bold;">EXACT LOCATION</td>
             <td rowspan="2" style="text-align: center; font-weight: bold;">HOSE BOX NO.</td>
             <td colspan="5" style="text-align: center; font-weight: bold;">CHECK ITEMS</td>
             <td rowspan="2" style="text-align: center; font-weight: bold;">APPROACH</td>
@@ -275,7 +275,7 @@
             <tr>
                 <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $loop->iteration }}</td>
                 <td style="border: 1px solid black; padding: 8px;" title="Location">
-                    {{ getLocationName($details->location) }}</td>
+                    {{ ($details->location) }}</td>
                 <td style="border: 1px solid black; padding: 8px;" title="Hose Box Number">
                     {{ $details->hose_box_no }}
                 </td>
