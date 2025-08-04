@@ -330,7 +330,8 @@ class MSDSController extends Controller
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                     'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'D9E1F2']]
                 ]);
-                $sheet->mergeCells("A{$row}:E{$row}")->setCellValue("A{$row}", 'Location: ' . getLocationName($firstData->location_id));
+                $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", 'Location: ' . getLocationName($firstData->location_id));
+                $sheet->mergeCells("C{$row}:E{$row}")->setCellValue("C{$row}", 'Exact Location: ' . ($firstData->exact_location));
                 $sheet->mergeCells("F{$row}:J{$row}")->setCellValue("F{$row}", 'Department: ' . getDepartment($firstData->department_id));
                 $sheet->mergeCells("K{$row}:O{$row}")->setCellValue("K{$row}", 'Unit: ' . getUnitName($firstData->unit_id));
                 $row++;
@@ -356,24 +357,24 @@ class MSDSController extends Controller
                 foreach ($msds as $index => $msdsDetails) {
                     $ratings = json_decode($msdsDetails->nfa_rating, true) ?? [];
 
-                    // Build a combined string like "Flammability: 3, Health: 4"
                     $combinedNFPA = '';
                     foreach ($ratings as $rating) {
                         $name = getNFARating($rating['id'] ?? '') ?? '-';
                         $value = isset($rating['value']) ? $rating['value'] : '-';
                         $combinedNFPA .= "{$name}: {$value}, ";
                     }
-
-                    // Trim trailing comma
                     $combinedNFPA = rtrim($combinedNFPA, ', ');
 
-                    // Set cell value in the sheet (e.g., H column)
-                    $sheet->setCellValue("H{$row}:I{$row}", $combinedNFPA);
-                    $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", $index + 1);
+                    $sheet->mergeCells("A{$row}:B{$row}");
+                    $sheet->setCellValue("A{$row}", $index + 1);
                     $sheet->setCellValue("C{$row}", $msdsDetails->item_code ?? '');
-                    $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", $msdsDetails->name_of_chemical ?? '');
+                    $sheet->mergeCells("D{$row}:F{$row}");
+                    $sheet->setCellValue("D{$row}", $msdsDetails->name_of_chemical ?? '');
                     $sheet->setCellValue("G{$row}", $msdsDetails->storage_capacity ?? '');
 
+                    // ✅ FIXED MERGE AND CELL SETTING FOR NFPA COLUMN
+                    $sheet->mergeCells("H{$row}:I{$row}");
+                    $sheet->setCellValue("H{$row}", $combinedNFPA);
 
                     $status = strtoupper($msdsDetails->msds_availability_status ?? '');
                     switch ($status) {
@@ -398,13 +399,16 @@ class MSDSController extends Controller
                             break;
                     }
 
-                    $sheet->mergeCells("J{$row}:L{$row}")->setCellValue("J{$row}", $symbol);
+                    $sheet->mergeCells("J{$row}:L{$row}");
+                    $sheet->setCellValue("J{$row}", $symbol);
                     $sheet->getStyle("J{$row}:L{$row}")->applyFromArray([
                         'font' => ['color' => ['rgb' => $color], 'bold' => true, 'size' => 14],
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     ]);
 
-                    $sheet->mergeCells("M{$row}:O{$row}")->setCellValue("M{$row}", $msdsDetails->remark ?? '');
+                    $sheet->mergeCells("M{$row}:O{$row}");
+                    $sheet->setCellValue("M{$row}", $msdsDetails->remark ?? '');
+
                     $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
                         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -412,6 +416,7 @@ class MSDSController extends Controller
 
                     $row++;
                 }
+
 
                 // Outline border for each section
                 $sheet->getStyle("A{$titleRow}:O{$row}")->applyFromArray([
@@ -496,6 +501,7 @@ class MSDSController extends Controller
             $spreadsheet = new Spreadsheet();
             $sheet = $spreadsheet->getActiveSheet();
 
+            // Logo
             $logoPath = public_path('assets/images/logo-dark.png');
             if (file_exists($logoPath)) {
                 $drawing = new Drawing();
@@ -516,16 +522,19 @@ class MSDSController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
+            // Document Header
             $docHeaders = ['M1:N1' => 'Doc. No.', 'M2:N2' => 'Issue Dt.', 'M3:N3' => 'Rev. & Dt.'];
             foreach ($docHeaders as $cellRange => $label) {
                 $startCell = explode(':', $cellRange)[0];
-                $sheet->mergeCells($cellRange)->setCellValue($startCell, $label);
+                $sheet->mergeCells($cellRange);
+                $sheet->setCellValue($startCell, $label);
                 $sheet->getStyle($cellRange)->applyFromArray([
                     'font' => ['bold' => true],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
                 ]);
             }
+
             $sheet->setCellValue("O1", $document_no->doc_no ?? '');
             $sheet->setCellValue("O2", Displaydateformat($document_no->issue_date ?? ''));
             $sheet->setCellValue("O3", $document_no->rev_dt ?? '');
@@ -534,8 +543,7 @@ class MSDSController extends Controller
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             ]);
 
-
-
+            // Row 4
             $sheet->getStyle('A4:O4')->applyFromArray([
                 'font' => ['bold' => true],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -543,10 +551,12 @@ class MSDSController extends Controller
                 'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['argb' => 'D9E1F2']]
             ]);
 
-            $sheet->mergeCells('A4:E4')->setCellValue('A4', 'Location: ' . getLocationName($msds->location_id));
+            $sheet->mergeCells('A4:B4')->setCellValue('A4', 'Location: ' . getLocationName($msds->location_id));
+            $sheet->mergeCells('C4:E4')->setCellValue('C4', 'Exact Location: ' . ($msds->exact_location));
             $sheet->mergeCells('F4:J4')->setCellValue('F4', 'Department: ' . getDepartment($msds->department_id));
             $sheet->mergeCells('K4:O4')->setCellValue('K4', 'Unit: ' . getUnitName($msds->unit_id));
 
+            // Header Row 5
             $sheet->getStyle('A5:O5')->applyFromArray([
                 'font' => ['bold' => true],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -558,33 +568,31 @@ class MSDSController extends Controller
             $sheet->setCellValue('C5', 'Item Code');
             $sheet->mergeCells('D5:F5')->setCellValue('D5', 'Name Of Chemical');
             $sheet->setCellValue('G5', 'Storage Capacity');
-            $sheet->setCellValue('H5:I5', 'NPFA Rating and Value');
-
+            $sheet->mergeCells('H5:I5')->setCellValue('H5', 'NPFA Rating and Value');
             $sheet->mergeCells('J5:L5')->setCellValue('J5', 'MSDS Availability Status');
             $sheet->mergeCells('M5:O5')->setCellValue('M5', 'Remarks');
 
+            // Data Rows
             $row = 6;
             foreach ($inspection_details as $index => $msdsDetails) {
                 $ratings = json_decode($msdsDetails->nfa_rating, true) ?? [];
 
-                // Build a combined string like "Flammability: 3, Health: 4"
                 $combinedNFPA = '';
                 foreach ($ratings as $rating) {
                     $name = getNFARating($rating['id'] ?? '') ?? '-';
                     $value = isset($rating['value']) ? $rating['value'] : '-';
                     $combinedNFPA .= "{$name}: {$value}, ";
                 }
-
-                // Trim trailing comma
                 $combinedNFPA = rtrim($combinedNFPA, ', ');
 
-                // Set cell value in the sheet (e.g., H column)
-                $sheet->setCellValue("H{$row}:I{$row}", $combinedNFPA);
-                $sheet->mergeCells("A{$row}:B{$row}")->setCellValue("A{$row}", $index + 1);
+                $sheet->mergeCells("A{$row}:B{$row}");
+                $sheet->setCellValue("A{$row}", $index + 1);
                 $sheet->setCellValue("C{$row}", $msdsDetails->item_code ?? '');
-                $sheet->mergeCells("D{$row}:F{$row}")->setCellValue("D{$row}", ($msdsDetails->name_of_chemical) ?? '');
+                $sheet->mergeCells("D{$row}:F{$row}");
+                $sheet->setCellValue("D{$row}", $msdsDetails->name_of_chemical ?? '');
                 $sheet->setCellValue("G{$row}", $msdsDetails->storage_capacity ?? '');
-
+                $sheet->mergeCells("H{$row}:I{$row}");
+                $sheet->setCellValue("H{$row}", $combinedNFPA);
 
                 $status = strtoupper($msdsDetails->msds_availability_status ?? '');
                 switch ($status) {
@@ -609,13 +617,15 @@ class MSDSController extends Controller
                         break;
                 }
 
-                $sheet->mergeCells("J{$row}:L{$row}")->setCellValue("J{$row}", $symbol);
+                $sheet->mergeCells("J{$row}:L{$row}");
+                $sheet->setCellValue("J{$row}", $symbol);
                 $sheet->getStyle("J{$row}:L{$row}")->applyFromArray([
                     'font' => ['color' => ['rgb' => $color], 'bold' => true, 'size' => 14],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
                 ]);
 
-                $sheet->mergeCells("M{$row}:O{$row}")->setCellValue("M{$row}", $msdsDetails->remark ?? '');
+                $sheet->mergeCells("M{$row}:O{$row}");
+                $sheet->setCellValue("M{$row}", $msdsDetails->remark ?? '');
 
                 $sheet->getStyle("A{$row}:O{$row}")->applyFromArray([
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -643,7 +653,6 @@ class MSDSController extends Controller
             return redirect(admin_url('msds/list'));
         }
     }
-
 
     public function GetUnit(Request $request)
     {

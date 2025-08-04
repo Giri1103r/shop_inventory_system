@@ -15,6 +15,7 @@ class MSDS extends Model
     protected $fillable = [
         'id',
         'location_id',
+        'exact_location',
         'unit_id',
         'department_id',
         'document_reference_id',
@@ -75,7 +76,7 @@ class MSDS extends Model
             $query = $query->where('inspection_msds.unit_id', 'LIKE', '%' . decryptId($request->unit_id) . '%');
         }
         if ($request->has('from_date') && !empty($request->from_date)) {
-            
+
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_msds.created_at', '>=', $startDate);
         }
@@ -171,6 +172,7 @@ class MSDS extends Model
         $request = request();
         $insert_array = array(
             'location_id' => decryptId($request->location_id),
+            'exact_location' => ($request->exact_location),
             'department_id' => decryptId($request->department_id),
             'unit_id' => decryptId($request->unit_id),
             'document_reference_id' => decryptId($request->document_reference_id),

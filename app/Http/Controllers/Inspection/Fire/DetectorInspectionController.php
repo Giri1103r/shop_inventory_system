@@ -782,8 +782,8 @@ class DetectorInspectionController extends Controller
             $row = 1;
 
             foreach ($allData as $groupedDetails) {
-
                 $inspection_detail = $groupedDetails->first();
+
 
                 $document_no = $this->document_reference->selectOne($inspection_detail->document_reference_id);
 
@@ -847,7 +847,8 @@ class DetectorInspectionController extends Controller
                 $headerInfoRow = $titleRow + 3;
 
                 $sheet->mergeCells("A{$headerInfoRow}:D{$headerInfoRow}")->setCellValue("A{$headerInfoRow}", "Date of Inspection:- " . Displaydateformat($inspection_detail->date_of_inspection));
-                $sheet->mergeCells("E{$headerInfoRow}:H{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Location:- " . getLocationname($inspection_detail->location));
+                $sheet->mergeCells("E{$headerInfoRow}:F{$headerInfoRow}")->setCellValue("E{$headerInfoRow}", "Location:- " . getLocationname($inspection_detail->location));
+                $sheet->mergeCells("G{$headerInfoRow}:H{$headerInfoRow}")->setCellValue("G{$headerInfoRow}", "Excat Location:- " . ($inspection_detail->exact_location));
                 $sheet->mergeCells("I{$headerInfoRow}:L{$headerInfoRow}")->setCellValue("I{$headerInfoRow}", "Shift:- " . $inspection_detail->shift);
                 $sheet->getStyle("A{$headerInfoRow}:L{$headerInfoRow}")->applyFromArray([
                     'font' => ['bold' => true],
@@ -1194,7 +1195,8 @@ class DetectorInspectionController extends Controller
             ]);
 
             $sheet->mergeCells("A4:D4")->setCellValue("A4", "Date of Inspection:- " . Displaydateformat($detector->date_of_inspection));
-            $sheet->mergeCells("E4:H4")->setCellValue("E4", "Location :- " . getLocationname($detector->location));
+            $sheet->mergeCells("E4:F4")->setCellValue("E4", "Location :- " . getLocationname($detector->location));
+            $sheet->mergeCells("G4:H4")->setCellValue("G4", "Exact Location :- " . ($detector->exact_location));
             $sheet->mergeCells("I4:L4")->setCellValue("I4", "Shift:- " . getShift($detector->shift));
             $sheet->mergeCells("A5:D5")->setCellValue("A5", "Next Due date:- " . Displaydateformat($detector->next_due));
             $sheet->mergeCells("E5:H5")->setCellValue("E5", "Unit:- " . getUnitname($detector->unit));

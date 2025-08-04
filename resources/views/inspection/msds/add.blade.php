@@ -91,6 +91,13 @@
                                                     </select>
                                                 </div>
                                             </div>
+                                            <div class="col-md-4 mb-3">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label require">Exact Location</label>
+                                                    <input type="text" name ="exact_location" id="exact_location"
+                                                        class="form-control" placeholder="Excat Location">
+                                                </div>
+                                            </div>
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
                                                     <label for="unit_id" class="form-label require">
@@ -376,6 +383,11 @@
                     unit_id: {
                         required: true,
                     },
+                    exact_location: {
+                        required: true,
+                        minlength: 3,
+                        maxlength: 100,
+                    },
                     department_id: {
                         required: true,
                     },
@@ -435,6 +447,11 @@
                     },
                     department_id: {
                         required: "Please Select the Department",
+                    },
+                    exact_location: {
+                        required: "Exact Location is Required",
+                        minlength: "Minimum Characters should be 3",
+                        maxlength: "Maximum Characters should not exceed 100",
                     },
                     'item_code[1]': {
                         required: "Item Code is Required",

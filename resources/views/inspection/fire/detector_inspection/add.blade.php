@@ -119,6 +119,14 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
+                                                    <label
+                                                        class="form-label require">{{ __('inspection.exact_location') }}</label>
+                                                    <input type="text" name="exact_location" id = "exact_location"
+                                                        class="form-control">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
                                                     <label class="form-label require">{{ __('inspection.unit') }}</label>
                                                     <select name="unit_id" id="unit_id"
                                                         class=" form-control single-select" style="width: 100%">
@@ -519,6 +527,11 @@
                         frequency_id: {
                             required: true,
                         },
+                        exact_location: {
+                            required: true,
+                            minlength: 3,
+                            maxlength: 100,
+                        },
                         identification_no: {
                             required: true,
                             minlength: 3,
@@ -598,6 +611,11 @@
                         },
                         unit_id: {
                             required: "Unit is required",
+                        },
+                        exact_location: {
+                            required: "Exact Location is required",
+                            minlength: "Minimum Characters should be 3",
+                            maxlength: "Maximum Characters should not exceed 100",
                         },
                         'detector_type[1]': {
                             required: "Please Select the Detector Type",

@@ -6,22 +6,28 @@ use Exception;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Jobs\kpi\LeadinglaggingJob;
 use App\Models\KPI\LeadingLagging;
+use App\Models\UploadLog;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Response;
-use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
+use Yajra\DataTables\DataTables;
+use Illuminate\Support\Str;
 
 class LeadingLaggingController extends Controller
 {
 
     private $leading_lagging;
+    private $uploadlog;
 
     public function __construct()
     {
         $this->leading_lagging = new LeadingLagging();
+        $this->uploadlog = new UploadLog();
     }
 
 
@@ -86,6 +92,8 @@ class LeadingLaggingController extends Controller
             return view('kpi.master.leading_lagging.add');
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('kpi/master/leading-lagging/list'));
         }
     }
 
@@ -135,6 +143,8 @@ class LeadingLaggingController extends Controller
             return view('kpi.master.leading_lagging.view', $data);
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('kpi/master/leading-lagging/list'));
         }
     }
 
@@ -150,7 +160,9 @@ class LeadingLaggingController extends Controller
 
             return view('kpi.master.leading_lagging.edit', $data);
         } catch (Exception $error) {
-            report($error->getMessage());
+            report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('kpi/master/leading-lagging/list'));
         }
     }
 
@@ -242,6 +254,8 @@ class LeadingLaggingController extends Controller
                 );
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('kpi/master/leading-lagging/list'));
         }
     }
 
@@ -294,9 +308,93 @@ class LeadingLaggingController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error', 'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('kpi/master/leading-lagging/list'));
         }
     }
+    public function Import(Request $request)
+    {
+        $data = array();
+        return view('kpi.master.leading_lagging.import', $data);
+    }
+    public function ImportSubmit(Request $request)
+    {
+        try {
+            $file = $request->file('leading_upload');
 
+            $rules = [
+                'leading_upload' => 'required',
+            ];
+            $messages = [
+                'leading_upload.required' => 'Please upload a file',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+
+            if ($file != null) {
+
+                $uploadpath = 'public/uploads/leadinglagging';
+
+                $folderPath = public_path('uploads/leadinglagging');
+
+                if (!File::exists($folderPath)) {
+
+                    File::makeDirectory($folderPath, 0755, true);
+                }
+
+                $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
+
+                $fileName = $file->getClientOriginalName();
+                $fileSize = $file->getSize();
+
+                $fileExt = $file->getClientOriginalExtension();
+
+                $file->move($uploadpath, $filenewname);
+
+                $path = $uploadpath . "/" . $filenewname;
+                $user_id = Auth::id();
+
+                $insert_data = array(
+                    'upload_type' => 1,
+                    'upload_status' => 0,
+                    'file_name' => $filenewname,
+                    'file_orgname' => $fileName,
+                    'file_path' => $path,
+                    'file_size' => $fileSize,
+                    'file_extension' => $fileExt,
+                    'created_by' => $user_id,
+                );
+
+                $insert_id =  $this->uploadlog->create($insert_data)->id;
+
+
+
+                $details = [
+                    "user_id" => $user_id,
+                    "log_id" => $insert_id,
+                    "path" => $path,
+                ];
+
+                dispatch(new LeadinglaggingJob($details));
+                // dispatch((new LeadinglaggingJob($details))->onQueue('company'));
+            }
+
+            $insert_data['log_id'] = $insert_id;
+            $insert_data['Uploded_by'] = Auth::user()->toArray();
+
+
+            Session::flash('success', 'File Uploaded Successfully!');
+            return redirect(admin_url('kpi/master/leading-lagging/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', 'File uploads fails!');
+            return redirect(admin_url('kpi/master/leading-lagging/list'));
+        }
+    }
     public function list(Request $request, $companyId)
     {
 
@@ -332,5 +430,17 @@ class LeadingLaggingController extends Controller
             }
             return Response::json(true);
         }
+    }
+
+    public function DownloadSample(Request $request)
+    {
+
+        dd( 1);
+        $filedetails =  exportsamplefile('leading_lagging');
+        $filePath = $filedetails->sample_file;
+        $customFileName = $filedetails->file_name;
+
+        //return Response::download($filePath, $customFileName);
+        return redirect(url($filePath));
     }
 }

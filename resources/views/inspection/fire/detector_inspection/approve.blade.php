@@ -70,6 +70,14 @@
                                                 </div>
                                             </div>
                                         </div>
+                                         <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label ">{{ __('inspection.exact_location') }}</label>
+                                                <div class="view_data">
+                                                    {{ $inspection->exact_location }}
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label ">Shift</label>
@@ -148,7 +156,7 @@
                                         </div>
                                     </div>
                                     <hr>
- 
+
 
                                     @foreach ($inspection_details as $details)
                                         <div class="form-wrapper">

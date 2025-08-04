@@ -3,16 +3,19 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ppe\PPEMasterJob;
 use App\Models\Master\PpeType;
 use App\Models\Master\PpeTypeMaster;
 use App\Models\UploadLog;
 use Illuminate\Http\Request;
 use Exception;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Spatie\SimpleExcel\SimpleExcelWriter;
 use Yajra\DataTables\DataTables;
+use Illuminate\Support\Str;
 
 class PpeTypeMasterController extends Controller
 {
@@ -346,6 +349,8 @@ class PpeTypeMasterController extends Controller
                 );
         } catch (Exception $ex) {
             report($ex);
+            Session::flash('error',  'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ppe_ppetype_master/list'));
         }
     }
 
@@ -403,7 +408,8 @@ class PpeTypeMasterController extends Controller
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
             report($ex);
-            report($ex);
+            Session::flash('error',  'Something went wrong, Please try after sometimes!');
+            return redirect(admin_url('ppe_ppetype_master/list'));
         }
     }
 
@@ -422,5 +428,98 @@ class PpeTypeMasterController extends Controller
             $ppeNameId = $request->input('id');
             return $this->ppetypemaster->PPEnamelist($ppeNameId);
         }
+    }
+    public function Import(Request $request)
+    {
+        $data = array();
+        return view('master.ppetypemaster.import', $data);
+    }
+    public function ImportSubmit(Request $request)
+    {
+        try {
+            $file = $request->file('ppe_upload');
+
+            $rules = [
+                'ppe_upload' => 'required',
+            ];
+            $messages = [
+                'ppe_upload.required' => 'Please upload a file',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+
+            if ($file != null) {
+
+                $uploadpath = 'public/uploads/PPEMaster';
+
+                $folderPath = public_path('uploads/company');
+
+                if (!File::exists($folderPath)) {
+
+                    File::makeDirectory($folderPath, 0755, true);
+                }
+
+                $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
+
+                $fileName = $file->getClientOriginalName();
+                $fileSize = $file->getSize();
+
+                $fileExt = $file->getClientOriginalExtension();
+
+                $file->move($uploadpath, $filenewname);
+
+                $path = $uploadpath . "/" . $filenewname;
+                $user_id = Auth::id();
+
+                $insert_data = array(
+                    'upload_type' => 1,
+                    'upload_status' => 0,
+                    'file_name' => $filenewname,
+                    'file_orgname' => $fileName,
+                    'file_path' => $path,
+                    'file_size' => $fileSize,
+                    'file_extension' => $fileExt,
+                    'created_by' => $user_id,
+                );
+
+                $insert_id =  $this->uploadlog->create($insert_data)->id;
+
+
+
+                $details = [
+                    "user_id" => $user_id,
+                    "log_id" => $insert_id,
+                    "path" => $path,
+                ];
+
+                dispatch(new PPEMasterJob($details));
+                // dispatch((new PPEMasterJob($details))->onQueue('company'));
+            }
+
+            $insert_data['log_id'] = $insert_id;
+            $insert_data['Uploded_by'] = Auth::user()->toArray();
+
+            Session::flash('success',  'File Upload Successfully!');
+            return redirect(admin_url('ppe_ppetype_master/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error',  'File uploads failed!');
+            return redirect(admin_url('ppe_ppetype_master/list'));
+        }
+    }
+    public function DownloadSample(Request $request)
+    {
+
+        $filedetails =  exportsamplefile('PPE_Master');
+
+        $filePath = $filedetails->sample_file;
+        $customFileName = $filedetails->file_name;
+
+        //return Response::download($filePath, $customFileName);
+        return redirect(url($filePath));
     }
 }
