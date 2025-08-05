@@ -197,7 +197,8 @@ class SafetyWalkObservationController extends Controller
             foreach ($safety_walk_observations as $details) {
 
                 if ($details->observing_status == 1) {
-                    $responsiblePerson = string_to_array($details->responsible_persion);
+                    $responsiblePerson = string_to_array(is_array($details->responsible_persion) ? implode(',', $details->responsible_persion) : ($details->responsible_persion ?? ''));
+
                     foreach ($responsiblePerson as $users) {
                         $email = getUseremail($users);
 
@@ -236,7 +237,7 @@ class SafetyWalkObservationController extends Controller
                             notificationSave($notificationData);
                         }
                     }
-
+                    $title = 'SAFETY WALK OBSERVATION - Has been created';
                     $ehsOfficer = GetEHSHead();
                     $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
                     $mailsubject = 'Safety Walk Observation';
@@ -360,7 +361,7 @@ class SafetyWalkObservationController extends Controller
                             'id' => $details->id,
                             'module' => 1,
                         )),
-                        'web_link' =>  admin_url('safety/safety-walk-observation/approval/' . encryptId($$details->id)),
+                        'web_link' =>  admin_url('safety/safety-walk-observation/approval/' . encryptId($details->id)),
                         'assigned_user' => array_to_string($ehsOfficers),
                         'created_by' => Auth::id(),
                     );
@@ -506,7 +507,7 @@ class SafetyWalkObservationController extends Controller
                 $toStatus  = SAFETY_OFFICER_APPROVAL_PENDING;
             }
 
-        $safetyDetails =  $this->safety_walk->approvalSubmit($id, $date, $remarks);
+            $safetyDetails =  $this->safety_walk->approvalSubmit($id, $date, $remarks);
             $safetyDetails = $this->safety_walk->selectOne($id);
 
             $title = 'SAFETY WALK OBERVATION';
@@ -636,124 +637,79 @@ class SafetyWalkObservationController extends Controller
 
 
     // ehs officer approval
-   public function finalapproval(Request $request)
-{
-    try {
-        $id = decryptId($request->id);
-        $status = '';
+    public function finalapproval(Request $request)
+    {
+        try {
+            $id = decryptId($request->id);
+            $status = '';
 
-        if ($request->approved == 1) {
-            $status = SAFETY_WALK_EHS_OFFICER_APPROVED;
-        } elseif ($request->rejected == 2) {
-            $status = SAFETY_WALK_EHS_OFFICER_REJECTED;
-        } elseif ($request->on_process == 3) {
-            $status = SAFETY_WALK_EHS_OFFICER_ON_PROCESS;
-        }
-
-        $remarks = $request->remarks;
-        $date = $request->date;
-
-        $this->safety_walk->ehsapproval($id, $status, $remarks, $date);
-        $inspection_details = $this->safety_walk->selectOne($id);
-        $title = 'SAFETY WALK OBSERVATION';
-        $mailsubject = 'Safety Walk Observation';
-
-        if ($request->approved == 1 || $request->rejected == 2) {
-            // --- Notify EHS Officers ---
-            $ehsOfficers = GetEHSOfficer()->pluck('id')->toArray();
-            notificationSave([
-                'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 7,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode([
-                    'title' => $mailsubject,
-                    'message' => "Safety Walk Observation",
-                    'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $id,
-                    'module' => 1,
-                ]),
-                'web_link' => admin_url('safety/safety-walk-observation/approval/' . encryptId($id)),
-                'assigned_user' => implode(',', $ehsOfficers),
-                'created_by' => Auth::id(),
-            ]);
-
-            foreach ($ehsOfficers as $user) {
-                $email = getUseremail($user);
-                Mail::to($email)->queue(new SafetyWalkInspection([
-                    'safety_type' => 'Safety Walk Observation',
-                    'email' => $email,
-                    'mail_subject' => $mailsubject,
-                    'title' => $title . ($request->approved == 1 ? ' - Has been Approved' : ' - Has been Rejected'),
-                    'url' => admin_url('safety/safety-walk-observation/approval/' . encryptId($id)),
-                    'data' => $inspection_details,
-                ]));
+            if ($request->approved == 1) {
+                $status = SAFETY_WALK_EHS_OFFICER_APPROVED;
+            } elseif ($request->rejected == 2) {
+                $status = SAFETY_WALK_EHS_OFFICER_REJECTED;
+            } elseif ($request->on_process == 3) {
+                $status = SAFETY_WALK_EHS_OFFICER_ON_PROCESS;
             }
 
-            // --- Notify EHS Heads ---
-            $ehsHeads = GetEHSHead()->pluck('id')->toArray();
-            notificationSave([
-                'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 7,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode([
-                    'title' => $mailsubject,
-                    'message' => "Safety Walk Observation",
-                    'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $inspection_details->id,
-                    'module' => 1,
-                ]),
-                'web_link' => admin_url('safety/safety-walk-observation/approval/' . encryptId($inspection_details->id)),
-                'assigned_user' => implode(',', $ehsHeads),
-                'created_by' => Auth::id(),
-            ]);
+            $remarks = $request->remarks;
+            $date = $request->date;
 
-            foreach ($ehsHeads as $user) {
-                $email = getUseremail($user);
-                Mail::to($email)->queue(new SafetyWalkInspection([
-                    'safety_type' => 'Safety Walk Observation',
-                    'email' => $email,
-                    'mail_subject' => $mailsubject,
-                    'title' => $title . ($request->approved == 1 ? ' - Has been Approved' : ' - Has been Rejected'),
-                    'url' => admin_url('safety/safety-walk-observation/approval/' . encryptId($inspection_details->id)),
-                    'data' => $inspection_details,
-                ]));
-            }
+            $this->safety_walk->ehsapproval($id, $status, $remarks, $date);
+            $inspection_details = $this->safety_walk->selectOne($id);
+            $title = 'SAFETY WALK OBSERVATION';
+            $mailsubject = 'Safety Walk Observation';
 
-            // --- Notify Admins ---
-            $admins = GetAdmin()->pluck('id')->toArray();
-            notificationSave([
-                'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 7,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode([
-                    'title' => $mailsubject,
-                    'message' => "Safety Walk Observation",
-                    'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $inspection_details->id,
-                    'module' => 1,
-                ]),
-                'web_link' => admin_url('safety/safety-walk-observation/approval/' . encryptId($inspection_details->id)),
-                'assigned_user' => implode(',', $admins),
-                'created_by' => Auth::id(),
-            ]);
+            if ($request->approved == 1 || $request->rejected == 2) {
+                // --- Notify EHS Officers ---
+                $ehsOfficers = GetEHSOfficer()->pluck('id')->toArray();
+                notificationSave([
+                    'notification_type' => SAFETY_INSPECTION,
+                    'module_type' => 7,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode([
+                        'title' => $mailsubject,
+                        'message' => "Safety Walk Observation",
+                        'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $id,
+                        'module' => 1,
+                    ]),
+                    'web_link' => admin_url('safety/safety-walk-observation/approval/' . encryptId($id)),
+                    'assigned_user' => implode(',', $ehsOfficers),
+                    'created_by' => Auth::id(),
+                ]);
 
-            foreach ($admins as $user) {
-                $email = getUseremail($user);
-                Mail::to($email)->queue(new SafetyWalkInspection([
-                    'safety_type' => 'Safety Walk Observation',
-                    'email' => $email,
-                    'mail_subject' => $mailsubject,
-                    'title' => $title . ($request->approved == 1 ? ' - Has been Approved' : ' - Has been Rejected'),
-                    'url' => admin_url('safety/safety-walk-observation/approval/' . encryptId($inspection_details->id)),
-                    'data' => $inspection_details,
-                ]));
-            }
+                foreach ($ehsOfficers as $user) {
+                    $email = getUseremail($user);
+                    Mail::to($email)->queue(new SafetyWalkInspection([
+                        'safety_type' => 'Safety Walk Observation',
+                        'email' => $email,
+                        'mail_subject' => $mailsubject,
+                        'title' => $title . ($request->approved == 1 ? ' - Has been Approved' : ' - Has been Rejected'),
+                        'url' => admin_url('safety/safety-walk-observation/approval/' . encryptId($id)),
+                        'data' => $inspection_details,
+                    ]));
+                }
 
-            // --- Notify Responsible Persons ---
-            $responsiblePersons = string_to_array($inspection_details->responsible_persion);
-            foreach ($responsiblePersons as $userId) {
-                $email = getUseremail($userId);
-                if (!empty($email)) {
+                // --- Notify EHS Heads ---
+                $ehsHeads = GetEHSHead()->pluck('id')->toArray();
+                notificationSave([
+                    'notification_type' => SAFETY_INSPECTION,
+                    'module_type' => 7,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode([
+                        'title' => $mailsubject,
+                        'message' => "Safety Walk Observation",
+                        'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $inspection_details->id,
+                        'module' => 1,
+                    ]),
+                    'web_link' => admin_url('safety/safety-walk-observation/approval/' . encryptId($inspection_details->id)),
+                    'assigned_user' => implode(',', $ehsHeads),
+                    'created_by' => Auth::id(),
+                ]);
+
+                foreach ($ehsHeads as $user) {
+                    $email = getUseremail($user);
                     Mail::to($email)->queue(new SafetyWalkInspection([
                         'safety_type' => 'Safety Walk Observation',
                         'email' => $email,
@@ -762,78 +718,123 @@ class SafetyWalkObservationController extends Controller
                         'url' => admin_url('safety/safety-walk-observation/approval/' . encryptId($inspection_details->id)),
                         'data' => $inspection_details,
                     ]));
-
-                    notificationSave([
-                        'notification_type' => SAFETY_INSPECTION,
-                        'module_type' => 7,
-                        'notification_message' => $mailsubject,
-                        'mobile_notification' => json_encode([
-                            'title' => $mailsubject,
-                            'message' => "Safety Walk Observation - Observation Has been Created",
-                            'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                            'id' => '',
-                            'module' => 1,
-                        ]),
-                        'web_link' => admin_url('safety/safety-walk-observation/list'),
-                        'assigned_user' => $userId,
-                        'created_by' => Auth::id(),
-                    ]);
                 }
-            }
 
-        } elseif ($request->on_process == 3) {
-            // --- Re-verification Request ---
-            $responsiblePersons = string_to_array($inspection_details->responsible_persion);
-            foreach ($responsiblePersons as $userId) {
-                $email = getUseremail($userId);
-                if (!empty($email)) {
+                // --- Notify Admins ---
+                $admins = GetAdmin()->pluck('id')->toArray();
+                notificationSave([
+                    'notification_type' => SAFETY_INSPECTION,
+                    'module_type' => 7,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode([
+                        'title' => $mailsubject,
+                        'message' => "Safety Walk Observation",
+                        'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $inspection_details->id,
+                        'module' => 1,
+                    ]),
+                    'web_link' => admin_url('safety/safety-walk-observation/approval/' . encryptId($inspection_details->id)),
+                    'assigned_user' => implode(',', $admins),
+                    'created_by' => Auth::id(),
+                ]);
+
+                foreach ($admins as $user) {
+                    $email = getUseremail($user);
                     Mail::to($email)->queue(new SafetyWalkInspection([
                         'safety_type' => 'Safety Walk Observation',
                         'email' => $email,
                         'mail_subject' => $mailsubject,
-                        'title' => $title . ' - Has been Sent For Re-Verification',
+                        'title' => $title . ($request->approved == 1 ? ' - Has been Approved' : ' - Has been Rejected'),
                         'url' => admin_url('safety/safety-walk-observation/approval/' . encryptId($inspection_details->id)),
                         'data' => $inspection_details,
                     ]));
+                }
 
-                    notificationSave([
-                        'notification_type' => SAFETY_INSPECTION,
-                        'module_type' => 7,
-                        'notification_message' => $mailsubject,
-                        'mobile_notification' => json_encode([
-                            'title' => $mailsubject,
-                            'message' => "Safety Walk Observation - Observation Has been Created",
-                            'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                            'id' => '',
-                            'module' => 1,
-                        ]),
-                        'web_link' => admin_url('safety/safety-walk-observation/list'),
-                        'assigned_user' => $userId,
-                        'created_by' => Auth::id(),
-                    ]);
+                // --- Notify Responsible Persons ---
+                $responsiblePersons = string_to_array(is_array($inspection_details->responsible_persion) ? implode(',', $inspection_details->responsible_persion) : ($inspection_details->responsible_persion ?? ''));
+
+                foreach ($responsiblePersons as $userId) {
+                    $email = getUseremail($userId);
+                    if (!empty($email)) {
+                        Mail::to($email)->queue(new SafetyWalkInspection([
+                            'safety_type' => 'Safety Walk Observation',
+                            'email' => $email,
+                            'mail_subject' => $mailsubject,
+                            'title' => $title . ($request->approved == 1 ? ' - Has been Approved' : ' - Has been Rejected'),
+                            'url' => admin_url('safety/safety-walk-observation/approval/' . encryptId($inspection_details->id)),
+                            'data' => $inspection_details,
+                        ]));
+
+                        notificationSave([
+                            'notification_type' => SAFETY_INSPECTION,
+                            'module_type' => 7,
+                            'notification_message' => $mailsubject,
+                            'mobile_notification' => json_encode([
+                                'title' => $mailsubject,
+                                'message' => "Safety Walk Observation - Observation Has been Created",
+                                'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                                'id' => '',
+                                'module' => 1,
+                            ]),
+                            'web_link' => admin_url('safety/safety-walk-observation/list'),
+                            'assigned_user' => $userId,
+                            'created_by' => Auth::id(),
+                        ]);
+                    }
+                }
+            } elseif ($request->on_process == 3) {
+                // --- Re-verification Request ---
+                $responsiblePersons = string_to_array(is_array($inspection_details->responsible_persion) ? implode(',', $inspection_details->responsible_persion) : ($inspection_details->responsible_persion ?? ''));
+
+                foreach ($responsiblePersons as $userId) {
+                    $email = getUseremail($userId);
+                    if (!empty($email)) {
+                        Mail::to($email)->queue(new SafetyWalkInspection([
+                            'safety_type' => 'Safety Walk Observation',
+                            'email' => $email,
+                            'mail_subject' => $mailsubject,
+                            'title' => $title . ' - Has been Sent For Re-Verification',
+                            'url' => admin_url('safety/safety-walk-observation/approval/' . encryptId($inspection_details->id)),
+                            'data' => $inspection_details,
+                        ]));
+
+                        notificationSave([
+                            'notification_type' => SAFETY_INSPECTION,
+                            'module_type' => 7,
+                            'notification_message' => $mailsubject,
+                            'mobile_notification' => json_encode([
+                                'title' => $mailsubject,
+                                'message' => "Safety Walk Observation - Observation Has been Created",
+                                'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
+                                'id' => '',
+                                'module' => 1,
+                            ]),
+                            'web_link' => admin_url('safety/safety-walk-observation/list'),
+                            'assigned_user' => $userId,
+                            'created_by' => Auth::id(),
+                        ]);
+                    }
                 }
             }
+
+            // --- Status Log ---
+            $this->statusLog->create([
+                'type' => SAFETY_WALK_OBSERVATION,
+                'inspection_id' => $id,
+                'from_status' => SAFETY_WALK_EHS_OFFICER_PENDING,
+                'to_status' => $status,
+                'remarks' => $remarks,
+                'approved_by' => Auth::id(),
+            ]);
+
+            Session::flash('success', __('common.updated_msg'));
+            return redirect(admin_url('safety/safety-walk-observation/list'));
+        } catch (Exception $ex) {
+            report($ex); // You may want to log this instead in production
+            Session::flash('error', 'Something went wrong!');
+            return redirect(admin_url('safety/safety-walk-observation/list'));
         }
-
-        // --- Status Log ---
-        $this->statusLog->create([
-            'type' => SAFETY_WALK_OBSERVATION,
-            'inspection_id' => $id,
-            'from_status' => SAFETY_WALK_EHS_OFFICER_PENDING,
-            'to_status' => $status,
-            'remarks' => $remarks,
-            'approved_by' => Auth::id(),
-        ]);
-
-        Session::flash('success', __('common.updated_msg'));
-        return redirect(admin_url('safety/safety-walk-observation/list'));
-
-    } catch (Exception $ex) {
-        dd($ex); // You may want to log this instead in production
-        Session::flash('error', 'Something went wrong!');
-        return redirect(admin_url('safety/safety-walk-observation/list'));
     }
-}
 
 
     public function ExportExcel()

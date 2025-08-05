@@ -1994,6 +1994,9 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('ppe_ppetype_master/edit/{id}', [PpeTypeMasterController::class, 'edit']);
             Route::post('ppe_ppetype_master/edit/submit', [PpeTypeMasterController::class, 'update']);
             Route::post('ppe_ppetype_master/status', [PpeTypeMasterController::class, 'statusChange']);
+            Route::get('ppe_ppetype_master/sampledownload', [PpeTypeMasterController::class, 'DownloadSample']);
+            Route::get('ppe_ppetype_master/import', [PpeTypeMasterController::class, 'import']);
+            Route::post('ppe_ppetype_master/import/submit', [PpeTypeMasterController::class, 'importSubmit']);
             Route::post('ppe_ppetype_master/delete', [PpeTypeMasterController::class, 'delete']);
             Route::get('ppe_ppetype_master/export/excel', [PpeTypeMasterController::class, 'exportExcel']);
             Route::get('ppe_ppetype_master/export/pdf', [PpeTypeMasterController::class, 'exportPdf']);

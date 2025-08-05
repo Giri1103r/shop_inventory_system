@@ -203,8 +203,11 @@
                 <td colspan="10" style="border: 1px solid black; text-align: left;">
                     <strong>Unit:</strong> {{ $fist_data->unit_name ?? '' }}
                 </td>
-                <td colspan="11" style="border: 1px solid black; text-align: left;">
+                <td colspan="6" style="border: 1px solid black; text-align: left;">
                     <strong>Department:</strong> {{ $fist_data->department_name ?? '' }}
+                </td>
+                <td colspan="5" style="border: 1px solid black; text-align: left;">
+                    <strong>Exact Location:</strong> {{ $fist_data->exact_location ?? '' }}
                 </td>
             </tr>
 

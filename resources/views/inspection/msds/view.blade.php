@@ -68,6 +68,12 @@
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">{{ __('inspection.exact_location') }}</label>
+                                        <div class="view_data">
+                                            {{ $msds->exact_location }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.unit') }}</label>
                                         <div class="view_data">
                                             {{ getUnitname($msds->unit_id) }}

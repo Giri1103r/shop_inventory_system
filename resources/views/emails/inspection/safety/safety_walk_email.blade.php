@@ -95,7 +95,9 @@
                                 <td colspan="3" style="font-family: sans-serif; font-size: 14px; vertical-align: top;"
                                     valign="top">
                                     @php
-                                        $person = explode(',', $details['data']->responsible_persion);
+                                        $person = is_array($details['data']->responsible_persion)
+                                            ? $details['data']->responsible_persion
+                                            : explode(',', $details['data']->responsible_persion);
                                     @endphp
 
                                     @foreach ($person as $personId)

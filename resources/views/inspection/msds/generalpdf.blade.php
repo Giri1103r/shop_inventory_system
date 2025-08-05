@@ -184,6 +184,13 @@
                 {{ isset($msds->location_id) ? getLocationname($msds->location_id) : '' }}
             </td>
         </tr>
+         <tr>
+            <td width="50%" style="padding:5px;"><b>Excat Location</b></td>
+            <td width="2%" style="padding:5px;">:</td>
+            <td width="48%" style="padding:5px;">
+                {{ isset($msds->exact_location) ? ($msds->exact_location) : '' }}
+            </td>
+        </tr>
         <tr>
             <td width="50%" style="padding:5px;"><b>Unit</b></td>
             <td width="2%" style="padding:5px;">:</td>

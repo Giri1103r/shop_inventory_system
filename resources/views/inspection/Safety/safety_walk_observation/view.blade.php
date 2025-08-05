@@ -205,9 +205,9 @@
                                     </div>
 
                                     @if (
-                                        $inspection_details->observation_status == SAFETY_WALK_EHS_OFFICER_PENDING ||
+                                       ( $inspection_details->observation_status == SAFETY_WALK_EHS_OFFICER_PENDING ||
                                             $inspection_details->observation_status == SAFETY_WALK_EHS_OFFICER_APPROVED ||
-                                            $inspection_details->observation_status == SAFETY_WALK_EHS_OFFICER_REJECTED)
+                                            $inspection_details->observation_status == SAFETY_WALK_EHS_OFFICER_REJECTED) && !empty($inspection_details->observer_person))
                                         <div>
                                             <div class="card-header-inner p-2">
                                                 <h4 class="text-white">Action Required</h4>
@@ -243,8 +243,8 @@
                                     @endif
 
                                     @if (
-                                        $inspection_details->observation_status == SAFETY_WALK_EHS_OFFICER_APPROVED ||
-                                            $inspection_details->observation_status == SAFETY_WALK_EHS_OFFICER_REJECTED)
+                                       ( $inspection_details->observation_status == SAFETY_WALK_EHS_OFFICER_APPROVED ||
+                                            $inspection_details->observation_status == SAFETY_WALK_EHS_OFFICER_REJECTED) && !empty($inspection_details->approver_id))
                                         <div>
                                             <div class="card-header-inner p-2">
                                                 <h4 class="text-white">EHS Officer Approval</h4>

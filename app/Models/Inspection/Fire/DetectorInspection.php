@@ -16,6 +16,7 @@ class DetectorInspection extends Model
         'id',
         'document_reference_id',
         'date_of_inspection',
+        'exact_location',
         'location',
         'shift',
         'next_due',
@@ -160,6 +161,7 @@ class DetectorInspection extends Model
 
         $data = array(
             'doc_no' => $request->doc_no,
+            'exact_location'=>$request->exact_location,
             'document_reference_id' => decryptId($request->document_reference_id),
             'date_of_inspection' => DBdateformat($request->inspection_date),
             'location' => decryptId($request->location_id),

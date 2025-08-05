@@ -21,7 +21,9 @@
 
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
-
+                        {{-- @if (CheckUserPermission('import')) --}}
+                            {{-- <x-button-import href="{{ admin_url('ppe_ppetype_master/import') }}"></x-button-import> --}}
+                        {{-- @endif --}}
 
                         <x-button-add dataId="" class="add btn btn-primary ms-1"
                             href="{{ admin_url('ppe_ppetype_master/add') }}">Add</x-button-add>
@@ -36,15 +38,18 @@
                                 <div class="col-md-12">
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">{{__('ppe_management.item_code')}}</label>
+                                            <label for="inspectiontype"
+                                                class="form-label ">{{ __('ppe_management.item_code') }}</label>
                                             <input type="text" name="item_code" id="item_code" class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">{{__('ppe_management.ppe_name')}}</label>
+                                            <label for="inspectiontype"
+                                                class="form-label ">{{ __('ppe_management.ppe_name') }}</label>
                                             <input type="text" name="ppe_name" id="ppe_name" class="form-control">
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="inspectiontype" class="form-label ">{{__('ppe_management.ppe_type')}}</label>
+                                            <label for="inspectiontype"
+                                                class="form-label ">{{ __('ppe_management.ppe_type') }}</label>
                                             <select name="ppe_type" id="ppe_type" style="width: 100%"
                                                 class="form-select   single-select">
                                                 <option value="">Select the ppe type</option>
@@ -55,7 +60,8 @@
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">{{__('ppe_management.from_date')}}</label>
+                                            <label for="emp_name"
+                                                class="form-label ">{{ __('ppe_management.from_date') }}</label>
                                             <div class="input-group date form-input custom-height">
                                                 <input type="text" class="form-control " name="from_date" id="from_date"
                                                     autocomplete="off">
@@ -66,7 +72,8 @@
 
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
-                                            <label for="emp_name" class="form-label ">{{__('ppe_management.to_date')}}</label>
+                                            <label for="emp_name"
+                                                class="form-label ">{{ __('ppe_management.to_date') }}</label>
                                             <div class="input-group date form-input  custom-height">
                                                 <input type="text" class="form-control " name="to_date" id="to_date"
                                                     autocomplete="off">
@@ -106,7 +113,7 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{__('ppe_management.item_code')}}</th>
+                                        <th>{{ __('ppe_management.item_code') }}</th>
                                         {{-- <th>{{__('ppe_management.ppe_name')}}</th> --}}
                                         {{-- <th>{{__('ppe_management.ppe_type')}}</th> --}}
                                         {{-- <th>{{__('ppe_management.ppe_standard')}}</th> --}}

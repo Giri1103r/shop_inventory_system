@@ -229,16 +229,20 @@
         style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
         <tr>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                colspan="3">
+                colspan="2">
                 DATE OF INSPECTION: {{ Displaydateformat($forklift_details->date_of_inspection) ?? 'N/A' }}
             </th>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                colspan="3">
+                colspan="2">
                 LOCATION: {{ getLocationname($forklift_details->location) ?? 'N/A' }}
             </th>
             <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
-                colspan="3">
+                colspan="2">
                 SHIFT: {{ getShift($forklift_details->shift) ?? 'N/A' }}
+            </th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;"
+                colspan="3">
+                EXACT LOCATION: {{ $forklift_details->excat_location ?? 'N/A' }}
             </th>
         </tr>
         <tr>

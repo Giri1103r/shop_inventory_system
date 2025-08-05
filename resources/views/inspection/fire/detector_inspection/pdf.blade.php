@@ -194,14 +194,17 @@
     </tr>
 
     <tr style="background-color: #ddd;">
-        <th colspan="4" style="border: 1px solid black; text-align: left; padding: 6px;">
+        <th colspan="2" style="border: 1px solid black; text-align: left; padding: 6px;">
             DATE OF INSPECTION: {{ Displaydateformat($first->date_of_inspection) }}
         </th>
-        <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
+        <th colspan="2" style="border: 1px solid black; text-align: left; padding: 6px;">
             LOCATION: {{ getLocationName($first->location) }}
         </th>
         <th colspan="2" style="border: 1px solid black; text-align: left; padding: 6px;">
             SHIFT: {{ $first->shift }}
+        </th>
+         <th colspan="3" style="border: 1px solid black; text-align: left; padding: 6px;">
+            EXACT LOCATION: {{ $first->exact_location }}
         </th>
     </tr>
 
