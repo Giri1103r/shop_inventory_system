@@ -245,12 +245,13 @@
             $(function() {
                 /* Datatable */
                 var table = $('.datatable-list').DataTable({
-                    autoWidth: false,
-                    responsive: true,
-                    processing: false,
                     serverSide: true,
                     searching: true,
                     ordering: true,
+                    bSort: true,
+                    scrollX: true,
+                    autoWidth: true,
+                    responsive: false,
                     dom: 'Bfrtip',
                     layout: {
                         top2Start: 'buttons',
