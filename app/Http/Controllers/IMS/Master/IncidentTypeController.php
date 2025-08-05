@@ -76,10 +76,10 @@ class IncidentTypeController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                            $btn = '<a href="' . admin_url('incident/type-master/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('ohc/medicine/list/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                            $btn .= '<a href="' . admin_url('incident/type-master/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('ohc/medicine/list/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
 
                             return $btn;
@@ -145,11 +145,11 @@ class IncidentTypeController extends Controller
                 Session::flash('error', 'Something went wrong, Please try after sometimes!');
             }
 
-            return redirect(admin_url('incident/type-master/list'));
+            return redirect(admin_url('ohc/medicine/list/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/type-master/list'));
+            return redirect(admin_url('ohc/medicine/list/list'));
         }
     }
 
@@ -210,10 +210,10 @@ class IncidentTypeController extends Controller
             }
             $this->incidenttype->updates($id);
             Session::flash('success', 'Your data has been updated successfully!');
-            return redirect(admin_url('incident/type-master/list'));
+            return redirect(admin_url('ohc/medicine/list/list'));
         } catch (Exception $ex) {
             Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('incident/type-master/list'));
+            return redirect(admin_url('ohc/medicine/list/list'));
         }
     }
 
@@ -369,18 +369,18 @@ class IncidentTypeController extends Controller
                 ];
 
                 dispatch(new ImportIncidentType($details));
-                // dispatch((new ImportIncidentType($details))->onQueue('incident_type'));
+                // dispatch((new ImportIncidentType($details))->onQueue('medicine'));
             }
 
             $insert_data['log_id'] = $insert_id;
             $insert_data['Uploded_by'] = Auth::user()->toArray();
 
-            Session::flash('success', __('Incident Type uploaded sucessfully'));
-            return redirect(admin_url('incident/type-master/list'));
+            Session::flash('success', __('Medicine uploaded sucessfully'));
+            return redirect(admin_url('ohc/medicine/list/list'));
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', __('Company upload failed'));
-            return redirect(admin_url('incident/type-master/list'));
+            Session::flash('error', __('Medicine upload failed'));
+            return redirect(admin_url('ohc/medicine/list/list'));
         }
     }
 

@@ -26,7 +26,7 @@
                                 <div class="d-flex justify-content-end p-2 gap-2">
                                     <x-button-download href="{{ admin_url('ohc/medicine/sampledownload') }}"></x-button-download>
                                     <x-button-back href="{{ admin_url('ohc/medicine/list') }}"></x-button-back>
-                                    
+
                                 </div>
 
                             </div>
@@ -39,8 +39,8 @@
                                         @csrf
                                         <div class="row">
                                             <div class="mb-3 col-md-6 form-input">
-                                                <label class="form-label required">Medicine File</label>
-                                                <input type="file" name="medicine_upload" class="form-control"
+                                                <label class="form-label require">Medicine File</label>
+                                                <input type="file" name="file_upload" class="form-control"
                                                     placeholder="">
                                             </div>
                                         </div>
@@ -79,14 +79,14 @@
             $('#medicineimport').validate({
                 rules: {
 
-                    medicine_upload: {
+                    file_upload: {
                         required: true,
                         extension: "xlsx",
                         filesize: 5242880,
                     },
                 },
                 messages: {
-                    medicine_upload: {
+                    file_upload: {
                         required: "Please upload a file",
                         extension: "Please upload an Excel file (.xlsx)",
                     },
