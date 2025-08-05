@@ -129,7 +129,36 @@ class SafetyWalkObservation extends Model
             $query = $query->where('inspection_safety_walk_observation.shift_id', decryptId($request->shift));
         }
 
-
+        if (isset($request->order) && count($request->order) > 0) {
+            $columnName = $request->order[0]['column'];
+            $columnorder = $request->order[0]['dir'];
+            switch ($columnName) {
+                case "date":
+                    $query->orderBy('inspection_safety_walk_observation.date', $columnorder);
+                    break;
+                case "shift_id":
+                    $query = $query->orderBy('inspection_safety_walk_observation.shift_id', $columnorder);
+                    break;
+                case "unit":
+                    $query = $query->orderBy('inspection_safety_walk_observation.unit', $columnorder);
+                    break;
+                case "month":
+                    $query = $query->orderBy('inspection_safety_walk_observation.month', $columnorder);
+                    break;
+                case "observation_status":
+                    $query = $query->orderBy('inspection_safety_walk_observation.observation_status', $columnorder);
+                    break;
+                case "safety_walk_taken_by":
+                    $query = $query->orderBy('inspection_safety_walk_observation.safety_walk_taken_by', $columnorder);
+                    break;
+                case "created_date":
+                    $query = $query->orderBy('inspection_safety_walk_observation.created_at', $columnorder);
+                    break;
+                default:
+                    $query = $query->orderBy('inspection_safety_walk_observation.id', 'DESC');
+                    break;
+            }
+        }
 
         $data_count = $query;
         $total_records = $data_count->count();
