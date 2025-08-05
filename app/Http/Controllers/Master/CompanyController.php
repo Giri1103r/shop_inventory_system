@@ -84,7 +84,7 @@ class CompanyController extends Controller
                             if (CheckUserPermission('edit')) {
                                 $btn .= '<a href="' . admin_url('company/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
-                          
+
                             return $btn;
                         })
                         ->rawColumns(['action', 'created_date', 'created_by', 'status'])
@@ -239,7 +239,7 @@ class CompanyController extends Controller
         }
     }
 
- 
+
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
