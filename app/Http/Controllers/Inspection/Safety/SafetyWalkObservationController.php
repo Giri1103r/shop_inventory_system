@@ -361,7 +361,7 @@ class SafetyWalkObservationController extends Controller
                             'id' => $details->id,
                             'module' => 1,
                         )),
-                        'web_link' =>  admin_url('safety/safety-walk-observation/approval/' . encryptId($$details->id)),
+                        'web_link' =>  admin_url('safety/safety-walk-observation/approval/' . encryptId($details->id)),
                         'assigned_user' => array_to_string($ehsOfficers),
                         'created_by' => Auth::id(),
                     );
@@ -435,7 +435,7 @@ class SafetyWalkObservationController extends Controller
             Session::flash('success', 'Safety Walk Observation added successfully!');
             return redirect(admin_url('safety/safety-walk-observation/list'));
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             Session::flash('error', 'Something went wrong !');
             return redirect(admin_url('safety/safety-walk-observation/list'));
         }

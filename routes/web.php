@@ -2515,9 +2515,9 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/delete', [IncidentTypeController::class, 'delete']);
                 Route::get('/export/excel', [IncidentTypeController::class, 'exportExcel']);
                 Route::get('/export/pdf', [IncidentTypeController::class, 'exportPdf']);
-                Route::get('/sample_download', [IncidentTypeController::class, 'DownloadSample']);
+                Route::get('/sampledownload', [IncidentTypeController::class, 'DownloadSample']);
                 Route::get('/import', [IncidentTypeController::class, 'import']);
-                Route::post('/import/Submit', [IncidentTypeController::class, 'importSubmit']);
+                Route::post('/import/submit', [IncidentTypeController::class, 'importSubmit']);
                 Route::post('/status', [IncidentTypeController::class, 'statusChange']);
                 Route::post('/unique', [IncidentTypeController::class, 'Uniquecheck']);
             });
