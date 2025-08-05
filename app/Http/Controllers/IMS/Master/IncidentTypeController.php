@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\IMS\Master;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ImportIncidentType;
 use Illuminate\Http\Request;
 
 
@@ -75,10 +76,10 @@ class IncidentTypeController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('incident/type-master/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('incident/type-master/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('incident/type-master/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('incident/type-master/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
 
                             return $btn;
@@ -135,7 +136,7 @@ class IncidentTypeController extends Controller
             try {
 
 
-                 $this->incidenttype->store();
+                $this->incidenttype->store();
 
 
                 Session::flash('success', 'Your data has been created successfully!');
@@ -191,7 +192,7 @@ class IncidentTypeController extends Controller
     {
         try {
             $id = decryptId($request->id);
-           
+
             $rules = [
 
                 'incident_type_name' => 'required',
@@ -300,6 +301,89 @@ class IncidentTypeController extends Controller
         }
     }
 
+    public function Import(Request $request)
+    {
+        $data = array();
+        return view('ims.master.incident_type.import', $data);
+    }
+    public function ImportSubmit(Request $request)
+    {
+        try {
+            $file = $request->file('file_upload');
+
+            $rules = [
+                'file_upload' => 'required',
+            ];
+            $messages = [
+                'file_upload.required' => 'Please upload a file',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+
+            if ($file != null) {
+
+                $uploadpath = 'public/uploads/ims/incident_type';
+
+                $folderPath = public_path('uploads/ims/incident_type');
+
+                if (!File::exists($folderPath)) {
+
+                    File::makeDirectory($folderPath, 0755, true);
+                }
+
+                $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
+
+                $fileName = $file->getClientOriginalName();
+                $fileSize = $file->getSize();
+
+                $fileExt = $file->getClientOriginalExtension();
+
+                $file->move($uploadpath, $filenewname);
+
+                $path = $uploadpath . "/" . $filenewname;
+                $user_id = Auth::id();
+
+                $insert_data = array(
+                    'upload_type' => 1,
+                    'upload_status' => 0,
+                    'file_name' => $filenewname,
+                    'file_orgname' => $fileName,
+                    'file_path' => $path,
+                    'file_size' => $fileSize,
+                    'file_extension' => $fileExt,
+                    'created_by' => $user_id,
+                );
+
+                $insert_id =  $this->uploadlog->create($insert_data)->id;
+
+
+
+                $details = [
+                    "user_id" => $user_id,
+                    "log_id" => $insert_id,
+                    "path" => $path,
+                ];
+
+                dispatch(new ImportIncidentType($details));
+                // dispatch((new ImportIncidentType($details))->onQueue('incident_type'));
+            }
+
+            $insert_data['log_id'] = $insert_id;
+            $insert_data['Uploded_by'] = Auth::user()->toArray();
+
+            Session::flash('success', __('Incident Type uploaded sucessfully'));
+            return redirect(admin_url('incident/type-master/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', __('Company upload failed'));
+            return redirect(admin_url('incident/type-master/list'));
+        }
+    }
+
     public function ExportPdf(Request $request)
     {
 
@@ -357,7 +441,7 @@ class IncidentTypeController extends Controller
     public function DownloadSample(Request $request)
     {
 
-        $filedetails =  exportsamplefile('vendor');
+        $filedetails =  exportsamplefile('incident_type');
 
         $filePath = $filedetails->sample_file;
         $customFileName = $filedetails->file_name;
