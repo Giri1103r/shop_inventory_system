@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers\OhcManagement\Master;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Exception;
+use App\Models\User;
 
-use App\Models\Master\Company;
+use App\Models\UploadLog;
 use App\Models\Master\Unit;
+use Illuminate\Support\Str;
+use Illuminate\Http\Request;
+use App\Jobs\ImportCompanyJob;
+use App\Models\Master\Company;
+use App\Models\Master\Employee;
 use App\Models\Master\Location;
 use App\Models\Master\Department;
-use App\Models\User;
-use App\Models\UploadLog;
-use App\Jobs\ImportCompanyJob;
-use App\Models\OhcManagement\Master\CertifiedFirstAider;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Exception;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
-use Spatie\SimpleExcel\SimpleExcelWriter;
+use Illuminate\Support\Facades\Response;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Str;
-use App\Models\Master\Employee;
+use Spatie\SimpleExcel\SimpleExcelWriter;
+use App\Jobs\Ohc\ImportCertifiedFirstAiderJob;
+use App\Models\OhcManagement\Master\CertifiedFirstAider;
 
 class CertifiedFirstAiderController extends Controller
 {
@@ -413,6 +414,109 @@ class CertifiedFirstAiderController extends Controller
 
             report($ex);
             Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/certified-first-aider/list'));
+        }
+    }
+
+    public function Import()
+    {
+        try {
+            $data = array();
+            return view('ohcmanagement.master.certified_first_aid.import', $data);
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error',  __('common.message_error'));
+            return redirect(admin_url('ohc/certified-first-aider/list'));
+        }
+    }
+
+    public function DownloadSample(Request $request)
+    {
+
+        $filedetails =  exportsamplefile('certified_first_sider');
+
+        $filePath = $filedetails->sample_file;
+        $customFileName = $filedetails->file_name;
+
+        //return Response::download($filePath, $customFileName);
+        return redirect(url($filePath));
+    }
+
+    public function ImportSubmit(Request $request)
+    {
+
+        try {
+            $file = $request->file('certified_first_aider_upload');
+
+            $rules = [
+                'certified_first_aider_upload' => 'required',
+            ];
+            $messages = [
+                'certified_first_aider_upload.required' => 'Please upload a file',
+            ];
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+            if ($validator->fails()) {
+                return redirect()->back()->withErrors($validator)->withInput();
+            }
+
+
+            if ($file != null) {
+
+                $uploadpath = 'public/uploads/certified_first_aider';
+
+                $folderPath = public_path('uploads/certified_first_aider');
+
+                if (!File::exists($folderPath)) {
+
+                    File::makeDirectory($folderPath, 0755, true);
+                }
+
+                $filenewname = time() . Str::random('10') . '.' . $file->getClientOriginalExtension();
+
+                $fileName = $file->getClientOriginalName();
+                $fileSize = $file->getSize();
+
+                $fileExt = $file->getClientOriginalExtension();
+
+                $file->move($uploadpath, $filenewname);
+
+                $path = $uploadpath . "/" . $filenewname;
+                $user_id = Auth::id();
+
+                $insert_data = array(
+                    'upload_type' => 1,
+                    'upload_status' => 0,
+                    'file_name' => $filenewname,
+                    'file_orgname' => $fileName,
+                    'file_path' => $path,
+                    'file_size' => $fileSize,
+                    'file_extension' => $fileExt,
+                    'created_by' => $user_id,
+                );
+
+                $insert_id =  $this->uploadlog->create($insert_data)->id;
+
+
+
+                $details = [
+                    "user_id" => $user_id,
+                    "log_id" => $insert_id,
+                    "path" => $path,
+                ];
+
+                dispatch(new ImportCertifiedFirstAiderJob($details));
+                // dispatch((new ImportCertifiedFirstAiderJob($details))->onQueue('certified_first_aider'));
+            }
+
+            $insert_data['log_id'] = $insert_id;
+            $insert_data['Uploded_by'] = Auth::user()->toArray();
+
+            Session::flash('success', __('Certified First Aider uploaded sucessfully'));
+            return redirect(admin_url('ohc/certified-first-aider/list'));
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error', __('Certified First Aider upload failed'));
             return redirect(admin_url('ohc/certified-first-aider/list'));
         }
     }
