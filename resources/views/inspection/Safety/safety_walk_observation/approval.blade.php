@@ -223,8 +223,8 @@
                                     </div>
                                 </div>
                                 @if (
-                                    (($inspection_details->responsible_persion == Auth::id() || isAdmin()) &&
-                                        $inspection_details->observation_status == RESPONSIBLE_PERSON_APPROVAL_PENDING) ||
+                                    (
+                                     $inspection_details->observation_status == RESPONSIBLE_PERSON_APPROVAL_PENDING) ||
                                         $inspection_details->observation_status == SAFETY_WALK_EHS_OFFICER_ON_PROCESS)
                                     <div>
                                         <div class="card-header-inner p-2">
