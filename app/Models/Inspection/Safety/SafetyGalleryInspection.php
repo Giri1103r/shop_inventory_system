@@ -60,8 +60,8 @@ class SafetyGalleryInspection extends Model
             ->leftJoin('masters_unit', 'inspection_safety_gallery.unit', '=', 'masters_unit.id')
             ->leftJoin('inspection_static_docno', 'inspection_safety_gallery.document_reference_id', '=', 'inspection_static_docno.id');
 
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
-        } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_EHS_OFFICER)) {
             $query->where('inspection_safety_gallery.created_by', Auth::id());
         }
 
@@ -382,6 +382,10 @@ class SafetyGalleryInspection extends Model
                 $query->where('masters_unit.unit_name LIKE "%' . $search . '%"');
                 $query->where('masters_unit.resource_code LIKE "%' . $search . '%"');
             });
+        }
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+        } else if (CheckUserRole(ROLE_EHS_OFFICER)) {
+            $query->where('inspection_safety_gallery.created_by', Auth::id());
         }
         if ($request->has('from_date') && !empty($request->from_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
