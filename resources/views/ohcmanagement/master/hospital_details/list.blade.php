@@ -15,7 +15,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
                         {{-- @if (CheckUserPermission('import')) --}}
-                        {{-- <x-button-import href="{{ admin_url('ohc/hospital-details/import') }}"></x-button-import> --}}
+                        <x-button-import href="{{ admin_url('ohc/hospital-details/import') }}"></x-button-import>
                         {{-- @endif --}}
 
                         {{-- @if (CheckUserPermission('add')) --}}

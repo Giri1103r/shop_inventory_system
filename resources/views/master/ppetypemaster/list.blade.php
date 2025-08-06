@@ -22,7 +22,7 @@
                         <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
 
                         {{-- @if (CheckUserPermission('import')) --}}
-                            {{-- <x-button-import href="{{ admin_url('ppe_ppetype_master/import') }}"></x-button-import> --}}
+                            <x-button-import href="{{ admin_url('ppe_ppetype_master/import') }}"></x-button-import>
                         {{-- @endif --}}
 
                         <x-button-add dataId="" class="add btn btn-primary ms-1"

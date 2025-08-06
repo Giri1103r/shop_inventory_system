@@ -24,7 +24,7 @@
                                 {{-- <h4 class="card-title">{{ __('administration.employee_import') }}</h4> --}}
                                 <div class="d-flex justify-content-end p-2 gap-2">
                                     <x-button-download
-                                        href="{{ admin_url('kpi/master/leading-lagging/sampledownload') }}"></x-button-download>
+                                        href="{{ admin_url('kpi/master/leading-lagging/sample_download') }}"></x-button-download>
                                     <x-button-back href="{{ admin_url('kpi/master/leading-lagging/list') }}"></x-button-back>
 
                                 </div>

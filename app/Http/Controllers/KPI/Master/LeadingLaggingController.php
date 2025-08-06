@@ -435,7 +435,7 @@ class LeadingLaggingController extends Controller
     public function DownloadSample(Request $request)
     {
 
-        dd( 1);
+        // dd(1);
         $filedetails =  exportsamplefile('leading_lagging');
         $filePath = $filedetails->sample_file;
         $customFileName = $filedetails->file_name;

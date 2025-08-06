@@ -2756,7 +2756,7 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::GET('/export/excel', [LeadingLaggingController::class, 'ExportExcel']);
                     Route::GET('/export/pdf', [LeadingLaggingController::class, 'ExportPDF']);
                     Route::GET('/import', [LeadingLaggingController::class, 'Import']);
-                    Route::POST('/import/Submit', [LeadingLaggingController::class, 'ImportSubmit']);
+                    Route::POST('/import/submit', [LeadingLaggingController::class, 'ImportSubmit']);
                     Route::GET('/sample_download', [LeadingLaggingController::class, 'DownloadSample']);
                     Route::POST('/lists', [LeadingLaggingController::class, 'Checklists']);
                 });
