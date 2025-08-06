@@ -1938,7 +1938,7 @@ if (!function_exists('getMonth')) {
         }
     }
 
-     if (!function_exists('GetAdmin')) {
+    if (!function_exists('GetAdmin')) {
         function GetAdmin()
         {
             $data = User::whereRaw('FIND_IN_SET(' . ROLE_ADMIN . ', role)')->where('status', 1)->where('trash', 'NO')->get();
@@ -2494,9 +2494,9 @@ if (!function_exists('getMonth')) {
                 return "Rejected by EHS Officer ";
             } else if ($id == SAFETY_WALK_EHS_OFFICER_APPROVED) {
                 return "Closed ";
-            }else if ($id == SAFETY_WALK_EHS_OFFICER_ON_PROCESS) {
+            } else if ($id == SAFETY_WALK_EHS_OFFICER_ON_PROCESS) {
                 return "Waiting for the Re-verification of Responsible Person";
-            }  else {
+            } else {
                 return "Inspection Creation";
             }
         }
@@ -2585,6 +2585,27 @@ if (!function_exists('getMonth')) {
                 return 'Level Two Manager Rejected - Waiting For CAPA Action';
             }
 
+            return 'Inspection Creation';
+        }
+    }
+
+
+    if (!function_exists('getSafetyGalleryinspectionstatus')) {
+        function getSafetyGalleryinspectionstatus($id)
+        {
+            if ($id == SAFETY_L2_MANAGER_APPROVAL_PENDING) {
+                return 'Waiting For Level two manager approval';
+            } else if ($id == SAFETY_EHS_HEAD_REJECTED) {
+                return 'EHS head Rejected';
+            } else if ($id == SAFETY_EHS_HEAD_APPROVED) {
+                return 'Closed';
+            } else if ($id == SAFETY_L2_MANAGER_REJECTED) {
+                return 'Level two Manager Rejected';
+            } else if ($id == SAFETY_L2_MANAGER_APPROVED) {
+                return 'Level two Manager Approved';
+            } else if ($id == SAFETY_EHS_HEAD_APPROVAL_PENDING) {
+                return 'EHS Head Approval Pending';
+            }
             return 'Inspection Creation';
         }
     }

@@ -98,16 +98,14 @@
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId('1') }}">WAITING FOR EHS OFFICER VERIFICATION
+                                                <option value="{{ encryptId('1') }}">Waiting for the Level two manager Approval
                                                 </option>
-                                                <option value="{{ encryptId('2') }}">WAITING FOR CAPA ACTION</option>
-                                                <option value="{{ encryptId('3') }}">WAITING FOR CAPA VERIFICATION</option>
-                                                <option value="{{ encryptId('4') }}">WAITING FOR L1 VERIFICATION</option>
-                                                <option value="{{ encryptId('5') }}">WAITING FOR L2 VERIFICATION</option>
-                                                <option value="{{ encryptId('6') }}">CLOSED</option>
-                                                <option value="{{ encryptId('7') }}">EHS OFFICER REJECTED</option>
-                                                <option value="{{ encryptId('8') }}">L1 MANAGER REJECTED</option>
-                                                <option value="{{ encryptId('9') }}">L2 MANAGER REJECTED</option>
+                                                <option value="{{ encryptId('2') }}"> level two manager approved</option>
+                                                <option value="{{ encryptId('3') }}">level two manager rejected</option>
+                                                <option value="{{ encryptId('4') }}">EHS head Approval Pending</option>
+                                                <option value="{{ encryptId('6') }}">EHS Head Rejected</option>
+                                                <option value="{{ encryptId('5') }}">Closed</option>
+
                                             </select>
                                         </div>
 

@@ -27,6 +27,8 @@ class SafetyGalleryInspection extends Model
         'capa_recomendation',
         'capa_remarks',
         'level_one_manager_remarks',
+        'verified_date',
+        'approved_date',
         'level_two_manager_remarks',
         'checked_by',
         'verified_by',
@@ -175,7 +177,7 @@ class SafetyGalleryInspection extends Model
             'excat_location' => $request->excat_location,
             'created_by' => Auth::id(),
             'responses' => $respones,
-            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+            'inspection_status' => SAFETY_L2_MANAGER_APPROVAL_PENDING,
         ];
         return $this->create($insert_array);
     }
@@ -203,7 +205,7 @@ class SafetyGalleryInspection extends Model
             'resource_code' => $request->resource_code,
             'created_by' => Auth::id(),
             'responses' => $respones,
-            'inspection_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+            'inspection_status' => SAFETY_L2_MANAGER_APPROVAL_PENDING,
         ];
         return $this->create($insert_array);
     }
@@ -217,11 +219,12 @@ class SafetyGalleryInspection extends Model
     {
 
         $request = request();
-        if ($request->is_passed == 1) {
+        if ($request->approved == 1) {
             $update_array = [
                 'verified_by' => Auth::id(),
                 'approved_by' => Auth::id(),
-                'inspection_status' => INSPECTION_APPROVED,
+                'verified_date' => DBdateformat($request->date),
+                'inspection_status' => SAFETY_EHS_HEAD_APPROVAL_PENDING,
                 'updated_by' => Auth::id(),
                 'remarks' => $request->remarks,
             ];
@@ -229,9 +232,37 @@ class SafetyGalleryInspection extends Model
         } else {
             $update_array = [
                 'verified_by' => Auth::id(),
-                'inspection_status' => WAITING_FOR_CAPA_ACTION,
+                'approved_by' => Auth::id(),
+                'verified_date' => DBdateformat($request->date),
+                'inspection_status' => SAFETY_L2_MANAGER_REJECTED,
                 'updated_by' => Auth::id(),
-                'capa_recomendation' => $request->remarks,
+                'remarks' => $request->remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+
+    public function finalapproval($id)
+    {
+        $request = request();
+        if ($request->approved == 1) {
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'approved_by' => Auth::id(),
+                'approved_date' =>  DBdateformat($request->ehs_date),
+                'updated_by' => Auth::id(),
+                'inspection_status' => SAFETY_EHS_HEAD_APPROVED,
+                'level_two_manager_remarks' => $request->ehs_remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'approved_date' =>  DBdateformat($request->ehs_date),
+                'inspection_status' => SAFETY_EHS_HEAD_REJECTED,
+                'level_two_manager_remarks' => $request->ehs_remarks,
             ];
             $this->where('id', $id)->update($update_array);
         }

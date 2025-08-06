@@ -483,7 +483,14 @@ class AppServiceProvider extends ServiceProvider
         defined('LEADING_CATEGORY_1') or define('LEADING_CATEGORY_1', 1);
         defined('LEADING_CATEGORY_2') or define('LEADING_CATEGORY_2', 2);
 
+        // safety gallery inspection
 
+        defined('SAFETY_L2_MANAGER_APPROVAL_PENDING') or define('SAFETY_L2_MANAGER_APPROVAL_PENDING', 1);
+        defined('SAFETY_L2_MANAGER_APPROVED') or define('SAFETY_L2_MANAGER_APPROVED', 2);
+        defined('SAFETY_L2_MANAGER_REJECTED') or define('SAFETY_L2_MANAGER_REJECTED', 3);
+        defined('SAFETY_EHS_HEAD_APPROVAL_PENDING') or define('SAFETY_EHS_HEAD_APPROVAL_PENDING', 4);
+        defined('SAFETY_EHS_HEAD_APPROVED') or define('SAFETY_EHS_HEAD_APPROVED', 5);
+        defined('SAFETY_EHS_HEAD_REJECTED') or define('SAFETY_EHS_HEAD_REJECTED', 6);
 
         View::composer('*', function ($view) {
 

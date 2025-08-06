@@ -240,12 +240,12 @@
                     <td colspan="5" style="border: 1px solid black; padding: 8px;">
                         {{ GetChecklistTypeDate($index) }}
                     </td>
-                    <td
+                     <td
                         style="border: 1px solid black; padding: 8px; text-align: center; color: {{ strtoupper($item['answer']) == 'YES' ? 'green' : 'red' }};">
                         @if (strtoupper($item['answer']) == 'YES')
                             ✔
                         @else
-                            ❌
+                            X
                         @endif
                     </td>
                     <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center;">

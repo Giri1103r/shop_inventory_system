@@ -159,420 +159,158 @@
         </table>
     </div>
 
-    <table width="100%" style="width:100%;">
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Document Number</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($document_no->doc_no) ? $document_no->doc_no : '' }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Issue Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ Displaydateformat(isset($document_no->issue_date) ? $document_no->issue_date : '') }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Revision Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($document_no->rev_dt) ? $document_no->rev_dt : '' }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Location</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getLocationname(isset($forklift_details->location) ? $forklift_details->location : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Unit</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUnitname(isset($forklift_details->unit) ? $forklift_details->unit : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Resource Code</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUnitname(isset($forklift_details->resource_code) ? $forklift_details->resource_code : '') }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Exact Location</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ isset($forklift_details->excat_location) ? $forklift_details->excat_location : '' }}
-            </td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created By</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;">
-                {{ getUsername(isset($forklift_details->created_by) ? $forklift_details->created_by : '') }}</td>
-        </tr>
-        <tr>
-            <td width="50%" style="padding:5px;"><b>Created Date</b></td>
-            <td width="2%" style="padding:5px;">:</td>
-            <td width="48%" style="padding:5px;"> {{ displayDateformat($forklift_details->created_at) }}</td>
-        </tr>
-    </table>
+
 
     <br>
     @php
         $user_response = json_decode($forklift_details->responses, true);
     @endphp
 
-    <table style="width: 100%; border-collapse: collapse;">
-        <thead>
+    <table
+        style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
+        <tr>
+            <th colspan="3" style="border:1px solid black; height:50px;">
+                <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px; height:50px;">
+            </th>
+            <th colspan="6" style="border:1px solid black; text-align: center;">
+                <h3><b>{{ __('title.safety_gallery') }}</b></h3>
+            </th>
+            <th colspan="3" style="border:1px solid black;">
+                <table style="width:100%; border-collapse: collapse;">
+                    <thead>
+                        <tr>
+                            <td style="border: 1px solid black; width:70px;">Doc.No</td>
+                            <td style="border: 1px solid black;">{{ $document_no->doc_no }}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black; width:70px;">Issue Dt.</td>
+                            <td style="border: 1px solid black;">{{ displaydateformat($document_no->issue_date) }}</td>
+                        </tr>
+                        <tr>
+                            <td style="border: 1px solid black; width:70px;">Rev.& Dt.</td>
+                            <td style="border: 1px solid black;">{{ $document_no->rev_dt }}</td>
+                        </tr>
+                    </thead>
+                </table>
+            </th>
+        </tr>
+
+        <tr>
+            <th colspan="4"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                DATE OF INSPECTION: {{ Displaydateformat($forklift_details->date_of_inspection) ?? 'N/A' }}
+            </th>
+
+            <th colspan="4"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                RESOURCE CODE: {{ $forklift_details->resource_code ?? 'N/A' }}
+            </th>
+            <th colspan="4"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                EXACT LOCATION: {{ $forklift_details->excat_location ?? 'N/A' }}
+            </th>
+        </tr>
+
+        <tr>
+            <th colspan="6"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                LOCATION: {{getLocationname( $forklift_details->location ?? 'N/A') }}
+            </th>
+            <th colspan="6"
+                style="border: 1px solid black; padding: 8px; background-color: #f2f2f2; text-align: left;">
+                UNIT: {{ getUnitname($forklift_details->unit ?? 'N/A') }}
+            </th>
+
+        </tr>
+
+
+        <tr>
+            <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Sr. No
+            </th>
+            <th colspan="5"
+                style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
+                CHECK ITEMS</th>
+            <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Status
+            </th>
+            <th colspan="5"
+                style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Remarks
+            </th>
+        </tr>
+
+        @php
+            $user_response = json_decode($forklift_details->responses, true);
+            $srNo = 1;
+        @endphp
+
+        @foreach ($user_response as $index => $item)
             <tr>
-                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Sr. No
-                </th>
-                <th colspan="5"
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    CHECK ITEMS
-                </th>
-                <th style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">Status
-                </th>
-                <th colspan="5"
-                    style="border: 1px solid black; padding: 8px; background-color: #ccc; text-align: center;">
-                    Remarks
-                </th>
+                <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $srNo++ }}</td>
+                <td colspan="5" style="border: 1px solid black; padding: 8px;">
+                    {{ GetChecklistTypeDate($index) }}
+                </td>
+                <td
+                    style="border: 1px solid black; padding: 8px; text-align: center; color: {{ strtoupper($item['answer']) == 'YES' ? 'green' : 'red' }};">
+                    @if (strtoupper($item['answer']) == 'YES')
+                        ✔
+                    @else
+                        X
+                    @endif
+                </td>
+                <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center;">
+                    {{ $item['remarks'] }}
+                </td>
             </tr>
-        </thead>
-        <tbody>
-            @php
-                $user_response = json_decode($forklift_details->responses, true);
-                $srNo = 1;
-            @endphp
-
-            @foreach ($user_response as $index => $item)
-                <tr>
-                    <td style="border: 1px solid black; padding: 8px; text-align: center;">{{ $srNo++ }}</td>
-                    <td colspan="5" style="border: 1px solid black; padding: 8px;">
-                        {{ GetChecklistTypeDate($index) }}
-                    </td>
-                    <td
-                        style="border: 1px solid black; padding: 8px; text-align: center; color: {{ strtoupper($item['answer']) == 'YES' ? 'green' : 'red' }};">
-                        @if (strtoupper($item['answer']) == 'YES')
-                            ✔
-                        @else
-                            'X'
-                        @endif
-                    </td>
-                    <td colspan="5" style="border: 1px solid black; padding: 8px; text-align: center;">
-                        {{ $item['remarks'] }}
-                    </td>
-                </tr>
-            @endforeach
-
-            {{-- @php
-                $creator_signature = GetSafetySignature(
-                    $forklift_details->created_by,
-                    $forklift_details->id,
-                    SAFETY_GALLERY_INSPECTION,
-                );
+        @endforeach
+        {{-- @php
+                $creator_signature = GetSafetySignature($details->checked_by, $details->inspection_id, SAFETY_GALLERY_INSPECTION);
                 $verifier_signature = GetSafetySignature(
-                    $forklift_details->verified_by,
-                    $forklift_details->id,
+                    $details->verified_by,
+                    $details->inspection_id,
                     SAFETY_GALLERY_INSPECTION,
                 );
                 $approver_signature = GetSafetySignature(
-                    $forklift_details->approved_by,
-                    $forklift_details->id,
+                    $details->approved_by,
+                    $details->inspection_id,
                     SAFETY_GALLERY_INSPECTION,
                 );
             @endphp --}}
 
-
-
-            <!-- Signatures and Approval Section -->
-            <tr>
-                <td colspan="4"
-                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    {{-- <img src="{{ admin_url($creator_signature) }}" alt="Checked By Signature" style="height: 50px;"> --}}
-                    <div>Checked & Prepared By: {{ getUsername($forklift_details->created_by) }}</div>
-                </td>
-                <td colspan="4"
-                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    @if ($forklift_details->verified_by != null)
-                        {{-- <img src="{{ admin_url($verifier_signature) }}" alt="Verified By Signature"
+        <!-- Signature Section in a Single Row -->
+        <tr>
+            <td colspan="4"
+                style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                {{-- <img src="{{ admin_url($creator_signature) }}" alt="Checked By Signature" style="height: 50px;"> --}}
+                <div>Checked & Prepared By: {{ getUsername($forklift_details->created_by) }}</div>
+            </td>
+            <td colspan="4"
+                style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                @if ($forklift_details->verified_by != null)
+                    {{-- <img src="{{ admin_url($verifier_signature) }}" alt="Verified By Signature"
                             style="height: 50px;"> --}}
-                        <div>Verified By: {{ getUsername($forklift_details->verified_by) }}</div>
-                    @else
-                        <p>Inspection has not been Verified Yet</p>
-                    @endif
-                </td>
-                <td colspan="4"
-                    style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
-                    @if ($forklift_details->approved_by != null)
-                        {{-- <img src="{{ admin_url($approver_signature) }}" alt="Approved By Signature"
+                    <div>Verified By: {{ getUsername($forklift_details->verified_by) }}</div>
+                @else
+                    <p>Inspection has not been Verified Yet</p>
+                @endif
+            </td>
+            <td colspan="4"
+                style="border: 1px solid black; text-align: center; font-weight: bold; vertical-align: middle;">
+                @if ($forklift_details->approved_by != null)
+                    {{-- <img src="{{ admin_url($approver_signature) }}" alt="Approved By Signature"
                             style="height: 50px;"> --}}
-                        <div>Approved By: {{ getUsername($forklift_details->approved_by) }}</div>
-                    @else
-                        <p>Inspection has not been Approved Yet</p>
-                    @endif
-                </td>
-            </tr>
-        </tbody>
+                    <div>Approved By: {{ getUsername($forklift_details->approved_by) }}</div>
+                @else
+                    <p>Inspection has not been Approved Yet</p>
+                @endif
+            </td>
+        </tr>
+
     </table>
 
-    <div class="page-break"></div>
 
 
 
-    @if ($forklift_details->inspection_status != WAITING_FOR_EHS_OFFICER_VERIFICATION)
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{ __('inspection.ehs_officer_verify') }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <table width="100%" style="width:100%;">
-            @if (isset($forklift_details->verified_by))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
-                </tr>
-            @endif
-            @php
-                $updated_time = GetSafetyUpdatedTime(
-                    $forklift_details->verified_by,
-                    $forklift_details->id,
-                    SAFETY_GALLERY_INSPECTION,
-                    WAITING_FOR_EHS_OFFICER_VERIFICATION,
-                );
-            @endphp
-            @if (isset($forklift_details->created_at))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;"> {{ Displaydateformat($updated_time->created_at) }}
-                    </td>
-                </tr>
-            @endif
-            @if (isset($forklift_details->approved_by))
-                @if ($forklift_details->verified_by == $forklift_details->approved_by)
-                    <tr>
-                        <td width="50%" style="padding:5px;"><b>{{ __('inspection.approved_by') }}</b></td>
-                        <td width="2%" style="padding:5px;">:</td>
-                        <td width="48%" style="padding:5px;">
-                            {{ getUsername($forklift_details->approved_by) }}
-                        </td>
-                    </tr>
-                @endif
-            @endif
-            @if (isset($forklift_details->capa_recomendation))
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_recomendation') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $forklift_details->capa_recomendation }}
-                    </td>
-                </tr>
-            @else
-                <tr>
-                    <td width="50%" style="padding:5px;"><b>{{ __('inspection.remarks') }}</b></td>
-                    <td width="2%" style="padding:5px;">:</td>
-                    <td width="48%" style="padding:5px;">
-                        {{ $forklift_details->remarks }}
-                </tr>
-            @endif
 
 
-        </table>
-        <br>
-    @endif
-
-    @if (isset($forklift_details->capa_remarks))
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{ __('inspection.fire_associate_action') }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <table width="100%" style="width:100%;">
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.name') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->created_by) }}</td>
-            </tr>
-            @php
-                $updated_time = GetSafetyUpdatedTime(
-                    $forklift_details->created_by,
-                    $forklift_details->id,
-                    SAFETY_GALLERY_INSPECTION,
-                    WAITING_FOR_CAPA_ACTION,
-                );
-            @endphp
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($updated_time->created_at) }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_action_remarks') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ $forklift_details->capa_remarks }}
-                </td>
-            </tr>
-
-        </table>
-        <br>
-    @endif
-
-
-    @if ($forklift_details->capa_ehs_remarks)
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{ __('inspection.ehs_officer_reverification') }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <table width="100%" style="width:100%;">
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.verified_by') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ getUserName($forklift_details->verified_by) }}</td>
-            </tr>
-            @php
-                $updated_time = GetSafetyUpdatedTime(
-                    $forklift_details->verified_by,
-                    $forklift_details->id,
-                    SAFETY_GALLERY_INSPECTION,
-                    WAITING_FOR_CAPA_VERIFICATION,
-                );
-            @endphp
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($updated_time->created_at) }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.capa_reverifcation_remarks') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ $forklift_details->capa_ehs_remarks }}
-                </td>
-            </tr>
-
-        </table>
-        <br>
-    @endif
-
-
-    @if (isset($forklift_details->level_one_manager_remarks))
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{ __('inspection.level_one_manager_action') }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <table width="100%" style="width:100%;">
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getUserName($forklift_details->l1_manager_verified_by) }}</td>
-            </tr>
-            @php
-                $updated_time = GetSafetyUpdatedTime(
-                    $forklift_details->l1_manager_verified_by,
-                    $forklift_details->id,
-                    SAFETY_GALLERY_INSPECTION,
-                    WAITING_FOR_L1_VERIFICATION,
-                );
-            @endphp
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($updated_time->created_at) }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager_remarks') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ $forklift_details->level_one_manager_remarks }}
-                </td>
-            </tr>
-
-        </table>
-        <br>
-    @endif
-
-    @if (isset($forklift_details->level_two_manager_remarks))
-        <div style="width:100%;">
-            <table style="width:100%;">
-                <tr>
-                    <td
-                        style="width:100%;background-color: #ce0f1f;color:#ffffff;padding: 10px 10px 10px;font-weight:bold;">
-                        {{ __('inspection.level_two_manager_action') }}
-                    </td>
-                </tr>
-            </table>
-        </div>
-        <table width="100%" style="width:100%;">
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_one_manager') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getUserName($forklift_details->l2_manager_verified_by) }}</td>
-            </tr>
-            @php
-                $updated_time = GetSafetyUpdatedTime(
-                    $forklift_details->l2_manager_verified_by,
-                    $forklift_details->id,
-                    SAFETY_GALLERY_INSPECTION,
-                    WAITING_FOR_L2_VERIFICATION,
-                );
-            @endphp
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.date') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;"> {{ Displaydateformat($updated_time->created_at) }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.approved_by') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ getUsername($forklift_details->approved_by) }}
-                </td>
-            </tr>
-            <tr>
-                <td width="50%" style="padding:5px;"><b>{{ __('inspection.level_two_manager_remarks') }}</b></td>
-                <td width="2%" style="padding:5px;">:</td>
-                <td width="48%" style="padding:5px;">
-                    {{ $forklift_details->level_two_manager_remarks }}
-                </td>
-            </tr>
-
-        </table>
-        <br>
-    @endif
 
     <div class="page-break"></div>
 
@@ -607,8 +345,8 @@
                             @foreach ($status_log as $log)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
-                                    <td>{{ getInspectionStatus($log->from_status) }}</td>
-                                    <td>{{ getInspectionStatus($log->to_status) }}</td>
+                                    <td>{{ getSafetyGalleryinspectionstatus($log->from_status) }}</td>
+                                    <td>{{ getSafetyGalleryinspectionstatus($log->to_status) }}</td>
                                     <td>{{ $log->remarks ?? 'N/A' }}</td>
                                     <td>{{ getUserName($log->approved_by) ? getUserName($log->approved_by) : '-' }}
                                     </td>

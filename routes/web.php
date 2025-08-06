@@ -1212,11 +1212,9 @@ Route::middleware(['securityheader'])->group(function () {
                     Route::post('add/submit', [SafetyGalleryInsepctionController::class, 'store']);
                     Route::get('view/{id}', [SafetyGalleryInsepctionController::class, 'view']);
                     Route::get('verification/{id}/{employee_type}', [SafetyGalleryInsepctionController::class, 'approvals']);
-                    Route::post('ehsofficer/verify/submit', [SafetyGalleryInsepctionController::class, 'EHSOfficerSubmit']);
-                    Route::post('capa/submit', [SafetyGalleryInsepctionController::class, 'CAPASubmit']);
-                    Route::post('capa/reverify/submit', [SafetyGalleryInsepctionController::class, 'CAPAVerifySubmit']);
-                    Route::post('level-one/verify/submit', [SafetyGalleryInsepctionController::class, 'levelOneManagerSubmit']);
-                    Route::post('level-two/verify/submit', [SafetyGalleryInsepctionController::class, 'levelTwoManagerSubmit']);
+                    Route::post('ehsofficer/verify/submit', [SafetyGalleryInsepctionController::class, 'firstapproval']);
+                    Route::post('ehshead/verify/submit', [SafetyGalleryInsepctionController::class, 'finalapproval']);
+
                     Route::post('unique', [SafetyGalleryInsepctionController::class, 'UniqueCheck']);
                     Route::get('export/excel', [SafetyGalleryInsepctionController::class, 'exportExcel']);
                     Route::get('export/pdf', [SafetyGalleryInsepctionController::class, 'exportPdf']);
