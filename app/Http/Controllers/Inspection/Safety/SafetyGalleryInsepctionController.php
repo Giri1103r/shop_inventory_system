@@ -86,13 +86,14 @@ class SafetyGalleryInsepctionController extends Controller
                             $text = '';
                             switch ($row->inspection_status) {
                                 case SAFETY_L2_MANAGER_APPROVAL_PENDING:
-                                    $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>Waiting For level two Manager Approval</span>";
+                                    $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>Waiting For Level Two Manager Approval
+ </span>";
                                     break;
                                 case SAFETY_L2_MANAGER_APPROVED:
-                                    $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>Approved by the level two Manager</span>";
+                                    $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>Approved by the Level Two Manager</span>";
                                     break;
                                 case SAFETY_L2_MANAGER_REJECTED:
-                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>Rejected By the level two Manager</span>";
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>Rejected By the Level Two Manager</span>";
                                     break;
                                 case SAFETY_EHS_HEAD_APPROVAL_PENDING:
                                     $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>EHS Head Approval Pending</span>";
@@ -332,40 +333,49 @@ class SafetyGalleryInsepctionController extends Controller
                 $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
                 $to_status = SAFETY_L2_MANAGER_REJECTED;
             }
-            $userIds = [
-                'users' => $inspection_details->created_by,
-            ];
-            $mailsubject = 'Safety Gallery inspection';
-            $notificationData = array(
-                'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 3,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => $message,
-                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $inspection_details->id,
-                    'module' => 1,
-                )),
-                'web_link' =>  $web_link,
-                'assigned_user' => array_to_string($userIds),
-                'created_by' => Auth::id(),
-            );
-            notificationSave($notificationData);
 
-            $title = $message;
-            $user = $inspection_details->created_by;
-            $email_id = getUseremail($user);
-            $url = admin_url('safety/safety-gallery-inspection/monthly/verification/' . encryptId($id) . '/capa');
-            $details = array(
-                'safety_type' => 'Safety Gallery Inspection',
-                'email' => $email_id,
-                'mail_subject' => $mailsubject,
-                'title' => $title,
-                'url' => $url,
-                'data' => $inspection_details
-            );
-            Mail::to($email_id)->queue(new SafetyInspection($details));
+            $mailsubject = 'Safety Gallery inspection';
+            $ehsOfficer = GetEHSHead();
+            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            // $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $safety_gallery_inspection->id);
+            $mailsubject = 'Safety Gallery inspection';
+
+
+
+            $title = 'Safety Gallery Inspection Created';
+            if ($ehsOfficer->isNotEmpty()) {
+                foreach ($ehsOfficers as $user) {
+                    $email_id = getUseremail($user);
+                    $url = admin_url('safety/safety-gallery-inspection/verification/' . encryptId($id) . '/ehs');
+                    $details = array(
+                        'safety_type' => 'Safety Gallery Inspection',
+                        'email' => $email_id,
+                        'mail_subject' => $mailsubject,
+                        'title' => $title,
+                        'url' => $url,
+                        'data' => $inspection_details
+                    );
+                    Mail::to($email_id)->queue(new SafetyInspection($details));
+                }
+
+                $notificationData = array(
+                    'notification_type' => SAFETY_INSPECTION,
+                    'module_type' => 3,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => "Safety Gallery Inspection Created",
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $inspection_details->id,
+                        'module' => 1,
+                    )),
+                    'web_link' => admin_url('safety/safety-gallery-inspection/view/' . encryptId($inspection_details->id)),
+                    'assigned_user' => implode(',', $ehsOfficers), // fixed array to string
+                    'created_by' => Auth::id(),
+                );
+
+                notificationSave($notificationData);
+            }
 
             $insert_array = [
                 'type' => SAFETY_GALLERY_INSPECTION,
