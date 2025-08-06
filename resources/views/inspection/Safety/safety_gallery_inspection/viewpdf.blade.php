@@ -307,16 +307,8 @@
     </table>
 
 
-
-
-
-
-
-    <div class="page-break"></div>
-
-
-    <div>
-        <div style="width:100%;">
+    <div style="margin-top: 10px">
+        <div style="width:100%;" >
             <table style="width:100%;">
                 <tr>
                     <td

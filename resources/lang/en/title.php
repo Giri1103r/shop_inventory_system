@@ -3,7 +3,7 @@ return [
 
     'hooter' => 'HOOTER  INSPECTION CHECKLIST .',
     'floor_stretcher' => 'Checklist Of Floor Stretcher Inspection',
-    'safety_gallery' => 'SAFETY GALLERY INSPECTION CHECKLIST .',
+    'safety_gallery' => 'SAFETY GALLERY INSPECTION CHECKLIST',
     'ohs_summary_report' => 'OHS PLANT SUMMARY REPORT ',
     'safety_equipment' => 'List of Fire Safety & Rescue Equipment ',
     'opd_medicine' => 'Monthly OHC First-Aid Medicine Inspection Checklist',

@@ -19,8 +19,8 @@ use Spatie\SimpleExcel\SimpleExcelWriter;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use App\Http\Controllers\Admin\AdminController;
+use App\Mail\Inspection\Safety\SafetyGalleryEmail;
 use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
-use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Safety\SafetyStatusLog;
 use App\Models\Inspection\Safety\SignatureUpload;
@@ -233,7 +233,7 @@ class SafetyGalleryInsepctionController extends Controller
                         'url' => $url,
                         'data' => $safety_gallery_inspection
                     );
-                    Mail::to($email_id)->queue(new SafetyInspection($details));
+                    Mail::to($email_id)->queue(new SafetyGalleryEmail($details));
                 }
 
                 $notificationData = array(
@@ -355,7 +355,7 @@ class SafetyGalleryInsepctionController extends Controller
                         'url' => $url,
                         'data' => $inspection_details
                     );
-                    Mail::to($email_id)->queue(new SafetyInspection($details));
+                    Mail::to($email_id)->queue(new SafetyGalleryEmail($details));
                 }
 
                 $notificationData = array(
@@ -446,7 +446,7 @@ class SafetyGalleryInsepctionController extends Controller
                 'url' => $url,
                 'data' => $inspection_details
             );
-            Mail::to($email_id)->queue(new SafetyInspection($details));
+            Mail::to($email_id)->queue(new SafetyGalleryEmail($details));
 
             $insert_array = [
                 'type' => SAFETY_GALLERY_INSPECTION,
@@ -506,7 +506,7 @@ class SafetyGalleryInsepctionController extends Controller
     //             // 'url' => $url,
     //             'data' => $inspection_details
     //         );
-    //         Mail::to($email_id)->queue(new SafetyInspection($details));
+    //         Mail::to($email_id)->queue(new SafetyGalleryEmail($details));
 
     //         $insert_array = [
     //             'type' => SAFETY_GALLERY_INSPECTION,
@@ -579,7 +579,7 @@ class SafetyGalleryInsepctionController extends Controller
     //                 'url' => $url,
     //                 'data' => $inspection_details
     //             );
-    //             Mail::to($email_id)->queue(new SafetyInspection($details));
+    //             Mail::to($email_id)->queue(new SafetyGalleryEmail($details));
     //         }
 
     //         $insert_array = [
@@ -653,7 +653,7 @@ class SafetyGalleryInsepctionController extends Controller
     //                 'url' => $url,
     //                 'data' => $inspection_details
     //             );
-    //             Mail::to($email_id)->queue(new SafetyInspection($details));
+    //             Mail::to($email_id)->queue(new SafetyGalleryEmail($details));
     //         }
 
     //         $insert_array = [
@@ -724,7 +724,7 @@ class SafetyGalleryInsepctionController extends Controller
     //                 'url' => $url,
     //                 'data' => $inspection_details
     //             );
-    //             Mail::to($email_id)->queue(new SafetyInspection($details));
+    //             Mail::to($email_id)->queue(new SafetyGalleryEmail($details));
     //         }
 
     //         $insert_array = [
