@@ -86,13 +86,13 @@ class SafetyGalleryInsepctionController extends Controller
                             $text = '';
                             switch ($row->inspection_status) {
                                 case SAFETY_L2_MANAGER_APPROVAL_PENDING:
-                                    $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>Waiting For l2 Manager Approval</span>";
+                                    $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>Waiting For level two Manager Approval</span>";
                                     break;
                                 case SAFETY_L2_MANAGER_APPROVED:
-                                    $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>Approved by the L2 Manager</span>";
+                                    $text = "<span class='badge bg-success rounded' style='font-size: 1.0em;'>Approved by the level two Manager</span>";
                                     break;
                                 case SAFETY_L2_MANAGER_REJECTED:
-                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>Rejected By the L2 Manager</span>";
+                                    $text = "<span class='badge bg-danger rounded' style='font-size: 1.0em;'>Rejected By the level two Manager</span>";
                                     break;
                                 case SAFETY_EHS_HEAD_APPROVAL_PENDING:
                                     $text = "<span class='badge bg-primary rounded' style='font-size: 1.0em;'>EHS Head Approval Pending</span>";
