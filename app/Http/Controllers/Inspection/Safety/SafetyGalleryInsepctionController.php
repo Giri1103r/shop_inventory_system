@@ -1046,7 +1046,7 @@ class SafetyGalleryInsepctionController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $html = view('inspection.safety.safety_gallery_inspection.viewpdf', $data);
+            $html = view('inspection.Safety.safety_gallery_inspection.viewpdf', $data);
             $view = $html->render();
             $mpdf->WriteHTML($view);
 
