@@ -401,7 +401,7 @@ class SafetyGalleryInsepctionController extends Controller
             } else {
                 $message = 'Safety gallery Inspeciton Rejected Successfully';
                 $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
-                $to_status = SAFETY_L2_MANAGER_REJECTED;
+                $to_status = SAFETY_EHS_HEAD_REJECTED;
             }
             $userIds = [
                 'users' => $inspection_details->created_by,
