@@ -324,9 +324,11 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('nearMissFrequency', [AdminController::class, 'nearMissFrequency']);
                 Route::get('auditFindings', [AdminController::class, 'auditFindings']);
                 Route::get('IIRTypeWiseRCPA', [AdminController::class, 'IIRTypeWiseRCPA']);
-                Route::get('gemba-walk-observation', [AdminController::class, 'gembaWalkObservation']);
+
                 Route::get('unitwiseptw', [AdminController::class, 'unitwiseptw']);
                 Route::get('monthwiseptw', [AdminController::class, 'monthwiseptw']);
+                // Inspection --> gemba walk
+                  Route::get('gemba-walk-observation', [AdminController::class, 'gembaWalkObservation']);
                 // Training Management
                 Route::get('department', [AdminController::class, 'getDepartment']);
                 Route::get('training-open-close-total', [AdminController::class, 'getTrainingOpenClose']);
