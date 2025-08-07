@@ -220,7 +220,10 @@ class CronController extends Controller
 
             try {
                 foreach ($office_id as $company) {
-                    $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetWorkerDetails?TokenId=123&OfficeId={$company->company_name}&fromDate={$fromDate}&toDate={$toDate}";
+                    $officeName = $company->company_name;
+                    $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetWorkerDetails?TokenId=123&OfficeId={$officeName}&fromDate={$fromDate}&toDate={$toDate}";
+
+                    Log::info("Fetching data from API for: {$officeName}");
 
                     $response = Http::get($apiUrl);
 
@@ -228,15 +231,16 @@ class CronController extends Controller
                         $data = $response->json();
 
                         if (!empty($data)) {
-                            $this->worktemp->store($data);
-                            $responses[] = "Data saved successfully";
+                            $this->worktemp->store($data); 
+                            $responses[] = "Data saved successfully for {$officeName}";
                         } else {
-                            $responses[] = "No data found in API response";
+                            $responses[] = "No data for {$officeName}";
                         }
                     } else {
-                        $errors[] = "API request failed";
+                        $errors[] = "API failed for {$officeName}";
                     }
                 }
+
 
                 return response()->json([
                     'message' => 'Processing completed.',
