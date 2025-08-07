@@ -84,6 +84,8 @@
                         filesize: 5242880,
                     },
                 },
+
+                
                 messages: {
                     hospital_upload: {
                         required: "Please upload a file",
