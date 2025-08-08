@@ -86,7 +86,7 @@ class SafetyPermitController extends BaseController
                 $data = [];
                 $data['id'] = $listdata['id'] ?? '';
                 $data['permit_id'] = $listdata['permit_id'] ?? '';
-                $data['unit_id'] =getUnitname( $listdata['unit_id'] ?? '');
+                $data['unit_id'] = getUnitname($listdata['unit_id'] ?? '');
                 $data['date'] = Displaydateformat($listdata['date'] ?? '');
                 $data['exact_location_job'] = $listdata['exact_location_job'] ?? '';
                 $data['status_name'] = $listdata['status_name'] ?? '';
@@ -293,6 +293,7 @@ class SafetyPermitController extends BaseController
                         $logEntry = [
                             'from_status' => isset($status['to_status']) ? $status['to_status'] : '-',
                             'to_status' => isset($status['status_name']) ? $status['status_name'] : '-',
+                            'approved_by' => isset($status['approved_by']) ? getUsername($status['approved_by']) : '-',
                             'remarks' => isset($status['remarks']) ? $status['remarks'] : '-',
                             'created_at' => isset($status['created_at']) ? Displaydateformat($status['created_at']) : '-',
                         ];
