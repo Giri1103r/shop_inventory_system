@@ -295,19 +295,25 @@ class CronController extends Controller
             $toDate = $request->todate;
             $office_id = $this->company->getcompany();
             foreach ($office_id as $company) {
-                $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetWorkerDetails?TokenId=123&OfficeId={$company->company_name}&fromDate={$fromDate}&toDate={$toDate}";
+                  $officeName = $company->company_name;
+                $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetWorkerDetails?TokenId=123&OfficeId={$officeName}&fromDate={$fromDate}&toDate={$toDate}";
 
 
-                $response = Http::get($apiUrl);
+               Log::info("Fetching data from API for: {$officeName}");
 
-                if ($response->successful()) {
-                    $data = $response->json();
+                    $response = Http::get($apiUrl);
 
-                    if (!empty($data)) {
-                        $work = $this->worktemp->store($data);
-                        return response()->json(['message' => 'Data saved successfully.']);
+                    if ($response->successful()) {
+                        $data = $response->json();
+
+                        if (!empty($data)) {
+                            $this->worktemp->store($data);
+                            $responses[] = "Data saved successfully for {$officeName}";
+                        } else {
+                            $responses[] = "No data for {$officeName}";
+                        }
                     } else {
-                        return response()->json(['message' => 'No data found in API response.']);
+                        $errors[] = "API failed for {$officeName}";
                     }
                 }
             }
