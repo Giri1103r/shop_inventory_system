@@ -185,7 +185,8 @@ class GembaWalkChecklist extends Model
             'inspection_gemba_walk_checklist.observation_type_id',
             DB::raw('COUNT(*) as total')
         )
-        ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_gemba_walk_checklist.unit_id');
+        ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_gemba_walk_checklist.unit_id')
+        ->where('inspection_gemba_walk_checklist.status',1);
 
     if ($request->Fromdate && $request->Todate) {
         $query->whereBetween('inspection_gemba_walk_checklist.created_at', [

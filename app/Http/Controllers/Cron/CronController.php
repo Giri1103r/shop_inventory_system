@@ -319,7 +319,6 @@ class CronController extends Controller
             return response()->json([
                 'message' => 'Processing completed.',
                 'results' => $responses,
-                'errors' => $errors
             ]);
         } catch (Exception $ex) {
             report($ex);
