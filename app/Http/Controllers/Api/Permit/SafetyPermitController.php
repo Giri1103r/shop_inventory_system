@@ -508,6 +508,8 @@ class SafetyPermitController extends BaseController
                         'date' =>  isset($getEhsapproval->date) ? Displaydateformat($getEhsapproval->date) : '',
                         'remarks' => isset($getEhsapproval->remarks) ? $getEhsapproval->remarks : ''
                     ],
+
+
                     'plant_head_approval' => [
                         'approver_name' => isset($getplantheadapproval->approve_reject_by) ? $getplantheadapproval->approve_reject_by : '',
                         'date' => isset($getplantheadapproval->date) ? Displaydateformat($getplantheadapproval->date) : '',

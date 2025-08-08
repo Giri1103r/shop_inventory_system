@@ -121,7 +121,7 @@
                                 @foreach ($gembaWalk_details as $gembaWalk)
                                     <div class="row">
                                         <div class="card-header-inner">
-                                            <h4 class="text-white">{{ __('inspection.checklist_details') }}</h4>
+                                            <h4 class="text-white"> {{ __('inspection.checklist_details') }}</h4>
                                         </div>
                                     </div>
                                     <div class="row">
@@ -187,14 +187,6 @@
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
-                                                <label class="form-label">{{ __('inspection.observation_type') }}</label>
-                                                <div class="view_data">
-                                                    {{ getObservationType(isset($gembaWalk->observation_type_id) ? $gembaWalk->observation_type_id : '') }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
                                                 <label class="form-label">{{ __('inspection.risk_category') }}</label>
                                                 <div class="view_data">
                                                     {{ getRiskCategory(isset($gembaWalk->risk_category) ? $gembaWalk->risk_category : '') }}
@@ -210,7 +202,14 @@
                                                 </div>
                                             </div>
                                         </div>
-
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">Observation Type</label>
+                                                <div class="view_data">
+                                                    {{ $gembaWalk->observation_type_id == '1' ? 'Unsafe Act' : 'Unsafe Condition' }}
+                                                </div>
+                                            </div>
+                                        </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">{{ __('inspection.hazard') }}</label>
@@ -241,19 +240,36 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Evidence</label>
                                                     <div class="view_data">
-                                                        @if ($gembaWalk)
-                                                            <a href="{{ asset($gembaWalk->file_path) }}" target="_blank">
-                                                                <img src="{{ asset($gembaWalk->file_path) }}"
-                                                                    alt="image"
-                                                                    style="max-width: 100px; max-height: 100px;">
-                                                            </a>
+                                                        @if ($gembaWalk && $gembaWalk->file_path)
+                                                            @php
+                                                                $filePath = asset($gembaWalk->file_path);
+                                                                $extension = pathinfo(
+                                                                    $gembaWalk->file_path,
+                                                                    PATHINFO_EXTENSION,
+                                                                );
+                                                                $videoExtensions = ['mp4', 'webm', 'ogg'];
+                                                            @endphp
+
+                                                            @if (in_array(strtolower($extension), $videoExtensions))
+                                                                <video width="200" height="150" controls>
+                                                                    <source src="{{ $filePath }}"
+                                                                        type="video/{{ strtolower($extension) }}">
+                                                                    Your browser does not support the video tag.
+                                                                </video>
+                                                            @else
+                                                                <a href="{{ $filePath }}" target="_blank">
+                                                                    <img src="{{ $filePath }}" alt="image"
+                                                                        style="max-width: 100px; max-height: 100px;">
+                                                                </a>
+                                                            @endif
                                                         @else
                                                             <small class="text-muted">No file uploaded yet.</small>
                                                         @endif
-
                                                     </div>
                                                 </div>
                                             </div>
+
+
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">{{ __('inspection.capa') }}</label>
@@ -273,38 +289,6 @@
                                                 </div>
                                             </div>
                                         @endif
-
-
-                                        <div class="col-md-4 mb-2">
-                                            <div class="form-group form-input">
-                                                <label class="form-label">GembaWalk Status</label>
-                                                <div class="view_data">
-                                                    {{ getGembaWalkStatus(isset($gembaWalk->gemba_walk_checklist_status) ? $gembaWalk->gemba_walk_checklist_status : '') }}
-                                                </div>
-                                            </div>
-                                        </div>
-                                       
-                                        @if ($gembaWalk->gemba_walk_checklist_status == 2)
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Closing Evidence</label>
-                                                    <div class="view_data">
-                                                        @if ($closingEvidence)
-                                                            <a href="{{ asset($closingEvidence->file_path) }}"
-                                                                target="_blank">
-                                                                <img src="{{ asset($closingEvidence->file_path) }}"
-                                                                    alt="image"
-                                                                    style="max-width: 100px; max-height: 100px;">
-                                                            </a>
-                                                        @else
-                                                            <small class="text-muted">No file uploaded yet.</small>
-                                                        @endif
-
-
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        @endif
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label class="form-label">{{ __('inspection.observer_person') }}</label>
@@ -315,7 +299,7 @@
 
                                                 <div class="view_data">
                                                     @foreach ($responsibility_id as $responsibilityId)
-                                                        {{ getUsername($responsibilityId) }}@if (!$loop->last)
+                                                        {{ getUsername($responsibilityId) ?: '-' }}@if (!$loop->last)
                                                             ,
                                                         @endif
                                                     @endforeach
@@ -323,6 +307,51 @@
 
                                             </div>
                                         </div>
+
+                                        <div class="col-md-4 mb-2">
+                                            <div class="form-group form-input">
+                                                <label class="form-label">GembaWalk Status</label>
+                                                <div class="view_data">
+                                                    {{ getGembaWalkStatus(isset($gembaWalk->gemba_walk_checklist_status) ? $gembaWalk->gemba_walk_checklist_status : '') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @if ($gembaWalk->gemba_walk_checklist_status == 2)
+                                            <div class="col-md-4 mb-2">
+                                                <div class="form-group form-input">
+                                                    <label class="form-label">Closing Evidence</label>
+                                                    <div class="view_data">
+                                                        @if ($closingEvidence && $closingEvidence->file_path)
+                                                            @php
+                                                                $filePath = asset($closingEvidence->file_path);
+                                                                $extension = strtolower(
+                                                                    pathinfo(
+                                                                        $closingEvidence->file_path,
+                                                                        PATHINFO_EXTENSION,
+                                                                    ),
+                                                                );
+                                                                $videoExtensions = ['mp4', 'webm', 'ogg'];
+                                                            @endphp
+
+                                                            @if (in_array($extension, $videoExtensions))
+                                                                <video width="200" height="150" controls>
+                                                                    <source src="{{ $filePath }}"
+                                                                        type="video/{{ $extension }}">
+                                                                    Your browser does not support the video tag.
+                                                                </video>
+                                                            @else
+                                                                <a href="{{ $filePath }}" target="_blank">
+                                                                    <img src="{{ $filePath }}" alt="image"
+                                                                        style="max-width: 100px; max-height: 100px;">
+                                                                </a>
+                                                            @endif
+                                                        @else
+                                                            <small class="text-muted">No file uploaded yet.</small>
+                                                        @endif
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endif
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
@@ -352,7 +381,7 @@
                                         {{-- <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
                                                 <label
-                                                    class="form-label require">Observation</label>
+                                                    class="form-label ">Observation</label>
                                                 <div class="view_data">
                                                     {{ $gembaWalk->observation_needed == '1' ? 'YES' : 'NO' }}
                                                 </div>
@@ -390,161 +419,16 @@
                                     </div>
                                 @endforeach
 
-                                {{-- @if ($gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_CAPA_ACTION)
-                                    <div class="row mt-3">
-                                        <div class="card-header-inner">
-                                            <h4 class="text-white">{{ __('inspection.capa_action') }}</h4>
-                                        </div>
-                                    </div>
-                                    <form method="POST" id="capaAction"
-                                        action="{{ admin_url('inspection/gemba-walk/capa/submit') }}" autocomplete="off"
-                                        enctype="multipart/form-data">
-                                        @csrf
-
-
-                                        <input type="hidden" value="{{ encryptId($gembaWalk->gemba_walk_id) }}"
-                                            name="id">
-
-                                        <div class="row">
-
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">EHS Office Name</label>
-                                                    <input type="text" name="officer_name" class="form-control"
-                                                        value="{{ Auth::user()->name }}" readonly>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Date</label>
-                                                    <input type="text" name="capa_date" id="capa_date"
-                                                        class="form-control" placeholder="Select Date">
-
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-4 mb-2" id="remarkField">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Remark</label>
-                                                    <textarea name="capa_remark" class="form-control"></textarea>
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-12">
-                                                <label class="form-label required">Whether the Inspection has been passed
-                                                    to the Floor Manager Action?</label>
-                                                <div class="mb-3 form-input">
-                                                    <input type="radio" id="yes" name="is_passed"
-                                                        value="1">
-                                                    <label for="yes">YES</label>
-
-                                                    <input type="radio" id="no" name="is_passed"
-                                                        value="0">
-                                                    <label for="no">NO</label>
-                                                </div>
-                                            </div>
-
-
-
-                                            <div class="col-md-4 mb-2" id="capa_recomendation" style="display: none;">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Upload Image</label>
-                                                    <input type="file" name="capa_image" class="form-control">
-                                                </div>
-                                            </div>
-
-                                            <div class="col-md-4 mb-2" id="verified_by" style="display: none;">
-                                                <div class="form-group form-input">
-                                                    <label for="gemba_walk_verified_by" class="form-label">Singnature
-                                                        Upload</label>
-                                                    <input type="file"
-                                                        class="form-control validate-file-accept validate-file-required"
-                                                        name="gemba_walk_verified_by" id="gemba_walk_verified_by">
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-12 text-end mt-3">
-                                                <x-button-submit class="submit"></x-button-submit>
-                                                <x-button-cancel
-                                                    href="{{ admin_url('inspection/gemba-walk/list') }}"></x-button-cancel>
-                                            </div>
-                                        </div>
-                                    </form>
-                                @endif --}}
 
 
                                 @if (
                                     $gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_WAITING_FOR_FLOOR_MANAGER_VERIFICATION ||
                                         $gembaWalk->gemba_walk_status == GEMBA_WALK_INSPECTION_REJECTED)
                                     <div class="row mt-3">
-                                        {{-- <div class="card-header-inner">
-                                            <h4 class="text-white">Recommended CAPA Action</h4>
-                                        </div> --}}
 
                                         <div class="row">
 
-                                            {{-- <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">EHS Officer Name</label>
-                                                    <div class="view_data">
-                                                        {{ isset($gembaWalk_ehs_capa_details->name) ? $gembaWalk_ehs_capa_details->name : '' }}
-                                                    </div>
-                                                </div>
-                                            </div>
 
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Date</label>
-                                                    <div class="view_data">
-                                                        {{ Displaydateformat(isset($gembaWalk_ehs_capa_details->date) ? $gembaWalk_ehs_capa_details->date : '') }}
-                                                    </div>
-                                                </div>
-                                            </div>
-
-
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Remarks</label>
-                                                    <div class="view_data">
-                                                        {{ isset($gembaWalk_ehs_capa_details->remarks) ? $gembaWalk_ehs_capa_details->remarks : '' }}
-                                                    </div>
-                                                </div>
-                                            </div> --}}
-
-
-
-                                            {{-- <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Uploaded File</label>
-                                                    <div class="view_data">
-                                                        @if ($gembaWalk_ehs_capa_details)
-                                                            <a href="{{ asset($gembaWalk_ehs_capa_details->file_path) }}"
-                                                                target="_blank">
-                                                                <img src="{{ asset($gembaWalk_ehs_capa_details->file_path) }}"
-                                                                    alt="image"
-                                                                    style="max-width: 100px; max-height: 100px;">
-                                                            </a>
-                                                        @else
-                                                            <small class="text-muted">No file uploaded yet.</small>
-                                                        @endif
-
-                                                    </div>
-                                                </div>
-                                            </div> --}}
-
-                                            {{-- <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">Whether the Inspection has been passed
-                                                        Without the CAPA?</label>
-                                                    <div class="view_data">
-                                                        @if (isset($gembaWalk_ehs_capa_details->capa))
-                                                            {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'YES' : 'NO' }}
-                                                        @endif
-                                                    </div>
-                                                </div>
-                                            </div> --}}
 
                                             <div class="row mt-3">
                                                 <div class="card-header-inner">
@@ -634,73 +518,6 @@
                                     <div class="row mt-3">
                                         <div class="row">
 
-                                            <div class="row">
-                                                {{-- <div class="card-header-inner">
-                                                    <h4 class="text-white">Recommended CAPA Action</h4>
-                                                </div>
-
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label">EHS Officer Name</label>
-                                                        <div class="view_data">
-                                                            {{ isset($gembaWalk_ehs_capa_details->name) ? $gembaWalk_ehs_capa_details->name : '' }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label">Date</label>
-                                                        <div class="view_data">
-                                                            {{ Displaydateformat(isset($gembaWalk_ehs_capa_details->date) ? $gembaWalk_ehs_capa_details->date : '') }}
-                                                        </div>
-                                                    </div>
-                                                </div>
-
-
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label">Remarks</label>
-                                                        <div class="view_data">
-                                                            {{ isset($gembaWalk_ehs_capa_details->remarks) ? $gembaWalk_ehs_capa_details->remarks : '' }}
-                                                        </div>
-                                                    </div>
-                                                </div> --}}
-
-
-
-                                                {{-- <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label">Uploaded File</label>
-                                                        <div class="view_data">
-                                                            @if ($gembaWalk_ehs_capa_details)
-                                                                <a href="{{ asset($gembaWalk_ehs_capa_details->file_path) }}"
-                                                                    target="_blank">
-                                                                    <img src="{{ asset($gembaWalk_ehs_capa_details->file_path) }}"
-                                                                        alt="image"
-                                                                        style="max-width: 100px; max-height: 100px;">
-                                                                </a>
-                                                            @else
-                                                                <small class="text-muted">No file uploaded yet.</small>
-                                                            @endif
-
-                                                        </div>
-                                                    </div>
-                                                </div> --}}
-
-                                                {{-- <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label">Whether the Inspection has been passed
-                                                            Without the CAPA?</label>
-                                                        <div class="view_data">
-                                                            @if (isset($gembaWalk_ehs_capa_details->capa))
-                                                                {{ $gembaWalk_ehs_capa_details->capa == 1 ? 'YES' : 'NO' }}
-                                                            @endif
-                                                        </div>
-                                                    </div>
-                                                </div> --}}
-                                            </div>
-
 
                                             <div class="row mt-3">
 
@@ -741,17 +558,35 @@
                                                     <div class="form-group form-input">
                                                         <label class="form-label">Uploaded File</label>
                                                         <div class="view_data">
-                                                            @if ($gembaWalk_ehs_floor_manager_details)
-                                                                <a href="{{ asset($gembaWalk_ehs_floor_manager_details->file_path) }}"
-                                                                    target="_blank">
-                                                                    <img src="{{ asset($gembaWalk_ehs_floor_manager_details->file_path) }}"
-                                                                        alt="image"
-                                                                        style="max-width: 100px; max-height: 100px;">
-                                                                </a>
+                                                            @if ($gembaWalk_ehs_floor_manager_details && $gembaWalk_ehs_floor_manager_details->file_path)
+                                                                @php
+                                                                    $filePath = asset(
+                                                                        $gembaWalk_ehs_floor_manager_details->file_path,
+                                                                    );
+                                                                    $extension = strtolower(
+                                                                        pathinfo(
+                                                                            $gembaWalk_ehs_floor_manager_details->file_path,
+                                                                            PATHINFO_EXTENSION,
+                                                                        ),
+                                                                    );
+                                                                    $videoExtensions = ['mp4', 'webm', 'ogg'];
+                                                                @endphp
+
+                                                                @if (in_array($extension, $videoExtensions))
+                                                                    <video width="200" height="150" controls>
+                                                                        <source src="{{ $filePath }}"
+                                                                            type="video/{{ $extension }}">
+                                                                        Your browser does not support the video tag.
+                                                                    </video>
+                                                                @else
+                                                                    <a href="{{ $filePath }}" target="_blank">
+                                                                        <img src="{{ $filePath }}" alt="image"
+                                                                            style="max-width: 100px; max-height: 100px;">
+                                                                    </a>
+                                                                @endif
                                                             @else
                                                                 <small class="text-muted">No file uploaded yet.</small>
                                                             @endif
-
                                                         </div>
                                                     </div>
                                                 </div>

@@ -26,6 +26,10 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
+                                        <input type="hidden" name="observation_type" value="{{ $observationType }}">
+                                        <input type="hidden" name="fromDate" value="{{ $fromDate }}">
+                                        <input type="hidden" name="toDate" value="{{ $toDate }}">
+                                        <input type="hidden" name="unitId" value="{{ $unitId }}">
                                         <div class="col-md-4 mb-3 form-input">
                                             <label for="gemba_walk_auto_id" class="form-label ">Gemba Walk ID</label>
                                             <input type="text" name="gemba_walk_auto_id" id="gemba_walk_auto_id"
@@ -275,16 +279,9 @@
                                 .attr('content')
                         },
                         data: function(d) {
-                            d.doc_no = $('#gemba_walk_auto_id').val();
-                            d.date = $('#date').val();
-                            d.inspection_status = $('#inspection_status').val();
-                            d.shift = $('#shift').val();
-                            d.from_date = $('#from_date').val();
-                            d.to_date = $('#to_date').val();
-                            d.unit_name = $("#unit_name").val();
-                            d.unit_id = $("#unit_id").val();
-                            d.ehs_officer = $("#ehs_officer").val();
-
+                            let formData = $('#formsearch').serialize();
+                            let params = new URLSearchParams(formData);
+                            params.forEach((value, key) => d[key] = value);
                         },
                         error: function(xhr, error, code) {
                             if (xhr.status === 419) {
@@ -355,65 +352,25 @@
                                     text: '{{ __('common.pdf') }}',
                                     action: function(e, dt, button, config) {
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        var gemba_walk_auto_id = $('#gemba_walk_auto_id').val();
-                                        var date = $('#date').val();
-                                        var inspection_status = $('#inspection_status').val();
-                                        var shift = $('#shift').val();
-                                        var from_date = $('#from_date').val();
-                                        var to_date = $('#to_date').val();
-                                        var unit_name = $('#unit_name').val() ?? "";
-                                        var unit_id = $('#unit_id').val();
-                                        var ehs_officer = $('#ehs_officer').val();
-
-
-                                        $(".dt-button").removeClass('processing');
-                                        $('body').click();
-                                        window.location.href =
-                                            "{{ admin_url('inspection/gemba-walk/export/pdf') }}" +
-                                            '?search=' + searchValue +
-                                            '&gemba_walk_auto_id=' + gemba_walk_auto_id +
-                                            '&date=' + date +
-                                            '&inspection_status=' + inspection_status +
-                                            '&from_date=' + from_date +
-                                            '&to_date=' + to_date +
-                                            '&shift=' + shift +
-                                            '&unit_name=' + unit_name +
-                                            '&ehs_officer=' + ehs_officer +
-                                            '&unit_id=' + unit_id
-
+                                        var formData = $('#formsearch').serialize();
+                                        var exportUrl =
+                                            "{{ admin_url('inspection/gemba-walk/export/pdf') }}";
+                                        window.location.href = exportUrl + '?search=' +
+                                            searchValue + '&' +
+                                            formData;
                                     }
                                 },
                                 {
                                     extend: 'excel',
                                     text: '{{ __('common.excel') }}',
                                     action: function(e, dt, button, config) {
-
                                         var searchValue = $('#datatable-list_filter input').val();
-                                        var gemba_walk_auto_id = $('#gemba_walk_auto_id').val();
-                                        var date = $('#date').val();
-                                        var inspection_status = $('#inspection_status').val();
-                                        var shift = $('#shift').val();
-                                        var from_date = $('#from_date').val();
-                                        var to_date = $('#to_date').val();
-                                        var unit_id = $('#unit_id').val();
-                                        var unit_name = $('#unit_name').val() ?? "";
-                                        var ehs_officer = $('#ehs_officer').val();
-
-
-                                        $(".dt-button").removeClass('processing');
-                                        $('body').click();
-                                        window.location.href =
-                                            "{{ admin_url('inspection/gemba-walk/export/excel') }}" +
-                                            '?search=' + searchValue +
-                                            '&gemba_walk_auto_id=' + gemba_walk_auto_id +
-                                            '&date=' + date +
-                                            '&inspection_status=' + inspection_status +
-                                            '&from_date=' + from_date +
-                                            '&to_date=' + to_date +
-                                            '&shift=' + shift +
-                                            '&unit_name=' + unit_name +
-                                            '&ehs_officer=' + ehs_officer +
-                                            '&unit_id=' + unit_id
+                                        var formData = $('#formsearch').serialize();
+                                        var exportUrl =
+                                            "{{ admin_url('inspection/gemba-walk/export/excel') }}";
+                                        window.location.href = exportUrl + '?search=' +
+                                            searchValue + '&' +
+                                            formData;
                                     }
                                 },
                             ]

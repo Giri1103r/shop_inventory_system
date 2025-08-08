@@ -91,7 +91,7 @@ class GembaWalkInspectionEhsApproval extends Model
             'gemba_walk_id' => $id,
             'type' =>  $capa_type,
             'name' => Auth::user()->name,
-            'date' =>Carbon::now(),
+            'date' => Carbon::now(),
             'capa' => decryptId($request->is_passed),
             'capa_action_date' => DBdateformat($request->capa_action_date) ?: null,
             'remarks' => $request->capa_remark,
@@ -162,4 +162,6 @@ class GembaWalkInspectionEhsApproval extends Model
 
         return $data;
     }
+
+   
 }

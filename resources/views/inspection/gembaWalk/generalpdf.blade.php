@@ -285,22 +285,52 @@
                                 </td>
                                 <td>
                                     @if (!empty($gembaWalk->file_path))
-                                        <img src="{{ $gembaWalk->file_path }}" style="width: 100px; height: auto;">
+                                        @php
+                                            $extension = strtolower(
+                                                pathinfo($gembaWalk->file_path, PATHINFO_EXTENSION),
+                                            );
+                                            $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                                            $videoExtensions = ['mp4', 'mov', 'avi', 'wmv', 'flv', 'mkv'];
+                                        @endphp
+
+                                        @if (in_array($extension, $imageExtensions))
+                                            <img src="{{ $gembaWalk->file_path }}" style="width: 100px; height: auto;">
+                                        @elseif (in_array($extension, $videoExtensions))
+                                            <a href="{{ $gembaWalk->file_path }}" target="_blank">View Video</a>
+                                        @else
+                                            Unsupported file type
+                                        @endif
                                     @else
                                         N/A
                                     @endif
                                 </td>
 
+
                                 <td>{{ $gembaWalk->capa ?? 'N/A' }}</td>
 
                                 <td>{{ getGembaWalkStatus($gembaWalk->gemba_walk_checklist_status ?? 'N/A') }}</td>
-                                 <td>
+                                <td>
+
                                     @if (!empty($closingEvidence->file_path))
-                                        <img src="{{ $closingEvidence->file_path }}"
-                                            style="width: 100px; height: auto;">
+                                        @php
+                                            $extension = strtolower(
+                                                pathinfo($closingEvidence->file_path, PATHINFO_EXTENSION),
+                                            );
+                                            $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                                            $videoExtensions = ['mp4', 'mov', 'avi', 'wmv', 'flv', 'mkv'];
+                                        @endphp
+
+                                        @if (in_array($extension, $imageExtensions))
+                                            <img src="{{ $closingEvidence->file_path }}" style="width: 100px; height: auto;">
+                                        @elseif (in_array($extension, $videoExtensions))
+                                            <a href="{{ $closingEvidence->file_path }}" target="_blank">View Video</a>
+                                        @else
+                                            Unsupported file type
+                                        @endif
                                     @else
                                         N/A
                                     @endif
+                                  
                                 </td>
                                 <td>{{ $gembaWalk->remark ?? 'N/A' }}</td>
                                 <td>

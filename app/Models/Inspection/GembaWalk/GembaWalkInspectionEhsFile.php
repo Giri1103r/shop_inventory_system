@@ -34,7 +34,8 @@ class GembaWalkInspectionEhsFile extends Model
     ];
 
 
-    public function capaFileSubmit($gembaWalk_id,$ehs_id,$upload_status){
+    public function capaFileSubmit($gembaWalk_id, $ehs_id, $upload_status)
+    {
         $request = request();
         $floorId = decryptId($request->floor_managerId);
 
@@ -76,7 +77,7 @@ class GembaWalkInspectionEhsFile extends Model
             $user_id = Auth::id();
 
             $insert_data = array(
-                'gemba_walk_id'=>$gembaWalk_id,
+                'gemba_walk_id' => $gembaWalk_id,
                 'ehs_id' => $ehs_id,
                 'file_type' => $upload_status,
                 'file_name' => $filenewname,
@@ -88,5 +89,10 @@ class GembaWalkInspectionEhsFile extends Model
             );
             $this->create($insert_data);
         }
+    }
+
+    public function getClosingEvidence($id)
+    {
+        return $this->where('gemba_walk_id', $id)->where('file_type', 2)->first();
     }
 }

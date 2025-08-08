@@ -174,71 +174,70 @@ class GembaWalkChecklist extends Model
     {
         return $this->where('gemba_walk_id', $id)->where('status', 1)->first();
     }
-    public function gembaWalkPotentialCount()
-    {
-        $request = request();
+ public function gembaWalkPotentialCount()
+{
+    $request = request();
 
-        // Step 1: Base query
-        $query = $this
-            ->select(
-                'masters_unit.unit_name',
-                'inspection_gemba_walk_checklist.observation_type_id as observation_type_name',
-                DB::raw('COUNT(*) as total')
-            )
-            ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_gemba_walk_checklist.unit_id');
+    $query = $this
+        ->select(
+            'masters_unit.unit_name',
+            'inspection_gemba_walk_checklist.unit_id',
+            'inspection_gemba_walk_checklist.observation_type_id',
+            DB::raw('COUNT(*) as total')
+        )
+        ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_gemba_walk_checklist.unit_id');
 
-        // Step 2: Date filter
-        if ($request->Fromdate && $request->Todate) {
-            $query->whereBetween('inspection_gemba_walk_checklist.created_at', [
-                DBdateformat($request->Fromdate),
-                DBdateformat($request->Todate)
-            ]);
-        } elseif ($request->Fromdate) {
-            $query->where('inspection_gemba_walk_checklist.created_at', '>=', DBdateformat($request->Fromdate));
-        } elseif ($request->Todate) {
-            $query->where('inspection_gemba_walk_checklist.created_at', '<=', DBdateformat($request->Todate));
-        }
-
-        // Step 3: Role-based filtering
-        if (!CheckUserRole(ROLE_SUPERADMIN) && !CheckUserRole(ROLE_ADMIN) && !CheckUserRole(ROLE_EHS_HEAD)) {
-            if (Auth::user()->role == ROLE_USER) {
-                $query->where('inspection_gemba_walk_checklist.created_by', Auth::id());
-            }
-        }
-
-        $results = $query
-            ->groupBy('masters_unit.unit_name', 'inspection_gemba_walk_checklist.observation_type_id')
-            ->get();
-
-        $finalData = [];
-        $allObservationTypes = [];
-
-        foreach ($results as $row) {
-            $unit = $row->unit_name;
-            $type = getObservationType($row->observation_type_name);
-            $count = $row->total;
-
-            $allObservationTypes[$type] = true;
-
-            if (!isset($finalData[$unit])) {
-                $finalData[$unit] = ['unit_name' => $unit];
-            }
-
-            $finalData[$unit][$type] = $count;
-        }
-
-        $allTypes = array_keys($allObservationTypes);
-        foreach ($finalData as &$unitData) {
-            foreach ($allTypes as $type) {
-                if (!isset($unitData[$type])) {
-                    $unitData[$type] = 0;
-                }
-            }
-        }
-
-        $finalData = array_values($finalData);
-        return $finalData;
+    if ($request->Fromdate && $request->Todate) {
+        $query->whereBetween('inspection_gemba_walk_checklist.created_at', [
+            DBdateformat($request->Fromdate),
+            DBdateformat($request->Todate)
+        ]);
+    } elseif ($request->Fromdate) {
+        $query->where('inspection_gemba_walk_checklist.created_at', '>=', DBdateformat($request->Fromdate));
+    } elseif ($request->Todate) {
+        $query->where('inspection_gemba_walk_checklist.created_at', '<=', DBdateformat($request->Todate));
     }
+
+    $results = $query
+        ->groupBy('masters_unit.unit_name', 'inspection_gemba_walk_checklist.observation_type_id', 'inspection_gemba_walk_checklist.unit_id')
+        ->get();
+
+    $finalData = [];
+    $observationLabels = [];
+
+    foreach ($results as $row) {
+        $unit = $row->unit_name;
+        $unit_id = $row->unit_id;
+        $typeId = $row->observation_type_id;
+        $label = getObservationType($typeId); // returns "Unsafe Act" or "Unsafe Condition"
+        $count = $row->total;
+
+        $observationLabels[$typeId] = $label;
+
+        if (!isset($finalData[$unit])) {
+            $finalData[$unit] = [
+                'unit_name' => $unit,
+                'unit_id' => $unit_id,
+                'counts' => [],
+                'observation_labels' => $observationLabels
+            ];
+        }
+
+        $finalData[$unit]['counts'][$typeId] = $count;
+    }
+
+    // Ensure missing observation types are set to 0
+    foreach ($finalData as &$unitData) {
+        foreach ($observationLabels as $typeId => $label) {
+            if (!isset($unitData['counts'][$typeId])) {
+                $unitData['counts'][$typeId] = 0;
+            }
+        }
+        $unitData['observation_labels'] = $observationLabels;
+    }
+
+    return array_values($finalData);
+}
 
     public function DailyObservationMonthCount()
     {
@@ -364,7 +363,7 @@ class GembaWalkChecklist extends Model
                     // Save file
                     $filenewname = time() . Str::random(10) . '.' . $extension;
                     $fullFilePath = $folderPath . '/' . $filenewname;
-                     $path = "public/" . $uploadpath . "/" . $filenewname;
+                    $path = "public/" . $uploadpath . "/" . $filenewname;
                     file_put_contents($fullFilePath, $fileData);
 
                     // Store file info in DB
@@ -382,7 +381,7 @@ class GembaWalkChecklist extends Model
                 }
 
 
-                  // Handle Base64 file upload (closing_evidence)
+                // Handle Base64 file upload (closing_evidence)
                 if (!empty($walk['closing_evidence']) && is_string($walk['closing_evidence'])) {
                     $base64File = $walk['closing_evidence'];
                     $extension = null;

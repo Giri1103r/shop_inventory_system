@@ -62,9 +62,15 @@ class PpeExemptionController extends BaseController
                 ->join('company_management', 'ppe_ppeexemption.company', '=', 'company_management.id')
                 ->join('masters_location', 'ppe_ppeexemption.location_id', '=', 'masters_location.id');
 
-            if (in_array(ROLE_EHS_HEAD, $userRole)) {
+            if (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole) || CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
+            } else if (in_array(ROLE_EHS_HEAD, $userRole)) {
                 $ppe_exemption_array->whereIn('ppe_ppeexemption.approve_status', [STATUS_EHS_APPROVAL_PENDING, STATUS_EHS_APPROVED, STATUS_EHS_REJECTED]);
-            } elseif (in_array(ROLE_ADMIN, $userRole) || in_array(ROLE_SUPERADMIN, $userRole)) {
+            } elseif (in_array(ROLE_HOD, $userRole)) {
+                $departmentId = $user->department_id;
+                $ppe_exemption_array->where('ppe_ppeexemption.department', $departmentId);
+            } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
+                $ppe_exemption_array
+                    ->orderBy('ppe_ppeexemption.id', 'DESC');
             } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
                 $ppe_exemption_array
                     ->orderBy('ppe_ppeexemption.id', 'DESC');

@@ -35,6 +35,7 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
 use PhpOffice\PhpSpreadsheet\RichText\RichText;
 use PhpOffice\PhpSpreadsheet\Worksheet\Worksheet;
+use PhpOffice\PhpSpreadsheet\Style\Color;
 
 class GembaWalkController extends Controller
 {
@@ -80,6 +81,7 @@ class GembaWalkController extends Controller
     public function index(Request $request)
     {
         try {
+            // dd($request->all());
             if (Auth::check()) {
                 if ($request->ajax()) {
                     try {
@@ -148,12 +150,20 @@ class GembaWalkController extends Controller
                 }
             }
             $shift = $this->shift->getShiftname();
-            $ehs_officers =$this->employee->getEmployeeBasedOnRole(ROLE_EHS_OFFICER);
+            $ehs_officers = $this->employee->getEmployeeBasedOnRole(ROLE_EHS_OFFICER);
             $unit = $this->unit->getunit();
+            $observationType = $request->gemba_walk;
+            $unitId = $request->unit_id;
+            $fromDate = $request->fromDate;
+            $toDate = $request->toDate;
             $data = array(
                 'shift' => $shift,
-                'unit'=>$unit,
+                'unit' => $unit,
                 'dashboard_search' => $request->unit_name,
+                'observationType' => $observationType,
+                'unitId' => $unitId,
+                'fromDate' => $fromDate,
+                'toDate' => $toDate,
                 'ehs_officers' => $ehs_officers,
             );
             return view('inspection.gembaWalk.list', $data);
@@ -787,7 +797,7 @@ class GembaWalkController extends Controller
                 $gembaWalk_ehs_floor_manager_details = $this->gembaWalkInspectionEhsAprroval->getEHSFloormanagerReview($id);
                 $gembaWalk_ehs_verificatioin_details = $this->gembaWalkInspectionEhsAprroval->getEHSOfficerReview($id);
                 $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
-                $closingEvidence = $this->gembaWalkChecklistFile->getClosingEvidence($id);
+                $closingEvidence = $this->gembaWalkInspectionEhsFile->getClosingEvidence($id);
 
 
                 $data = [
@@ -839,8 +849,8 @@ class GembaWalkController extends Controller
 
             $gembaWalk_approved_singnature = GetSignature($getUserId->created_by, $id, $type);
             $gembaWalk_verified_singnature = GetSignature($getUserId->verified_by, $id, $type);
-            $image_type = 4;
-            $closing_image = getGembaWalkClosingImage($id, $image_type);
+            $image_type = 2;
+            $closing_image = evidenclosing($id, $image_type);
             $document_no = $this->document_reference->selectOne($getUserId->document_reference_id);
 
 
@@ -1028,25 +1038,37 @@ class GembaWalkController extends Controller
 
 
 
-                // Insert Image if exists
                 if (!empty($data->file_path)) {
-                    $imagePath = ($data->file_path);
-                    if (file_exists($imagePath)) {
-                        $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                        $drawing->setPath($imagePath);
-                        $drawing->setCoordinates("K{$row}");
-                        $drawing->setOffsetX(5);
-                        $drawing->setOffsetY(5);
-                        $drawing->setWidth(80);
-                        $drawing->setWorksheet($sheet);
-                        $sheet->getRowDimension($row)->setRowHeight(90);
-                        $sheet->getColumnDimension('K')->setWidth(20);
+                    $filePath = $data->file_path;
+                    $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+                    $videoExtensions = ['mp4', 'webm', 'ogg'];
+
+                    if (file_exists($filePath)) {
+                        if (in_array($extension, $videoExtensions)) {
+                            // Insert hyperlink or text for video
+                            $sheet->setCellValue("K{$row}", 'Video File');
+                            $sheet->getCell("K{$row}")->getHyperlink()->setUrl(asset($filePath));
+                            $sheet->getStyle("K{$row}")->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLUE);
+                            $sheet->getStyle("K{$row}")->getFont()->setUnderline(true);
+                        } else {
+                            // Insert image
+                            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                            $drawing->setPath($filePath);
+                            $drawing->setCoordinates("K{$row}");
+                            $drawing->setOffsetX(5);
+                            $drawing->setOffsetY(5);
+                            $drawing->setWidth(80);
+                            $drawing->setWorksheet($sheet);
+                            $sheet->getRowDimension($row)->setRowHeight(90);
+                            $sheet->getColumnDimension('K')->setWidth(20);
+                        }
                     } else {
-                        $sheet->setCellValue("K{$row}", 'Image not found');
+                        $sheet->setCellValue("K{$row}", 'File not found');
                     }
                 } else {
-                    $sheet->setCellValue("K{$row}", 'No image');
+                    $sheet->setCellValue("K{$row}", 'No file');
                 }
+
 
                 $sheet->setCellValue("L{$row}", $data->capa ?? 'N/A');
                 $sheet->setCellValue("M{$row}", getGembaWalkStatus($data->status ?? ''));
@@ -1064,23 +1086,36 @@ class GembaWalkController extends Controller
 
 
                 if (!empty($closing_image)) {
-                    $imagePath = ($closing_image);
-                    if (file_exists($imagePath)) {
-                        $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
-                        $drawing->setPath($imagePath);
-                        $drawing->setCoordinates("Q{$row}");
-                        $drawing->setOffsetX(5);
-                        $drawing->setOffsetY(5);
-                        $drawing->setWidth(80);
-                        $drawing->setWorksheet($sheet);
-                        $sheet->getRowDimension($row)->setRowHeight(90);
-                        $sheet->getColumnDimension('Q')->setWidth(20);
+                    $ImagePath = $closing_image;
+                    $extension = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+                    $videoExtensions = ['mp4', 'webm', 'ogg'];
+
+                    if (file_exists($ImagePath)) {
+                        if (in_array($extension, $videoExtensions)) {
+                            // Insert hyperlink for video
+                            $sheet->setCellValue("Q{$row}", 'Video File');
+                            $sheet->getCell("Q{$row}")->getHyperlink()->setUrl(asset($ImagePath));
+                            $sheet->getStyle("Q{$row}")->getFont()->getColor()->setARGB(\PhpOffice\PhpSpreadsheet\Style\Color::COLOR_BLUE);
+                            $sheet->getStyle("Q{$row}")->getFont()->setUnderline(true);
+                        } else {
+                            // Insert image
+                            $drawing = new \PhpOffice\PhpSpreadsheet\Worksheet\Drawing();
+                            $drawing->setPath($ImagePath);
+                            $drawing->setCoordinates("Q{$row}");
+                            $drawing->setOffsetX(5);
+                            $drawing->setOffsetY(5);
+                            $drawing->setWidth(80);
+                            $drawing->setWorksheet($sheet);
+                            $sheet->getRowDimension($row)->setRowHeight(90);
+                            $sheet->getColumnDimension('Q')->setWidth(20);
+                        }
                     } else {
-                        $sheet->setCellValue("Q{$row}", 'Image not found');
+                        $sheet->setCellValue("Q{$row}", 'File not found');
                     }
                 } else {
-                    $sheet->setCellValue("Q{$row}", 'No image');
+                    $sheet->setCellValue("Q{$row}", 'No file');
                 }
+
 
                 $sheet->getStyle("A{$row}:Q{$row}")->applyFromArray([
                     'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
@@ -1232,8 +1267,8 @@ class GembaWalkController extends Controller
                 $verifiedSignature = GetSignature($getUserId->verified_by ?? '', $id, $type);
                 $document_no = $this->document_reference->selectOne($getUserId->document_reference_id ?? '');
 
-                $image_type = 4;
-                $closing_image = getGembaWalkClosingImage($inspection_detail->gemba_walk_id, $image_type);
+                $image_type = 2;
+                $closing_image = evidenclosing($inspection_detail->gemba_walk_id, $image_type);
                 $currentRow = $row;
 
                 $logoPath = public_path('assets/images/logo-dark.png');
@@ -1374,18 +1409,41 @@ class GembaWalkController extends Controller
                     $sheet->setCellValue("J{$detIL_row}", implode(', ', $hazardNames));
                     $sheet->getStyle("J{$detIL_row}")->getAlignment()->setWrapText(true);
 
+                    $videoExtensions = ['mp4', 'webm', 'ogg'];
+                    $docExtensions = ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'txt'];
+                    $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+
+                    // === FILE 1 ===
                     if (!empty($data->file_path) && file_exists($data->file_path)) {
-                        $drawing = new Drawing();
-                        $drawing->setPath($data->file_path);
-                        $drawing->setCoordinates("K{$detIL_row}");
-                        $drawing->setOffsetX(5);
-                        $drawing->setOffsetY(5);
-                        $drawing->setWidth(80);
-                        $drawing->setWorksheet($sheet);
-                        $sheet->getRowDimension($detIL_row)->setRowHeight(90);
+                        $extension = strtolower(pathinfo($data->file_path, PATHINFO_EXTENSION));
+                        $column = "K{$detIL_row}";
+
+                        if (in_array($extension, $imageExtensions)) {
+                            $drawing = new Drawing();
+                            $drawing->setPath($data->file_path);
+                            $drawing->setCoordinates($column);
+                            $drawing->setOffsetX(5);
+                            $drawing->setOffsetY(5);
+                            $drawing->setWidth(80);
+                            $drawing->setWorksheet($sheet);
+                            $sheet->getRowDimension($detIL_row)->setRowHeight(90);
+                        } elseif (in_array($extension, $videoExtensions)) {
+                            $sheet->setCellValue($column, 'Video File');
+                            $sheet->getCell($column)->getHyperlink()->setUrl(asset($data->file_path));
+                            $sheet->getStyle($column)->getFont()->getColor()->setARGB(Color::COLOR_BLUE);
+                            $sheet->getStyle($column)->getFont()->setUnderline(true);
+                        } elseif (in_array($extension, $docExtensions)) {
+                            $sheet->setCellValue($column, strtoupper($extension) . ' Document');
+                            $sheet->getCell($column)->getHyperlink()->setUrl(asset($data->file_path));
+                            $sheet->getStyle($column)->getFont()->getColor()->setARGB(Color::COLOR_BLUE);
+                            $sheet->getStyle($column)->getFont()->setUnderline(true);
+                        } else {
+                            $sheet->setCellValue($column, 'Unsupported file type');
+                        }
                     } else {
-                        $sheet->setCellValue("K{$detIL_row}", 'No image');
+                        $sheet->setCellValue("K{$detIL_row}", 'No file');
                     }
+
 
                     $sheet->setCellValue("L{$detIL_row}", $data->capa ?? '-');
                     $sheet->setCellValue("M{$detIL_row}", getGembaWalkStatus($data->status ?? ''));
@@ -1408,16 +1466,33 @@ class GembaWalkController extends Controller
                     $sheet->setCellValue("P{$detIL_row}", getUsername($data->gemba_walk_created_by ?? ''));
 
                     if (!empty($closing_image) && file_exists($closing_image)) {
-                        $drawing = new Drawing();
-                        $drawing->setPath($closing_image);
-                        $drawing->setCoordinates("Q{$detIL_row}");
-                        $drawing->setOffsetX(5);
-                        $drawing->setOffsetY(5);
-                        $drawing->setWidth(80);
-                        $drawing->setWorksheet($sheet);
-                        $sheet->getRowDimension($detIL_row)->setRowHeight(90);
+                        $extension = strtolower(pathinfo($closing_image, PATHINFO_EXTENSION));
+                        $column = "Q{$detIL_row}";
+
+                        if (in_array($extension, $imageExtensions)) {
+                            $drawing = new Drawing();
+                            $drawing->setPath($closing_image);
+                            $drawing->setCoordinates($column);
+                            $drawing->setOffsetX(5);
+                            $drawing->setOffsetY(5);
+                            $drawing->setWidth(80);
+                            $drawing->setWorksheet($sheet);
+                            $sheet->getRowDimension($detIL_row)->setRowHeight(90);
+                        } elseif (in_array($extension, $videoExtensions)) {
+                            $sheet->setCellValue($column, 'Video File');
+                            $sheet->getCell($column)->getHyperlink()->setUrl(asset($closing_image));
+                            $sheet->getStyle($column)->getFont()->getColor()->setARGB(Color::COLOR_BLUE);
+                            $sheet->getStyle($column)->getFont()->setUnderline(true);
+                        } elseif (in_array($extension, $docExtensions)) {
+                            $sheet->setCellValue($column, strtoupper($extension) . ' Document');
+                            $sheet->getCell($column)->getHyperlink()->setUrl(asset($closing_image));
+                            $sheet->getStyle($column)->getFont()->getColor()->setARGB(Color::COLOR_BLUE);
+                            $sheet->getStyle($column)->getFont()->setUnderline(true);
+                        } else {
+                            $sheet->setCellValue($column, 'Unsupported file type');
+                        }
                     } else {
-                        $sheet->setCellValue("Q{$detIL_row}", 'No image');
+                        $sheet->setCellValue("Q{$detIL_row}", 'No file');
                     }
 
                     $sheet->getStyle("A{$detIL_row}:Q{$detIL_row}")->applyFromArray([

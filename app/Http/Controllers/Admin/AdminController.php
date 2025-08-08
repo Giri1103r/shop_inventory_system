@@ -1055,7 +1055,7 @@ class AdminController extends Controller
             foreach ($chartData as $item) {
                 $lookup['Major'][$item->unit_name] = [
                     'unit_id' => $item->unit_id,
-                    'injury_type' =>IIR_TYPE_MAJOR
+                    'injury_type' => IIR_TYPE_MAJOR
                 ];
                 $lookup['Minor'][$item->unit_name] = [
                     'unit_id' => $item->unit_id,
@@ -1063,7 +1063,7 @@ class AdminController extends Controller
                 ];
                 $lookup['Fatal'][$item->unit_name] = [
                     'unit_id' => $item->unit_id,
-                    'injury_type' =>IIR_TYPE_FATAL
+                    'injury_type' => IIR_TYPE_FATAL
                 ];
             }
 
@@ -1158,48 +1158,63 @@ class AdminController extends Controller
 
 
 
-    public function gembaWalkObservation(Request $request)
-    {
-        try {
-            $chartData = $this->gembaWalk->gembaWalkPotentialCount();
+ public function gembaWalkObservation(Request $request)
+{
+    try {
+        $chartData = $this->gembaWalk->gembaWalkPotentialCount();
 
-            if (count($chartData) <= 0) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-            }
+        if (count($chartData) <= 0) {
+            return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+        }
 
-
-
-            $chartDataSeries = [
-                'Unsafe Act' => [],
-                'Unsafe Condition' => [],
-            ];
-
-            $categories = [];
-
-            foreach ($chartData as $data) {
-                $categories[] = $data['unit_name'];
-                foreach ($chartDataSeries as $key => $value) {
-                    $chartDataSeries[$key][] = isset($data[$key]) ? $data[$key] : 0;
+        // Get distinct observation types
+        $observationTypes = [];
+        foreach ($chartData as $data) {
+            foreach ($data['counts'] as $obsTypeId => $count) {
+                if (!isset($observationTypes[$obsTypeId])) {
+                    $observationTypes[$obsTypeId] = $data['observation_labels'][$obsTypeId];
                 }
             }
-
-            $chartData = [
-                'categories' => $categories,
-                'series' => [
-                    ['name' => 'Unsafe Act', 'data' => $chartDataSeries['Unsafe Act']],
-                    ['name' => 'Unsafe Condition', 'data' => $chartDataSeries['Unsafe Condition']],
-                ],
-            ];
-
-            return view('admin.dashboard.gembaWalkObservation', [
-                'chartData' => $chartData
-            ]);
-        } catch (\Exception $ex) {
-            report($ex);
-
-            return back()->with('error', 'Failed to load unit-wise incident data.');
         }
+
+        // Prepare categories and unit IDs
+        $categories = array_column($chartData, 'unit_name');
+        $unitIds = array_column($chartData, 'unit_id');
+
+        // Build series dynamically for each observation type
+        $series = [];
+        foreach ($observationTypes as $typeId => $label) {
+            $series[] = [
+                'name' => $label,
+                'id' => $typeId,
+                'data' => array_map(function ($row) use ($typeId) {
+                    return [
+                        'x' => $row['unit_name'],
+                        'y' => $row['counts'][$typeId] ?? 0,
+                        'custom' => [
+                            'unit_id' => $row['unit_id'],
+                            'observation_type_id' => $typeId
+                        ]
+                    ];
+                }, $chartData)
+            ];
+        }
+
+        $chartData = [
+            'categories' => $categories,
+            'series' => $series
+        ];
+
+        return view('admin.dashboard.gembaWalkObservation', [
+            'chartData' => $chartData
+        ]);
+    } catch (\Exception $ex) {
+        report($ex);
+        return back()->with('error', 'Failed to load unit-wise incident data.');
     }
+}
+    
+
 
     public function DailyObservationMonthCount()
     {

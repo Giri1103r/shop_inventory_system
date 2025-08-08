@@ -73,10 +73,10 @@ class PperequestController extends BaseController
                 ->join('masters_location', 'ppe_pperequest.location_id', '=', 'masters_location.id')
                 ->join('masters_unit', 'ppe_pperequest.unit_id', '=', 'masters_unit.id')
                 ->join('masters_department', 'ppe_pperequest.department', '=', 'masters_department.id');
-
-            if (in_array(ROLE_EHS_HEAD, $userRole)) {
+            if (in_array(ROLE_EHS_HEAD, $userRole) || CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
                 $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
             } elseif (in_array(ROLE_HOD, $userRole)) {
+
                 $reportingEmployees = Employee::where('reporting_manager', $user->employee_id)
                     ->where('status', 1)
                     ->get(['emp_id', 'company', 'department']);
@@ -86,19 +86,22 @@ class PperequestController extends BaseController
                         foreach ($reportingEmployees as $emp) {
                             $q->orWhere(function ($subQ) use ($emp) {
                                 $subQ
-                                    ->where('ppe_pperequest.company_id', $emp->company)
-                                    ->where('ppe_pperequest.department', $emp->department);
+                                    ->where('ppe_pperequest.emp_id', $emp->emp_id);
                             });
                         }
                     });
                 }
+
+
+                $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
             } elseif (in_array(ROLE_STORE_MANAGER, $userRole)) {
+                $companyId = $user->company_id;
                 $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
             } elseif (in_array(ROLE_EHS_OFFICER, $userRole)) {
                 $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
             } elseif (in_array(ROLE_ADMIN, $userRole)) {
                 $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
-            } elseif (in_array(ROLE_SUPERADMIN, $userRole)) {
+            } elseif (in_array(ROLE_SUPERADMIN, $userRole) || CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
                 $ppe_request_array->orderBy('ppe_pperequest.id', 'DESC');
             } else {
                 $ppe_request_array->where('ppe_pperequest.created_by', Auth::id());
@@ -259,7 +262,7 @@ class PperequestController extends BaseController
                 if ($request->request_for == 1) {
 
                     $employee = User::where('employee_id', $request->emp_id)
-                        ->select('unit_id', 'department_id', 'company_id','location_id')
+                        ->select('unit_id', 'department_id', 'company_id', 'location_id')
                         ->first();
 
                     $unit = $employee->unit_id;
@@ -268,7 +271,7 @@ class PperequestController extends BaseController
                     $department = $employee->department_id;
                 } elseif ($request->request_for == 2) {
                     $work = Work::where('emp_id', $request->emp_id)
-                        ->select('unit', 'department', 'company','location')
+                        ->select('unit', 'department', 'company', 'location')
                         ->first();
 
                     $unit = $work->unit;

@@ -239,20 +239,35 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Evidence</label>
                                                     <div class="view_data">
-                                                        @if ($gembaWalk)
-                                                            <a href="{{ asset($gembaWalk->file_path) }}" target="_blank">
-                                                                <img src="{{ asset($gembaWalk->file_path) }}"
-                                                                    alt="image"
-                                                                    style="max-width: 100px; max-height: 100px;">
-                                                            </a>
+                                                        @if ($gembaWalk && $gembaWalk->file_path)
+                                                            @php
+                                                                $filePath = asset($gembaWalk->file_path);
+                                                                $extension = pathinfo(
+                                                                    $gembaWalk->file_path,
+                                                                    PATHINFO_EXTENSION,
+                                                                );
+                                                                $videoExtensions = ['mp4', 'webm', 'ogg'];
+                                                            @endphp
+
+                                                            @if (in_array(strtolower($extension), $videoExtensions))
+                                                                <video width="200" height="150" controls>
+                                                                    <source src="{{ $filePath }}"
+                                                                        type="video/{{ strtolower($extension) }}">
+                                                                    Your browser does not support the video tag.
+                                                                </video>
+                                                            @else
+                                                                <a href="{{ $filePath }}" target="_blank">
+                                                                    <img src="{{ $filePath }}" alt="image"
+                                                                        style="max-width: 100px; max-height: 100px;">
+                                                                </a>
+                                                            @endif
                                                         @else
                                                             <small class="text-muted">No file uploaded yet.</small>
                                                         @endif
-
-
                                                     </div>
                                                 </div>
                                             </div>
+
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
@@ -305,18 +320,33 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Closing Evidence</label>
                                                     <div class="view_data">
-                                                        @if ($closingEvidence)
-                                                            <a href="{{ asset($closingEvidence->file_path) }}"
-                                                                target="_blank">
-                                                                <img src="{{ asset($closingEvidence->file_path) }}"
-                                                                    alt="image"
-                                                                    style="max-width: 100px; max-height: 100px;">
-                                                            </a>
+                                                        @if ($closingEvidence && $closingEvidence->file_path)
+                                                            @php
+                                                                $filePath = asset($closingEvidence->file_path);
+                                                                $extension = strtolower(
+                                                                    pathinfo(
+                                                                        $closingEvidence->file_path,
+                                                                        PATHINFO_EXTENSION,
+                                                                    ),
+                                                                );
+                                                                $videoExtensions = ['mp4', 'webm', 'ogg'];
+                                                            @endphp
+
+                                                            @if (in_array($extension, $videoExtensions))
+                                                                <video width="200" height="150" controls>
+                                                                    <source src="{{ $filePath }}"
+                                                                        type="video/{{ $extension }}">
+                                                                    Your browser does not support the video tag.
+                                                                </video>
+                                                            @else
+                                                                <a href="{{ $filePath }}" target="_blank">
+                                                                    <img src="{{ $filePath }}" alt="image"
+                                                                        style="max-width: 100px; max-height: 100px;">
+                                                                </a>
+                                                            @endif
                                                         @else
                                                             <small class="text-muted">No file uploaded yet.</small>
                                                         @endif
-
-
                                                     </div>
                                                 </div>
                                             </div>
@@ -438,20 +468,39 @@
                                             <div class="form-group form-input">
                                                 <label class="form-label">Uploaded File</label>
                                                 <div class="view_data">
-                                                    @if ($gembaWalk_ehs_floor_manager_details)
-                                                        <a href="{{ asset($gembaWalk_ehs_floor_manager_details->file_path) }}"
-                                                            target="_blank">
-                                                            <img src="{{ asset($gembaWalk_ehs_floor_manager_details->file_path) }}"
-                                                                alt="image"
-                                                                style="max-width: 100px; max-height: 100px;">
-                                                        </a>
+                                                    @if ($gembaWalk_ehs_floor_manager_details && $gembaWalk_ehs_floor_manager_details->file_path)
+                                                        @php
+                                                            $filePath = asset(
+                                                                $gembaWalk_ehs_floor_manager_details->file_path,
+                                                            );
+                                                            $extension = strtolower(
+                                                                pathinfo(
+                                                                    $gembaWalk_ehs_floor_manager_details->file_path,
+                                                                    PATHINFO_EXTENSION,
+                                                                ),
+                                                            );
+                                                            $videoExtensions = ['mp4', 'webm', 'ogg'];
+                                                        @endphp
+
+                                                        @if (in_array($extension, $videoExtensions))
+                                                            <video width="200" height="150" controls>
+                                                                <source src="{{ $filePath }}"
+                                                                    type="video/{{ $extension }}">
+                                                                Your browser does not support the video tag.
+                                                            </video>
+                                                        @else
+                                                            <a href="{{ $filePath }}" target="_blank">
+                                                                <img src="{{ $filePath }}" alt="image"
+                                                                    style="max-width: 100px; max-height: 100px;">
+                                                            </a>
+                                                        @endif
                                                     @else
                                                         <small class="text-muted">No file uploaded yet.</small>
                                                     @endif
-
                                                 </div>
                                             </div>
                                         </div>
+
 
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
@@ -507,17 +556,35 @@
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Uploaded File</label>
                                                     <div class="view_data">
-                                                        @if ($gembaWalk_ehs_floor_manager_details)
-                                                            <a href="{{ asset($gembaWalk_ehs_floor_manager_details->file_path) }}"
-                                                                target="_blank">
-                                                                <img src="{{ asset($gembaWalk_ehs_floor_manager_details->file_path) }}"
-                                                                    alt="image"
-                                                                    style="max-width: 100px; max-height: 100px;">
-                                                            </a>
+                                                        @if ($gembaWalk_ehs_floor_manager_details && $gembaWalk_ehs_floor_manager_details->file_path)
+                                                            @php
+                                                                $filePath = asset(
+                                                                    $gembaWalk_ehs_floor_manager_details->file_path,
+                                                                );
+                                                                $extension = strtolower(
+                                                                    pathinfo(
+                                                                        $gembaWalk_ehs_floor_manager_details->file_path,
+                                                                        PATHINFO_EXTENSION,
+                                                                    ),
+                                                                );
+                                                                $videoExtensions = ['mp4', 'webm', 'ogg'];
+                                                            @endphp
+
+                                                            @if (in_array($extension, $videoExtensions))
+                                                                <video width="200" height="150" controls>
+                                                                    <source src="{{ $filePath }}"
+                                                                        type="video/{{ $extension }}">
+                                                                    Your browser does not support the video tag.
+                                                                </video>
+                                                            @else
+                                                                <a href="{{ $filePath }}" target="_blank">
+                                                                    <img src="{{ $filePath }}" alt="image"
+                                                                        style="max-width: 100px; max-height: 100px;">
+                                                                </a>
+                                                            @endif
                                                         @else
                                                             <small class="text-muted">No file uploaded yet.</small>
                                                         @endif
-
                                                     </div>
                                                 </div>
                                             </div>

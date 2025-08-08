@@ -74,6 +74,7 @@ use App\Models\Inspection\Safety\SafetyWalkObservationDetails;
 use App\Models\Inspection\Fire\EmergencyLightInspectionDetails;
 use App\Models\Inspection\Fire\MonthlyPhysicalInspectionFileUpload;
 use App\Models\Inspection\GembaWalk\GembaWalkHazard;
+use App\Models\Inspection\GembaWalk\GembaWalkInspectionEhsFile;
 use App\Models\Inspection\MSDS\Master\Chemical;
 use App\Models\Inspection\MSDS\Master\NFARating;
 use App\Models\KPI\HSCInputs;
@@ -3002,6 +3003,18 @@ if (!function_exists('getMonth')) {
         }
     }
 
+       if (!function_exists('evidenclosing')) {
+        function evidenclosing($id, $type)
+        {
+            $file = GembaWalkInspectionEhsFile::where('gemba_walk_id', $id)
+                ->where('file_type', $type)
+                ->where('trash', 'NO')
+                ->first();
+
+            return $file->file_path ?? '';
+        }
+    }
+
 
     // Fire Inspection Hooter Sequence
     if (!function_exists('FireSequence')) {
@@ -3345,14 +3358,14 @@ if (!function_exists('InspectionCount')) {
     function InspectionCount($from_date, $to_date)
     {
         $group_wise_models = [
-            'Environment' => [
-                \App\Models\Inspection\Environment\AmbientAirMonitoring::class,
-                \App\Models\Inspection\Environment\AmbientNoiseMonitoring::class,
-                \App\Models\Inspection\Environment\DgSetStackEmissionMonitoring::class,
-                \App\Models\Inspection\Environment\LuxMonitoring::class,
-                \App\Models\Inspection\Environment\WorkNoiseMonitoring::class,
-                \App\Models\Inspection\Environment\WorkZoneAirMonitoring::class,
-            ],
+            // 'Environment' => [
+            //     \App\Models\Inspection\Environment\AmbientAirMonitoring::class,
+            //     \App\Models\Inspection\Environment\AmbientNoiseMonitoring::class,
+            //     \App\Models\Inspection\Environment\DgSetStackEmissionMonitoring::class,
+            //     \App\Models\Inspection\Environment\LuxMonitoring::class,
+            //     \App\Models\Inspection\Environment\WorkNoiseMonitoring::class,
+            //     \App\Models\Inspection\Environment\WorkZoneAirMonitoring::class,
+            // ],
 
             'Fire' => [
                 \App\Models\Inspection\Fire\CartridgeTypeFireExtinguisher::class,
@@ -3386,9 +3399,9 @@ if (!function_exists('InspectionCount')) {
                 \App\Models\Inspection\MSDS\MSDS::class
             ],
 
-            'RRAA' => [
-                \App\Models\Inspection\RRAA\RRAADetails::class,
-            ],
+            // 'RRAA' => [
+            //     \App\Models\Inspection\RRAA\RRAADetails::class,
+            // ],
 
             'Safety' => [
                 App\Models\Inspection\Safety\FireSafetyEquipment::class,
@@ -3418,7 +3431,7 @@ if (!function_exists('InspectionCount')) {
                 App\Models\Inspection\Ohc\OccupationHealthInspection::class,
                 App\Models\Inspection\Ohc\OHCHygieneCleaningChecklist::class,
                 // App\Models\Inspection\Ohc\PhysicalHealthExamination::class,
-                App\Models\Inspection\Ohc\SafetyPettyDetails::class,
+                // App\Models\Inspection\Ohc\SafetyPettyDetails::class,
                 App\Models\Inspection\Ohc\WeeklyAmbulance::class,
                 App\Models\Inspection\Ohc\WeeklyFirstAidBox::class,
             ]
