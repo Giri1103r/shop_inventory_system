@@ -959,6 +959,7 @@ class SafetyPermitController extends BaseController
                     'masters_employee.emp_id',
                 )
                     ->where('masters_employee.status', 1)
+                    ->whereRaw("FIND_IN_SET(?, user_role)", [3])
                     ->get()
                     ->map(function ($employee) {
                         return [
