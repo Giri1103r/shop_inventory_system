@@ -529,30 +529,23 @@ class SafetyPermitController extends BaseController
                 return $this->sendResponse($success, 'Safety Permit Details');
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
 
     public function ehsapproval(Request $request)
     {
-
         try {
-
             $rules = [
-                'ptw_id' => 'required',
-                'remarks' => 'required',
-                'status' => 'required',
-
-
+                'ptw_id'   => 'required',
+                'remarks'  => 'required',
+                'status'   => 'required',
             ];
             $messages = [
-                'ptw_id.required' => 'id is Required',
+                'ptw_id.required'  => 'id is Required',
                 'remarks.required' => 'Remarks is Required',
-                'status.required' => 'Status is Required',
-
-
-
+                'status.required'  => 'Status is Required',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -560,9 +553,12 @@ class SafetyPermitController extends BaseController
             if ($validator->fails()) {
                 return $this->sendError('Validation Error', $validator->errors(), 422);
             }
-            $id = $request->ptw_id;
-            $safetypermit = $this->safetypermit->find($id);
 
+            $id            = $request->ptw_id;
+            $safetypermit  = $this->safetypermit->find($id);
+            $userids       = []; // ✅ initialize to avoid undefined variable
+
+            // Map request status to permit status
             if ($request->status == '1') {
                 $permit_status = STATUS_EHS_HOLD;
             } elseif ($request->status == '2') {
@@ -572,73 +568,71 @@ class SafetyPermitController extends BaseController
             } elseif ($request->status == '4') {
                 $permit_status = STATUS_EHS_REASSIGN;
             } elseif ($request->status == '5') {
-
                 $permit_status = STATUS_PLANT_HEAD_PENDING;
             }
 
-            $approve =   $this->approvereject->ehsapproval_api($permit_status, $safetypermit);
+            $approve = $this->approvereject->ehsapproval_api($permit_status, $safetypermit);
+
             if ($request->status == '4') {
                 $this->safetypermit->reassignto_api($request->reassign_to, $id);
             } elseif ($request->status == '2' || $request->status == '1') {
                 $this->safetypermit->resume_hold($approve->created_by, $id);
             }
+
             $this->safetypermit->permitstatus($permit_status, $id);
 
+            // Status-specific handling
             if ($request->status == '1') {
-
                 $mailsubject = 'EHS Holded the permit';
                 $Assignedusers = User::whereIn('id', [$approve->created_by, $safetypermit->created_by])
                     ->select('name', 'email')
                     ->get()
                     ->unique('email');
 
-                if (count($Assignedusers) > 0) {
-
+                if ($Assignedusers->count() > 0) {
                     foreach ($Assignedusers as $user) {
-
                         $email_id = $user->email;
-
-                        if ($email_id != '' || $email_id != null) {
-                            $safetypermitdetails =  $this->safetypermit->selectmail($id);
-                            $permitrray  = $safetypermitdetails->toArray();
-
-                            $permitrray['name'] = $user->name;
-                            $permitrray['email_id'] =  $email_id;
+                        if (!empty($email_id)) {
+                            $safetypermitdetails = $this->safetypermit->selectmail($id);
+                            $permitrray = $safetypermitdetails->toArray();
+                            $permitrray['name']         = $user->name;
+                            $permitrray['email_id']     = $email_id;
                             $permitrray['mail_subject'] = $mailsubject;
 
                             Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
                         }
                     }
                 }
-                $UserIds = User::whereIn('id', [$safetypermit->resume_hold_by, $safetypermit->created_by])
+
+                $userids = User::whereIn('id', [$safetypermit->resume_hold_by, $safetypermit->created_by])
                     ->pluck('id')
                     ->toArray();
 
-                $UserIdsCommaSeparated = implode(',', $UserIds);
-                $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                $notificationData = [
+                    'notification_type'    => 3,
+                    'module_type'          => 1,
                     'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
+                    'mobile_notification'  => json_encode([
+                        'title'   => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
-                        'id' => $safetypermit->id,
-                        'module' => 3,
-                    )),
-                    'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
-                    'assigned_user' => $UserIdsCommaSeparated,
-                    'created_by' => Auth::id(),
-                );
+                        'icon'    => admin_url('public/assets/icons/permit_to_work.png'),
+                        'id'      => $safetypermit->id,
+                        'module'  => 3,
+                    ]),
+                    'web_link'      => admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                    'assigned_user' => implode(',', $userids),
+                    'created_by'    => Auth::id(),
+                ];
                 notificationSave($notificationData);
+
                 $notifydata = [
-                    'title' => $mailsubject,
-                    'message' =>   'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                    'module_id' => $safetypermit->permit_id,
-                    'module_type' => 1,
+                    'title'          => $mailsubject,
+                    'message'        => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                    'module_id'      => $safetypermit->permit_id,
+                    'module_type'    => 1,
                     'module_sub_type' => 0,
                 ];
-                mobilePushNotification($UserIdsCommaSeparated, $notifydata);
+                mobilePushNotification(implode(',', $userids), $notifydata);
             } elseif ($request->status == '2') {
                 $mailsubject = 'EHS Resumed the permit';
                 $Assignedusers = User::whereIn('id', [$approve->created_by, $safetypermit->created_by])
@@ -646,73 +640,63 @@ class SafetyPermitController extends BaseController
                     ->get()
                     ->unique('email');
 
-                if (count($Assignedusers) > 0) {
-
+                if ($Assignedusers->count() > 0) {
                     foreach ($Assignedusers as $user) {
-
                         $email_id = $user->email;
-
-                        if ($email_id != '' || $email_id != null) {
-                            $safetypermitdetails =  $this->safetypermit->selectmail($id);
-                            $permitrray  = $safetypermitdetails->toArray();
-
-                            $permitrray['name'] = $user->name;
-                            $permitrray['email_id'] =  $email_id;
+                        if (!empty($email_id)) {
+                            $safetypermitdetails = $this->safetypermit->selectmail($id);
+                            $permitrray = $safetypermitdetails->toArray();
+                            $permitrray['name']         = $user->name;
+                            $permitrray['email_id']     = $email_id;
                             $permitrray['mail_subject'] = $mailsubject;
 
                             Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
                         }
                     }
                 }
-                $UserIds = User::whereIn('id', [$safetypermit->resume_hold_by, $safetypermit->created_by])
+
+                $userids = User::whereIn('id', [$safetypermit->resume_hold_by, $safetypermit->created_by])
                     ->pluck('id')
                     ->toArray();
 
-                $UserIdsCommaSeparated = implode(',', $UserIds);
-                $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                $notificationData = [
+                    'notification_type'    => 3,
+                    'module_type'          => 1,
                     'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
+                    'mobile_notification'  => json_encode([
+                        'title'   => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
-                        'id' => $safetypermit->id,
-                        'module' => 3,
-                    )),
-                    'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
-                    'assigned_user' => $UserIdsCommaSeparated,
-                    'created_by' => Auth::id(),
-                );
+                        'icon'    => admin_url('public/assets/icons/permit_to_work.png'),
+                        'id'      => $safetypermit->id,
+                        'module'  => 3,
+                    ]),
+                    'web_link'      => admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                    'assigned_user' => implode(',', $userids),
+                    'created_by'    => Auth::id(),
+                ];
                 notificationSave($notificationData);
+
                 $notifydata = [
-                    'title' => $mailsubject,
-                    'message' =>   'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                    'module_id' => $safetypermit->permit_id,
-                    'module_type' => 1,
+                    'title'          => $mailsubject,
+                    'message'        => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                    'module_id'      => $safetypermit->permit_id,
+                    'module_type'    => 1,
                     'module_sub_type' => 0,
                 ];
-                mobilePushNotification($UserIdsCommaSeparated, $notifydata);
+                mobilePushNotification(implode(',', $userids), $notifydata);
             } elseif ($request->status == '3') {
                 $mailsubject = 'EHS declined the permit Rework the permit';
-                $notifywhere = array(
-                    'id' => $safetypermit->created_by,
-                );
-                $userids = User::where($notifywhere)->pluck('id')->toArray();
-                $users = User::where($notifywhere)->get();
+                $userids = User::where('id', $safetypermit->created_by)->pluck('id')->toArray();
+                $users   = User::where('id', $safetypermit->created_by)->get();
 
-                if (count($users) > 0) {
-
+                if ($users->count() > 0) {
                     foreach ($users as $user) {
-
                         $email_id = $user->email;
-
-                        if ($email_id != '' || $email_id != null) {
-                            $safetypermitdetails =  $this->safetypermit->selectmail($id);
-                            $permitrray  = $safetypermitdetails->toArray();
-
-                            $permitrray['name'] = $user->name;
-                            $permitrray['email_id'] =  $email_id;
+                        if (!empty($email_id)) {
+                            $safetypermitdetails = $this->safetypermit->selectmail($id);
+                            $permitrray = $safetypermitdetails->toArray();
+                            $permitrray['name']         = $user->name;
+                            $permitrray['email_id']     = $email_id;
                             $permitrray['mail_subject'] = $mailsubject;
 
                             Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
@@ -720,55 +704,35 @@ class SafetyPermitController extends BaseController
                     }
                 }
 
-
-                /**
-                 * Send Web notification
-                 */
-
-                $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                $notificationData = [
+                    'notification_type'    => 3,
+                    'module_type'          => 1,
                     'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
+                    'mobile_notification'  => json_encode([
+                        'title'   => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
-                        'id' => $safetypermit->id,
-                        'module' => 3,
-                    )),
-                    'web_link' =>  admin_url('safetypermit/edit/' . encryptId($safetypermit->id)),
+                        'icon'    => admin_url('public/assets/icons/permit_to_work.png'),
+                        'id'      => $safetypermit->id,
+                        'module'  => 3,
+                    ]),
+                    'web_link'      => admin_url('safetypermit/edit/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
-                    'created_by' => Auth::id(),
-                );
-                notificationSave($notificationData);
-                $notifydata = [
-                    'title' => $mailsubject,
-                    'message' =>   'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                    'module_id' => $safetypermit->permit_id,
-                    'module_type' => 1,
-                    'module_sub_type' => 0,
+                    'created_by'    => Auth::id(),
                 ];
-                mobilePushNotification(array_to_string($userids), $notifydata);
+                notificationSave($notificationData);
             } elseif ($request->status == '4') {
                 $mailsubject = 'EHS Re-assigned the permit';
-                $notifywhere = array(
-                    'id' => $request->reassign_to,
-                );
-                $userids = User::where($notifywhere)->pluck('id')->toArray();
-                $users = User::where($notifywhere)->get();
+                $userids = User::where('id', $request->reassign_to)->pluck('id')->toArray();
+                $users   = User::where('id', $request->reassign_to)->get();
 
-                if (count($users) > 0) {
-
+                if ($users->count() > 0) {
                     foreach ($users as $user) {
-
                         $email_id = $user->email;
-
-                        if ($email_id != '' || $email_id != null) {
-                            $safetypermitdetails =  $this->safetypermit->selectmail($id);
-                            $permitrray  = $safetypermitdetails->toArray();
-
-                            $permitrray['name'] = $user->name;
-                            $permitrray['email_id'] =  $email_id;
+                        if (!empty($email_id)) {
+                            $safetypermitdetails = $this->safetypermit->selectmail($id);
+                            $permitrray = $safetypermitdetails->toArray();
+                            $permitrray['name']         = $user->name;
+                            $permitrray['email_id']     = $email_id;
                             $permitrray['mail_subject'] = $mailsubject;
 
                             Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
@@ -776,115 +740,111 @@ class SafetyPermitController extends BaseController
                     }
                 }
 
-
-                /**
-                 * Send Web notification
-                 */
-
-                $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
+                $notificationData = [
+                    'notification_type'    => 3,
+                    'module_type'          => 1,
                     'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
+                    'mobile_notification'  => json_encode([
+                        'title'   => $mailsubject,
                         'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
-                        'id' => $safetypermit->id,
-                        'module' => 3,
-                    )),
-                    'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                        'icon'    => admin_url('public/assets/icons/permit_to_work.png'),
+                        'id'      => $safetypermit->id,
+                        'module'  => 3,
+                    ]),
+                    'web_link'      => admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
                     'assigned_user' => array_to_string($userids),
-                    'created_by' => Auth::id(),
-                );
+                    'created_by'    => Auth::id(),
+                ];
                 notificationSave($notificationData);
+
+                if (!empty($userids)) {
+                    $notifydata = [
+                        'title'          => $mailsubject,
+                        'message'        => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                        'module_id'      => $safetypermit->permit_id,
+                        'module_type'    => 1,
+                        'module_sub_type' => 0,
+                    ];
+                    mobilePushNotification(array_to_string($userids), $notifydata);
+                }
+            } elseif ($request->status == '5') {
+                $mailsubject = 'EHS Approved';
+                $user_role = ROLE_PLANT_HEAD;
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')
+                    ->where('unit_id', $safetypermit->unit_id)
+                    ->pluck('id')
+                    ->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')
+                    ->where('unit_id', $safetypermit->unit_id)
+                    ->get();
+
+                if ($users->count() > 0) {
+                    foreach ($users as $user) {
+                        $email_id = $user->email;
+                        if (!empty($email_id)) {
+                            $safetypermitdetails = $this->safetypermit->selectmail($id);
+                            $permitrray = $safetypermitdetails->toArray();
+                            $permitrray['name']         = $user->name;
+                            $permitrray['email_id']     = $email_id;
+                            $permitrray['mail_subject'] = $mailsubject;
+
+                            Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
+                        }
+                    }
+                }
+
+                $notificationData = [
+                    'notification_type'    => 3,
+                    'module_type'          => 1,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification'  => json_encode([
+                        'title'   => $mailsubject,
+                        'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                        'icon'    => admin_url('public/assets/icons/permit_to_work.png'),
+                        'id'      => $safetypermit->id,
+                        'module'  => 3,
+                    ]),
+                    'web_link'      => admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
+                    'assigned_user' => array_to_string($userids),
+                    'created_by'    => Auth::id(),
+                ];
+                notificationSave($notificationData);
+            }
+
+            // ✅ Safe final mobile push without undefined variable
+            if (!empty($userids)) {
                 $notifydata = [
-                    'title' => $mailsubject,
-                    'message' =>   'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                    'module_id' => $safetypermit->permit_id,
-                    'module_type' => 1,
+                    'title'          => $mailsubject,
+                    'message'        => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
+                    'module_id'      => $safetypermit->permit_id,
+                    'module_type'    => 1,
                     'module_sub_type' => 0,
                 ];
                 mobilePushNotification(array_to_string($userids), $notifydata);
-            } elseif ($request->status == '5') {
-                // dd('STATUS_PLANT_HEAD_PENDING', $request);
-                $mailsubject = 'EHS Approved';
-                $user_role = ROLE_PLANT_HEAD;
-
-                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->pluck('id')->toArray();
-                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->get();
-
-
-
-                if (count($users) > 0) {
-
-                    foreach ($users as $user) {
-
-                        $email_id = $user->email;
-
-                        if ($email_id != '' || $email_id != null) {
-                            $safetypermitdetails =  $this->safetypermit->selectmail($id);
-                            $permitrray  = $safetypermitdetails->toArray();
-
-                            $permitrray['name'] = $user->name;
-                            $permitrray['email_id'] =  $email_id;
-                            $permitrray['mail_subject'] = $mailsubject;
-
-                            Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
-                        }
-                    }
-                }
-
-
-                /**
-                 * Send Web notification
-                 */
-
-                $notificationData = array(
-                    'notification_type' => 3,
-                    'module_type' => 1,
-                    'notification_message' => $mailsubject,
-                    'mobile_notification' => json_encode(array(
-                        'title' => $mailsubject,
-                        'message' => 'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                        'icon' =>  admin_url('public/assets/icons/permit_to_work.png'),
-                        'id' => $safetypermit->id,
-                        'module' => 3,
-                    )),
-                    'web_link' =>  admin_url('safetypermit/approvereject/' . encryptId($safetypermit->id)),
-                    'assigned_user' => array_to_string($userids),
-                    'created_by' => Auth::id(),
-                );
-                notificationSave($notificationData);
             }
-            $notifydata = [
-                'title' => $mailsubject,
-                'message' =>   'Safety Permit ' . $safetypermit->permit_id . $mailsubject . getUsername($approve->created_by),
-                'module_id' => $safetypermit->permit_id,
-                'module_type' => 1,
-                'module_sub_type' => 0,
-            ];
-            mobilePushNotification(array_to_string($userids), $notifydata);
-            $insert_array = array(
-                'permit_type' => 2,
-                'permit_id' => $id,
-                'from_status' => 2,
-                'to_status' => $permit_status,
-                'is_reject' => null,
-                'remarks' => $request->remarks,
-                'approved_by' => Auth::id(),
-            );
 
+            // Status log
+            $insert_array = [
+                'permit_type' => 2,
+                'permit_id'   => $id,
+                'from_status' => 2,
+                'to_status'   => $permit_status,
+                'is_reject'   => null,
+                'remarks'     => $request->remarks,
+                'approved_by' => Auth::id(),
+            ];
             $this->statuslog->create($insert_array);
+
             $success = [
                 'ptw_id' => $id
             ];
             return $this->sendResponse($success, 'Responded successfully');
         } catch (Exception $ex) {
-
-            report($ex);
+            dd($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
+
 
     public function qrcode(Request $request)
     {
