@@ -295,28 +295,32 @@ class CronController extends Controller
             $toDate = $request->todate;
             $office_id = $this->company->getcompany();
             foreach ($office_id as $company) {
-                  $officeName = $company->company_name;
+                $officeName = $company->company_name;
                 $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetWorkerDetails?TokenId=123&OfficeId={$officeName}&fromDate={$fromDate}&toDate={$toDate}";
 
+                Log::info("Fetching data from API for: {$officeName}");
 
-               Log::info("Fetching data from API for: {$officeName}");
+                $response = Http::get($apiUrl);
 
-                    $response = Http::get($apiUrl);
+                if ($response->successful()) {
+                    $data = $response->json();
 
-                    if ($response->successful()) {
-                        $data = $response->json();
-
-                        if (!empty($data)) {
-                            $this->worktemp->store($data);
-                            $responses[] = "Data saved successfully for {$officeName}";
-                        } else {
-                            $responses[] = "No data for {$officeName}";
-                        }
+                    if (!empty($data)) {
+                        $this->worktemp->store($data);
+                        $responses[] = "Data saved successfully for {$officeName}";
                     } else {
-                        $errors[] = "API failed for {$officeName}";
+                        $responses[] = "No data for {$officeName}";
                     }
+                } else {
+                    $errors[] = "API failed for {$officeName}";
                 }
             }
+
+            return response()->json([
+                'message' => 'Processing completed.',
+                'results' => $responses,
+                'errors' => $errors
+            ]);
         } catch (Exception $ex) {
             report($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
