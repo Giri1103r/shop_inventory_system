@@ -158,7 +158,7 @@
         <table style="width: 100%; border-collapse: collapse; border: 3px double black;">
             <tr>
                 <th colspan="3" style="border: 2px double black;">
-                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:100px;height:70px;">
                 </th>
                 <th colspan="4" style="border: 2px double black; text-align: center;">
                     <h3 style="margin: 0;">

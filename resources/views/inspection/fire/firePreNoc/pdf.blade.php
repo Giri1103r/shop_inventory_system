@@ -158,7 +158,7 @@
         <table class="table table-bordered table-hover tblborder">
             <tr>
                 <th colspan="6" style="border:1px solid black;height:50;width:40">
-                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:100px;height:70px;">
                 </th>
                 <th colspan="6" style="border:1px solid black;">
                     <h3>

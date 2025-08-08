@@ -82,7 +82,7 @@
             <table border="0" style="width:100%;border:0;border-bottom: 4px solid #000;background-color: #FFF;">
                 <tr style="">
                     <td border="0" style="width:35%;float:left;text-align:left;">
-                        <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+                        <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:100px;height:70px;">
                     </td>
 
                     <td border="0"

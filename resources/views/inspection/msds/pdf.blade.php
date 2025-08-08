@@ -162,7 +162,7 @@
             style="width: 100%; border-collapse: collapse; font-family: Arial, sans-serif; text-align: center; border: 1px solid black;">
             <tr>
                 <th colspan="8" style="border:1px solid black;height:50;width:40">
-                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:100px;height:70px;">
                 </th>
                 <th colspan="9" style="border:1px solid black;">
                     <h3>

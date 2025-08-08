@@ -163,7 +163,7 @@
             {{-- Header Row with Logo and Doc Info --}}
             <tr>
                 <th colspan="10" style="border:1px solid black;height:50px;">
-                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:125px;height:50px;">
+                    <img src="{{ url('public/assets/images/logo-dark.png') }}" style="width:100px;height:70px;">
                 </th>
                 <th colspan="26" style="border:1px solid black;">
                     <h3>
