@@ -25,7 +25,7 @@
                         let unitId = pointData.custom.unit_id;
                         let observationTypeId = pointData.custom.observation_type_id;
 
-                        // redirection 
+                        // redirection
                         const url = "{{ admin_url('inspection/gemba-walk/list') }}";
                         redirectcharturl('gemba_walk', observationTypeId, url,unitId);
                     }
@@ -35,10 +35,8 @@
             plotOptions: {
                 bar: {
                     horizontal: false,
-                    borderRadius: 10,
                     columnWidth: '10%',
-                    borderRadiusApplication: 'end',
-                    borderRadiusWhenStacked: 'last'
+
                 }
             },
             dataLabels: {

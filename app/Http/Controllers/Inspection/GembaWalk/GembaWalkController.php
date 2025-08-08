@@ -81,7 +81,7 @@ class GembaWalkController extends Controller
     public function index(Request $request)
     {
         try {
-            // dd($request->all());
+         
             if (Auth::check()) {
                 if ($request->ajax()) {
                     try {
