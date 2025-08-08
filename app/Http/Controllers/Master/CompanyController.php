@@ -362,7 +362,7 @@ class CompanyController extends Controller
                 ];
 
                 // dispatch(new ImportCompanyJob($details));
-                   dispatch((new ImportCompanyJob($details))->onQueue('company'));
+                dispatch((new ImportCompanyJob($details))->onQueue('company'));
             }
 
             $insert_data['log_id'] = $insert_id;
@@ -424,6 +424,8 @@ class CompanyController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('success', __('Company uploaded sucessfully'));
+            return redirect(admin_url('company/list'));
         }
     }
 
@@ -479,6 +481,8 @@ class CompanyController extends Controller
         } catch (Exception $ex) {
 
             report($ex);
+            Session::flash('success', __('Company uploaded sucessfully'));
+            return redirect(admin_url('company/list'));
         }
     }
 
