@@ -337,10 +337,10 @@ class PpeExemptionController extends BaseController
                     ];
                     $ppestatuslog[] = [
                         'from_status' => 'EHS Head Approval Pending',
-                        'to_status' => $statusLabels[$ehsheadstatus->to_status] ?? 'Unknown',
-                        'remarks' => $ehsheadstatus->remarks,
-                        'created_by' => getusername($ehsheadstatus->created_by),
-                        'created_at' => Displaydateformat($ehsheadstatus->created_at),
+                        'to_status' => $statusLabels[$ehsheadstatus->to_status] ?? '-',
+                        'remarks' => $ehsheadstatus->remarks ?? '-',
+                        'created_by' => getusername($ehsheadstatus->created_by) ?? '-',
+                        'created_at' => Displaydateformat($ehsheadstatus->created_at) ?? '-',
                     ];
                 }
                 $files = [];
