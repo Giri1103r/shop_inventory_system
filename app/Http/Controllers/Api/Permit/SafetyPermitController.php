@@ -89,6 +89,23 @@ class SafetyPermitController extends BaseController
                 $data['unit_id'] = getUnitname($listdata['unit_id'] ?? '');
                 $data['date'] = Displaydateformat($listdata['date'] ?? '');
                 $data['exact_location_job'] = $listdata['exact_location_job'] ?? '';
+
+                // Handle sub_permit names
+                $names = [];
+                if (!empty($listdata['sub_permit'])) {
+                    $sub_permit_array = is_array($listdata['sub_permit'])
+                        ? $listdata['sub_permit']
+                        : explode(',', $listdata['sub_permit']);
+
+                    foreach ($sub_permit_array as $sub_permit_id) {
+                        $name = GetTypeofjob(trim($sub_permit_id));
+                        if (!empty($name)) {
+                            $names[] = $name;
+                        }
+                    }
+                }
+                $data['sub_permit_names'] = implode(',',$names);
+
                 $data['status_name'] = $listdata['status_name'] ?? '';
                 $data['approved_by'] = getUsername($listdata['approved_by'] ?? '');
                 $data['verified_by'] = getUsername($listdata['verified_by'] ?? '');
@@ -315,7 +332,8 @@ class SafetyPermitController extends BaseController
                 $success = [
                     'id' => $safetypermit->id,
                     'permit_id' => $safetypermit->permit_id,
-                    'date' => $safetypermit->date,
+                    'date' => Displaydateformat($safetypermit->date),
+                    'to_date' => Displaydateformat($safetypermit->to_date),
                     'time_from' => $safetypermit->time_from,
                     'time_to' => $safetypermit->time_to,
                     'company' => getcompanyname($safetypermit->company_id),
@@ -840,7 +858,7 @@ class SafetyPermitController extends BaseController
             ];
             return $this->sendResponse($success, 'Responded successfully');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

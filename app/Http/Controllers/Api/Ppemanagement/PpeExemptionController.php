@@ -121,6 +121,7 @@ class PpeExemptionController extends BaseController
                 $data['unit'] = $listdata->unit_name;
                 $data['department'] = $listdata->department_name;
                 $data['unit_name'] = $listdata->unit_name;
+                $data['status'] = $listdata->status == 1 ? 'Active' : 'In-Active';
                 $data['from_date'] = Displaydateformat($listdata->from_date);
                 $data['to_date'] = Displaydateformat($listdata->to_date);
                 $data['approve_status'] = $text;
