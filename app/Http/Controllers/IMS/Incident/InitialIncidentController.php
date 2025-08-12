@@ -780,7 +780,7 @@ class InitialIncidentController extends Controller
         try {
             $addInjury = $this->incident_body_parts->addInjuryApi();
             Session::flash('success', 'Your data has been created successfully!');
-            
+
             return $addInjury;
         } catch (Exception $ex) {
             report($ex);
@@ -1072,6 +1072,8 @@ class InitialIncidentController extends Controller
     {
         try {
             $id = decryptId($request->id);
+
+
             $rules = [
 
                 'incident_date_time' => 'required',

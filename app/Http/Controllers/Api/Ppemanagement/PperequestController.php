@@ -362,7 +362,7 @@ class PperequestController extends BaseController
                 return $this->sendResponse($success, 'PPE Request Created successfully');
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
@@ -376,8 +376,10 @@ class PperequestController extends BaseController
                 $details = $this->pperequest->selectOne($id);
                 $empId = $details->emp_id;
                 $statusLogs = $this->ppestatus->statuslog_api($id);
+                $hodstatuslog = $this->ppestatus->gethodstatuslog($id);
+                $ehsstatuslog = $this->ppestatus->getehsstatuslog($id);
                 $previoushistory = $this->pperequest->getuserdata($empId);
-
+                $smStatuslog = $this->ppestatus->getsmstatuslog($id);
 
                 $statusLabels = [
                     STATUS_HOD_APPROVAL_PENDING => 'HOD Approval Pending',
@@ -392,36 +394,35 @@ class PperequestController extends BaseController
 
                 $ppestatuslog = [];
                 if (!empty($statusLogs)) {
-                    foreach ($statusLogs as $value) {
-                        $ppestatuslog[] = [
-                            'from_status' => $statusLabels[$value->from_status] ?? 'Unknown',
-                            'to_status' => $statusLabels[$value->to_status] ?? 'Unknown',
-                            'remarks' => $value->remarks,
-                            'created_by' => getusername($value->created_by),
-                            'created_at' => Displaydateformat($value->created_at),
-                        ];
-                        $ppestatuslog[] = [
-                            'from_status' => 'HOD Approval Pending',
-                            'to_status' => '-',
-                            'remarks' => '-',
-                            'created_by' => '-',
-                            'created_at' => '-',
-                        ];
-                        $ppestatuslog[] = [
-                            'from_status' => 'EHS Offcer Approval Pending',
-                            'to_status' => '-',
-                            'remarks' => '-',
-                            'created_by' => '-',
-                            'created_at' => '-',
-                        ];
-                        $ppestatuslog[] = [
-                            'from_status' => 'Store manager Issue Pending',
-                            'to_status' => '-',
-                            'remarks' => '-',
-                            'created_by' => '-',
-                            'created_at' => '-',
-                        ];
-                    }
+
+                    $ppestatuslog[] = [
+                        'from_status' => 'User Applied',
+                        'to_status' => 'HOD Approval Pending'?? '-',
+                        'remarks' => $details->employee_remarks ?? '-',
+                        'created_by' => getusername($details->created_by) ?? '-',
+                        'created_at' => Displaydateformat($details->created_at) ?? '-',
+                    ];
+                    $ppestatuslog[] = [
+                        'from_status' => 'HOD Approval Pending',
+                        'to_status' => $statusLabels[$hodstatuslog->to_status] ?? '-',
+                        'remarks' => $hodstatuslog->remarks ?? '-',
+                        'created_by' => getusername($hodstatuslog->created_by) ?? '-',
+                        'created_at' => Displaydateformat($hodstatuslog->created_at) ?? '-',
+                    ];
+                    $ppestatuslog[] = [
+                        'from_status' => 'EHS Offcer Approval Pending',
+                        'to_status' => $statusLabels[$ehsstatuslog->to_status] ?? '-',
+                        'remarks' => $ehsstatuslog->remarks ?? '-',
+                        'created_by' => getusername($ehsstatuslog->created_by) ?? '-',
+                        'created_at' => Displaydateformat($ehsstatuslog->created_at) ?? '-',
+                    ];
+                    $ppestatuslog[] = [
+                        'from_status' => 'Store manager Issue Pending',
+                        'to_status' => $statusLabels[$smStatuslog->to_status] ?? '-',
+                        'remarks' => $smStatuslog->remarks ?? '-',
+                        'created_by' => getusername($smStatuslog->created_by) ?? '-',
+                        'created_at' => Displaydateformat($smStatuslog->created_at) ?? '-',
+                    ];
                 }
 
                 $history = [];
