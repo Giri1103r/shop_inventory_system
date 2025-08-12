@@ -310,39 +310,56 @@ class PpeExemptionController extends BaseController
                 if ($details->approve_status == 5) {
                     $ehsheadstatus = $this->ppestatus->getehsheadstatuslog($id);
                 } elseif ($details->approve_status == 6) {
-
                     $ehsheadstatus = $this->ppestatus->getehsheadrejectstatuslog($id);
                 } else {
                     $ehsheadstatus = null;
                 }
+
                 $statusLabels = [
                     STATUS_HOD_APPROVAL_PENDING => 'HOD Approval Pending',
-                    STATUS_HOD_APPROVED => 'HOD Approved',
-                    STATUS_USER_APPLIED => 'User Applied',
-                    STATUS_HOD_REJECTED => 'HOD Rejected',
+                    STATUS_HOD_APPROVED         => 'HOD Approved',
+                    STATUS_USER_APPLIED         => 'User Applied',
+                    STATUS_HOD_REJECTED         => 'HOD Rejected',
                     STATUS_EHS_APPROVAL_PENDING => 'EHS  Head Approval Pending',
-                    STATUS_EHS_APPROVED => 'EHS  Head Approved',
-                    STATUS_EHS_REJECTED => 'EHS  Head Rejected',
-                    STATUS_ISSUED => 'Issued'
+                    STATUS_EHS_APPROVED         => 'EHS  Head Approved',
+                    STATUS_EHS_REJECTED         => 'EHS  Head Rejected',
+                    STATUS_ISSUED               => 'Issued'
                 ];
 
                 $ppestatuslog = [];
                 if (!empty($statusLogs)) {
+
+                    // First log entry - always from "User Applied" to "EHS Head Approval Pending"
                     $ppestatuslog[] = [
                         'from_status' => 'User Applied',
-                        'to_status' => 'EHS Head Approval Pending',
-                        'remarks' => $details->reason ?? '-',
-                        'created_by' =>  getusername($details->created_by) ?? '-',
-                        'created_at' => Displaydateformat( $details->created_at) ?? '-',
+                        'to_status'   => 'EHS Head Approval Pending',
+                        'remarks'     => $details->reason ?? '-',
+                        'created_by'  => getusername($details->created_by) ?? '-',
+                        'created_at'  => Displaydateformat($details->created_at) ?? '-',
                     ];
-                    $ppestatuslog[] = [
-                        'from_status' => 'EHS Head Approval Pending',
-                        'to_status' => $statusLabels[$ehsheadstatus->to_status] ?? '-',
-                        'remarks' => $ehsheadstatus->remarks ?? '-',
-                        'created_by' => getusername($ehsheadstatus->created_by) ?? '-',
-                        'created_at' => Displaydateformat($ehsheadstatus->created_at) ?? '-',
-                    ];
+
+                    if (empty($ehsheadstatus)) {
+                        $ppestatuslog[] = [
+                            'from_status' => 'EHS Head Approval Pending',
+                            'to_status'   =>  '-',
+                            'remarks'     => '-',
+                            'created_by'  =>  '-',
+                            'created_at'  =>  '-',
+                        ];
+                    }
+
+                    // Second log entry - only if we have EHS head status
+                    if (!empty($ehsheadstatus)) {
+                        $ppestatuslog[] = [
+                            'from_status' => 'EHS Head Approval Pending',
+                            'to_status'   => $statusLabels[$ehsheadstatus->to_status] ?? '-',
+                            'remarks'     => $ehsheadstatus->remarks ?? '-',
+                            'created_by'  => getusername($ehsheadstatus->created_by) ?? '-',
+                            'created_at'  => Displaydateformat($ehsheadstatus->created_at) ?? '-',
+                        ];
+                    }
                 }
+
                 $files = [];
                 if (!empty($ppefiles)) {
                     foreach ($ppefiles as $value) {
