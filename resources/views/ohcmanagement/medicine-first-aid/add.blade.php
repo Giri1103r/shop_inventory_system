@@ -115,7 +115,8 @@
                                                         <tr>
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                    <label for="medicine_id" class="require">{{ __('ohc_management.medicine_name') }}</label>
+                                                                    <label for="medicine_id"
+                                                                        class="require">{{ __('ohc_management.medicine_name') }}</label>
                                                                     <select name="medicine_id[0]" id="medicine_id"
                                                                         class="form-control single-select"
                                                                         style="width: 100%">
@@ -149,7 +150,8 @@
 
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                    <label for="quantity" class="require">{{ __('ohc_management.available_quantity') }}</label>
+                                                                    <label for="quantity"
+                                                                        class="require">{{ __('ohc_management.available_quantity') }}</label>
                                                                     <input type="text" name="quantity[0]" id="quantity"
                                                                         placeholder="Enter the quantity"
                                                                         class="form-control">
@@ -207,7 +209,12 @@
 
         //     });
         // });
-
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(document).on('change', '#unit_id', function() {
             var unitId = $(this).val();
             if (unitId) {

@@ -36,7 +36,8 @@
 
                                             <div class="col-md-4">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">{{__('ohc_management.req_id')}}</label>
+                                                    <label
+                                                        class="form-label require">{{ __('ohc_management.req_id') }}</label>
                                                     <input type="text" name ="req_id" id="req_id" class="form-control"
                                                         placeholder="Requistion ID" value="{{ getsequence('requistion') }}"
                                                         readonly>
@@ -45,7 +46,7 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">{{__('common.unit')}}</label>
+                                                    <label class="form-label require">{{ __('common.unit') }}</label>
                                                     <input type="text" name="unit_id" id="unit_id"
                                                         value="{{ getUnitname(Auth::user()->unit_id) }}"
                                                         class="form-control" readonly>
@@ -54,7 +55,7 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">{{__('common.department')}}</label>
+                                                    <label class="form-label require">{{ __('common.department') }}</label>
                                                     <input type="text" name="department_id" id="department_id"
                                                         class=" form-control "value="{{ getDepartment(Auth::user()->department_id) }}"
                                                         readonly>
@@ -66,7 +67,8 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">{{__('ohc_management.request_date')}}</label>
+                                                    <label for="rate"
+                                                        class="form-label require ">{{ __('ohc_management.request_date') }}</label>
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="request_date" id="request_date"
                                                             class="form-control"autocomplete="off"
@@ -81,7 +83,7 @@
                                         </div>
                                         <div class="row mt-2">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">{{__('ohc_management.medicine_details')}}</h4>
+                                                <h4 class="text-white">{{ __('ohc_management.medicine_details') }}</h4>
 
                                             </div>
                                             <div
@@ -117,7 +119,8 @@
                                                         <tr>
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                    <label for="medicine_id" class="require">{{ __('ohc_management.medicine_name') }}</label>
+                                                                    <label for="medicine_id"
+                                                                        class="require">{{ __('ohc_management.medicine_name') }}</label>
                                                                     <select name="medicine_id[0]" id="medicine_id"
                                                                         class="form-control single-select"
                                                                         style="width: 100%">
@@ -145,7 +148,8 @@
 
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                    <label for="quantity" class="require">{{ __('ohc_management.quantity') }}</label>
+                                                                    <label for="quantity"
+                                                                        class="require">{{ __('ohc_management.quantity') }}</label>
                                                                     <input type="number" min = "1" name="quantity[0]"
                                                                         id="quantity" placeholder="Enter the quantity"
                                                                         class="form-control">
@@ -156,7 +160,8 @@
                                                             </td>
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                    <label for="remarks"class="">{{ __('ohc_management.remarks') }}</label>
+                                                                    <label
+                                                                        for="remarks"class="">{{ __('ohc_management.remarks') }}</label>
                                                                     <textarea name="remarks[0]" id="remarks" cols="10" rows="2" class="form-control"></textarea>
                                                                 </div>
                                                             </td>
@@ -197,13 +202,12 @@
 
 @push('script')
     <script>
-        // $(document).ready(function() {
-        //     var fromDatepicker = flatpickr("#request_date", {
-        //         dateFormat: "d-m-Y",
-        //         minDate: new Date(),
-
-        //     });
-        // });
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $('#medicine_id').on('change', function() {
             var selectedOption = $(this).find(':selected');
             var availableQuantity = selectedOption.data('available-quantity');

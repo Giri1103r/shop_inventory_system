@@ -1157,4 +1157,26 @@ class MedicineReceivingController extends Controller
 
         return response()->json(['error' => 'No HSN number found'], 404);
     }
+
+    public function medicinename(Request $request)
+    {
+        $name = $request->input('search');
+
+        $medicines = $this->inventory
+            ->where('unit_id', 1)
+            ->where('medicine_name', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+     
+
+        $result = $medicines->map(function ($item) {
+            return [
+                'id' => encryptId($item->medicine_id),
+                'text' => $item->medicine_name,
+            ];
+        });
+
+        return response()->json($result);
+    }
 }

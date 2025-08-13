@@ -38,7 +38,8 @@
 
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="medicine_name" class="form-label require ">{{__('ohc_management.medicine_name')}}</label>
+                                                    <label for="medicine_name"
+                                                        class="form-label require ">{{ __('ohc_management.medicine_name') }}</label>
                                                     <select name="medicine_id" id="medicine_id"
                                                         class="form-control form-control-sm single-select"
                                                         style="width: 100%">
@@ -56,7 +57,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="hsn_id" class="form-label require">{{__('ohc_management.hsn_number')}}</label>
+                                                    <label for="hsn_id"
+                                                        class="form-label require">{{ __('ohc_management.hsn_number') }}</label>
                                                     <input type="text" name="hsn_id" id="hsn_id" class="form-control"
                                                         value="{{ $medicine_receiving->hsn_id }}">
                                                     @error('hsn_id')
@@ -66,7 +68,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="pack_id" class="form-label require ">{{__('ohc_management.pack')}}</label>
+                                                    <label for="pack_id"
+                                                        class="form-label require ">{{ __('ohc_management.pack') }}</label>
                                                     <input type="text" name="pack_display" id="pack_id"
                                                         class="form-control" readonly value="{{ $hsn->pack }}">
                                                     <input type="hidden" name="pack_id" id="pack_hidden_id">
@@ -74,7 +77,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="quantity" class="form-label require ">{{__('ohc_management.quantity')}}</label>
+                                                    <label for="quantity"
+                                                        class="form-label require ">{{ __('ohc_management.quantity') }}</label>
                                                     <input type="text" name="quantity" id="quantity"
                                                         class="form-control"value={{ $medicine_receiving->quantity }}>
 
@@ -85,7 +89,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="batch_number" class="form-label require ">{{__('ohc_management.batch_number')}}</label>
+                                                    <label for="batch_number"
+                                                        class="form-label require ">{{ __('ohc_management.batch_number') }}</label>
                                                     <input type="text" name="batch_number" id="batch_number"
                                                         value={{ $medicine_receiving->batch_number }} class="form-control">
 
@@ -96,7 +101,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">{{__('ohc_management.rate')}}</label>
+                                                    <label for="rate"
+                                                        class="form-label require ">{{ __('ohc_management.rate') }}</label>
                                                     <input type="text" name="rate" id="rate"
                                                         class="form-control"value={{ $medicine_receiving->rate }}>
                                                     @error('expire_date')
@@ -106,7 +112,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="rate" class="form-label require ">{{__('ohc_management.expiry_date')}}</label>
+                                                    <label for="rate"
+                                                        class="form-label require ">{{ __('ohc_management.expiry_date') }}</label>
 
                                                     <div class="input-group date form-input custom-height">
                                                         <input type="text" name="expire_date" id="expire_date"
@@ -123,7 +130,8 @@
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label for="vendor_name" class="form-label require ">{{__('ohc_management.vendor_name')}}</label>
+                                                    <label for="vendor_name"
+                                                        class="form-label require ">{{ __('ohc_management.vendor_name') }}</label>
                                                     <select name="vendor_id" id="vendor_id"
                                                         class="form-control form-control-sm single-select"
                                                         style="width: 100%">
@@ -173,6 +181,32 @@
                 dateFormat: "d-m-Y",
                 minDate: new Date(),
 
+            });
+
+            $('#medicine_id').select2({
+                ajax: {
+                    url: '{{ admin_url('ohc/medicine-receiving-form/medicineid') }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.text
+                                };
+                            })
+                        };
+                    }
+                },
+                minimumInputLength: 2,
+                dropdownCssClass: 'form-control',
+                selectionCssClass: 'form-control'
             });
         });
         $(document).on('change', '#unit_id', function() {

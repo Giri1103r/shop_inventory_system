@@ -138,7 +138,8 @@
 
                                                             <td>
                                                                 <div class="form-group form-input">
-                                                                    <label for="quantity" class="require">{{ __('ohc_management.quantity') }}</label>
+                                                                    <label for="quantity"
+                                                                        class="require">{{ __('ohc_management.quantity') }}</label>
                                                                     <input type="number" name="quantity[0]" id="quantity"
                                                                         min="1" placeholder="Enter the quantity"
                                                                         class="form-control">
@@ -193,7 +194,12 @@
 
         //     });
         // });
-
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(document).on('change', '#unit_id', function() {
             var unitId = $(this).val();
             if (unitId) {

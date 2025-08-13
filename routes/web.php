@@ -182,6 +182,7 @@ Route::get('queueDepartmentuplodimport', [CronController::class, 'queueDepartmen
 
 Route::get('cron/ohc/medicine-issuance/import', [CronController::class, 'queueMedicineIsuuanceImport']);
 Route::get('cron/ohc/medicine-requisition/import', [CronController::class, 'queueMedicineRequisitionImport']);
+Route::get('cron/ohc/medicine-name/update', [CronController::class, 'getMedicineName']);
 
 
 Route::get('cron/safetypermit/protectiveequipmentmaster/import', [CronController::class, 'queueProtectiveequipmentmasterImport']);
@@ -2302,6 +2303,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/checkExistmedicineId', [MedicineReceivingController::class, 'checkExistmedicineId']);
                 Route::post('/close', [MedicineReceivingController::class, 'stockclosesubmit']);
                 Route::post('/pack-id', [MedicineReceivingController::class, 'packid']);
+                Route::get('/medicineid', [MedicineReceivingController::class, 'medicinename']);
             });
             // Medicine Requistion
             Route::group(['prefix' => 'ohc/medicine-requisition'], function () {

@@ -449,6 +449,14 @@
 @stop
 @push('script')
     <script>
+        // reset
+
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         // date picker and time picker
 
         $(document).ready(function() {

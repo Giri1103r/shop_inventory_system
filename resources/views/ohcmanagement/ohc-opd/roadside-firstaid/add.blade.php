@@ -221,6 +221,16 @@
 @stop
 @push('script')
     <script>
+
+        // reset
+
+         $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+
+            });
+        });
         // follow up required
 
         $(document).ready(function() {

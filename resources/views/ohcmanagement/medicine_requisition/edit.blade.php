@@ -77,7 +77,7 @@
 
                                         <div class="row mt-2">
                                             <div class="card-header-inner">
-                                                <h4 class="text-white">{{__('ohc_management.medicine_details')}}</h4>
+                                                <h4 class="text-white">{{ __('ohc_management.medicine_details') }}</h4>
 
                                             </div>
                                             <div
@@ -211,6 +211,14 @@
             var fromDatepicker = flatpickr("#request_date", {
                 dateFormat: "d-m-Y",
                 minDate: new Date(),
+
+            });
+        });
+
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
 
             });
         });

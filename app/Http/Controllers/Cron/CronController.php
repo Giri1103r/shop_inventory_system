@@ -852,6 +852,31 @@ class CronController extends Controller
         }
     }
 
+public function getMedicineName()
+{
+    try {
+        $inventoryItems = Inventory::select('medicine_id')->get();
+
+        foreach ($inventoryItems as $item) {
+            $medicineName = Medicine::where('id', $item->medicine_id)
+                ->value('medicine');
+
+            if ($medicineName) {
+                Inventory::where('medicine_id', $item->medicine_id)
+                    ->update(['medicine_name' => $medicineName]);
+            }
+        }
+
+        return response()->json(['message' => 'Medicine names updated successfully.']);
+
+    } catch (Exception $ex) {
+        return response()->json([
+            'message' => 'An error occurred.',
+            'error'   => $ex->getMessage(),
+        ]);
+    }
+}
+
 
     public function permitExpiry()
     {

@@ -124,7 +124,8 @@
                                                                     <input type="hidden" name="encryptid" class="encryptid"
                                                                         value="{{ encryptId($issuance->id) }}">
                                                                     <div class="form-group form-input">
-                                                                        <label for="medicine_id" class="require">{{ __('ohc_management.medicine_name') }}</label>
+                                                                        <label for="medicine_id"
+                                                                            class="require">{{ __('ohc_management.medicine_name') }}</label>
                                                                         <select name="medicine_id[{{ $key }}]"
                                                                             class="form-control medicine">
                                                                             <option value="">Select the Medicine Name
@@ -209,13 +210,13 @@
 
 @push('script')
     <script>
-        // $(document).ready(function() {
-        //     var fromDatepicker = flatpickr("#request_date", {
-        //         dateFormat: "d-m-Y",
-        //         minDate: new Date(),
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
 
-        //     });
-        // });
+            });
+        });
         let deletedPages = [];
 
 
@@ -245,7 +246,9 @@
 
                         row.remove();
 
-                        Swal.fire("Deleted!", "The medicine has been removed from the list.", "success");
+                        Swal.fire("Deleted!",
+                            "The medicine has been removed from the list.",
+                            "success");
                     }
                 });
             } else {
@@ -261,7 +264,8 @@
             $(document).on('input', '#hidden_unit_id', function() {
                 var unitId = $(this).val();
                 var ajaxUrl = $(this).data('url');
-                var selectedDepartment = $('#department_id').val(); // Get the currently selected department
+                var selectedDepartment = $('#department_id')
+                    .val(); // Get the currently selected department
 
                 console.log("Unit ID:", unitId);
                 console.log("Selected Department:", selectedDepartment);
@@ -273,24 +277,32 @@
                         dataType: 'json',
                         success: function(data) {
                             $('#department_id').empty().append(
-                                '<option value="">Select Department</option>');
+                                '<option value="">Select Department</option>'
+                            );
 
                             $.each(data, function(key, value) {
-                                var isSelected = (value.id === selectedDepartment) ?
+                                var isSelected = (value.id ===
+                                        selectedDepartment) ?
                                     "selected" : "";
-                                $('#department_id').append('<option value="' + value
-                                    .id + '" ' + isSelected + '>' + value.name +
+                                $('#department_id').append(
+                                    '<option value="' +
+                                    value
+                                    .id + '" ' +
+                                    isSelected + '>' + value
+                                    .name +
                                     '</option>');
                             });
 
                             $('#department_id').trigger('change');
                         },
                         error: function(xhr) {
-                            alert('Error fetching department. Please try again.');
+                            alert(
+                                'Error fetching department. Please try again.');
                         }
                     });
                 } else {
-                    $('#department_id').empty().append('<option value="">Select Department</option>');
+                    $('#department_id').empty().append(
+                        '<option value="">Select Department</option>');
                     $('#department_id').trigger('change');
                 }
             });
@@ -419,7 +431,8 @@
                 var duplicateFound = false;
 
                 $('select[name^="medicine_id"]').each(function() {
-                    if ($(this).val() === selectedMedicineId && $(this).attr('name') !== row.find(
+                    if ($(this).val() === selectedMedicineId && $(this)
+                        .attr('name') !== row.find(
                             'select[name^="medicine_id"]').attr('name')) {
                         duplicateFound = true;
                     }
@@ -444,11 +457,14 @@
                             type: 'get',
                             dataType: 'json',
                             success: function(data) {
-                                row.find('input[name^="available_quantity"]').val(data
+                                row.find(
+                                    'input[name^="available_quantity"]'
+                                ).val(data
                                     .available_quantity);
                             },
                             error: function() {
-                                Swal.fire('Error', 'Something went wrong. Please try again.',
+                                Swal.fire('Error',
+                                    'Something went wrong. Please try again.',
                                     'error');
                             }
                         });
@@ -461,7 +477,8 @@
 
             $(document).on("input", 'input[name^="quantity"]', function() {
                 var row = $(this).closest('tr'); // Get the row of the current input
-                var availableQuantity = parseInt(row.find('input[name^="available_quantity"]').val());
+                var availableQuantity = parseInt(row.find(
+                    'input[name^="available_quantity"]').val());
                 var quantity = parseInt($(this).val());
 
                 if (quantity > availableQuantity) {

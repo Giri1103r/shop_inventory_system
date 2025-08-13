@@ -121,7 +121,8 @@
                                                                     <input type="hidden" name="encryptid" class="encryptid"
                                                                         value="{{ encryptId($issuance->id) }}">
                                                                     <div class="form-group form-input">
-                                                                        <label for="medicine_id" class="require">{{ __('ohc_management.medicine_name') }}</label>
+                                                                        <label for="medicine_id"
+                                                                            class="require">{{ __('ohc_management.medicine_name') }}</label>
                                                                         <select name="medicine_id[{{ $key }}]"
                                                                             class="form-control medicine">
                                                                             <option value="">Select the Medicine Name
@@ -206,7 +207,13 @@
 
 @push('script')
     <script>
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
 
+            });
+        });
 
 
         let deletedPages = [];

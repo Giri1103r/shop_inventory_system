@@ -168,7 +168,8 @@
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
                                                         <label class="form-label require">Mobile Number</label>
-                                                        <input type="text" name="mobile_no" id="mobile_no"   value="{{ $opd_roadside_first_aid->mobile_no }}"
+                                                        <input type="text" name="mobile_no" id="mobile_no"
+                                                            value="{{ $opd_roadside_first_aid->mobile_no }}"
                                                             class="form-control" readonly>
                                                     </div>
                                                 </div>
@@ -180,12 +181,12 @@
                                                             class="form-control single-select" style="width: 100%">
                                                             <option value="">select the Vechicle</option>
                                                             @foreach ($reffered as $list)
-                                                            <option value="{{ encryptId($list->id) }}"
-                                                                @if ($list->id == $opd_roadside_first_aid->transport_method) selected @endif>
-                                                                {{ $list->refered_vechicle }}
-                                                            </option>
-                                                        @endforeach
-                                                           
+                                                                <option value="{{ encryptId($list->id) }}"
+                                                                    @if ($list->id == $opd_roadside_first_aid->transport_method) selected @endif>
+                                                                    {{ $list->refered_vechicle }}
+                                                                </option>
+                                                            @endforeach
+
                                                         </select>
                                                     </div>
                                                 </div>
@@ -245,6 +246,15 @@
 @stop
 @push('script')
     <script>
+        // reset
+
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+
+            });
+        });
         // follow up required
 
         $(document).ready(function() {

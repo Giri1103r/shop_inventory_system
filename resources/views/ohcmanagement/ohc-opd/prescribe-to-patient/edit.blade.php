@@ -435,12 +435,18 @@
                                                     <!-- Fitness Certificate Dropdown -->
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
-                                                            <label for="fitness_certificate" class="require">Fitness Certificate</label>
+                                                            <label for="fitness_certificate" class="require">Fitness
+                                                                Certificate</label>
                                                             <select name="fitness_certificate" id="fitness_certificate"
                                                                 class="form-control single-select" style="width: 100%">
-                                                                <option value="">Select the Fitness certificate</option>
-                                                                <option value="1" {{ $opdpatient->fitness_certificate == 1 ? 'selected' : '' }}>Required</option>
-                                                                <option value="2" {{ $opdpatient->fitness_certificate == 2 ? 'selected' : '' }}>Not Required</option>
+                                                                <option value="">Select the Fitness certificate
+                                                                </option>
+                                                                <option value="1"
+                                                                    {{ $opdpatient->fitness_certificate == 1 ? 'selected' : '' }}>
+                                                                    Required</option>
+                                                                <option value="2"
+                                                                    {{ $opdpatient->fitness_certificate == 2 ? 'selected' : '' }}>
+                                                                    Not Required</option>
                                                             </select>
                                                         </div>
                                                     </div>
@@ -449,7 +455,8 @@
                                                     <div class="col-md-4 mb-2 file_upload" style="display: none;">
                                                         <div class="form-group form-input">
                                                             <label for="file" class="require">File Upload</label>
-                                                            <input type="file" name="file" id="file" class="form-control">
+                                                            <input type="file" name="file" id="file"
+                                                                class="form-control">
                                                             <small>Allowed file types: PDF, DOCX, DOC ,PNG,JPG,JPEG</small>
                                                         </div>
                                                     </div>
@@ -457,9 +464,9 @@
                                                     <!-- Close Description -->
                                                     <div class="col-md-8 mb-2">
                                                         <div class="form-group form-input">
-                                                            <label for="close_description" class="form-label require">Close the Description</label>
-                                                            <textarea name="close_description" id="close_description" cols="30" rows="5"
-                                                                class="form-control">{{ $opdpatient->closed_description }}</textarea>
+                                                            <label for="close_description"
+                                                                class="form-label require">Close the Description</label>
+                                                            <textarea name="close_description" id="close_description" cols="30" rows="5" class="form-control">{{ $opdpatient->closed_description }}</textarea>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -501,6 +508,14 @@
 @stop
 @push('script')
     <script>
+        // reset
+
+        $(document).ready(function() {
+            $('#resetform').on('click', function(e) {
+                e.preventDefault();
+                location.reload();
+            });
+        });
         $(function() {
             $.validator.addMethod(
                 "regex",
@@ -641,7 +656,7 @@
                             return $('#fitness_certificate').val() ==
                                 '1';
                         },
-                       extension: "pdf|doc|docx|png|jpg|jpeg"
+                        extension: "pdf|doc|docx|png|jpg|jpeg"
                     },
                     patient_status: {
                         required: function() {
