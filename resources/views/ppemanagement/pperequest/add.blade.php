@@ -204,7 +204,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4 mb-3">
+                                            {{-- <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
                                                     <label class="form-label ">{{__('ppe_management.image')}}</label>
                                                     <input type="file" name="ppe_file" id="ppe_file"
@@ -217,7 +217,7 @@
                                                     @enderror
                                                     <div class="text-danger" id="ppe_name_error"></div>
                                                 </div>
-                                            </div>
+                                            </div> --}}
 
                                             <div class="col-md-12 mb-2">
                                                 <label for="remarks" class="form-label require">{{__('ppe_management.ppe_remarks')}}</label>
