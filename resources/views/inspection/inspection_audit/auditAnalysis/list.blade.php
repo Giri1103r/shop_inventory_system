@@ -23,7 +23,7 @@
                             <div class="card-body">
                                 <div class="col-md-12">
                                     <div class="row">
-   <input type="hidden" name="company_name" value="{{$companyId}}">
+                                          <input type="hidden" name="company_name" value="{{$companyId}}">
                                         <input type="hidden" name="fromDate" value="{{$fromdate}}">
                                         <input type="hidden" name="toDate" value="{{$toDate}}">
                                         <div class="col-md-4 mb-3 form-input">
@@ -92,6 +92,7 @@
                                         <th>6S Audit Analysis </th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
+                                        <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -205,6 +206,10 @@
                     {
                         data: 'created_date',
                         name: 'created_date'
+                    },
+                      {
+                        data: 'created_by',
+                        name: 'created_by'
                     },
                     {
                         data: 'action',

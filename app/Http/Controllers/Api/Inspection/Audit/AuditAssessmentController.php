@@ -86,7 +86,7 @@ class AuditAssessmentController extends BaseController
                 $data['id'] = $listdata['id'] ?? '';
                 $data['audit_id'] = ($listdata['audit_id'] ?? '');
                 $data['audit_date'] = Displaydateformat($listdata['audit_date'] ?? '');
-                $data['floor_name'] = ($listdata['floor_name'] ?? '');
+                $data['shop_floor'] = ($listdata['floor_name'] ?? '');
                 $data['floor_executive'] = getUsername($listdata['floor_executive'] ?? '');
                 $data['status'] = $listdata['status'] == 1 ? 'Active' : 'In-Active';
                 $data['created_by'] = getUsername($listdata['created_by'] ?? '');
@@ -153,8 +153,8 @@ class AuditAssessmentController extends BaseController
                     'shift_id' => getShift($details->shift_id),
                     'floor_executive' => getUsername($details->floor_executive),
                     'checklist' => $formattedChecklist,
-
-
+                    'total_score'=>$details->total_score,
+                    'obtained_score'=>$details->obtained_score,
                 ];
 
                 return $this->sendResponse($success, 'Audit Assessment Details');

@@ -41,6 +41,8 @@ use App\Http\Controllers\Api\Inspection\Ohc\WeeklyFirstAidBoxController;
 use App\Http\Controllers\Api\Inspection\Safety\FireSafetyEquipment;
 use App\Http\Controllers\Api\Inspection\Safety\SafetyWalkObservation;
 use App\Http\Controllers\Api\Ims\InitialIncidentController;
+use App\Http\Controllers\Api\Inspection\Master\InspectionMasterController;
+
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
 // })->middleware('auth:api');
@@ -56,7 +58,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
 
     Route::post('login', [LoginController::class, 'login']);
 
-   
+
     Route::post('password/forgot', [LoginController::class, 'forgotPassword']);
     Route::post('password/otp', [LoginController::class, 'passwordOtp']);
     Route::post('password/change', [LoginController::class, 'passwordChange']);
@@ -127,6 +129,17 @@ Route::middleware('api')->prefix('v1')->group(function () {
         });
 
         Route::group(['prefix' => 'inspection/'], function () {
+            Route::group(['prefix' => 'master/'], function () {
+                Route::group(['prefix' => 'checklist-type/'], function () {
+                    Route::post('list', [InspectionMasterController::class, 'list']);
+                });
+                Route::group(['prefix' => 'checklist-sub-type/'], function () {
+                    Route::post('list', [InspectionMasterController::class, 'list']);
+                });
+                Route::group(['prefix' => 'checklist-sub-type-data/'], function () {
+                    Route::post('list', [InspectionMasterController::class, 'list']);
+                });
+            });
             Route::group(['prefix' => 'audit/'], function () {
                 Route::group(['prefix' => 'audit-assessment/'], function () {
                     Route::post('list', [AuditAssessmentController::class, 'list']);
@@ -153,6 +166,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 });
 
                 Route::post('task-master/list', [TaskMasterController::class, 'list']);
+                Route::post('compilance-category/list', [TaskMasterController::class, 'compilancelist']);
             });
 
             // gembaWalk
@@ -221,7 +235,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
                     Route::post('list', [FireSandBucketInspectionController::class, 'List']);
                     Route::post('add', [FireSandBucketInspectionController::class, 'Add']);
                     Route::post('view', [FireSandBucketInspectionController::class, 'View']);
-});
+                });
                 Route::group(['prefix' => 'hydrant-and-riser/'], function () {
                     Route::post('list', [HydrantRiserController::class, 'list']);
                     Route::post('view', [HydrantRiserController::class, 'view']);
@@ -326,7 +340,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
         });
 
 
-        
+
         Route::group(['prefix' => 'incident/initial-incident/'], function () {
             Route::post('master/iir_type/list', [InitialIncidentController::class, 'iirTypeList']);
             Route::post('list', [InitialIncidentController::class, 'list']);
@@ -338,8 +352,6 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('capa/view', [InitialIncidentController::class, 'capaView']);
             Route::get('generate-random-id', [InitialIncidentController::class, 'generate']);
             Route::post('get-saved-or-not', [InitialIncidentController::class, 'getSavedOrNot']);
-        
         });
-
     });
 });

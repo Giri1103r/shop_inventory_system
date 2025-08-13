@@ -38,7 +38,7 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">{{ __('common.company') }}</label>
+                                                    <label class="form-label require">{{ __('common.company') }}</label>
                                                     <select name="company_id" id="company_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Company Name</option>
@@ -50,8 +50,8 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">{{ __('common.location') }}</label>
+                                                <div class="form-group form-input ">
+                                                    <label class="form-label require">{{ __('common.location') }}</label>
                                                     <select name="location_id" id="location_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Location</option>
@@ -59,8 +59,8 @@
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-3">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label">{{ __('common.unit') }}</label>
+                                                <div class="form-group form-input ">
+                                                    <label class="form-label require">{{ __('common.unit') }}</label>
                                                     <select name="unit_id" id="unit_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Unit</option>
@@ -69,7 +69,7 @@
                                             </div>
                                             <div class="col-md-4 mb-3">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label">{{ __('common.department') }}</label>
+                                                    <label class="form-label require">{{ __('common.department') }}</label>
                                                     <select name="department_id" id="department_id"
                                                         class=" form-control single-select" style="width: 100%">
                                                         <option value="">Select Department</option>
@@ -392,13 +392,7 @@
                     });
                 }
             });
-            $.validator.addClassRules("leading", {
-                required: true,
-            });
 
-            $.validator.addClassRules("lagging", {
-                required: true
-            });
         });
     </script>
 @endpush

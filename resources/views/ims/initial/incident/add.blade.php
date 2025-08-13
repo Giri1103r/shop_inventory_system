@@ -443,20 +443,26 @@
                                                         class="form-control" placeholder="Exact Location">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mt-2">
+                                            <div class="col-md-8 mt-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">IIR Type</label>
-                                                    @foreach ($incTypeList as $incType)
-                                                        <div class="form-check">
-                                                            <input type="radio" name="iir_type"
-                                                                id="iir_type_{{ $incType->id }}" class="form-check-input"
-                                                                value="{{ $incType->id }}">
-                                                            <label class="form-check-label"
-                                                                for="iir_type_{{ $incType->id }}">{{ $incType->incident_type_name }}</label>
-                                                        </div>
-                                                    @endforeach
+                                                    <div class="row">
+                                                        @foreach ($incTypeList as $incType)
+                                                            <div class="col-4"> 
+                                                                <div class="form-check">
+                                                                    <input type="radio" name="iir_type"
+                                                                        id="iir_type_{{ $incType->id }}"
+                                                                        class="form-check-input"
+                                                                        value="{{ $incType->id }}">
+                                                                    <label class="form-check-label"
+                                                                        for="iir_type_{{ $incType->id }}">{{ $incType->incident_type_name }}</label>
+                                                                </div>
+                                                            </div>
+                                                        @endforeach
+                                                    </div>
                                                 </div>
                                             </div>
+
 
                                         </div>
 
@@ -1286,8 +1292,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                           </div>-->
+                                                                                                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                               </div>-->
             </div>
         </div>
     </div>

@@ -94,9 +94,6 @@ class MasterController extends BaseController
     }
 
 
-
-
-
     public function worker()
     {
         try {

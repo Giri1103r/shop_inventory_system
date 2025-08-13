@@ -128,7 +128,7 @@ class InterUnitAuditController extends BaseController
                 $inter_unit_audit = $this->inter_unit_audit->selectOne($id);
 
                 $inter_unit_audit_checklist = json_decode($inter_unit_audit->checklist, true);
-dd( $inter_unit_audit_checklist );
+
                 $formattedChecklist = [];
 
                 foreach ($inter_unit_audit_checklist as $subcategory => $questions) {

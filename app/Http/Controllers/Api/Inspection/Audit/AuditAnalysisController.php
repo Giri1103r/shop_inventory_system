@@ -209,7 +209,7 @@ class AuditAnalysisController extends BaseController
                 return $this->sendResponse($success, 'Audit Analysis Details Created Successfully');
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

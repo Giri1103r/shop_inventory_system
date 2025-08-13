@@ -37,7 +37,7 @@
                                         <div class="form-wrapper">
 
                                             <div class="card-header-inner d-flex justify-content-between">
-                                                <h4 class="text-white">EHS Audit Calendar</h4>
+                                                <h4 class="text-white mx-2">EHS Audit Calendar</h4>
                                                 <button class="btn btn-primary add-row mb-2 " type="button" id="add-row"
                                                     style="margin-left: 10px;  margin-right: 10px; width: 84px;">
                                                     Add
@@ -142,9 +142,9 @@
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
-                                                    <label class="form-label ">Status (Yes/No)</label>
+                                                    <label class="form-label require">Status (Yes/No)</label>
                                                     <div class="mb-3 form-input">
-                                                        <input type="radio" name="status[1]" value="1">
+                                                        <input type="radio"  name="status[1]" value="1">
                                                         <label for="yes">YES</label>
 
                                                         <input type="radio" name="status[1]" value="0">
@@ -295,8 +295,8 @@
                         min: 1
                     },
                     "remark[1]": {
-                        required: true,
-                        minlength: 3
+                        minlength: 3,
+                        maxlength: 600,
                     }
                 },
                 messages: {
@@ -317,8 +317,9 @@
                         min: "Points must be at least 1"
                     },
                     "remark[1]": {
-                        required: "Please enter a Remark",
-                        minlength: "Remark must be at least 3 characters"
+
+                        minlength: "Remark must be at least 3 characters",
+                        maxlength: "Maximum Character Should not Exceed 600",
                     }
                 },
                 errorElement: 'span',
@@ -475,9 +476,9 @@
                                                 </div>
 
                                                 <div class="col-md-4 mb-2">
-                                                    <label class="form-label " for="status[${form_set_count}]">Status (Yes/No)</label>
+                                                    <label class="form-label require" for="status[${form_set_count}]">Status (Yes/No)</label>
                                                     <div class="mb-3 form-input">
-                                                        <input type="radio" name="status[${form_set_count}]" 
+                                                        <input type="radio" name="status[${form_set_count}]"
                                                             value="1">
                                                         <label for="yes">YES</label>
 
@@ -630,9 +631,11 @@
                 });
 
                 $("textarea[name='remark[" + form_set_count + "]']").rules('add', {
-                    required: true,
+                    minlength: 3,
+                        maxlength: 600,
                     messages: {
-                        required: 'Please add the remarks',
+                        minlength: "Remark must be at least 3 characters",
+                        maxlength: "Maximum Character Should not Exceed 600",
                     }
                 });
 

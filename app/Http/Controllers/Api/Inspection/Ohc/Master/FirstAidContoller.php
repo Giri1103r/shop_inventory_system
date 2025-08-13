@@ -40,7 +40,7 @@ class FirstAidContoller extends Controller
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 404);
             }
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 404);
         }
     }
