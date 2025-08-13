@@ -118,16 +118,11 @@
                                                                     <label for="medicine_id"
                                                                         class="require">{{ __('ohc_management.medicine_name') }}</label>
                                                                     <select name="medicine_id[0]" id="medicine_id"
-                                                                        class="form-control single-select"
+                                                                        class="form-control medicine_id single-select"
                                                                         style="width: 100%">
                                                                         <option value="">Select the Medicine Name
                                                                         </option>
-                                                                        @foreach ($medicine as $list)
-                                                                            <option
-                                                                                value="{{ encryptId($list->medicine_id) }}">
-                                                                                {{ getMedicinename($list->medicine_id) }}
-                                                                            </option>
-                                                                        @endforeach
+
                                                                     </select>
                                                                     @error('medicine_id.0')
                                                                         <div class="text-danger">{{ $message }}</div>
@@ -140,7 +135,8 @@
                                                                         class="require">{{ __('ohc_management.available_quantity') }}</label>
                                                                     <input type="number" min = "1"
                                                                         name="available_quantity[0]" id="available_quantity"
-                                                                        value="" placeholder="Available quantity"
+                                                                        value=""
+                                                                        placeholder="Enter the Available quantity"
                                                                         class="form-control" readonly>
                                                                     @error('available_quantity.0')
                                                                         <div class="text-danger">{{ $message }}</div>
@@ -151,7 +147,7 @@
                                                             <td>
                                                                 <div class="form-group form-input">
                                                                     <label for="quantity"
-                                                                        class="require">{{ __('ohc_management.available_quantity') }}</label>
+                                                                        class="require">{{ __('ohc_management.quantity') }}</label>
                                                                     <input type="text" name="quantity[0]" id="quantity"
                                                                         placeholder="Enter the quantity"
                                                                         class="form-control">
@@ -213,6 +209,32 @@
             $('#resetform').on('click', function(e) {
                 e.preventDefault();
                 location.reload();
+            });
+
+            $('.medicine_id').select2({
+                ajax: {
+                    url: '{{ admin_url('ohc/medicine-receiving-form/medicineid') }}',
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            search: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: $.map(data, function(item) {
+                                return {
+                                    id: item.id,
+                                    text: item.text
+                                };
+                            })
+                        };
+                    }
+                },
+                minimumInputLength: 2,
+                dropdownCssClass: 'form-control',
+                selectionCssClass: 'form-control'
             });
         });
         $(document).on('change', '#unit_id', function() {
@@ -279,22 +301,18 @@
             <tr>
                 <td>
                     <div class="form-group form-input">
-                        <label for="medicine_id" class="require">{{ __('ohc_management.medicine_name') }}/label>
-                        <select name="medicine_id[${rowcount}]" class="form-control single-select" style="width: 100%">
+                        <label for="medicine_id" class="require">{{ __('ohc_management.medicine_name') }}</label>
+                        <select name="medicine_id[${rowcount}]" class="form-control medicine_id single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
-                                    @foreach ($medicine as $list)
-                                                                        <option value="{{ encryptId($list->medicine_id) }}">
-                                                                            {{ getMedicinename($list->medicine_id) }}
-                                                                        </option>
-                                                                    @endforeach
+
                         </select>
 
                     </div>
                 </td>
                 <td>
                     <div class="form-group form-input">
-                        <label for="quantity" class="require">{{ __('ohc_management.available_quantity') }}/label>
-                        <input type="text" name="available_quantity[${rowcount}]" class="form-control" readonly>
+                        <label for="quantity" class="require">{{ __('ohc_management.available_quantity') }}</label>
+                        <input type="text" name="available_quantity[${rowcount}]"  placeholder="Enter the Available quantity" class="form-control"readonly>
 
                     </div>
                 </td>
@@ -339,6 +357,32 @@
                         required: 'Quantity is required',
                         digits: 'Quantity must be numeric',
                     }
+                });
+
+                $('.medicine_id').select2({
+                    ajax: {
+                        url: '{{ admin_url('ohc/medicine-first-aid/medicineid') }}',
+                        dataType: 'json',
+                        delay: 250,
+                        data: function(params) {
+                            return {
+                                search: params.term
+                            };
+                        },
+                        processResults: function(data) {
+                            return {
+                                results: $.map(data, function(item) {
+                                    return {
+                                        id: item.id,
+                                        text: item.text
+                                    };
+                                })
+                            };
+                        }
+                    },
+                    minimumInputLength: 2,
+                    dropdownCssClass: 'form-control',
+                    selectionCssClass: 'form-control'
                 });
 
                 rowcount++;

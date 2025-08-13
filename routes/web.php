@@ -2328,6 +2328,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/sample-download', [MedicineRequisitionController::class, 'DownloadSample']);
             });
 
+            // medicine issuance
             Route::group(['prefix' => 'ohc/medicine-issuance'], function () {
                 Route::get('/list', [MedicineIssuanceController::class, 'index']);
                 Route::post('/list', [MedicineIssuanceController::class, 'index']);
@@ -2377,7 +2378,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/quantity', [PrescribetoPatientController::class, 'quantity']);
                 Route::get('/employeename', [PrescribetoPatientController::class, 'employeename']);
             });
-
+// medicine first aid
             Route::group(['prefix' => 'ohc/first-aid'], function () {
                 Route::get('/list', [OpdFirstAidController::class, 'index']);
                 Route::post('/list', [OpdFirstAidController::class, 'index']);
@@ -2392,6 +2393,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::post('/status', [OpdFirstAidController::class, 'statusChange']);
                 Route::get('/quantity', [OpdFirstAidController::class, 'quantity']);
                 Route::get('/employeename', [OpdFirstAidController::class, 'employeename']);
+
                 Route::get('/emp-details/{emp_id}', [OpdFirstAidController::class, 'employeedetails']);
             });
 
@@ -2445,6 +2447,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('add/{id}', [MedicineFirstAidController::class, 'issue']);
                 Route::post('/issue/submit', [MedicineFirstAidController::class, 'issuestore']);
                 Route::post('/delete/{row_id}', [MedicineFirstAidController::class, 'delete']);
+                Route::get('/medicineid', [MedicineFirstAidController::class, 'medicinename']);
                 Route::get('/editquantity/{quantity_id}', [MedicineFirstAidController::class, 'editquantity']);
                 Route::get('/medicine-details/{unit_id}/{id}', [MedicineFirstAidController::class, 'medicineDetails']);
             });

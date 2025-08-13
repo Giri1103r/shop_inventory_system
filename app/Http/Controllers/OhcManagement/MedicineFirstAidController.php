@@ -518,4 +518,25 @@ class MedicineFirstAidController extends Controller
             ['available_quantity' => $availableQuantity->balance]
         );
     }
+
+    public function medicinename(Request $request)
+    {
+        $name = $request->input('search');
+
+        $medicines = $this->inventory->where('unit_id', Auth::user()->unit_id)
+            ->where('medicine_name', 'like', '%' . $name . '%')
+            ->where('status', 1)
+            ->limit(10)
+            ->get();
+
+
+        $result = $medicines->map(function ($item) {
+            return [
+                'id' => ($item->medicine_id),
+                'text' => $item->medicine_name,
+            ];
+        });
+
+        return response()->json($result);
+    }
 }
