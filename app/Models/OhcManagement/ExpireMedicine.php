@@ -97,20 +97,36 @@ class ExpireMedicine extends Model
         return $this->create($insert_array);
     }
 
-    public function updates($data)
-    {
-        $request = request();
+  public function updates($data)
+{
+    $update_array = [
+        'medicine_id' => $data->medicine_id,
+        'expire_date' => DBdateformat($data->expire_date),
+        'batch_no'    => $data->batch_number,
+        'updated_by'  =>Auth::id(),
+    ];
 
-        $update_array = [
-            'medicine_id' => $data->medicine_id,
-            'expire_date' => DBdateformat($data->expire_date),
-            'batch_no' => $data->batch_number,
-            'updated_by' => Auth::id(),
-        ];
+    // Check if the record exists
+    $existMedicine = $this->where('medicine_id', $data->medicine_id)->first();
 
+    if ($existMedicine) {
+        // Update existing record
+        $existMedicine->update($update_array);
+        $medicineData = $existMedicine;
+    } else {
+         $insert_array = [
+        'medicine_id' => $data->medicine_id,
+        'expire_date' => DBdateformat($data->expire_date),
+        'batch_no'    => $data->batch_number,
+        'created_by'  =>Auth::id(),
+    ];
 
-        return $this->where('medicine_id', $data->medicine_id)->update($update_array);
+        // Insert new record
+        $medicineData = $this->create($insert_array);
     }
+
+    return $medicineData;
+}
 
     public function statuschange($ids)
     {
