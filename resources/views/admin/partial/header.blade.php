@@ -136,15 +136,15 @@
                 <img src="{{ url('public/assets/images/klogo.jpg') }}" alt="" height="22">
             </span>
             <span class="logo-lg">
-                <img src="{{ url('public/assets/images/logo-dark.png') }}" alt="" height="16">
+                <img src="{{ url('public/assets/images/logo-dark.png') }}" alt="" style="width: 50%;height: 50%;">
             </span>
         </a>
         <a href="{{ url('/dashboard') }}" class="logo logo-dark text-center">
             <span class="logo-sm">
-                <img src="{{ url('public/assets/images/klogo.jpg') }}" alt="" height="22">
+                <img src="{{ url('public/assets/images/klogo.jpg') }}" alt="" height="40" width ="50">
             </span>
             <span class="logo-lg">
-                <img src="{{ url('public/assets/images/logo-dark.png') }}" alt="" height="16">
+                <img src="{{ url('public/assets/images/logo-dark.png') }}" alt="" height="10">
             </span>
         </a>
     </div>

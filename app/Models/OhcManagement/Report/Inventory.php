@@ -16,6 +16,7 @@ class Inventory extends Model
     protected $fillable = [
         'medicine_id',
         'unit_id',
+        'medicine_name',
         'total_purchase',
         'total_issue',
         'total_first_aid',
@@ -130,6 +131,7 @@ class Inventory extends Model
             $insert_array[] = [
                 'unit_id' => $unitId,
                 'medicine_id' => $details->id,
+                'medicine_name' => $details->medicine,
                 'total_purchase' => 0,
                 'total_issue' => 0,
                 'total_received' => 0,
