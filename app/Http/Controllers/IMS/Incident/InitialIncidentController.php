@@ -198,6 +198,10 @@ class InitialIncidentController extends Controller
         $unsafe_act = $request->unsafe_act;
         $unsafe_condition = $request->unsafe_condition;
         $fire_incidence = $request->fire_incidence;
+        $month = $request->month;
+        $ua_or_uc = $request->all;
+        $ua_or_op = $request->open;
+        $ua_or_cl = $request->close;
         $data = array(
             'unitList' => $unitList,
             'companyList' => $companyList,
@@ -206,7 +210,9 @@ class InitialIncidentController extends Controller
             'type' => $type,
             'condition' => $condition,
             'fromdate' => $fromdate,
-            'fromdate' => $fromdate,
+            'ua_or_cl' => $ua_or_cl,
+            'ua_or_op' => $ua_or_op,
+            'ua_or_uc' => $ua_or_uc,
             'minor' => $minor,
             'major' => $major,
             'near_miss' => $near_miss,
@@ -218,6 +224,7 @@ class InitialIncidentController extends Controller
             'fire_incidence' => $fire_incidence,
             'companyId' => $companyId,
             'incTypeList' => $incTypeList,
+            'month' => $month,
         );
 
         return view('ims.initial.incident.list', $data);
@@ -771,7 +778,7 @@ class InitialIncidentController extends Controller
             $addInjury = $this->incident_body_parts->addInjury();
             return $addInjury;
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }

@@ -814,7 +814,7 @@
                         </div>
                     </div>
 
-                    {{-- Training Management Topic wise--}}
+                    {{-- Training Management Topic wise --}}
 
                     <div class="row">
                         <div class="col-xl-12 col-xxl-12">
@@ -2509,7 +2509,7 @@
                 }
 
                 function LoadnearMissCount(CompanyId = '', Fromdate = '', Todate = '') {
-                    var url = "{{ admin_url('dashboard/nearMissFrequency') }}"
+                    var url = "{{ admin_url('dashboard/near-miss-frequency') }}"
                     var data = {
                         CompanyId: CompanyId,
                         Fromdate: Fromdate,
@@ -2779,6 +2779,60 @@
                 });
 
 
+
+                // ims month wise filter
+
+                function redirectchartIMSurl(chart_type, id, url, month = null) {
+                    let CompanyId = $('#company_id').val();
+                    let Fromdate = $('#fromDate').val();
+                    let Todate = $('#toDate').val();
+
+                    let form = $('<form>', {
+                        method: 'POST',
+                        action: url,
+                    });
+
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: '_token',
+                        value: "{{ csrf_token() }}"
+                    }));
+
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: chart_type,
+                        value: id
+                    }));
+
+                  
+
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'month',
+                        value: month
+                    }));
+
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'fromDate',
+                        value: Fromdate
+                    }));
+
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'toDate',
+                        value: Todate
+                    }));
+                    form.append($('<input>', {
+                        type: 'hidden',
+                        name: 'company_id',
+                        value: CompanyId
+                    }));
+
+
+                    $('body').append(form);
+                    form.submit();
+                }
                 // trainig schedule
 
                 function redirectcharturl(chart_type, id, url, unit_id = null) {
@@ -2803,7 +2857,7 @@
                         value: id
                     }));
 
-                      form.append($('<input>', {
+                    form.append($('<input>', {
                         type: 'hidden',
                         name: 'unit_id',
                         value: unit_id

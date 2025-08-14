@@ -1,41 +1,91 @@
 <div id="uaucStaticReport"></div>
 
 <script>
+   var unitdata = {!! json_encode($unitdata) !!};
+
     var options = {
-        series: {!! json_encode($series) !!},
+        series: [
+            {
+                name: 'Total',
+                data: {!! json_encode($total) !!}
+            },
+            {
+                name: 'Open',
+                data: {!! json_encode($open) !!}
+            },
+            {
+                name: 'Closed',
+                data: {!! json_encode($closed) !!}
+            }
+        ],
         chart: {
             type: 'bar',
             height: 350,
+            stacked: true,
             toolbar: {
                 show: false
+            },
+            events: {
+                dataPointSelection: function(event, chartContext, config) {
+                    var dataPointIndex = config.dataPointIndex;
+                    var seriesIndex = config.seriesIndex;
+                    var unitId = unitdata[dataPointIndex]; // ✅ Get unit ID
+                    var incidentTypeName = chartContext.w.config.xaxis.categories[dataPointIndex];
+
+                    const url = "{{ admin_url('incident/initial-incident/list/all/type') }}";
+
+                    let iirType;
+                    let iirOpenClose;
+
+                    // ✅ Map seriesIndex to correct type based on colors & labels
+                    if (seriesIndex === 1) {           // Open - Yellow
+                        iirType = 'open';
+                        iirOpenClose = 9;
+                    } else if (seriesIndex === 2) {    // Closed - Green
+                        iirType = 'close';
+                        iirOpenClose = 9;
+                    } else if (seriesIndex === 0) {    // Total - Blue
+                        iirType = 'all';
+                        iirOpenClose = null;
+                    } else {
+                        return;
+                    }
+
+                    redirectcharturl(iirType, iirOpenClose, url, unitId);
+                }
             }
         },
         plotOptions: {
             bar: {
                 horizontal: false,
-                columnWidth: '25%',
-                borderRadiusApplication: 'end'
+                borderRadius: 10,
+                columnWidth: '10%',
+                borderRadiusApplication: 'end',
+                borderRadiusWhenStacked: 'last'
             }
         },
         dataLabels: {
-            enabled: false
-        },
-        stroke: {
-            show: true,
-            width: 2,
-            colors: ['transparent']
+            enabled: true,
+            style: {
+                colors: ['#fff']
+            },
         },
         xaxis: {
             categories: {!! json_encode($units) !!}
         },
-
+        yaxis: {
+            title: {
+                text: 'Incident Count'
+            }
+        },
         fill: {
             opacity: 1
         },
+        colors: ['#1E90FF', '#ffc107', '#28a745'], // ✅ Blue, Yellow, Green
         tooltip: {
             y: {
                 formatter: function(val) {
-                    return val + " incidents"
+                    return val + " incidents";
                 }
             }
         }

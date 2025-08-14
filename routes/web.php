@@ -304,32 +304,36 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('get-safety-inspection-total', [AdminController::class, 'getSafetyinspection']);
 
 
+
+                Route::get('inspection-count', [AdminController::class, 'InspectionWiseCount']);
+                // PTW
+                Route::get('ptw-open-close', [AdminController::class, 'PTWActiveVsClose']);
+                Route::get('ptw-type-wise-count', [AdminController::class, 'PTWTypeWiseCount']);
+                Route::get('ptw-hold-violation', [AdminController::class, 'ptwholdviolation']);
+                Route::get('PTWAvgTimeChart', [AdminController::class, 'getPTWAvgTimeChart']);
+                Route::get('unitwiseptw', [AdminController::class, 'unitwiseptw']);
+                Route::get('monthwiseptw', [AdminController::class, 'monthwiseptw']);
+                // PPE Managment
+                Route::get('PPEIssuanceGroupWise', [AdminController::class, 'getPPEIssuanceGroupWise']);
+                Route::get('PPEAvailabilityChart', [AdminController::class, 'getPPEAvailabilityChart']);
+
+                // Incident management system
                 Route::get('total-incident', [AdminController::class, 'getTotalIncident']);
                 Route::get('heatmap-of-imsData', [AdminController::class, 'getHeatmapImsData']);
                 Route::get('incident-type-chart', [AdminController::class, 'getIncidentTypeChart']);
-                Route::get('inspection-count', [AdminController::class, 'InspectionWiseCount']);
-                Route::get('ptw-open-close', [AdminController::class, 'PTWActiveVsClose']);
-                Route::get('ptw-type-wise-count', [AdminController::class, 'PTWTypeWiseCount']);
-
-                Route::get('ptw-hold-violation', [AdminController::class, 'ptwholdviolation']);
-                Route::get('PPEIssuanceGroupWise', [AdminController::class, 'getPPEIssuanceGroupWise']);
-                Route::get('PTWAvgTimeChart', [AdminController::class, 'getPTWAvgTimeChart']);
-                Route::get('PPEAvailabilityChart', [AdminController::class, 'getPPEAvailabilityChart']);
-
                 Route::get('TypeofIIRCount', [AdminController::class, 'getTypeofIIRCount']);
                 Route::get('accident-report-unit-wise', [AdminController::class, 'getAccidentReportUnitWiseCount']);
                 Route::get('injurypart', [AdminController::class, 'getInjurypart']);
                 Route::post('getbodycount', [AdminController::class, 'injurybodycount']);
                 Route::get('IIRTypeWiseUAUC', [AdminController::class, 'IIRTypeWiseUAUC']);
                 Route::get('uauc-static-report', [AdminController::class, 'uaucStaticReport']);
-                Route::get('nearMissFrequency', [AdminController::class, 'nearMissFrequency']);
+                Route::get('near-miss-frequency', [AdminController::class, 'nearMissFrequency']);
                 Route::get('auditFindings', [AdminController::class, 'auditFindings']);
                 Route::get('IIRTypeWiseRCPA', [AdminController::class, 'IIRTypeWiseRCPA']);
 
-                Route::get('unitwiseptw', [AdminController::class, 'unitwiseptw']);
-                Route::get('monthwiseptw', [AdminController::class, 'monthwiseptw']);
+
                 // Inspection --> gemba walk
-                  Route::get('gemba-walk-observation', [AdminController::class, 'gembaWalkObservation']);
+                Route::get('gemba-walk-observation', [AdminController::class, 'gembaWalkObservation']);
                 // Training Management
                 Route::get('department', [AdminController::class, 'getDepartment']);
                 Route::get('training-open-close-total', [AdminController::class, 'getTrainingOpenClose']);
@@ -2378,7 +2382,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('/quantity', [PrescribetoPatientController::class, 'quantity']);
                 Route::get('/employeename', [PrescribetoPatientController::class, 'employeename']);
             });
-// medicine first aid
+            // medicine first aid
             Route::group(['prefix' => 'ohc/first-aid'], function () {
                 Route::get('/list', [OpdFirstAidController::class, 'index']);
                 Route::post('/list', [OpdFirstAidController::class, 'index']);

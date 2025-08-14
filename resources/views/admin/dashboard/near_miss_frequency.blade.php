@@ -2,7 +2,7 @@
 
 <script>
     var nearMissData = @json($chartData);
-
+    // console.log(nearMissData);
     var monthNames = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
@@ -33,7 +33,8 @@
                     if (selectedData) {
                         var iirType = selectedData.iir_type;
                         var month = selectedData.month;
-                        redirectToIms(iirType, '', '', '', month, '', '');
+                        const url = "{{ admin_url('incident/initial-incident/list/all/type') }}";
+                        redirectchartIMSurl('near_miss', iirType, url, month);
                     }
                 }
             }

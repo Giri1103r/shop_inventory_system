@@ -1029,6 +1029,7 @@ class AdminController extends Controller
                     return [$item->incident_type_name => $item->incident_type_id];
                 }),
             ];
+            // dd(  $formattedData);
             return view('admin.dashboard.type_of_irr', [
                 'formattedData' => $formattedData,
 
@@ -1158,62 +1159,62 @@ class AdminController extends Controller
 
 
 
- public function gembaWalkObservation(Request $request)
-{
-    try {
-        $chartData = $this->gembaWalk->gembaWalkPotentialCount();
+    public function gembaWalkObservation(Request $request)
+    {
+        try {
+            $chartData = $this->gembaWalk->gembaWalkPotentialCount();
 
-        if (count($chartData) <= 0) {
-            return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
-        }
+            if (count($chartData) <= 0) {
+                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            }
 
-        // Get distinct observation types
-        $observationTypes = [];
-        foreach ($chartData as $data) {
-            foreach ($data['counts'] as $obsTypeId => $count) {
-                if (!isset($observationTypes[$obsTypeId])) {
-                    $observationTypes[$obsTypeId] = $data['observation_labels'][$obsTypeId];
+            // Get distinct observation types
+            $observationTypes = [];
+            foreach ($chartData as $data) {
+                foreach ($data['counts'] as $obsTypeId => $count) {
+                    if (!isset($observationTypes[$obsTypeId])) {
+                        $observationTypes[$obsTypeId] = $data['observation_labels'][$obsTypeId];
+                    }
                 }
             }
-        }
 
-        // Prepare categories and unit IDs
-        $categories = array_column($chartData, 'unit_name');
-        $unitIds = array_column($chartData, 'unit_id');
+            // Prepare categories and unit IDs
+            $categories = array_column($chartData, 'unit_name');
+            $unitIds = array_column($chartData, 'unit_id');
 
-        // Build series dynamically for each observation type
-        $series = [];
-        foreach ($observationTypes as $typeId => $label) {
-            $series[] = [
-                'name' => $label,
-                'id' => $typeId,
-                'data' => array_map(function ($row) use ($typeId) {
-                    return [
-                        'x' => $row['unit_name'],
-                        'y' => $row['counts'][$typeId] ?? 0,
-                        'custom' => [
-                            'unit_id' => $row['unit_id'],
-                            'observation_type_id' => $typeId
-                        ]
-                    ];
-                }, $chartData)
+            // Build series dynamically for each observation type
+            $series = [];
+            foreach ($observationTypes as $typeId => $label) {
+                $series[] = [
+                    'name' => $label,
+                    'id' => $typeId,
+                    'data' => array_map(function ($row) use ($typeId) {
+                        return [
+                            'x' => $row['unit_name'],
+                            'y' => $row['counts'][$typeId] ?? 0,
+                            'custom' => [
+                                'unit_id' => $row['unit_id'],
+                                'observation_type_id' => $typeId
+                            ]
+                        ];
+                    }, $chartData)
+                ];
+            }
+
+            $chartData = [
+                'categories' => $categories,
+                'series' => $series
             ];
+
+            return view('admin.dashboard.gembaWalkObservation', [
+                'chartData' => $chartData
+            ]);
+        } catch (\Exception $ex) {
+            report($ex);
+            return back()->with('error', 'Failed to load unit-wise incident data.');
         }
-
-        $chartData = [
-            'categories' => $categories,
-            'series' => $series
-        ];
-
-        return view('admin.dashboard.gembaWalkObservation', [
-            'chartData' => $chartData
-        ]);
-    } catch (\Exception $ex) {
-        report($ex);
-        return back()->with('error', 'Failed to load unit-wise incident data.');
     }
-}
-    
+
 
 
     public function DailyObservationMonthCount()
@@ -1283,34 +1284,27 @@ class AdminController extends Controller
     {
         try {
             $chartData = $this->ims_incident->getTypeofUAUCStatusCountData($request);
-
-            if ($chartData->isEmpty()) {
-                return response()->json('<div class="border-0 pb-3" style="margin-top: 166px;"><h4 style="text-align: center;">No data Found.</h4></div>');
+            $units = [];
+            $total = [];
+            $open = [];
+            $closed = [];
+            $unitdata = [];
+            foreach ($chartData as $data) {
+                $units[] = $data->unit_name;
+                $total[] = $data->initident_total_count;
+                $open[] = $data->open_count;
+                $closed[] = $data->closed_count;
+                $unitdata[] = Unit::where('unit_name', $data->unit_name)->value('id');
             }
+        
+            // dd( $unitdata );
 
-            // Format for ApexCharts
-            $units = $chartData->pluck('unit_name')->unique()->values()->all();
-            $totals = [];
-            $opens = [];
-            $closeds = [];
-
-            foreach ($chartData as $row) {
-                $totals[] = ($row->ua_total + $row->uc_total);
-                $opens[] = ($row->ua_open + $row->uc_open);
-                $closeds[] = ($row->ua_closed + $row->uc_closed);
-            }
-
-            $series = [
-                ['name' => 'Total', 'data' => $totals],
-                ['name' => 'Open', 'data' => $opens],
-                ['name' => 'Closed', 'data' => $closeds],
-            ];
-
-            return view('admin.dashboard.unit_wise_uauc', compact('series', 'units', 'request'));
+            return view('admin.dashboard.unit_wise_uauc', compact('units', 'total', 'open', 'closed', 'request', 'unitdata'));
         } catch (\Exception $ex) {
             report($ex);
         }
     }
+
 
     public function nearMissFrequency(Request $request)
     {

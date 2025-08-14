@@ -111,6 +111,30 @@ class InitialIncident extends Model
                 $query->whereDate('ims_initial_incident.created_at', '<=', $enddatepickersearch);
             });
         }
+
+        if ($request->has('ua_or_uc') && empty($request->ua_or_uc)) {
+            $query->whereIn('ims_initial_incident.iir_type', [
+                IIR_TYPE_UNSAFE_ACT,
+                IIR_TYPE_UNSAFE_CONDITION
+            ]);
+        }
+
+        if ($request->has('ua_or_op') && $request->ua_or_op) {
+            $query->whereIn('ims_initial_incident.iir_type', [
+                IIR_TYPE_UNSAFE_ACT,
+                IIR_TYPE_UNSAFE_CONDITION
+            ])->where('ims_initial_incident.incident_status', '<',($request->ua_or_op));
+
+
+        }
+        if ($request->has('ua_or_cl') && $request->ua_or_cl) {
+            $query->whereIn('ims_initial_incident.iir_type', [
+                IIR_TYPE_UNSAFE_ACT,
+                IIR_TYPE_UNSAFE_CONDITION
+            ])->where('ims_initial_incident.incident_status', ($request->ua_or_cl));
+
+        }
+
         if ($request->has('company_name') && $request->company_name) {
 
             $query->where('ims_initial_incident.company_id', decryptId($request->company_name));
@@ -145,7 +169,7 @@ class InitialIncident extends Model
 
             $query->where('ims_initial_incident.iir_type', ($request->accident_report));
         }
-          if ($request->has('unit_name') && $request->unit_name) {
+        if ($request->has('unit_name') && $request->unit_name) {
 
             $query->where('ims_initial_incident.unit_id', ($request->unit_name));
         }
@@ -1001,16 +1025,16 @@ class InitialIncident extends Model
     public function getAccidentReportUnitWiseCountData($request)
     {
         $query = DB::table('ims_initial_incident as iii')
-        ->join('masters_unit as unit', 'iii.unit_id', '=', 'unit.id')
-        ->select(
-            'unit.unit_name',
-            'unit.id as unit_id',
-            DB::raw("SUM(CASE WHEN iii.iir_type = 11 THEN 1 ELSE 0 END) AS major"),
-            DB::raw("SUM(CASE WHEN iii.iir_type = 10 THEN 1 ELSE 0 END) AS minor"),
-            DB::raw("SUM(CASE WHEN iii.iir_type = 12 THEN 1 ELSE 0 END) AS fatal")
-        )
-        ->groupBy('unit.unit_name', 'unit.id')
-        ->orderBy('unit.unit_name');
+            ->join('masters_unit as unit', 'iii.unit_id', '=', 'unit.id')
+            ->select(
+                'unit.unit_name',
+                'unit.id as unit_id',
+                DB::raw("SUM(CASE WHEN iii.iir_type = 11 THEN 1 ELSE 0 END) AS major"),
+                DB::raw("SUM(CASE WHEN iii.iir_type = 10 THEN 1 ELSE 0 END) AS minor"),
+                DB::raw("SUM(CASE WHEN iii.iir_type = 12 THEN 1 ELSE 0 END) AS fatal")
+            )
+            ->groupBy('unit.unit_name', 'unit.id')
+            ->orderBy('unit.unit_name');
 
         // Apply company Filter
         if ($request->CompanyId) {
@@ -1208,37 +1232,74 @@ class InitialIncident extends Model
             ];
         });
     }
+
+    // public function getTypeofUAUCStatusCountData($request)
+    // {
+    //     $query = DB::table('ims_initial_incident as iii')
+    //         ->leftJoin('masters_unit as mu', 'mu.id', '=', 'iii.unit_id')
+    //         ->select(
+    //             'mu.unit_name',
+    //             DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as ua_total'),
+    //             DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 AND iii.status != 4 THEN 1 ELSE 0 END) as ua_open'),
+    //             DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 AND iii.status = 4 THEN 1 ELSE 0 END) as ua_closed'),
+
+    //             DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as uc_total'),
+    //             DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 AND iii.status != 4 THEN 1 ELSE 0 END) as uc_open'),
+    //             DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 AND iii.status = 4 THEN 1 ELSE 0 END) as uc_closed')
+    //         )
+    //         ->where('iii.ua_uc_yes_no', 1)
+    //         ->groupBy('mu.unit_name')
+    //         ->orderBy('mu.unit_name');
+
+    //     if ($request->Fromdate && $request->Todate) {
+    //         $query->whereBetween('iii.created_at', [
+    //             DBdateformat($request->Fromdate),
+    //             DBdateformat($request->Todate) . ' 23:59:59'
+    //         ]);
+    //     } elseif ($request->Fromdate) {
+    //         $query->where('iii.created_at', '>=', DBdateformat($request->Fromdate));
+    //     } elseif ($request->Todate) {
+    //         $query->where('iii.created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
+    //     }
+
+    //     return $query->get(); // returns multiple rows
+    // }
+
+
+
     public function getTypeofUAUCStatusCountData($request)
     {
         $query = DB::table('ims_initial_incident as iii')
-            ->leftJoin('masters_unit as mu', 'mu.id', '=', 'iii.unit_id')
             ->select(
-                'mu.unit_name',
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as ua_total'),
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 AND iii.status != 4 THEN 1 ELSE 0 END) as ua_open'),
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("1", iii.ua_or_uc) > 0 AND iii.status = 4 THEN 1 ELSE 0 END) as ua_closed'),
-
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 THEN 1 ELSE 0 END) as uc_total'),
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 AND iii.status != 4 THEN 1 ELSE 0 END) as uc_open'),
-                DB::raw('SUM(CASE WHEN FIND_IN_SET("2", iii.ua_or_uc) > 0 AND iii.status = 4 THEN 1 ELSE 0 END) as uc_closed')
+                DB::raw('COUNT(iii.id) as initident_total_count'),
+                DB::raw('SUM(CASE WHEN iii.incident_status = 9 THEN 1 ELSE 0 END) as closed_count'),
+                DB::raw('SUM(CASE WHEN iii.incident_status != 9 THEN 1 ELSE 0 END) as open_count'),
+                'mu.unit_name'
             )
-            ->where('iii.ua_uc_yes_no', 1)
-            ->groupBy('mu.unit_name')
+            ->leftJoin('masters_unit as mu', 'mu.id', '=', 'iii.unit_id')
+            ->where(function ($query) {
+                $query->where('iii.iir_type', IIR_TYPE_UNSAFE_ACT)
+                    ->orWhere('iii.iir_type', IIR_TYPE_UNSAFE_CONDITION);
+            })
+            ->groupBy('mu.unit_name','mu.id')
             ->orderBy('mu.unit_name');
 
-        if ($request->Fromdate && $request->Todate) {
-            $query->whereBetween('iii.created_at', [
-                DBdateformat($request->Fromdate),
-                DBdateformat($request->Todate) . ' 23:59:59'
-            ]);
-        } elseif ($request->Fromdate) {
-            $query->where('iii.created_at', '>=', DBdateformat($request->Fromdate));
-        } elseif ($request->Todate) {
-            $query->where('iii.created_at', '<=', DBdateformat($request->Todate) . ' 23:59:59');
+        if ($request->has('CompanyId') && $request->CompanyId) {
+            $query->where('iii.company_id', decryptId($request->CompanyId));
         }
 
-        return $query->get(); // returns multiple rows
+        if ($request->has('Fromdate') && $request->Fromdate) {
+            $query->where('iii.created_at', '>=', DBdateformat($request->Fromdate));
+        }
+
+        if ($request->has('Todate') && $request->Todate) {
+            $query->where('iii.created_at', '<=', DBdateformat($request->Todate));
+        }
+
+        $results = $query->get();
+        return $results;
     }
+
 
     public function getMajorTotalRecords()
     {

@@ -25,9 +25,8 @@
                     var dataPointIndex = config.dataPointIndex;
                     var incidentTypeName = chartContext.w.config.xaxis.categories[dataPointIndex];
                     var iirType = incidentTypeIdMap[incidentTypeName];
-                    if (iirType) {
-                        redirectToIms(iirType,'','','','','','');
-                    }
+                    const url = "{{ admin_url('incident/initial-incident/list/all/type') }}";
+                    redirectcharturl('near_miss', iirType, url);
                 }
             }
         },

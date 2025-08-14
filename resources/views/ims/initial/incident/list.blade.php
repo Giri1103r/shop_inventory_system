@@ -52,6 +52,10 @@
                                         <input type="hidden" name="unsafe_act" value="{{ $unsafe_act }}">
                                         <input type="hidden" name="accident_report" value="{{ $accident_report }}">
                                         <input type="hidden" name="unit_name" value="{{ $unitId }}">
+                                        <input type="hidden" name="dash_month" value="{{ $month }}">
+                                        <input type="hidden" name="ua_or_uc" value="{{ $ua_or_uc }}">
+                                        <input type="hidden" name="ua_or_op" value="{{ $ua_or_op }}">
+                                        <input type="hidden" name="ua_or_cl" value="{{ $ua_or_cl }}">
 
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="inspectiontype" class="form-label ">IIR Type</label>
@@ -94,8 +98,8 @@
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="emp_name" class="form-label ">To Date</label>
                                             <div class="input-group date form-input  custom-height">
-                                                <input type="text" class="form-control " name="to_date" id="to_date"
-                                                    autocomplete="off">
+                                                <input type="text" class="form-control " name="to_date"
+                                                    id="to_date" autocomplete="off">
                                                 <div class="input-group-addon input-group-text">
                                                     <span class="fa fa-calendar"></span>
                                                 </div>
