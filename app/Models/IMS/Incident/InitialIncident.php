@@ -112,7 +112,7 @@ class InitialIncident extends Model
             });
         }
 
-        if ($request->has('ua_or_uc') && empty($request->ua_or_uc)) {
+        if (($request->ua_or_uc)) {
             $query->whereIn('ims_initial_incident.iir_type', [
                 IIR_TYPE_UNSAFE_ACT,
                 IIR_TYPE_UNSAFE_CONDITION
