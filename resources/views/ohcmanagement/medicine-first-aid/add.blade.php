@@ -123,6 +123,13 @@
                                                                         <option value="">Select the Medicine Name
                                                                         </option>
 
+                                                                        @foreach ($medicine as $list)
+                                                                            <option
+                                                                                value="{{ encryptId($list->medicine_id) }}">
+                                                                                {{ getMedicinename($list->medicine_id) }}
+                                                                            </option>
+                                                                        @endforeach
+
                                                                     </select>
                                                                     @error('medicine_id.0')
                                                                         <div class="text-danger">{{ $message }}</div>
@@ -211,31 +218,31 @@
                 location.reload();
             });
 
-            $('.medicine_id').select2({
-                ajax: {
-                    url: '{{ admin_url('ohc/medicine-receiving-form/medicineid') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    }
-                },
-                minimumInputLength: 2,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
+            // $('.medicine_id').select2({
+            //     ajax: {
+            //         url: '{{ admin_url('ohc/medicine-receiving-form/medicineid') }}',
+            //         dataType: 'json',
+            //         delay: 250,
+            //         data: function(params) {
+            //             return {
+            //                 search: params.term
+            //             };
+            //         },
+            //         processResults: function(data) {
+            //             return {
+            //                 results: $.map(data, function(item) {
+            //                     return {
+            //                         id: item.id,
+            //                         text: item.text
+            //                     };
+            //                 })
+            //             };
+            //         }
+            //     },
+            //     minimumInputLength: 2,
+            //     dropdownCssClass: 'form-control',
+            //     selectionCssClass: 'form-control'
+            // });
         });
         $(document).on('change', '#unit_id', function() {
             var unitId = $(this).val();
@@ -304,7 +311,11 @@
                         <label for="medicine_id" class="require">{{ __('ohc_management.medicine_name') }}</label>
                         <select name="medicine_id[${rowcount}]" class="form-control medicine_id single-select" style="width: 100%">
                             <option value="">Select the Medicine Name</option>
-
+  @foreach ($medicine as $list)
+                                                                        <option value="{{ encryptId($list->medicine_id) }}">
+                                                                            {{ getMedicinename($list->medicine_id) }}
+                                                                        </option>
+                                                                    @endforeach
                         </select>
 
                     </div>
@@ -359,31 +370,31 @@
                     }
                 });
 
-                $('.medicine_id').select2({
-                    ajax: {
-                        url: '{{ admin_url('ohc/medicine-first-aid/medicineid') }}',
-                        dataType: 'json',
-                        delay: 250,
-                        data: function(params) {
-                            return {
-                                search: params.term
-                            };
-                        },
-                        processResults: function(data) {
-                            return {
-                                results: $.map(data, function(item) {
-                                    return {
-                                        id: item.id,
-                                        text: item.text
-                                    };
-                                })
-                            };
-                        }
-                    },
-                    minimumInputLength: 2,
-                    dropdownCssClass: 'form-control',
-                    selectionCssClass: 'form-control'
-                });
+                // $('.medicine_id').select2({
+                //     ajax: {
+                //         url: '{{ admin_url('ohc/medicine-first-aid/medicineid') }}',
+                //         dataType: 'json',
+                //         delay: 250,
+                //         data: function(params) {
+                //             return {
+                //                 search: params.term
+                //             };
+                //         },
+                //         processResults: function(data) {
+                //             return {
+                //                 results: $.map(data, function(item) {
+                //                     return {
+                //                         id: item.id,
+                //                         text: item.text
+                //                     };
+                //                 })
+                //             };
+                //         }
+                //     },
+                //     minimumInputLength: 2,
+                //     dropdownCssClass: 'form-control',
+                //     selectionCssClass: 'form-control'
+                // });
 
                 rowcount++;
             });

@@ -183,31 +183,31 @@
 
             });
 
-            $('#medicine_id').select2({
-                ajax: {
-                    url: '{{ admin_url('ohc/medicine-receiving-form/medicineid') }}',
-                    dataType: 'json',
-                    delay: 250,
-                    data: function(params) {
-                        return {
-                            search: params.term
-                        };
-                    },
-                    processResults: function(data) {
-                        return {
-                            results: $.map(data, function(item) {
-                                return {
-                                    id: item.id,
-                                    text: item.text
-                                };
-                            })
-                        };
-                    }
-                },
-                minimumInputLength: 2,
-                dropdownCssClass: 'form-control',
-                selectionCssClass: 'form-control'
-            });
+            // $('#medicine_id').select2({
+            //     ajax: {
+            //         url: '{{ admin_url('ohc/medicine-receiving-form/medicineid') }}',
+            //         dataType: 'json',
+            //         delay: 250,
+            //         data: function(params) {
+            //             return {
+            //                 search: params.term
+            //             };
+            //         },
+            //         processResults: function(data) {
+            //             return {
+            //                 results: $.map(data, function(item) {
+            //                     return {
+            //                         id: item.id,
+            //                         text: item.text
+            //                     };
+            //                 })
+            //             };
+            //         }
+            //     },
+            //     minimumInputLength: 2,
+            //     dropdownCssClass: 'form-control',
+            //     selectionCssClass: 'form-control'
+            // });
         });
         $(document).on('change', '#unit_id', function() {
             var unitId = $(this).val();
