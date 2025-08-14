@@ -3,6 +3,7 @@
 namespace App\Models\OhcManagement;
 
 use App\Models\OhcManagement\Report\Inventory;
+use App\Scopes\TrashScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -100,7 +101,8 @@ class MedicineFirstAid extends Model
     {
 
         $data = $this->select(
-            'ohc_management_medicine_first_aid.*')->where('reference_id',$id)->where('trash','NO')
+            'ohc_management_medicine_first_aid.*'
+        )->where('reference_id', $id)->where('trash', 'NO')
             ->get();
 
         return $data;
@@ -121,9 +123,14 @@ class MedicineFirstAid extends Model
     {
 
         $data = $this->select(
-            'ohc_management_medicine_first_aid.*')->where('id',$ids)->where('trash','NO')
+            'ohc_management_medicine_first_aid.*'
+        )->where('id', $ids)->where('trash', 'NO')
             ->first();
 
         return $data;
+    }
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('ohc_management_medicine_first_aid'));
     }
 }

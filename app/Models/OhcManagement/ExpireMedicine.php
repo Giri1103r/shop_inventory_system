@@ -2,6 +2,7 @@
 
 namespace App\Models\OhcManagement;
 
+use App\Scopes\TrashScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -108,7 +109,7 @@ class ExpireMedicine extends Model
         ];
 
 
-        return $this->where('medicine_id',$data->medicine_id)->update($update_array);
+        return $this->where('medicine_id', $data->medicine_id)->update($update_array);
     }
 
     public function statuschange($ids)
@@ -159,5 +160,9 @@ class ExpireMedicine extends Model
         $data  = $this->select('ohc_management_expire_medicine.*')->where('id', $id)
             ->update(['approve_status' => $updateData['approve_status'], 'approved_by' => Auth::id()]);
         return $data;
+    }
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('ohc_management_expire_medicine'));
     }
 }

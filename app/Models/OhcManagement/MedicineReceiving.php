@@ -2,6 +2,7 @@
 
 namespace App\Models\OhcManagement;
 
+use App\Scopes\TrashScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -361,5 +362,9 @@ class MedicineReceiving extends Model
             ->whereYear('approved_date', $selectedYear)
             ->select('ohc_master_medicine.medicine as medicine_name', 'approved_date', 'quantity')
             ->get();
+    }
+      protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('ohc_management_medicine_receiving'));
     }
 }

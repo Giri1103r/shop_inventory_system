@@ -2,6 +2,7 @@
 
 namespace App\Models\OhcManagement;
 
+use App\Scopes\TrashScope;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -153,7 +154,7 @@ class MedicineIssuance extends Model
 
     public function getissuedDate($selectedYear, $selectedMonth, $ids)
     {
-  $data=    $this
+        $data =    $this
             ->join('ohc_master_medicine', 'ohc_management_medicine_issuance.medicine_id', '=', 'ohc_master_medicine.id')
             ->whereIn('reference_id', $ids)
             ->whereYear('ohc_management_medicine_issuance.created_at', $selectedYear)
@@ -161,8 +162,7 @@ class MedicineIssuance extends Model
             ->select('ohc_master_medicine.medicine as medicine_name', 'ohc_management_medicine_issuance.created_at', 'quantity')
             ->get();
 
-            return $data;
-
+        return $data;
     }
 
     public function getYearlyissuedDate($selectedYear, $ids)
@@ -173,5 +173,9 @@ class MedicineIssuance extends Model
             ->whereYear('ohc_management_medicine_issuance.created_at', $selectedYear)
             ->select('ohc_master_medicine.medicine as medicine_name', 'ohc_management_medicine_issuance.created_at', 'quantity')
             ->get();
+    }
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('ohc_management_medicine_issuance'));
     }
 }

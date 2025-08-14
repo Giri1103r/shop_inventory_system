@@ -4,6 +4,7 @@ namespace App\Models\OhcManagement;
 
 use App\Models\Master\Employee;
 use App\Models\Master\Work;
+use App\Scopes\TrashScope;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -309,5 +310,12 @@ class MedicalFitnessCertificate extends Model
         }
 
         return $query->orderByDesc('id')->get();
+    }
+
+    protected static function booted()
+    {
+        static::addGlobalScope(new TrashScope('ohc_management_medical_fitness_certificate'));
+
+
     }
 }
