@@ -17,6 +17,7 @@ use App\Jobs\ImportmedicineJob;
 use App\Mail\Ohc\MedicineApprovalEmail;
 use App\Mail\Ohc\MedicineRequestEmail;
 use App\Mail\Ohc\MedicineStockRequestEmail;
+use App\Models\OhcManagement\ExpireMedicine;
 use App\Models\OhcManagement\Master\Medicine;
 use App\Models\OhcManagement\OhcStatuslog;
 use Illuminate\Support\Facades\Auth;
@@ -42,6 +43,7 @@ class MedicineController extends Controller
     private $uploadlog;
     private $ohc_status;
     private $inventory;
+    private $medicine_expire;
 
 
     public function __construct()
@@ -55,6 +57,7 @@ class MedicineController extends Controller
         $this->uploadlog = new UploadLog();
         $this->ohc_status = new OhcStatuslog();
         $this->inventory = new Inventory();
+        $this->medicine_expire = new ExpireMedicine();
     }
 
 
@@ -180,6 +183,7 @@ class MedicineController extends Controller
                 if ($medicine->approve_status == STATUS_OHC_EHS_HEAD_APPROVED) {
                     $count = $this->unit->getUnitcount();
                     $this->inventory->store($details, $count);
+                    $this->medicine_expire->store($medicine);
                 }
                 if ($medicine->approve_status == STATUS_OHC_EHS_HEAD_APPROVAL_PENDING) {
                     $mailsubject = 'Medicine is Added';
@@ -311,7 +315,7 @@ class MedicineController extends Controller
                 ];
                 $details = $this->medicine->selectOne($id);
                 $ohcStatus = $this->ohc_status->medicineapproval($id, $updateData);
-
+                $this->medicine_expire->store($details);
                 $createdby = $this->medicine->where('id', $id)->value('created_by');
                 $email = $this->user->where('id', $createdby)->value('email');
 

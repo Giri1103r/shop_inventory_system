@@ -39,6 +39,7 @@ return [
     'treatment_provided'=>'Treatment Provided',
     'first_aid'=>'First Aid',
     'opd_patient_list'=>'OPD Patient List',
+    'discarded_date'=>'Discard Date',
 
 
     // opd - prescribe to patient

@@ -135,24 +135,24 @@ class MedicineExpireController extends Controller
                                     $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" data-balance="' . $row->balance .  '" data-medicine="' . $row->medicine . '" data-unit="' . $row->unit .  '" class="discard me-1" title="Discard">
                                                 <i class="fa-solid fa-ban" style="color:white;"></i>
                                              </a>';
-                                } 
-                            }
-
-                            if ($row->approve_status != OHC_DISCARD_EHS_APPROVED && checkUserRole(ROLE_EHS_HEAD)) {
-                                if ($expireDate->lessThanOrEqualTo($today)) {
-                                    $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="close me-1" title="Close" >
-                                    <i class="fa fa-window-close" aria-hidden="true" style="color:white;"></i>
-                                 </a>';
-                                } elseif ($expireDate->lessThanOrEqualTo($oneMonthAhead)) {
-                                    $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="close me-1" title="Close" >
-                                    <i class="fa fa-window-close" aria-hidden="true" style="color:back;"></i>
-                                 </a>';
-                                }else{
-                                    $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="close me-1" title="Close" >
-                                    <i class="fa fa-window-close" aria-hidden="true" ></i>
-                                 </a>';
                                 }
                             }
+
+                            // if ($row->approve_status != OHC_DISCARD_EHS_APPROVED && (checkUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_SUPERADMIN))) {
+                            //     if ($expireDate->lessThanOrEqualTo($today)) {
+                            //         $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="close me-1" title="Close" >
+                            //         <i class="fa fa-window-close" aria-hidden="true" style="color:white;"></i>
+                            //      </a>';
+                            //     } elseif ($expireDate->lessThanOrEqualTo($oneMonthAhead)) {
+                            //         $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="close me-1" title="Close" >
+                            //         <i class="fa fa-window-close" aria-hidden="true" style="color:back;"></i>
+                            //      </a>';
+                            //     }else{
+                            //         $btn .= '<a href="javascript:void(0);" data-id="' . encryptId($row->id) . '" class="close me-1" title="Close" >
+                            //         <i class="fa fa-window-close" aria-hidden="true" ></i>
+                            //      </a>';
+                            //     }
+                            // }
 
                             return $btn;
                         })

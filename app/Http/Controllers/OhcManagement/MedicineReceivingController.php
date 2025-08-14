@@ -831,7 +831,7 @@ class MedicineReceivingController extends Controller
 
                 $data = $this->medicine_receiving->selectOne($id);
                 $unitIds = $this->unit->getUnitcount();
-                $this->expire_medicine->store($data, $unitIds);
+                $this->expire_medicine->updates($data);
                 $ids = $data->medicine_id;
 
 
@@ -1168,7 +1168,7 @@ class MedicineReceivingController extends Controller
             ->where('status', 1)
             ->limit(10)
             ->get();
-     
+
 
         $result = $medicines->map(function ($item) {
             return [
