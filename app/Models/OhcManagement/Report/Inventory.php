@@ -248,7 +248,7 @@ class Inventory extends Model
             return $query->where('ohc_report_inventory.unit_id', $selectedUnit);
         })
             ->when($selectedMonth && $selectedYear, function ($query) use ($selectedMonth, $selectedYear) {
-                return $query->whereMonth('ohc_report_inventory.created_at', $selectedMonth)
+                return $query->whereMonth('ohc_report_inventory.created_at', '<=', $selectedMonth)
                     ->whereYear('ohc_report_inventory.created_at', $selectedYear);
             })
             ->join('ohc_master_medicine', 'ohc_report_inventory.medicine_id', '=', 'ohc_master_medicine.id')

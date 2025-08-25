@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\BaseController;
+use App\Mail\PasswordOTPEmail;
 use App\Models\Master\Company;
 use App\Models\Master\Department;
 use App\Models\Master\Location;
@@ -18,6 +19,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 
 use Exception;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
 class LoginController extends BaseController
@@ -139,9 +141,14 @@ class LoginController extends BaseController
                 $userCheck->update();
 
                 $success = [
+                    'name'     => $userCheck->name,
+                    'username' => $userCheck->username,
                     'expire' => $expire_mins,
                     'otp' => $otp
                 ];
+
+                Mail::to($email)->queue(new PasswordOTPEmail($success));
+
 
                 return $this->sendResponse($success, 'OTP Sent to registered email');
             } else {

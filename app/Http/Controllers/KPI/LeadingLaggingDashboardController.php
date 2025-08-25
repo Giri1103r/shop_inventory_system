@@ -74,7 +74,7 @@ class LeadingLaggingDashboardController extends Controller
                 'value' => $internal_audit_count,
             ],
             [
-                'name'  => 'Daily 6S Audit',
+                'name'  => '6S Audit',
                 'value' => $daily_6s_audit,
             ],
             [

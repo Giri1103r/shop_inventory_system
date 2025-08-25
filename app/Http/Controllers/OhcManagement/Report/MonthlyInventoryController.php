@@ -133,10 +133,10 @@ class MonthlyInventoryController extends Controller
             $inventoryData = [];
             foreach ($inventory as $inv) {
                 $inventoryData[$inv->medicine_name] = [
-                    'total_purchase' => $inv->total_purchase ?? 0,
-                    'total_issue' => $inv->total_issue ?? 0,
-                    'previous_month_total' => $inv->previous_month_total ?? 0,
-                    'balance' => $inv->balance ?? 0
+                    'total_purchase' => $inv->total_purchase ?? null,
+                    'total_issue' => $inv->total_issue ?? null,
+                    'previous_month_total' => $inv->previous_month_total ?? null,
+                    'balance' => $inv->balance ?? null
                 ];
             }
             $issuanceData = [];
@@ -157,7 +157,7 @@ class MonthlyInventoryController extends Controller
                 'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FFFFFF']]
             ]);
 
-           
+
             $logoPath = public_path('assets/images/logo-dark.png');
             if (file_exists($logoPath)) {
                 $drawing = new Drawing();
@@ -167,8 +167,8 @@ class MonthlyInventoryController extends Controller
                 $drawing->setCoordinates('A1');
                 $drawing->setOffsetX(5);
                 $drawing->setOffsetY(5);
-                $drawing->setWidth(60);
-                $drawing->setHeight(60);
+                $drawing->setWidth(75);
+                $drawing->setHeight(75);
                 $drawing->setWorksheet($sheet);
             }
 
@@ -285,10 +285,10 @@ class MonthlyInventoryController extends Controller
                     $colIndex++;
                 }
 
-                $totalPurchase = $inventoryData[$med->medicine_name]['total_purchase'] ?? 0;
-                $totalIssue = $inventoryData[$med->medicine_name]['total_issue'] ?? 0;
-                $previousMonthTotal = $inventoryData[$med->medicine_name]['previous_month_total'] ?? 0;
-                $balance = $inventoryData[$med->medicine_name]['balance'] ?? 0;
+                $totalPurchase = $inventoryData[$med->medicine_name]['total_purchase'] ?? null;
+                $totalIssue = $inventoryData[$med->medicine_name]['total_issue'] ?? null;
+                $previousMonthTotal = $inventoryData[$med->medicine_name]['previous_month_total'] ?? null;
+                $balance = $inventoryData[$med->medicine_name]['balance'] ?? null;
                 // Fill calculated columns
                 $sheet->setCellValue(Coordinate::stringFromColumnIndex($colIndex) . $row, $totalPurchase);
                 $colIndex++;
