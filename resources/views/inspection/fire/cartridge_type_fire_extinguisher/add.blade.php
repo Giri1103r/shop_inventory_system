@@ -249,7 +249,7 @@
                                                             <option value="">Select Type</option>
                                                             @foreach ($types as $type)
                                                                 <option value="{{ encryptId($type->id) }}">
-                                                                    {{ $type->name }}</option>
+                                                                    {{ $type->fire_extinguisher_name }}</option>
                                                             @endforeach
                                                         </select>
                                                     </div>
@@ -748,7 +748,7 @@
                                         <option value="">Select Type</option>
                                         @foreach ($types as $type)
                                             <option value="{{ encryptId($type->id) }}">
-                                                {{ $type->name }}</option>
+                                                {{ $type->fire_extinguisher_name }}</option>
                                         @endforeach
                                     </select>
                                 </div>

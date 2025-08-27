@@ -102,7 +102,7 @@ class InitialIncidentController extends Controller
 
     public function index(Request $request)
     {
-// dd($request->all());
+
         if (Auth::check()) {
             if ($request->ajax()) {
 
