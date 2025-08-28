@@ -632,7 +632,7 @@
                                                                         class="form-control require single-select selectInjPersontype"
                                                                         name="injury_person[{{ $key }}][injury_person_type]"
                                                                         alt="0" style="width: 100%"
-                                                                        id="RowInjTypedata_{{ $key }}" disabled>
+                                                                        id="RowInjTypedata_{{ $key }}" >
                                                                         <option value="">Select Person Type</option>
                                                                         <option value="{{ encryptId('1') }}"
                                                                             {{ $injury->injury_person_type == 1 ? 'selected' : '' }}>
@@ -660,7 +660,7 @@
                                                                         id="RowInjothersdata_{{ $key }}"
                                                                         placeholder="Enter Injury Person Name"
                                                                         value="{{ $injury->injury_person_name }}"
-                                                                        disabled>
+                                                                        >
                                                                 </div>
                                                                 <!-- Injury Person Name (Dropdown) -->
                                                                 <div class="col-md-4 form-input {{ $injury->injury_person_type == 1 || $injury->injury_person_type == 2 ? '' : 'd-none' }}"
@@ -671,8 +671,8 @@
                                                                         class="form-control require injuryPersonEmployeeName single-select"
                                                                         style="width: 100%"
                                                                         name="injury_person[{{ $key }}][injury_person_id]"
-                                                                        id="RowInjEmpdata_{{ $key }}" disabled>
-                                                                        <option value="" disabled selected>Select
+                                                                        id="RowInjEmpdata_{{ $key }}" >
+                                                                        <option value=""  selected>Select
                                                                             Injury
                                                                             Person
                                                                             Name
@@ -689,7 +689,7 @@
                                                                         style="width: 100%"
                                                                         name="injury_person[{{$key}}][injury_person_id]"
                                                                         id="RowInjEmpdata_{{ $key }}">
-                                                                        <option value="" disabled selected>Select
+                                                                        <option value=""  selected>Select
                                                                             Injury
                                                                             Person
                                                                             Name
@@ -703,7 +703,7 @@
                                                                         Designation</label>
                                                                     <input type="text" alt="0"
                                                                         name="injury_person[{{ $key }}][injury_person_designation]"
-                                                                        class="form-control InjPerDest" disabled
+                                                                        class="form-control InjPerDest"
                                                                         id="InjPerDest_{{ $key }}"
                                                                         value="{{ $injury->injury_person_designation ?? '' }}">
                                                                 </div>
@@ -713,7 +713,7 @@
                                                                     id="injuryPersonDepttexxt_0">
                                                                     <label class="form-label require">Injury Person
                                                                         Department</label>
-                                                                    <input type="text" alt="0" disabled
+                                                                    <input type="text" alt="0"
                                                                         name="injury_person[{{ $key }}][injury_person_department_id]"
                                                                         class="form-control InjPerDept"
                                                                         id="InjPerDept_{{ $key }}"
@@ -747,7 +747,7 @@
                                                                             alt="0"
                                                                             id="nature_of_injury_{{ $key }}"
                                                                             style="width: 100%"
-                                                                            class="form-control single-select" disabled>
+                                                                            class="form-control single-select" >
                                                                             <option value="">Select Nature of Injury
                                                                             </option>
                                                                             <option value="{{ encryptId('1') }}"
@@ -840,7 +840,7 @@
                                                                     style="width: 100%"
                                                                     name="injury_person[0][injury_person_id]"
                                                                     id="RowInjEmpdata_0">
-                                                                    <option value="" disabled selected>Select
+                                                                    <option value=""  selected>Select
                                                                         Injury
                                                                         Person
                                                                         Name
@@ -1573,8 +1573,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                                                                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                                                                               </div>-->
+                                                                                                                                                                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                                                                       </div>-->
             </div>
         </div>
     </div>
@@ -1792,7 +1792,7 @@
                                 });
                                 console.log(data.employee.department);
                                 if (data.employee.department) {
-                                    departmentDropdown.prop("disabled",
+                                    departmentDropdown.prop("",
                                         false);
                                     departmentDropdown.css("pointer-events",
                                         "none");
@@ -2245,11 +2245,20 @@
                     }
                 });
                 $(`input[name="injury_person[${injuryIndex}][injury_person_name]"]`).rules("add", {
-                    required: true,
+                    required: {
+                        depends: function() {
+                            let selectedType = $(
+                                    `select[name="injury_person[${injuryIndex}][injury_person_type]"]`)
+                                .val();
+                            return (selectedType ==
+                            "{{ encryptId('3') }}");
+                        }
+                    },
                     messages: {
-                        required: "Injury Person Name is required."
+                        required: "Injury Person Name is required when Person Type is Others."
                     }
                 });
+
                 $(`input[name="injury_person[${injuryIndex}][injury_person_designation]"]`).rules("add", {
                     required: true,
                     messages: {
@@ -2263,181 +2272,7 @@
                     }
                 });
             }
-            $(function() {
-                $('#accidentinvestigation').validate({
-                    rules: {
-                        'injury_person[0][injury_person_type]': {
-                            required: true,
-                        },
-                        'injury_person[0][injury_person_id]': {
-                            required: true,
-                        },
-                        'injury_person[0][injury_person_name]': {
-                            required: true,
-                        },
-                        'injury_person[0][injury_person_designation]': {
-                            required: true,
-                        },
-                        'injury_person[0][injury_person_department_id]': {
-                            required: true,
-                        },
-                        'witness_id[]': {
-                            required: true,
-                        },
-                        'is_damaged[]': {
-                            required: true,
-                        },
-                        root_cause_analysis: {
-                            required: true,
-                        },
-                        is_treatment: {
-                            required: true,
-                        },
-                        action_taken: {
-                            required: true,
-                            minlength: 10,
-                            maxlength: 2000,
-                        },
-                        details: {
-                            required: function(element) {
-                                return $('input[name="is_treatment"]:checked').val() === '1';
-                            },
-                            minlength: 3,
-                            maxlength: 2000,
-                        },
-                        corrective_preventive_action: {
-                            required: true,
-                            minlength: 10,
-                            maxlength: 2000,
-                        },
-                        responsible_person_id: {
-                            required: true,
-                        },
-                        target_date: {
-                            required: true,
-                        },
-                        risk_analysis: {
-                            required: true,
-                        },
-                        risk_analysis_remark: {
-                            required: function(element) {
-                                return $('input[name="risk_analysis"]:checked').val() === '2';
-                            },
-                            minlength: 3,
-                            maxlength: 2000,
-                        },
-                        remark: {
-                            minlength: 10,
-                            maxlength: 2000,
-                        },
-                    },
-                    messages: {
-                        'injury_person[0][injury_person_type]': {
-                            required: "Injury Person Type is required."
-                        },
-                        'injury_person[0][injury_person_id]': {
-                            required: "Injury Person Name is required."
-                        },
-                        'injury_person[0][injury_person_name]': {
-                            required: "Injury Person Name is required."
-                        },
-                        'injury_person[0][injury_person_designation]': {
-                            required: "Injury Person Designation is required."
-                        },
-                        'injury_person[0][injury_person_department_id]': {
-                            required: "Injury Person Department is required."
-                        },
-                        'witness_id[]': {
-                            required: "Witness ID is required.",
-                        },
-                        'is_damaged[]': {
-                            required: "Was anything damaged is required.",
-                        },
-                        root_cause_analysis: {
-                            required: "Root cause analysis is required.",
-                        },
-                        is_treatment: {
-                            required: "Where the injured person receiving any treatment at present is required.",
-                        },
-                        action_taken: {
-                            required: "Action taken is required.",
-                            minlength: "Minimum 10 characters required.",
-                            maxlength: "Maximum 2000 characters allowed.",
-                        },
-                        details: {
-                            required: "Please provide details of the treatment.",
-                            minlength: "Details must be at least 3 characters long.",
-                            maxlength: "Details cannot exceed 2000 characters.",
-                        },
-                        corrective_preventive_action: {
-                            required: "Corrective/preventive action is required.",
-                            minlength: "Minimum 10 characters required.",
-                            maxlength: "Maximum 2000 characters allowed.",
-                        },
-                        responsible_person_id: {
-                            required: "Responsible person ID is required.",
-                        },
-                        target_date: {
-                            required: "Target date is required.",
-                        },
-                        risk_analysis: {
-                            required: "Risk Analysis is required.",
-                        },
-                        risk_analysis_remark: {
-                            required: "Risk Analysis Remarks is required.",
-                            minlength: "Details must be at least 3 characters long.",
-                            maxlength: "Details cannot exceed 2000 characters.",
-                        },
-                        remark: {
-                            minlength: "Minimum 10 characters required.",
-                            maxlength: "Maximum 2000 characters allowed.",
-                        },
-                    },
 
-                    errorElement: 'span',
-                    errorPlacement: function(error, element) {
-                        error.addClass('invalid-feedback');
-                        element.closest('.form-input').append(error);
-                    },
-                    highlight: function(element) {
-                        $(element).addClass('is-invalid');
-                    },
-                    unhighlight: function(element) {
-                        $(element).removeClass('is-invalid');
-                    },
-                    submitHandler: function(form) {
-                        // Form is valid, proceed with capturing the fishbone diagram
-                        let fishboneContainer = $(".fishbone-container")[
-                            0]; // Get the fishbone diagram container
-
-                        // Capture the fishbone diagram as an image
-                        html2canvas(fishboneContainer, {
-                            scale: 2
-                        }).then(function(canvas) {
-                            let imageData = canvas.toDataURL(
-                                "image/png"); // Convert canvas to base64
-
-                            // Set the image data to the hidden input field
-                            $("#fishbone_image").val(imageData);
-
-                            // Now submit the form programmatically
-                            form.submit();
-                        });
-                    },
-                    invalidHandler: function(event, validator) {
-                        var errors = validator.numberOfInvalids();
-                        if (errors) {
-                            console.log(`There are ${errors} validation errors.`);
-                            validator.errorList.forEach(function(error) {
-                                console.log(
-                                    `Field: ${error.element.name}, Error: ${error.message}`
-                                );
-                            });
-                        }
-                    },
-                });
-
-            });
         });
         $(function() {
             $('#initialIncidentedit').validate({
@@ -2611,13 +2446,13 @@
             var injury_id = '0';
 
             if ((injuredPerson_emp == '' || injuredPerson_emp == null) && (injuredPerson_empName == '' ||
-                    injuredPerson_empName == null)) {
+            injuredPerson_empName == null)) {
                 Swal.fire('Error', 'Please Select Victim Name', 'error');
                 errorcount = '1';
             } else {
-                // alert(injuredPerson_emp);
                 errorcount = '0';
                 if (injuredPerson_emp != '' && injuredPerson_emp != null) {
+
                     injuredPerson = injuredPerson_emp;
                     injury_person_type = injuredPerson_type;
                     injury_id = injury_detail_id;
@@ -2633,9 +2468,8 @@
 
                 return false;
             } else {
-
-                $('#injurdPerson').val(injuredPerson);
-                $('#injurye_person_type').val(injury_person_type);
+                $('#injuredPerson').val(injuredPerson);
+                $('#injury_person_type').val(injury_person_type);
                 $('#injury_id').val(injury_id);
                 var random_id = $('#random_id').val();
                 var incident_id = $('#incident_id').val();
@@ -2697,7 +2531,7 @@
             var modalsrc = $("#injury_model");
 
             $(modalsrc).find("[name='imgMapdata1']").val('');
-            $(modalsrc).find(':input[name="save_inj"]').prop('disabled', false);
+            $(modalsrc).find(':input[name="save_inj"]').prop('', false);
             $('.others').addClass('hide');
 
         }

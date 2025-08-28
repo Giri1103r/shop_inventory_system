@@ -89,12 +89,12 @@ class InjuryDetails extends Model
                         'injury_id' => $saveinjuryData->id,
                         'status' => 'Y',
                     ];
-
                     $updateConditions = [
                         'random_id' => $random_id,
                         'injured_person_type' => $personType,
                         'status' => 'T'
                     ];
+                    // dd($updateConditions);
 
                     if ($personType == 1 || $personType == 2) {
                         $updateConditions['injury_person_id'] = $saveinjuryData->injury_person_id;
@@ -317,7 +317,8 @@ class InjuryDetails extends Model
 
         )
             ->leftJoin('ims_incident_body_parts', 'ims_injury_details.id', '=', 'ims_incident_body_parts.injury_id')
-            ->where('ims_injury_details.incident_id', $id)->where('ims_injury_details.trash', 'NO')->get();
+            ->where('ims_injury_details.incident_id', $id)->where('ims_incident_body_parts.incident_id', $id)->where('ims_injury_details.trash', 'NO')->get();
+            // dd($data);
         return $data;
     }
 }

@@ -81,7 +81,7 @@ class GembaWalkController extends Controller
     public function index(Request $request)
     {
         try {
-         
+
             if (Auth::check()) {
                 if ($request->ajax()) {
                     try {
@@ -1567,6 +1567,100 @@ class GembaWalkController extends Controller
             return redirect(admin_url('inspection/gemba-walk/list'));
         }
     }
+
+//   public function ExportExcel(Request $request)
+// {
+//     try {
+//         $allData = $this->gembaWalk->exportdata();
+
+//         $header = [
+//             __("common.sno"),
+//             __("Location"),
+//             __("Unit"),
+//             __("Department"),
+//             __("Excat Location"),
+//             __("Date of Observation"),
+//             __("Observation Type"),
+//             __("Risk Category"),
+//             __("Description"),
+//             __("Hazard"),
+//             __("File (Image/Video/PDF)"),
+//             __("Recommended CAPA"),
+//             __("common.status"),
+//             __("Responsible Person"),
+//             __("Observer Person"),
+//             __("Closing Evidence"),
+//             __("Verified By"),
+
+//         ];
+
+//         $i = 1;
+//         $exportData = [];
+
+
+//           foreach ($allData as $data) {
+
+//             // Hazards
+//             $hazards = !empty($data->hazard) ? explode(',', $data->hazard) : [];
+//             $hazardNames = [];
+//             foreach ($hazards as $hazardId) {
+//                 $hazardNames[] = getGembaWalkHazardName($hazardId);
+//             }
+//             $hazardString = implode(', ', $hazardNames);
+
+//             // Responsible Person
+//             $responsiblePerson = !empty($data->responsibility_id) ? explode(',', $data->responsibility_id) : [];
+//             $responsiblePersonName = [];
+//             foreach ($responsiblePerson as $respId) {
+//                 $responsiblePersonName[] = getusername($respId);
+//             }
+//             $responsiblePersonNameString = implode(', ', $responsiblePersonName);
+
+//             // File
+//             $filePath = !empty($data->file_path) ? asset($data->file_path) : '';
+
+//             // Closing evidence
+//             $closingEvidence = '';
+//             if ($data->gemba_walk_checklist_status == 2 && !empty($data->file_path)) {
+//                 $closingEvidence = asset($data->file_path);
+//             }
+
+//             // Row
+//             $export = [];
+//             $export[] = $i;
+//             $export[] = getLocationname($data->location_id);
+//             $export[] = getUnitname($data->unit_id);
+//             $export[] = getDepartment($data->department_id);
+//             $export[] = $data->exact_location;
+//             $export[] = Displaydateformat($data->date_of_observation);
+//             $export[] = $data->observation_type_id == 1 ? 'Unsafe Act' : 'Unsafe Condition';
+//             $export[] = getRiskCategory($data->risk_category);
+//             $export[] = $data->description;
+//             $export[] = $hazardString;
+//             $export[] = $filePath;
+//             $export[] = $data->capa;
+//             $export[] = getGembaWalkStatus($data->gemba_walk_checklist_status);
+//             $export[] = $responsiblePersonNameString;
+//             $export[] = getusername($data->created_by);
+//             $export[] = Displaydateformat($data->created_at);
+//             $export[] = $closingEvidence;
+//             $export[] = getusername($data->verified_by ?? null);
+
+//             $exportData[] = $export;
+//             $i++;
+//         }
+
+//         return SimpleExcelWriter::streamDownload('Gembawalk.xlsx')
+//             ->addHeader($header)
+//             ->addRows($exportData);
+
+//     } catch (\Exception $ex) {
+//         dd($ex);
+//         Session::flash('error', 'Something went wrong, Please try again later!');
+//         return redirect(admin_url('inspection/gemba-walk/list'));
+//     }
+// }
+
 
     public function getEmployeeName(Request $request)
     {
