@@ -778,7 +778,7 @@ class InitialIncidentController extends Controller
             $addInjury = $this->incident_body_parts->addInjury();
             return $addInjury;
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
