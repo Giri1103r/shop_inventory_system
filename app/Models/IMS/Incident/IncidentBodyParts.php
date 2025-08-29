@@ -167,13 +167,16 @@ class IncidentBodyParts extends Model
     {
         $request = request();
         $random_id = $request->random_id;
-        $folderPath = 'incident/body_parts/' . $random_id;
+        $folderPath = "uploads/incident/body_parts/{$random_id}";
 
-        Storage::makeDirectory($folderPath);
+        // create directory in storage/app/public/uploads/incident/body_parts/{random_id}
+        Storage::disk('public')->makeDirectory($folderPath);
 
-        // Set permission to 0777 (you must use chmod with full path)
-        $fullPath = storage_path("app/public/uploads/{$folderPath}");
-        chmod($fullPath, 0777);
+        // now chmod on the correct full path
+        $fullPath = storage_path("app/public/{$folderPath}");
+        if (is_dir($fullPath)) {
+            chmod($fullPath, 0777);
+        }
 
         $base64String = $request->bodypartimage;
 
