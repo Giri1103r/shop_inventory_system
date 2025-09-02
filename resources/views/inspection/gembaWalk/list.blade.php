@@ -73,13 +73,13 @@
                                             <select name="inspection_status" id="inspection_status" style="width: 100%"
                                                 class="form-control single-select">
                                                 <option value="">Select Status</option>
-                                                <option value="{{ encryptId('1') }}">Waiting For CAPA Action</option>
-                                                <option value="{{ encryptId('2') }}">Waiting for Floor Manager Verification
+
+                                                <option value="{{ encryptId('2') }}">Waiting For CAPA Action
                                                 </option>
                                                 <option value="{{ encryptId('3') }}">Waiting for EHS Officer Verification
                                                 </option>
                                                 <option value="{{ encryptId('4') }}">EHS Officer Rejected - Resubmit to
-                                                    Floor Manager Verification
+                                                    Waiting For CAPA Action
                                                 </option>
                                                 <option value="{{ encryptId('5') }}">Closed</option>
                                             </select>

@@ -172,7 +172,7 @@ class IncidentBodyParts extends Model
         // create directory in storage/app/public/uploads/incident/body_parts/{random_id}
         Storage::disk('public')->makeDirectory($folderPath);
 
-        // now chmod on the correct full path
+
         $fullPath = storage_path("app/public/{$folderPath}");
         if (is_dir($fullPath)) {
             chmod($fullPath, 0777);
@@ -181,7 +181,7 @@ class IncidentBodyParts extends Model
         $base64String = $request->bodypartimage;
 
         if (preg_match('/^data:image\/(\w+);base64,/', $base64String, $matches)) {
-            $imageType = $matches[1]; // Extract extension (png, jpg, jpeg)
+            $imageType = $matches[1];
             $imageData = substr($base64String, strpos($base64String, ',') + 1);
             $imageData = base64_decode($imageData);
 
@@ -189,7 +189,7 @@ class IncidentBodyParts extends Model
                 return response()->json(['status' => false, 'message' => 'Invalid Base64 image'], 400);
             }
 
-            // Generate unique filename
+            
             $fileName = time() . uniqid() . '.' . $imageType;
             $filePath = $folderPath . '/' . $fileName;
 

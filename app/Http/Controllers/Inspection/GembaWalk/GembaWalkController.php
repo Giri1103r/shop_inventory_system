@@ -1575,6 +1575,7 @@ class GembaWalkController extends Controller
 
             $header = [
                 __("common.sno"),
+                __("Gemba Walk Id"),
                 __("Location"),
                 __("Unit"),
                 __("Department"),
@@ -1616,6 +1617,7 @@ class GembaWalkController extends Controller
 
                     $export = [
                         $i,
+                        $data->gemba_walk_auto_id,
                         getLocationname($data->location_id),
                         ($data->unit_name),
                         getDepartment($data->department_id),

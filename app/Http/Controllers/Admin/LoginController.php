@@ -98,11 +98,11 @@ class LoginController extends Controller
             }
 
             session()->put('locale', $user->language ?: env('APP_LOCALE'));
-            Session::flash('success', 'Login successful');
+            Session::flash('success', 'Login successfully');
             return redirect()->intended(admin_url('dashboard'));
         }
 
-        RateLimiter::hit($throttleKey, 300);  // 300 seconds = 5 mins
+        RateLimiter::hit($throttleKey, 300);
 
         Session::flash('error', 'Invalid Email or Password');
         return back()->withErrors(['email' => 'Email or Password is incorrect']);
@@ -346,7 +346,6 @@ class LoginController extends Controller
         }
     }
 
-
     public function passwordReset(Request $request)
     {
         try {
@@ -373,7 +372,6 @@ class LoginController extends Controller
             return redirect(admin_url('password/forgot'));
         }
     }
-
 
     public function passwordResetSubmit(Request $request)
     {
