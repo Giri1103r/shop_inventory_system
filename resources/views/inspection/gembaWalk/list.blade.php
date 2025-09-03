@@ -78,8 +78,7 @@
                                                 </option>
                                                 <option value="{{ encryptId('3') }}">Waiting for EHS Officer Verification
                                                 </option>
-                                                <option value="{{ encryptId('4') }}">EHS Officer Rejected - Resubmit to
-                                                    Waiting For CAPA Action
+                                                <option value="{{ encryptId('4') }}">EHS officer reject - waiting for Responsible Person action
                                                 </option>
                                                 <option value="{{ encryptId('5') }}">Closed</option>
                                             </select>
