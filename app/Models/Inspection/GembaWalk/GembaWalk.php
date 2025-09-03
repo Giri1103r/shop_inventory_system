@@ -119,31 +119,31 @@ class GembaWalk extends Model
         if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('inspection_gemba_walk.created_at', '>=', $startDate);
+            $query->where('inspection_gemba_walk.approved_date', '>=', $startDate);
         }
         if ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('inspection_gemba_walk.created_at', '<=', $endDate);
+            $query->where('inspection_gemba_walk.approved_date', '<=', $endDate);
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('inspection_gemba_walk.created_at', [$startDate, $endDate]);
+            $query->whereBetween('inspection_gemba_walk.approved_date', [$startDate, $endDate]);
         }
 
         if ($request->has('fromDate') && !empty($request->fromDate)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->fromDate)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('inspection_gemba_walk.created_at', '>=', $startDate);
+            $query->where('inspection_gemba_walk.approved_date', '>=', $startDate);
         }
         if ($request->has('toDate') && !empty($request->toDate)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->toDate)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('inspection_gemba_walk.created_at', '<=', $endDate);
+            $query->where('inspection_gemba_walk.approved_date', '<=', $endDate);
         }
         if ($request->has('fromDate') && !empty($request->fromDate) && $request->has('toDate') && !empty($request->toDate)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->fromDate)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->toDate)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('inspection_gemba_walk.created_at', [$startDate, $endDate]);
+            $query->whereBetween('inspection_gemba_walk.approved_date', [$startDate, $endDate]);
         }
 
         $org_total =  $query;
@@ -492,31 +492,31 @@ class GembaWalk extends Model
         if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('inspection_gemba_walk.created_at', '>=', $startDate);
+            $query->where('inspection_gemba_walk.approved_date', '>=', $startDate);
         }
         if ($request->has('to_date') && !empty($request->to_date)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('inspection_gemba_walk.created_at', '<=', $endDate);
+            $query->where('inspection_gemba_walk.approved_date', '<=', $endDate);
         }
         if ($request->has('from_date') && !empty($request->from_date) && $request->has('to_date') && !empty($request->to_date)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->to_date)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('inspection_gemba_walk.created_at', [$startDate, $endDate]);
+            $query->whereBetween('inspection_gemba_walk.approved_date', [$startDate, $endDate]);
         }
 
         if ($request->has('fromDate') && !empty($request->fromDate)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->fromDate)->startOfDay()->format('Y-m-d H:i:s');
-            $query->where('inspection_gemba_walk.created_at', '>=', $startDate);
+            $query->where('inspection_gemba_walk.approved_date', '>=', $startDate);
         }
         if ($request->has('toDate') && !empty($request->toDate)) {
             $endDate = Carbon::createFromFormat('d-m-Y', $request->toDate)->endOfDay()->format('Y-m-d H:i:s');
-            $query->where('inspection_gemba_walk.created_at', '<=', $endDate);
+            $query->where('inspection_gemba_walk.approved_date', '<=', $endDate);
         }
         if ($request->has('fromDate') && !empty($request->fromDate) && $request->has('toDate') && !empty($request->toDate)) {
             $startDate = Carbon::createFromFormat('d-m-Y', $request->fromDate)->startOfDay()->format('Y-m-d H:i:s');
             $endDate = Carbon::createFromFormat('d-m-Y', $request->toDate)->endOfDay()->format('Y-m-d H:i:s');
-            $query->whereBetween('inspection_gemba_walk.created_at', [$startDate, $endDate]);
+            $query->whereBetween('inspection_gemba_walk.approved_date', [$startDate, $endDate]);
         }
         $query->orderBy('inspection_gemba_walk.id', 'DESC');
         $results = $query->get();

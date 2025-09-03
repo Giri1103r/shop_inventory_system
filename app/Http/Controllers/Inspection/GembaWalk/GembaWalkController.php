@@ -107,6 +107,9 @@ class GembaWalkController extends Controller
                             ->addColumn('inspection_created_date', function ($row) {
                                 return Displaydateformat($row->inspection_created_date);
                             })
+                            ->addColumn('approved_date', function ($row) {
+                                return Displaydateformat($row->approved_date);
+                            })
                             ->addColumn('inspection_created_by', function ($row) {
                                 return getUsername($row->inspection_created_by);
                             })
@@ -248,12 +251,13 @@ class GembaWalkController extends Controller
 
 
             $gembaWalk = $this->gembaWalk->store();
+            $gembaWalkChecklist = $this->gembaWalkCheckList->store($gembaWalk->id);
             $inspection_type = GEMBA_WALK;
             $gembaWalk_id = $gembaWalk->id;
 
-            $gembaWalk_singnature = $this->gembaWalkChecklistFile->storeSignature($gembaWalk->id);
+            // $gembaWalk_singnature = $this->gembaWalkChecklistFile->storeSignature($gembaWalk->id);
 
-            $gembaWalkChecklist = $this->gembaWalkCheckList->store($gembaWalk->id);
+
 
             $gembaWalk_details = $this->gembaWalk->getUserId($gembaWalk_id);
             $ResponsibleId = $this->gembaWalkCheckList->selectone($gembaWalk_id);

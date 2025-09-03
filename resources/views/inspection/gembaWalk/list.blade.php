@@ -160,6 +160,7 @@
                                         <th>{{ __('common.status') }}</th>
                                         <th>Safety Officer</th>
                                         <th>{{ __('common.created_date') }}</th>
+                                        <th>Closer Date</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -319,9 +320,14 @@
                             data: 'inspection_created_by',
                             name: 'inspection_created_by'
                         },
+
                         {
                             data: 'inspection_created_date',
                             name: 'inspection_created_date'
+                        },
+                        {
+                            data: 'approved_date',
+                            name: 'approved_date'
                         },
                         {
                             data: 'action',
