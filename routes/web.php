@@ -216,6 +216,7 @@ Route::get('permit_close', [CronController::class, 'permitClose']);
 Route::get('cron/ohc/stockrequest', [CronController::class, 'stockrequest']);
 Route::get('cron/ohc/stockupdate', [CronController::class, 'stockupdate']);
 Route::get('cron/ohc/prevoiusmonthstock', [CronController::class, 'prevoiusmonthstock']);
+Route::get('cron/inspection/gembawalk', [CronController::class, 'getVerifiedDate']);
 
 Route::get('test', [TestController::class,  'index']);
 

@@ -33,6 +33,8 @@ use App\Mail\Ohc\MedicineStockEmail;
 use App\Mail\Ohc\MedicineStockRequestEmail;
 use App\Mail\PermitExpiryEmail;
 use App\Mail\SafetyPermitEmail;
+use App\Models\Inspection\GembaWalk\GembaWalk;
+use App\Models\Inspection\GembaWalk\GembaWalkStatusLog;
 use App\Models\Master\Company;
 use App\Models\Master\PpeTypeMaster;
 use App\Models\OhcManagement\Master\Medicine;
@@ -852,30 +854,29 @@ class CronController extends Controller
         }
     }
 
-public function getMedicineName()
-{
-    try {
-        $inventoryItems = Inventory::select('medicine_id')->get();
+    public function getMedicineName()
+    {
+        try {
+            $inventoryItems = Inventory::select('medicine_id')->get();
 
-        foreach ($inventoryItems as $item) {
-            $medicineName = Medicine::where('id', $item->medicine_id)
-                ->value('medicine');
+            foreach ($inventoryItems as $item) {
+                $medicineName = Medicine::where('id', $item->medicine_id)
+                    ->value('medicine');
 
-            if ($medicineName) {
-                Inventory::where('medicine_id', $item->medicine_id)
-                    ->update(['medicine_name' => $medicineName]);
+                if ($medicineName) {
+                    Inventory::where('medicine_id', $item->medicine_id)
+                        ->update(['medicine_name' => $medicineName]);
+                }
             }
+
+            return response()->json(['message' => 'Medicine names updated successfully.']);
+        } catch (Exception $ex) {
+            return response()->json([
+                'message' => 'An error occurred.',
+                'error'   => $ex->getMessage(),
+            ]);
         }
-
-        return response()->json(['message' => 'Medicine names updated successfully.']);
-
-    } catch (Exception $ex) {
-        return response()->json([
-            'message' => 'An error occurred.',
-            'error'   => $ex->getMessage(),
-        ]);
     }
-}
 
 
     public function permitExpiry()
@@ -958,6 +959,35 @@ public function getMedicineName()
             report($ex);
             Log::error('Error in permitExpiry cron job.', ['error' => $ex->getMessage()]);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
+        }
+    }
+
+    public function getVerifiedDate()
+    {
+        try {
+            $verifiedDate = GembaWalkStatusLog::where('to_status', 4)
+                ->where('status', 1)
+                ->get();
+
+            foreach ($verifiedDate as $date) {
+                GembaWalk::where('id', $date->gemba_walk_id)
+                    ->update([
+                        'approved_date' => $date->created_at
+                    ]);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Approved dates updated successfully'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Error occurred while updating approved dates',
+                'error'   => $e->getMessage(),
+                'line'    => $e->getLine(),
+                'file'    => $e->getFile()      
+            ], 500);
         }
     }
 

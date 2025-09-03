@@ -34,6 +34,7 @@ class GembaWalk extends Model
         'created_by',
         'updated_by',
         'verified_by',
+        'approved_date',
         'updated_at',
         'created_at',
     ];
