@@ -378,14 +378,19 @@ class GembaWalk extends Model
     public function updateStatus($gembaWalk_id, $gembaWalk_status)
     {
         $request = request();
-        $update_array = array(
-            'gemba_walk_status' => $gembaWalk_status,
-            'updated_by' => Auth::id(),
-            'updated_at' => now(),
-            'approved_date' => now(),
-            'verified_by' => Auth::id(),
 
-        );
+        $update_array = [
+            'gemba_walk_status' => $gembaWalk_status,
+            'updated_by'        => Auth::id(),
+            'verified_by'        => Auth::id(),
+            'updated_at'        => now(),
+        ];
+
+        if ($gembaWalk_status == GEMBA_WALK_INSPECTION_CLOSED) {
+            $update_array['approved_date'] = now();
+            $update_array['verified_by']   = Auth::id();
+        }
+
         return $this->where('id', $gembaWalk_id)->update($update_array);
     }
 
