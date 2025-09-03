@@ -382,6 +382,7 @@ class GembaWalk extends Model
             'gemba_walk_status' => $gembaWalk_status,
             'updated_by' => Auth::id(),
             'updated_at' => now(),
+            'approved_date' => now(),
             'verified_by' => Auth::id(),
 
         );
