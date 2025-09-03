@@ -408,6 +408,7 @@ class GembaWalk extends Model
             'inspection_gemba_walk.*',
             'inspection_gemba_walk.id as inspection_id',
             'inspection_gemba_walk.created_by as inspection_created_by',
+            'inspection_gemba_walk.created_at as inspection_created_date',
             'inspection_gemba_walk.updated_by as verified_by',
 
             'inspection_gemba_walk_status.status_name',
