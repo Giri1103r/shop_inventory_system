@@ -965,7 +965,7 @@ class CronController extends Controller
     public function getVerifiedDate()
     {
         try {
-            $verifiedDate = GembaWalkStatusLog::where('to_status', 4)
+            $verifiedDate = GembaWalkStatusLog::where('to_status', 5)
                 ->where('status', 1)
                 ->get();
 
@@ -986,7 +986,7 @@ class CronController extends Controller
                 'message' => 'Error occurred while updating approved dates',
                 'error'   => $e->getMessage(),
                 'line'    => $e->getLine(),
-                'file'    => $e->getFile()      
+                'file'    => $e->getFile()
             ], 500);
         }
     }
