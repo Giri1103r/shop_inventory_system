@@ -106,6 +106,16 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="col-md-4 mb-3 form-input">
+                                            <label for="emp_name" class="form-label ">Closure Date</label>
+                                            <div class="input-group date form-input  custom-height">
+                                                <input type="text" class="form-control " name="closure_date" id="closure_date"
+                                                    autocomplete="off">
+                                                <div class="input-group-addon input-group-text">
+                                                    <span class="fa fa-calendar"></span>
+                                                </div>
+                                            </div>
+                                        </div>
 
                                         @if (!empty($dashboard_search))
 
@@ -159,7 +169,7 @@
                                         <th>{{ __('common.status') }}</th>
                                         <th>Safety Officer</th>
                                         <th>{{ __('common.created_date') }}</th>
-                                        <th>Closer Date</th>
+                                        <th>Closure Date</th>
                                         <th>{{ __('common.action') }}</th>
                                     </tr>
                                 </thead>
@@ -226,7 +236,9 @@
                     dateFormat: "d-m-Y",
 
                 });
-
+                var toDatepicker = flatpickr("#closure_date", {
+                    dateFormat: "d-m-Y",
+                });
 
             });
 
