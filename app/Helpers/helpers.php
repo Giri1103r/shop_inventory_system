@@ -2925,6 +2925,17 @@ if (!function_exists('getMonth')) {
             }
         }
     }
+    if (!function_exists('getGembaStatus')) {
+        function getGembaStatus($id)
+        {
+            $data = DB::table('inspection_gemba_walk_status')->where('id', $id)->where('status', 1)->first();
+            if ($data) {
+                return $data->status_name;
+            } else {
+                return false;
+            }
+        }
+    }
 
     if (!function_exists('getIncidentStatus')) {
         function getIncidentStatus($type_id)
@@ -3003,7 +3014,7 @@ if (!function_exists('getMonth')) {
         }
     }
 
-       if (!function_exists('evidenclosing')) {
+    if (!function_exists('evidenclosing')) {
         function evidenclosing($id, $type)
         {
             $file = GembaWalkInspectionEhsFile::where('gemba_walk_id', $id)

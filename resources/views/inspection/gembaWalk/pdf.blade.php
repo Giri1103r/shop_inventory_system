@@ -271,7 +271,7 @@
 
                         </td>
                         <td>{{ $gembaWalk->capa ?? 'N/A' }}</td>
-                        <td>{{ getGembaWalkStatus($gembaWalk->gemba_walk_checklist_status ?? 'N/A') }}</td>
+                        <td>{{ getGembaStatus($gembaWalk->gemba_walk_status ?? 'N/A') }}</td>
 
                         <td>{{ $gembaWalk->remark ?? 'N/A' }}</td>
                         <td>

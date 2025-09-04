@@ -1075,7 +1075,7 @@ class GembaWalkController extends Controller
 
 
                 $sheet->setCellValue("L{$row}", $data->capa ?? 'N/A');
-                $sheet->setCellValue("M{$row}", getGembaWalkStatus($data->status ?? ''));
+                $sheet->setCellValue("M{$row}", getGembaStatus($data->status ?? ''));
                 $sheet->setCellValue("N{$row}", $data->remark ?? '');
                 $responsibilityIds = explode(',', $data->responsibility_id ?? '');
                 $responsibilityNames = [];
@@ -1450,7 +1450,7 @@ class GembaWalkController extends Controller
 
 
     //                 $sheet->setCellValue("L{$detIL_row}", $data->capa ?? '-');
-    //                 $sheet->setCellValue("M{$detIL_row}", getGembaWalkStatus($data->status ?? ''));
+    //                 $sheet->setCellValue("M{$detIL_row}", getGembaStatus($data->status ?? ''));
     //                 $sheet->setCellValue("N{$detIL_row}", $data->remark ?? '-');
     //                 $responsibilityNames = [];
 
@@ -1632,7 +1632,7 @@ class GembaWalkController extends Controller
                         $data->description,
                         $hazardString,
                         $data->capa,
-                        getGembaWalkStatus($data->gemba_walk_checklist_status),
+                        getGembaStatus($data->gemba_walk_status),
                         $responsiblePersonNameString,
                         getusername($data->created_by),
                         Displaydateformat($data->inspection_created_date),

@@ -54,8 +54,6 @@ class GembaWalk extends Model
             ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
             ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_gemba_walk_checklist.unit_id');
 
-
-
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
         } else {
             $query->whereRaw("FIND_IN_SET(?, inspection_gemba_walk_checklist.responsibility_id)", [Auth::id()]);
