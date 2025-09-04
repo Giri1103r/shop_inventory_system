@@ -37,7 +37,7 @@
                                         </div>
                                         <div class="col-md-4 mb-3 form-input">
                                             <label for="date" class="form-label ">Date</label>
-                                            <input type="text" name="date" id="date" class="form-control">
+                                            <input type="text" name="date" id="gemba_date" class="form-control">
                                         </div>
                                         <div class="col-md-4 mb-2">
                                             <div class="form-group form-input">
@@ -219,6 +219,10 @@
                 })
 
                 var toDatepicker = flatpickr("#to_date", {
+                    dateFormat: "d-m-Y",
+
+                });
+                var toDatepicker = flatpickr("#gemba_date", {
                     dateFormat: "d-m-Y",
 
                 });
