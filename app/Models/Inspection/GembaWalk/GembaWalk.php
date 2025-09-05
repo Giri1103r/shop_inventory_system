@@ -511,8 +511,8 @@ class GembaWalk extends Model
             $query->whereBetween('inspection_gemba_walk.created_at', [$startDate, $endDate]);
         }
 
-     
-        $query->orderBy('inspection_gemba_walk.id', 'DESC');
+
+            $query->orderBy('inspection_gemba_walk.id', 'DESC');
         $results = $query->get();
         $query = $results->groupBy('gemba_walk_id');
 
