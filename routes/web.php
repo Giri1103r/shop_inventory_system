@@ -1034,7 +1034,7 @@ Route::middleware(['securityheader'])->group(function () {
 
             Route::group(['prefix' => 'inspection/gemba-walk/'], function () {
                 Route::get('list', [GembaWalkController::class, 'index']);
-                Route::post('list', [GembaWalkController::class, 'index']);
+                  Route::post('list', [GembaWalkController::class, 'index']);
                 Route::get('add', [GembaWalkController::class, 'add']);
                 Route::post('add/submit', [GembaWalkController::class, 'store']);
                 Route::get('view/{id}', [GembaWalkController::class, 'view']);
