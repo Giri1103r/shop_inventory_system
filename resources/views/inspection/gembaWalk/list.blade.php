@@ -460,7 +460,6 @@
                         },
                     }).then((result) => {
 
-
                         if (result.value) {
                             $.ajax({
                                 url: "{{ admin_url('incident/initial-incident/status') }}",

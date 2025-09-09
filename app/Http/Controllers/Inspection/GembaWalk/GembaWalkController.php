@@ -1634,7 +1634,7 @@ class GembaWalkController extends Controller
                         $data->capa,
                         getGembaStatus($data->gemba_walk_status),
                         $responsiblePersonNameString,
-                        getusername($data->created_by),
+                        getusername($data->inspection_created_by),
                         Displaydateformat($data->inspection_created_date),
                         getusername($data->verified_by ?? null),
                     ];

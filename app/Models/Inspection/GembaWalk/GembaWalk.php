@@ -54,7 +54,7 @@ class GembaWalk extends Model
             ->leftJoin('inspection_gemba_walk_checklist', 'inspection_gemba_walk_checklist.gemba_walk_id', '=', 'inspection_gemba_walk.id')
             ->leftJoin('masters_unit', 'masters_unit.id', '=', 'inspection_gemba_walk_checklist.unit_id');
 
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) ||  CheckUserRole(ROLE_PLANT_HEAD) ||  CheckUserRole(ROLE_EHS_HEAD)) {
         } else {
             $query->whereRaw("FIND_IN_SET(?, inspection_gemba_walk_checklist.responsibility_id)", [Auth::id()]);
         }
@@ -446,9 +446,9 @@ class GembaWalk extends Model
             });
         }
 
-        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER)) {
+        if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) ||  CheckUserRole(ROLE_PLANT_HEAD) ||  CheckUserRole(ROLE_EHS_HEAD)) {
         } else {
-            $query->where('inspection_gemba_walk_checklist.responsibility_id', Auth::id());
+            $query->whereRaw("FIND_IN_SET(?, inspection_gemba_walk_checklist.responsibility_id)", [Auth::id()]);
         }
         //    dd($request->all());
         if ($request->has('doc_no') && $request->doc_no) {
@@ -512,7 +512,7 @@ class GembaWalk extends Model
         }
 
 
-            $query->orderBy('inspection_gemba_walk.id', 'DESC');
+        $query->orderBy('inspection_gemba_walk.id', 'DESC');
         $results = $query->get();
         $query = $results->groupBy('gemba_walk_id');
 
