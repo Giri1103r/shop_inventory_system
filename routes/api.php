@@ -351,7 +351,8 @@ Route::middleware('api')->prefix('v1')->group(function () {
             Route::post('calist', [InitialIncidentController::class, 'calist']);
             Route::post('capa/view', [InitialIncidentController::class, 'capaView']);
             Route::get('generate-random-id', [InitialIncidentController::class, 'generate']);
-            Route::post('get-saved-or-not', [InitialIncidentController::class, 'getSavedOrNot']);
+            Route::post('get-body-part-url', [InitialIncidentController::class, 'getBodyPartUrl']);
+            Route::post('list-bodyparts', [InitialIncidentController::class, 'listBodyParts']);
         });
     });
 });
