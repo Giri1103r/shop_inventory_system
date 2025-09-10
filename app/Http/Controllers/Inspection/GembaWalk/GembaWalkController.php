@@ -1203,48 +1203,48 @@ class GembaWalkController extends Controller
     }
 
 
-    public function ExportPdf(Request $request)
-    {
+    // public function ExportPdf(Request $request)
+    // {
 
-        try {
+    //     try {
 
-            $allData = $this->gembaWalk->exportdata();
-            if ($allData->isEmpty()) {
-                return redirect()->back()->with('error', 'No data found');
-            }
-
-
-            $data = array(
-                'content' => $allData,
-                'pagetitle' => "Gemba Walk (Safety Observation)",
-            );
+    //         $allData = $this->gembaWalk->exportdata();
+    //         if ($allData->isEmpty()) {
+    //             return redirect()->back()->with('error', 'No data found');
+    //         }
 
 
-            $property = [
-                'tempDir' => 'public/pdf/temp/',
-                'mode' => 'c',
-                'margin_left' => 10,
-                'margin_right' => 10,
-                'margin_top' => 10,
+    //         $data = array(
+    //             'content' => $allData,
+    //             'pagetitle' => "Gemba Walk (Safety Observation)",
+    //         );
 
-            ];
 
-            $mpdf = new \Mpdf\Mpdf($property);
-            $mpdf->setAutoTopMargin = 'stretch';
+    //         $property = [
+    //             'tempDir' => 'public/pdf/temp/',
+    //             'mode' => 'c',
+    //             'margin_left' => 10,
+    //             'margin_right' => 10,
+    //             'margin_top' => 10,
 
-            $view = view('inspection.gembaWalk.pdf', $data);
-            $html = $view->render();
+    //         ];
 
-            $mpdf->WriteHTML($html);
+    //         $mpdf = new \Mpdf\Mpdf($property);
+    //         $mpdf->setAutoTopMargin = 'stretch';
 
-            $filename = "Gemba Walk (Safety Observation).pdf";
-            $mpdf->Output($filename, 'D');
-        } catch (Exception $ex) {
-            report($ex);
-            Session::flash('error', 'Something went wrong, Please try after sometimes!');
-            return redirect(admin_url('inspection/gemba-walk/list'));
-        }
-    }
+    //         $view = view('inspection.gembaWalk.pdf', $data);
+    //         $html = $view->render();
+
+    //         $mpdf->WriteHTML($html);
+
+    //         $filename = "Gemba Walk (Safety Observation).pdf";
+    //         $mpdf->Output($filename, 'D');
+    //     } catch (Exception $ex) {
+    //         report($ex);
+    //         Session::flash('error', 'Something went wrong, Please try after sometimes!');
+    //         return redirect(admin_url('inspection/gemba-walk/list'));
+    //     }
+    // }
 
     // public function ExportExcel(Request $request)
     // {
@@ -1650,6 +1650,68 @@ class GembaWalkController extends Controller
                 ->toBrowser();
         } catch (\Exception $ex) {
             Session::flash('error', 'Something went wrong, Please try again later!');
+            return redirect(admin_url('inspection/gemba-walk/list'));
+        }
+    }
+
+     public function ExportPdf(Request $request)
+    {
+
+        try {
+
+            $allData = $this->gembaWalk->exportdata();
+
+            $header = [
+                __("common.sno"),
+                __("Gemba Walk Id"),
+                __("Location"),
+                __("Unit"),
+                __("Department"),
+                __("Excat Location"),
+                __("Date of Observation"),
+                __("Observation Type"),
+                __("Risk Category"),
+                __("Description"),
+                __("Hazard"),
+                __("Recommended CAPA"),
+                __("common.status"),
+                __("Responsible Person"),
+                __("Observer Person"),
+                __("Created Date"),
+                __("Verified By"),
+            ];
+
+
+            $data = array(
+                'header' => $header,
+                'content' => $allData,
+                'pagetitle' => "Gemba Walk",
+            );
+
+            $property = [
+                'tempDir' => 'public/pdf/temp/',
+                'mode' => 'c',
+                'margin_left' => 10,
+                'margin_right' => 10,
+                'margin_top' => 10,
+
+            ];
+
+            $mpdf = new \Mpdf\Mpdf($property);
+            $mpdf->setAutoTopMargin = 'stretch';
+
+            $view = view('inspection.gembaWalk.pdf', $data);
+            $html = $view->render();
+
+
+
+            $mpdf->WriteHTML($html);
+
+            $filename = "Gemba Walk.pdf";
+            $mpdf->Output($filename, 'D');
+        } catch (Exception $ex) {
+            report($ex);
+            Session::flash('error',  __('common.message_error'));
             return redirect(admin_url('inspection/gemba-walk/list'));
         }
     }
