@@ -123,16 +123,13 @@ class InitialIncident extends Model
             $query->whereIn('ims_initial_incident.iir_type', [
                 IIR_TYPE_UNSAFE_ACT,
                 IIR_TYPE_UNSAFE_CONDITION
-            ])->where('ims_initial_incident.incident_status', '<',($request->ua_or_op));
-
-
+            ])->where('ims_initial_incident.incident_status', '<', ($request->ua_or_op));
         }
         if ($request->has('ua_or_cl') && $request->ua_or_cl) {
             $query->whereIn('ims_initial_incident.iir_type', [
                 IIR_TYPE_UNSAFE_ACT,
                 IIR_TYPE_UNSAFE_CONDITION
             ])->where('ims_initial_incident.incident_status', ($request->ua_or_cl));
-
         }
 
         if ($request->has('company_name') && $request->company_name) {
@@ -515,7 +512,8 @@ class InitialIncident extends Model
                 'ims_injury_details.nature_of_injury',
                 DB::raw('COUNT(ims_initial_incident.id) as incident_count')
             )
-            ->leftJoin('ims_injury_details', 'ims_injury_details.incident_id', '=', 'ims_initial_incident.id');
+            ->leftJoin('ims_injury_details', 'ims_injury_details.incident_id', '=', 'ims_initial_incident.id')->where->where('ims_initial_incident.status', 1)
+            ->where('ims_injury_details.status', 1);;
 
         // Apply company Filter
         if ($request->CompanyId) {
@@ -996,7 +994,7 @@ class InitialIncident extends Model
     {
         $query = DB::table('ims_initial_incident as iii')
             ->join('ims_master_incident_type as imit', 'iii.iir_type', '=', 'imit.id')
-            ->select('imit.incident_type_name', 'iii.iir_type as incident_type_id', DB::raw('COUNT(iii.id) as total'))
+            ->select('imit.incident_type_name', 'iii.iir_type as incident_type_id', DB::raw('COUNT(iii.id) as total'))->where('iii.status', 1)
             ->groupBy('imit.incident_type_name', 'iii.iir_type')
             ->orderBy('imit.incident_type_name');
 
@@ -1281,7 +1279,7 @@ class InitialIncident extends Model
                 $query->where('iii.iir_type', IIR_TYPE_UNSAFE_ACT)
                     ->orWhere('iii.iir_type', IIR_TYPE_UNSAFE_CONDITION);
             })
-            ->groupBy('mu.unit_name','mu.id')
+            ->groupBy('mu.unit_name', 'mu.id')
             ->orderBy('mu.unit_name');
 
         if ($request->has('CompanyId') && $request->CompanyId) {
