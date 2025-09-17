@@ -1294,15 +1294,50 @@ class InitialIncidentController extends BaseController
             'message'   => 'New random id generated.'
         ]);
     }
-    public function getSavedOrNot(Request $request)
+    public function getBodyPartUrl(Request $request)
     {
-        $isSaved = IncidentBodyParts::where('random_id', $request->random_id)
+        // Find record
+        $isSaved = IncidentBodyParts::select('is_saved')
+            ->where('random_id', $request->random_id)
             ->where('row_id', $request->row_id)
-            ->value('is_saved');
+            ->first();
+        $url = null;
+
+        if ($isSaved && $isSaved->is_saved == "1") {
+            // Edit URL
+            $url = url("incident/initial-incident/body-part/edit/{$request->random_id}/{$request->row_id}");
+        } else {
+            // Add URL
+            $url = url("incident/initial-incident/body-part/{$request->random_id}/{$request->row_id}/{$request->injury_person_type}/{$request->injured_person_id}");
+        }
 
         return response()->json([
-            'status'   => true,
-            'is_saved' => $isSaved ?? 0,
+            'status' => $isSaved ? true : false,
+            'url'    => $url,
         ]);
+    }
+
+    public function listBodyParts()
+    {
+        try {
+            if (Auth::check()) {
+                $datas = IncidentBodyParts::select('id', 'incident_id', 'random_id', 'row_id', 'is_saved')
+                    ->where('trash', "NO")
+                    ->get();
+
+                $success = [
+                    'BodyPartsList' => $datas,
+                ];
+
+
+                return $this->sendResponse($success, 'BodyParts List');
+            }
+
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        } catch (Exception $ex) {
+            Log::error('Employee Fetch Error: ' . $ex->getMessage());
+
+            return $this->sendError('Something went wrong.', ['error' => $ex->getMessage()], 500);
+        }
     }
 }

@@ -791,8 +791,7 @@
                                                                 <img src="{{ admin_url('public/assets/images/human_body_parts/male/front/Right-Foot.png') }}"
                                                                     usemap='#imgmap_css_container_imgmap201293016112'
                                                                     class='imgmap_css_container'
-                                                                    title='imgmap201293016112'
-                                                                    alt='imgmap201293016112'
+                                                                    title='imgmap201293016112' alt='imgmap201293016112'
                                                                     id='img-imgmap201293016112' />
                                                                 <map id='imgmap201293016112' data-map="foot-right"
                                                                     name='imgmap_css_container_imgmap201293016112'>
@@ -1220,7 +1219,7 @@
                                     <div class="">
                                         <button name="save_inj"
                                             style="background-color: #086ca6 !important;border-color: #086ca6 !important;"
-                                            type="submit" id="button" value="Save & Submit"
+                                            type="submit" id="button" value="1"
                                             class="btn btn-secondary save_inj">{{ 'Save' }}</button>
 
                                         <button type="button"
@@ -2146,7 +2145,6 @@
 
                             const combinedImageUrl = tempCanvas.toDataURL('image/png');
                             $("#bodypartimage").val(combinedImageUrl);
-                            console.log(combinedImageUrl);
 
                             var random_id = $("#randomID").val();
                             var formDatas = new URLSearchParams($('#injuryform')
@@ -2154,37 +2152,32 @@
                             formDatas.append('random_id',
                                 random_id); // Append the new key-value pair
                             var data = formDatas.toString()
-
                             $.ajax({
-                                type: 'ajax',
+                                type: 'POST',
                                 dataType: 'json',
-                                method: 'post',
                                 data: data,
                                 url: url,
-                                success: function(data) {
-                                    $('.alert-msg').html(
-                                        '<span style="color:green;">Body Part Saved Successfully!</span>'
-                                    );
-                                    $(".alert-msg").show().delay(3000)
-                                        .fadeOut();
+                                success: function(response) {
+                                    var message = "Body Part Updated Successfully!";
+
+                                    Swal.fire('Success', message, 'success');
+
+                                    $('.alert-msg').html('<span style="color:green;">' +
+                                        message + '</span>');
+                                    $(".alert-msg").show().delay(3000).fadeOut();
+
                                     setTimeout(function() {
-                                        $("#injury_model").modal(
-                                            'hide');
-                                        setTimeout(function() {}, 500);
+                                        $("#injury_model").modal('hide');
                                     }, 1000);
-
-                                    var myModal = $('#injury_model').on('shown',
-                                        function() {
-                                            clearTimeout(myModal.data(
-                                                'hideInteval'))
-                                            var id = setTimeout(function() {
-                                                myModal.modal(
-                                                    'hide');
-                                            });
-                                        })
-
+                                   
+                                },
+                                error: function(xhr) {
+                                    Swal.fire('Error', 'Failed to save body part!',
+                                        'error');
+                                    console.error(xhr.responseText);
                                 }
                             });
+                         
                         }
                     }
                 }

@@ -2148,7 +2148,6 @@
 
                             const combinedImageUrl = tempCanvas.toDataURL('image/png');
                             $("#bodypartimage").val(combinedImageUrl);
-                            console.log(combinedImageUrl);
 
                             var random_id = $("#random_id").val();
                             var formDatas = new URLSearchParams($('#injuryform')
@@ -2156,42 +2155,68 @@
                             formDatas.append('random_id',
                                 random_id); // Append the new key-value pair
                             var data = formDatas.toString()
-
                             $.ajax({
-                                type: 'ajax',
+                                type: 'POST',
                                 dataType: 'json',
-                                method: 'post',
                                 data: data,
                                 url: url,
-                                success: function(data) {
+                                success: function(response) {
                                     var message = "Body Part Saved Successfully!";
 
-                                    // SweetAlert popup
                                     Swal.fire('Success', message, 'success');
 
-                                    // Show message in alert-msg element
                                     $('.alert-msg').html('<span style="color:green;">' +
                                         message + '</span>');
-                                    $(".alert-msg").show().delay(3000)
-                                        .fadeOut();
+                                    $(".alert-msg").show().delay(3000).fadeOut();
+
                                     setTimeout(function() {
-                                        $("#injury_model").modal(
-                                            'hide');
-                                        setTimeout(function() {}, 500);
+                                        $("#injury_model").modal('hide');
                                     }, 1000);
+                                    var baseUrl = "{{ url('/') }}";
 
-                                    var myModal = $('#injury_model').on('shown',
-                                        function() {
-                                            clearTimeout(myModal.data(
-                                                'hideInteval'))
-                                            var id = setTimeout(function() {
-                                                myModal.modal(
-                                                    'hide');
-                                            });
-                                        })
-
+                                },
+                                error: function(xhr) {
+                                    Swal.fire('Error', 'Failed to save body part!',
+                                        'error');
+                                    console.error(xhr.responseText);
                                 }
                             });
+
+                            // $.ajax({
+                            //     type: 'ajax',
+                            //     dataType: 'json',
+                            //     method: 'post',
+                            //     data: data,
+                            //     url: url,
+                            //     success: function(data) {
+                            //         var message = "Body Part Saved Successfully!";
+
+                            //         // SweetAlert popup
+                            //         Swal.fire('Success', message, 'success');
+
+                            //         // Show message in alert-msg element
+                            //         $('.alert-msg').html('<span style="color:green;">' +
+                            //             message + '</span>');
+                            //         $(".alert-msg").show().delay(3000)
+                            //             .fadeOut();
+                            //         setTimeout(function() {
+                            //             $("#injury_model").modal(
+                            //                 'hide');
+                            //             setTimeout(function() {}, 500);
+                            //         }, 1000);
+
+                            //         var myModal = $('#injury_model').on('shown',
+                            //             function() {
+                            //                 clearTimeout(myModal.data(
+                            //                     'hideInteval'))
+                            //                 var id = setTimeout(function() {
+                            //                     myModal.modal(
+                            //                         'hide');
+                            //                 });
+                            //             })
+
+                            //     }
+                            // });
                         }
                     }
                 }

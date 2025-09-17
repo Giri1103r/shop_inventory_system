@@ -2,6 +2,8 @@
 
 namespace App\Models\IMS\Incident;
 
+use Illuminate\Support\Facades\Http;
+
 
 
 use Carbon\Carbon;
@@ -308,14 +310,14 @@ class IncidentBodyParts extends Model
 
             $storedImagePath = $filePath;
         }
-
+        $nextIsSaved = $request->save_inj;
 
         if ($request['body_prim_id'] != 0 && $request['incident_id'] != 0) {
             $locdatas = [
                 'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
                 'row_id' => $request->row_id,
-                'is_saved' => $request->save_inj,
+                'is_saved' => $nextIsSaved,
                 'injured_person_type' => $request->injury_person_type,
                 'imgMapdata' => postData($request, 'imgMapdata'),
                 'body_parts' => $request->humanbodyinjury,
@@ -335,7 +337,7 @@ class IncidentBodyParts extends Model
                 'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
                 'row_id' => $request->row_id,
-                'is_saved' => $request->save_inj,
+                'is_saved' => $nextIsSaved,
                 'injured_person_type' => $request->injury_person_type,
                 'imgMapdata' => postData($request, 'imgMapdata'),
                 'body_parts' => $request->humanbodyinjury,
@@ -355,7 +357,7 @@ class IncidentBodyParts extends Model
                 'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
                 'row_id' => $request->row_id,
-                'is_saved' => $request->save_inj,
+                'is_saved' => $nextIsSaved,
                 'injured_person_type' => $request->injury_person_type,
                 'imgMapdata' => postData($request, 'imgMapdata'),
                 'body_parts' => $request->humanbodyinjury,
@@ -376,7 +378,7 @@ class IncidentBodyParts extends Model
                 'incident_id' => $request->incident_id,
                 'random_id' => $random_id,
                 'row_id' => $request->row_id,
-                'is_saved' => $request->save_inj,
+                'is_saved' => $nextIsSaved,
                 'injured_person_type' => $request->injury_person_type,
                 'imgMapdata' => postData($request, 'imgMapdata'),
                 'body_parts' => $request->humanbodyinjury,
@@ -392,16 +394,26 @@ class IncidentBodyParts extends Model
             }
             $updtBody =  $this->create($locdatas);
         }
+        return response()->json([
+            'status'    => true,
+            'message'   => 'Body part saved successfully',
+            'random_id' => $random_id,
+            'row_id'    => $request->row_id,
+            'is_saved'  => $nextIsSaved,
+        ]);
 
-        if (!empty($updtBody)) {
-            $data = [
-                'status' => true
-            ];
-        } else {
-            $data = [
-                'status' => false
-            ];
-        }
+        // return response()->json($data);
+
+
+        // if (!empty($updtBody)) {
+        //     $data = [
+        //         'status' => true
+        //     ];
+        // } else {
+        //     $data = [
+        //         'status' => false
+        //     ];
+        // }
 
         echo json_encode($data);
     }
