@@ -49,7 +49,7 @@ class PpeRequest extends Model
         $empId = $user->employee_id;
         $query = $this->select('ppe_pperequest.*');
 
-        if (in_array(ROLE_EHS_HEAD, $userRole) || CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
+        if (in_array(ROLE_EHS_HEAD, $userRole)) {
             $query->orderBy('ppe_pperequest.id', 'DESC');
         } elseif (in_array(ROLE_HOD, $userRole)) {
 
