@@ -512,8 +512,8 @@ class InitialIncident extends Model
                 'ims_injury_details.nature_of_injury',
                 DB::raw('COUNT(ims_initial_incident.id) as incident_count')
             )
-            ->leftJoin('ims_injury_details', 'ims_injury_details.incident_id', '=', 'ims_initial_incident.id')->where->where('ims_initial_incident.status', 1)
-            ->where('ims_injury_details.status', 1);;
+            ->leftJoin('ims_injury_details', 'ims_injury_details.incident_id', '=', 'ims_initial_incident.id')->where('ims_initial_incident.status', 1)
+            ->where('ims_injury_details.status', 1);
 
         // Apply company Filter
         if ($request->CompanyId) {
