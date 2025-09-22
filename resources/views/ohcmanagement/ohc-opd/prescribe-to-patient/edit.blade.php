@@ -1188,46 +1188,92 @@
 
         // deleted Rows
 
-        let deletedPages = [];
-
-
         $(document).on('click', '.delete-row', function(event) {
-            event.preventDefault();
+            event.preventDefault(); // Prevents the form from submitting
 
             var row = $(this).closest(".medicinedetails");
             var rowId = row.find("input[name='encryptid']").val();
-            var totalRows = $(".medicinedetails").length;
 
-            if (totalRows > 1) {
+            if (rowId) {
                 Swal.fire({
-                    title: "Are you sure?",
-                    text: "Do you want to delete this medicine from the list?",
-                    icon: "warning",
+                    title: 'Are you sure?',
+                    text: 'Do you want to delete this record?',
+                    icon: 'warning',
                     showCancelButton: true,
-                    confirmButtonText: "Yes, delete it!",
-                    cancelButtonText: "No, cancel!",
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, keep it'
                 }).then((result) => {
                     if (result.isConfirmed) {
-
-                        deletedPages.push(rowId);
-
-
-                        $('#deletedPage').val(JSON.stringify(deletedPages));
-
-
-                        row.remove();
-
-                        Swal.fire("Deleted!", "The medicine has been removed from the list.", "success");
+                        $.ajax({
+                            url: "{{ url('ohc/prescribe-to-patient/delete') }}/" +
+                                rowId,
+                            type: 'POST', // Use POST instead of DELETE
+                            data: {
+                                _token: '{{ csrf_token() }}',
+                                _method: 'POST', // Simulate DELETE method
+                                id: rowId
+                            },
+                            success: function(response) {
+                                if (response.status === 'success') {
+                                    row.remove();
+                                    Swal.fire('Deleted!', response.msg, 'success');
+                                } else {
+                                    Swal.fire('Error!', response.msg, 'error');
+                                }
+                            },
+                            error: function() {
+                                Swal.fire('Error!',
+                                    'Something went wrong. Please try again later.',
+                                    'error');
+                            }
+                        });
                     }
                 });
             } else {
-                Swal.fire({
-                    title: "Warning!",
-                    text: "At least one row must remain!",
-                    icon: "error",
-                });
+                $(this).closest("tr").remove();
             }
         });
+
+        // let deletedPages = [];
+
+
+        // $(document).on('click', '.delete-row', function(event) {
+        //     event.preventDefault();
+
+        //     var row = $(this).closest(".medicinedetails");
+        //     var rowId = row.find("input[name='encryptid']").val();
+        //     var totalRows = $(".medicinedetails").length;
+
+        //     if (totalRows > 1) {
+        //         Swal.fire({
+        //             title: "Are you sure?",
+        //             text: "Do you want to delete this medicine from the list?",
+        //             icon: "warning",
+        //             showCancelButton: true,
+        //             confirmButtonText: "Yes, delete it!",
+        //             cancelButtonText: "No, cancel!",
+        //         }).then((result) => {
+        //             if (result.isConfirmed) {
+
+        //                 deletedPages.push(rowId);
+
+
+        //                 $('#deletedPage').val(JSON.stringify(deletedPages));
+
+
+        //                 row.remove();
+
+        //                 Swal.fire("Deleted!", "The medicine has been removed from the list.", "success");
+        //             }
+        //         });
+        //     } else {
+        //         Swal.fire({
+        //             title: "Warning!",
+        //             text: "At least one row must remain!",
+        //             icon: "error",
+        //         });
+        //     }
+        // });
 
         $('#medicine_id').on('change', function() {
             var selectedOption = $(this).find(':selected');

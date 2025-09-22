@@ -185,7 +185,7 @@ class PrescribetoPatientController extends Controller
         $toDate = $request->toDate;
         $data = array(
             'patientstatus' => $patientstatus,
-  'fromdate' => $fromdate,
+            'fromdate' => $fromdate,
             'toDate' => $toDate,
             'companyId' => $companyId,
             'unit' => $unit
