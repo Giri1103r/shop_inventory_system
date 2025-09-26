@@ -276,8 +276,7 @@
                 noCalendar: true,
                 dateFormat: "H:i",
                 time_24hr: true,
-                defaultDate: currentTime,
-                minTime: currentTime,
+                
             });
 
 

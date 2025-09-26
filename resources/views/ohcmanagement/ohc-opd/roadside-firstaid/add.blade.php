@@ -240,20 +240,14 @@
                 maxDate: new Date(),
 
             });
-            // time
-            var currentTime = new Date().toLocaleTimeString('en-GB', {
-                hour: '2-digit',
-                minute: '2-digit',
 
-            });
+
 
             var timepicker = flatpickr("#time_of_incident", {
                 enableTime: true,
                 noCalendar: true,
                 dateFormat: "H:i",
                 time_24hr: true,
-                defaultDate: currentTime,
-                minTime: currentTime,
             });
 
             // treatment start and time
