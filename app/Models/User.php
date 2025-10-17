@@ -154,7 +154,7 @@ class User extends Authenticatable
                 'first_name' => $item['emp_name'],
                 'last_name' => '',
                 'email' => $item['email'],
-                'role' => $item['user_role'],
+                'role' => 9,
                 'user_type' => 1,
                 'employee_id' => $item['emp_id'],
                 'designation_id' => $item['designation'],
