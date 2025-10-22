@@ -475,7 +475,7 @@ class CronController extends Controller
 
             $fromDate = $request->fromdate;
             $toDate = $request->todate;
-            $customtoken = "KSCAroz4HhR1EIx8qaz3C13z/quTXBkQ3Q5hj7Qx3aA*";
+            $customtoken = "KSPLroz4HhR1EIx8qaz3C13z/quTXBkQ3Q5hj7Qx3aA*";
             $apiKeyTokens = $this->company->getApiKeyToken();
 
             $responses = [];
