@@ -93,7 +93,7 @@ class MonthlyEyeWashInspection extends Model
         }
 
         if ($request->has('from_date') && !empty($request->from_date)) {
-          
+
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_monthly_eyewash.created_at', '>=', $startDate);
         }
@@ -148,12 +148,12 @@ class MonthlyEyeWashInspection extends Model
         $perPage = $request->input('per_page', 10);
         $search = $request->input('search', '');
 
-        $query = $this->select('inspection_monthly_eyewash.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_monthly_eyewash.id as inspection_id', 'inspection_static_docno.*')
+        $query = $this->select('inspection_monthly_eyewash.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_monthly_eyewash.id as inspection_id', 'inspection_monthly_eyewash.created_at as inspection_created_at')
             ->leftJoin('masters_location', 'inspection_monthly_eyewash.location', '=', 'masters_location.id')
             ->leftJoin('inspection_shift_option', 'inspection_monthly_eyewash.shift', '=', 'inspection_shift_option.id')
             ->leftJoin('masters_unit', 'inspection_monthly_eyewash.unit', '=', 'masters_unit.id')
-            ->leftJoin('inspection_static_docno', 'inspection_monthly_eyewash.document_reference_id', '=', 'inspection_static_docno.id')
-            ->leftJoin('inspection_frequency_option', 'inspection_monthly_eyewash.frequency', '=', 'inspection_frequency_option.id');
+            ->leftJoin('inspection_frequency_option', 'inspection_monthly_eyewash.frequency', '=', 'inspection_frequency_option.id')
+            ->leftJoin('inspection_static_docno', 'inspection_monthly_eyewash.document_reference_id', '=', 'inspection_static_docno.id');
 
 
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {

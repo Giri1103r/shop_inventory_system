@@ -73,7 +73,7 @@ class EyeWashInspectionDetails extends Model
                 'water' => isset($water[$index]) ? decryptId($water[$index]) : null,
                 'quality' => $quality[$index] ?? null,
                 'pressure' => $pressure[$index] ?? null,
-                'temperature' => $temperature[$index] ?? null,
+                'temperature' => decryptId($temperature[$index]) ?? null,
                 'value' => $value[$index] ?? null,
                 'remarks' => $remarks[$index] ?? null,
                 'created_by' => Auth::id(),

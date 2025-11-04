@@ -249,13 +249,13 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 });
             });
 
-            Route::group(['prefix' => 'safety'], function () {
-                Route::group(['prefix' => 'monthly-eye-wash-inspection'], function () {
-                    Route::post('list', [MonthlyEyeWashController::class, 'List']);
-                    Route::post('add', [MonthlyEyeWashController::class, 'Add']);
-                    Route::post('view', [MonthlyEyeWashController::class, 'View']);
-                });
-            });
+            // Route::group(['prefix' => 'safety'], function () {
+            //     Route::group(['prefix' => 'monthly-eye-wash-inspection'], function () {
+            //         Route::post('list', [MonthlyEyeWashController::class, 'List']);
+            //         Route::post('add', [MonthlyEyeWashController::class, 'Add']);
+            //         Route::post('view', [MonthlyEyeWashController::class, 'View']);
+            //     });
+            // });
 
             // OHC
             Route::group(['prefix' => 'ohc/'], function () {
@@ -336,6 +336,16 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 Route::post('list', [SafetyWalkObservation::class, 'list']);
                 Route::post('add', [SafetyWalkObservation::class, 'store']);
                 Route::post('view', [SafetyWalkObservation::class, 'view']);
+            });
+
+            Route::prefix('eye-wash-inspection/monthly')->group(function () {
+                Route::post('list', [MonthlyEyeWashController::class, 'list']);
+                Route::post('view', [MonthlyEyeWashController::class, 'view']);
+                Route::post('ehs-officer', [MonthlyEyeWashController::class, 'EHSOfficerSubmit']);
+                Route::post('capa-action', [MonthlyEyeWashController::class, 'CAPASubmit']);
+                Route::post('ehs-reverification', [MonthlyEyeWashController::class, 'CAPAVerifySubmit']);
+                Route::post('level-one-action', [MonthlyEyeWashController::class, 'levelOneManagerSubmit']);
+                Route::post('level-two-action', [MonthlyEyeWashController::class, 'levelTwoManagerSubmit']);
             });
         });
 
