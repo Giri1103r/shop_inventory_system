@@ -365,7 +365,7 @@ class MonthlyForkLiftInspectionController extends Controller
             $request = Request();
             $id = decryptId($request->id);
             $inspection_updates = $this->forklift->EHSOfficerUpdate($id);
-            // $signature_update = $this->signature->signatureUpload(MONTHLY_FORKLIFT_INSPECTION, $id);
+           
             $inspection_details = $this->forklift->selectOne($id);
             if ($request->is_passed == 1) {
                 $message = 'ForkLift Inspeciton Approved Successfully';

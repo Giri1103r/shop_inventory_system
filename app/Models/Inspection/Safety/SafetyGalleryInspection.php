@@ -55,9 +55,8 @@ class SafetyGalleryInspection extends Model
         $request = request();
         $search = '';
 
-        $query = $this->select('inspection_safety_gallery.*', 'masters_unit.*', 'masters_location.*', 'inspection_safety_gallery.id as inspection_id', 'inspection_safety_gallery.created_at as inspection_created_at')
-            ->leftJoin('masters_location', 'inspection_safety_gallery.location', '=', 'masters_location.id')
-            ->leftJoin('masters_unit', 'inspection_safety_gallery.unit', '=', 'masters_unit.id')
+        $query = $this->select('inspection_safety_gallery.*', 'inspection_safety_gallery.id as inspection_id', 'inspection_safety_gallery.created_at as inspection_created_at')
+
             ->leftJoin('inspection_static_docno', 'inspection_safety_gallery.document_reference_id', '=', 'inspection_static_docno.id');
 
         if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
@@ -240,6 +239,31 @@ class SafetyGalleryInspection extends Model
         }
     }
 
+    public function EHSOfficerUpdateAPI($id,$date, $remarks, $action)
+    {
+
+        $request = request();
+        if ($action == 1) {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'verified_date' => DBdateformat($date),
+                'inspection_status' => SAFETY_EHS_HEAD_APPROVAL_PENDING,
+                'updated_by' => Auth::id(),
+                'remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'verified_by' => Auth::id(),
+                'verified_date' => DBdateformat($date),
+                'inspection_status' => SAFETY_L2_MANAGER_REJECTED,
+                'updated_by' => Auth::id(),
+                'remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
 
     public function finalapproval($id)
     {
@@ -261,6 +285,33 @@ class SafetyGalleryInspection extends Model
                 'approved_date' =>  DBdateformat($request->ehs_date),
                 'inspection_status' => SAFETY_EHS_HEAD_REJECTED,
                 'level_two_manager_remarks' => $request->ehs_remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        }
+    }
+
+      public function finalapprovalapi($id,$date, $remarks, $action)
+    {
+        $request = request();
+
+        if ($action == 1) {
+            
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'approved_by' => Auth::id(),
+                'approved_date' =>  DBdateformat($date),
+                'updated_by' => Auth::id(),
+                'inspection_status' => SAFETY_EHS_HEAD_APPROVED,
+                'level_two_manager_remarks' => $remarks,
+            ];
+            $this->where('id', $id)->update($update_array);
+        } else {
+            $update_array = [
+                'l2_manager_verified_by' => Auth::id(),
+                'updated_by' => Auth::id(),
+                'approved_date' =>  DBdateformat($date),
+                'inspection_status' => SAFETY_EHS_HEAD_REJECTED,
+                'level_two_manager_remarks' => $remarks,
             ];
             $this->where('id', $id)->update($update_array);
         }

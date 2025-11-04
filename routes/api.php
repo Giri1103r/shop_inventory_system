@@ -306,6 +306,8 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 Route::post('list', [SafetyGalleryInspection::class, 'list']);
                 Route::post('add', [SafetyGalleryInspection::class, 'store']);
                 Route::post('view', [SafetyGalleryInspection::class, 'view']);
+                Route::post('level-one-verification', [SafetyGalleryInspection::class, 'leveloneverification']);
+                Route::post('ehs-head-approval', [SafetyGalleryInspection::class, 'ehsheadapproval']);
             });
 
             Route::prefix('forklift-inspection')->group(function () {
@@ -318,6 +320,11 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 Route::post('list', [MonthlyForkLiftInspection::class, 'list']);
                 Route::post('add', [MonthlyForkLiftInspection::class, 'store']);
                 Route::post('view', [MonthlyForkLiftInspection::class, 'view']);
+                Route::post('ehs-officer', [MonthlyForkLiftInspection::class, 'EHSofficersubmit']);
+                Route::post('capa-action', [MonthlyForkLiftInspection::class, 'capaSubmit']);
+                Route::post('capa-reverification', [MonthlyForkLiftInspection::class, 'capaverification']);
+                Route::post('level-one-manager-approval', [MonthlyForkLiftInspection::class, 'leveloneverfication']);
+                Route::post('level-two-manager-approval', [MonthlyForkLiftInspection::class, 'leveltwoverfication']);
             });
 
             Route::prefix('ohs-plant-summary')->group(function () {

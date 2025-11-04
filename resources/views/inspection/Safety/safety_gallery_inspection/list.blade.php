@@ -263,12 +263,12 @@
                             name: 'resource_code',
                         },
                         {
-                            data: 'location_name',
-                            name: 'location_name',
+                            data: 'location',
+                            name: 'location',
                         },
                         {
-                            data: 'unit_name',
-                            name: 'unit_name',
+                            data: 'unit',
+                            name: 'unit',
                         },
                         {
                             data: 'inspection_status',

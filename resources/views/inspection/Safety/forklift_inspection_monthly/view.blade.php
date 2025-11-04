@@ -409,64 +409,7 @@
                                         </div>
                                     @endif
 
-                                    @if (isset($inspection_details->level_one_manager_remarks))
-                                        <div class="row">
-                                            <div class="card-header-inner">
-                                                <h4 class="text-white">{{ __('inspection.level_one_manager_action') }}
-                                                </h4>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label ">{{ __('inspection.level_one_manager') }}</label>
-                                                    <div class="view_data">
-                                                        {{ getUserName($inspection_details->l1_manager_verified_by) }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            @php
-                                                // $signature = GetSafetySignature(
-                                                //     $inspection_details->l1_manager_verified_by,
-                                                //     $inspection_details->id,
-                                                //     MONTHLY_FORKLIFT_INSPECTION,
-                                                // );
 
-                                                $updated_time = GetSafetyUpdatedTime(
-                                                    $inspection_details->l1_manager_verified_by,
-                                                    $inspection_details->id,
-                                                    MONTHLY_FORKLIFT_INSPECTION,
-                                                    WAITING_FOR_L1_VERIFICATION,
-                                                );
-                                            @endphp
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label ">{{ __('inspection.date') }}</label>
-                                                    <div class="view_data">
-                                                        {{ Displaydateformat($updated_time->created_at) }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            {{-- @if (isset($signature))
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label"
-                                                            style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
-                                                    </div>
-                                                </div>
-                                            @endif --}}
-                                            <div class="col-md-12 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label
-                                                        class="form-label ">{{ __('inspection.level_one_manager_remarks') }}</label>
-                                                    <div class="view_data">
-                                                        {{ $inspection_details->level_one_manager_remarks }}
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    @endif
                                     @if (isset($inspection_details->level_two_manager_remarks))
                                         <div class="row">
                                             <div class="card-header-inner">
@@ -483,11 +426,7 @@
                                                 </div>
                                             </div>
                                             @php
-                                                // $signature = GetSafetySignature(
-                                                //     $inspection_details->l2_manager_verified_by,
-                                                //     $inspection_details->id,
-                                                //     MONTHLY_FORKLIFT_INSPECTION,
-                                                // );
+
 
                                                 $updated_time = GetSafetyUpdatedTime(
                                                     $inspection_details->l2_manager_verified_by,
@@ -504,16 +443,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            {{-- @if (isset($signature))
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label"
-                                                            style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
-                                                    </div>
-                                                </div>
-                                            @endif --}}
+
                                             @if ($inspection_details->approved_by)
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
@@ -525,16 +455,7 @@
                                                     </div>
                                                 </div>
                                             @endif
-                                            {{-- @if (isset($signature))
-                                                <div class="col-md-4 mb-2">
-                                                    <div class="form-group form-input">
-                                                        <label class="form-label"
-                                                            style="display: block;">{{ __('inspection.signature') }}</label>
-                                                        <img src="{{ admin_url($signature) }}" alt="Signature Upload"
-                                                            style="width: 150px; margin-top: -10px;" />
-                                                    </div>
-                                                </div>
-                                            @endif --}}
+                                           
                                             <div class="col-md-12 mb-2">
                                                 <div class="form-group form-input">
                                                     <label
