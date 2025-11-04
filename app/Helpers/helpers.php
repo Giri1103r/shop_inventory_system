@@ -3980,3 +3980,19 @@ if (!function_exists('GetOPOrNonOP')) {
         }
     }
 }
+
+if (!function_exists('GetInspectionWater')){
+    function GetInspectionWater($value)
+    {
+        switch ($value){
+            case GOOD:
+                return 'Good';
+            case FAIR:
+                return 'Fair';
+            case POOR:
+                return 'poor';
+            default:
+            return 'Unkown';
+        }
+    }
+}
