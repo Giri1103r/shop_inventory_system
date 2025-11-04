@@ -108,7 +108,7 @@ class Worktemp extends Model
                     $valuesToInsertOrUpdate
                 );
 
-                $companyExists = DB::table('company_management')->where('short_name', $item['Company'])->first();
+                $companyExists = DB::table('company_management')->where('company_name', $item['Company'])->first();
                 if (!$companyExists) {
                     $errorMessage = "Company not found: " . $item['Company'];
                     $this->updateErrorStatus($item['EmpId'], $errorMessage);

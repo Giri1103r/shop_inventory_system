@@ -53,20 +53,13 @@ class MonthlyForkLiftInspection extends BaseController
                     $search = $request->search;
                 }
             }
-            $query = SafetyMonthlyForkLiftInspection::select(
-                'inspection_forklift_inpsection_monthly.*',
-                'inspection_shift_option.*',
-                'masters_unit.*',
-                'masters_location.*',
-                'inspection_frequency_option.*',
-                'inspection_forklift_inpsection_monthly.id as inspection_id',
-                'inspection_forklift_inpsection_monthly.created_at as inspection_created_at'
-            )
+            $query = SafetyMonthlyForkLiftInspection::select('inspection_forklift_inpsection_monthly.*', 'inspection_shift_option.*', 'masters_unit.*', 'masters_location.*', 'inspection_frequency_option.*', 'inspection_forklift_inpsection_monthly.id as inspection_id', 'inspection_forklift_inpsection_monthly.created_at as inspection_created_at')
                 ->leftJoin('masters_location', 'inspection_forklift_inpsection_monthly.location', '=', 'masters_location.id')
                 ->leftJoin('inspection_shift_option', 'inspection_forklift_inpsection_monthly.shift', '=', 'inspection_shift_option.id')
                 ->leftJoin('masters_unit', 'inspection_forklift_inpsection_monthly.unit', '=', 'masters_unit.id')
                 ->leftJoin('inspection_frequency_option', 'inspection_forklift_inpsection_monthly.frequency', '=', 'inspection_frequency_option.id')
                 ->leftJoin('inspection_static_docno', 'inspection_forklift_inpsection_monthly.document_reference_id', '=', 'inspection_static_docno.id');
+
 
             $org_total_counts = $query->count();
 
@@ -96,7 +89,7 @@ class MonthlyForkLiftInspection extends BaseController
             $data_array = [];
             foreach ($inspection_list['data'] as $datas) {
                 $data = [];
-                $data['id'] = $datas['id'] ?? '';
+                $data['id'] = $datas['inspection_id'] ?? '';
                 $data['date_of_inspection'] = Displaydateformat($datas['date_of_inspection']);
                 $data['next_due'] = Displaydateformat($datas['next_due']);
                 $data['location_name'] = ($datas['location_name'] ?? '');
@@ -130,203 +123,295 @@ class MonthlyForkLiftInspection extends BaseController
     }
 
 
+    // public function view(Request $request)
+    // {
+    //     try {
+    //         if (Auth::user()) {
+    //             $id = $request->id;
+    //             $inspection = $this->forklift_inspection
+    //                 ->leftJoin('inspection_static_docno', 'inspection_forklift_inpsection_monthly.document_reference_id', '=', 'inspection_static_docno.id')
+    //                 ->where('inspection_forklift_inpsection_monthly.id', $id)
+    //                 ->select(
+    //                     'inspection_forklift_inpsection_monthly.*',
+    //                     'inspection_static_docno.*',
+    //                     'inspection_forklift_inpsection_monthly.id as inspection_id',
+    //                     'inspection_forklift_inpsection_monthly.created_by as inspection_created_by',
+    //                     'inspection_forklift_inpsection_monthly.updated_at as inspection_updated_at',
+    //                 )
+    //                 ->first();
+
+    //             $inspection_responses = json_decode($inspection->responses, true);
+
+    //             $responses = [];
+    //             foreach ($inspection_responses as $inspection_response) {
+    //                 $data = [
+    //                     'question_name' => GetChecklistTypeDate($inspection_response['question_id']),
+    //                     'answer' => $inspection_response['answer'],
+    //                     'remarks' => $inspection_response['remarks'],
+    //                 ];
+    //                 $responses[] = $data;
+    //             }
+    //             $signature = GetSafetySignature(
+    //                 $inspection->inspection_created_by,
+    //                 $inspection->inspection_id,
+    //                 MONTHLY_FORKLIFT_INSPECTION,
+    //             );
+
+    //             $statuslog = $this->statusLog->selectOne($id, MONTHLY_FORKLIFT_INSPECTION);
+
+    //             if (count($statuslog) > 0) {
+    //                 foreach ($statuslog as $key => $status) {
+    //                     $statuslog[$key]->from_status = getInspectionStatus($status->from_status);
+    //                     $statuslog[$key]->to_status = getInspectionStatus($status->to_status);
+    //                     $statuslog[$key]->remarks = $status->remarks;
+    //                     $statuslog[$key]->approved_by = getUsername($status->approved_by);
+    //                     $statuslog[$key]->created_by = getUsername($status->created_by);
+    //                     $statuslog[$key]->created_at = Displaydateformat($status->created_at);
+    //                 }
+    //             } else {
+    //                 $statuslog = null;
+    //             }
+
+    //             $inspection_details = [
+    //                 'id' => $inspection->inspection_id,
+    //                 'issue_date' => Displaydateformat($inspection->issue_date),
+    //                 'doc_no' => $inspection->doc_no,
+    //                 'rev_dt' => $inspection->rev_dt,
+    //                 'date_of_inspection' => Displaydateformat($inspection->date_of_inspection),
+    //                 'next_due' => Displaydateformat($inspection->next_due),
+    //                 'location' => getLocationname($inspection->location),
+    //                 'shift' => getShiftname($inspection->shift),
+    //                 'unit' => getUnitname($inspection->unit),
+    //                 'frequency' => getFrequencyname($inspection->frequency),
+    //                 'identification_no' => $inspection->identification_no,
+    //                 'forklift_type' => GetForkLiftType($inspection->forklift_type),
+    //                 'capacity' => $inspection->capacity,
+    //                 'remarks' => $inspection->remarks ?? '',
+    //                 'responses' => $responses,
+    //                 'inspection_creator_signature' => admin_url($signature),
+    //             ];
+
+    //             if (!empty($inspection->verified_by)) {
+    //                 $updated_time = GetSafetyUpdatedTime(
+    //                     $inspection->verified_by,
+    //                     $inspection->inspection_id,
+    //                     MONTHLY_FORKLIFT_INSPECTION,
+    //                     WAITING_FOR_EHS_OFFICER_VERIFICATION,
+    //                 );
+
+    //                 $verifier_signature = GetSafetySignature(
+    //                     $inspection->verified_by,
+    //                     $inspection->inspection_id,
+    //                     MONTHLY_FORKLIFT_INSPECTION,
+    //                 );
+
+    //                 $inspection_details += [
+    //                     'inspection_verified_by' => getUsername($inspection->verified_by),
+    //                     'inspection_verified_at' => Displaydateformat($updated_time->created_at),
+    //                     'verifier_signature' => admin_url($verifier_signature),
+    //                     'capa_recomendation' => !empty($inspection->capa_recomendation) ? $inspection->capa_recomendation : $inspection->remarks,
+    //                 ];
+    //             }
+    //             // CAPA Remarks by Inspection Creator
+    //             if (!empty($inspection->capa_remarks)) {
+    //                 $capa_creator_time = GetSafetyUpdatedTime(
+    //                     $inspection->inspection_created_by,
+    //                     $inspection->inspection_id,
+    //                     MONTHLY_FORKLIFT_INSPECTION,
+    //                     WAITING_FOR_CAPA_ACTION,
+    //                 );
+
+    //                 $inspection_details += [
+    //                     'capa_remarks' => $inspection->capa_remarks,
+    //                     'capa_created_by' => getUsername($inspection->inspection_created_by),
+    //                     'capa_created_at' => Displaydateformat($capa_creator_time->created_at),
+    //                     'capa_creator_signature' => admin_url($signature),
+    //                 ];
+    //             }
+
+    //             if (!empty($inspection->capa_ehs_remarks) && !empty($inspection->verified_by)) {
+    //                 $ehs_updated_time = GetSafetyUpdatedTime(
+    //                     $inspection->verified_by,
+    //                     $inspection->inspection_id,
+    //                     MONTHLY_FORKLIFT_INSPECTION,
+    //                     WAITING_FOR_CAPA_VERIFICATION,
+    //                 );
+
+    //                 $ehs_signature = GetSafetySignature(
+    //                     $inspection->verified_by,
+    //                     $inspection->inspection_id,
+    //                     MONTHLY_FORKLIFT_INSPECTION,
+    //                 );
+
+    //                 $inspection_details += [
+    //                     'capa_ehs_remarks' => $inspection->capa_ehs_remarks,
+    //                     'capa_ehs_by' => getUsername($inspection->verified_by),
+    //                     'capa_ehs_at' => Displaydateformat($ehs_updated_time->created_at),
+    //                     'capa_ehs_signature' => admin_url($ehs_signature),
+    //                 ];
+    //             }
+
+
+    //             if (!empty($inspection->l1_manager_verified_by)) {
+    //                 $l1_signature = GetSafetySignature(
+    //                     $inspection->l1_manager_verified_by,
+    //                     $inspection->inspection_id,
+    //                     MONTHLY_FORKLIFT_INSPECTION,
+    //                 );
+
+    //                 $l1_updated_time = GetSafetyUpdatedTime(
+    //                     $inspection->l1_manager_verified_by,
+    //                     $inspection->inspection_id,
+    //                     MONTHLY_FORKLIFT_INSPECTION,
+    //                     WAITING_FOR_L1_VERIFICATION,
+    //                 );
+
+    //                 $inspection_details += [
+    //                     'l1_verified_by' => getUsername($inspection->l1_manager_verified_by),
+    //                     'l1_remarks' => $inspection->level_one_manager_remarks ?? '',
+    //                     'l1_updated_time' => Displaydateformat($l1_updated_time->created_at),
+    //                     'l1_signature' => admin_url($l1_signature),
+    //                 ];
+    //             }
+
+    //             if ($inspection->inspection_status == INSPECTION_APPROVED && !empty($inspection->approved_by)) {
+
+    //                 if (!empty($inspection->l2_manager_verified_by)) {
+    //                     $l2_signature = GetSafetySignature(
+    //                         $inspection->l2_manager_verified_by,
+    //                         $inspection->inspection_id,
+    //                         SAFETY_GALLERY_INSPECTION,
+    //                     );
+
+    //                     $inspection_details += [
+    //                         'l2_verified_by'   => getUsername($inspection->l2_manager_verified_by),
+    //                         'l2_remarks'       => $inspection->level_two_manager_remarks ?? '',
+    //                         'l2_updated_time'  => Displaydateformat($inspection->inspection_updated_at),
+    //                         'l2_signature'     => !empty($l2_signature) ? admin_url($l2_signature) : '',
+    //                     ];
+    //                 } else {
+    //                     $approver_signature = GetSafetySignature(
+    //                         $inspection->approved_by,
+    //                         $inspection->inspection_id,
+    //                         SAFETY_GALLERY_INSPECTION,
+    //                     );
+
+    //                     $inspection_details += [
+    //                         'approved_by'           => getUsername($inspection->approved_by),
+    //                         'approved_remarks'      => $inspection->remarks ?? '',
+    //                         'approved_updated_time' => Displaydateformat($inspection->inspection_updated_at),
+    //                         'approved_signature'    => !empty($approver_signature) ? admin_url($approver_signature) : '',
+    //                     ];
+    //                 }
+    //             }
+
+    //             $success = [
+    //                 'id' => $inspection->inspection_id,
+    //                 'inspection_details' => $inspection_details,
+    //                 '$statuslog' => $statuslog,
+    //             ];
+    //             return $this->sendResponse($success, 'Inspection Details');
+    //         } else {
+    //             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+    //         }
+    //     } catch (Exception $ex) {
+    //         report($ex);
+    //         return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+    //     }
+    // }
+
     public function view(Request $request)
     {
         try {
-            if (Auth::user()) {
-                $id = $request->id;
-                $inspection = $this->forklift_inspection
-                    ->leftJoin('inspection_static_docno', 'inspection_forklift_inpsection_monthly.document_reference_id', '=', 'inspection_static_docno.id')
-                    ->where('inspection_forklift_inpsection_monthly.id', $id)
-                    ->select(
-                        'inspection_forklift_inpsection_monthly.*',
-                        'inspection_static_docno.*',
-                        'inspection_forklift_inpsection_monthly.id as inspection_id',
-                        'inspection_forklift_inpsection_monthly.created_by as inspection_created_by',
-                        'inspection_forklift_inpsection_monthly.updated_at as inspection_updated_at',
-                    )
-                    ->first();
 
-                $inspection_responses = json_decode($inspection->responses, true);
+            $id = $request->id;
 
-                $responses = [];
-                foreach ($inspection_responses as $inspection_response) {
-                    $data = [
-                        'question_name' => GetChecklistTypeDate($inspection_response['question_id']),
-                        'answer' => $inspection_response['answer'],
-                        'remarks' => $inspection_response['remarks'],
-                    ];
-                    $responses[] = $data;
-                }
-                $signature = GetSafetySignature(
-                    $inspection->inspection_created_by,
-                    $inspection->inspection_id,
-                    MONTHLY_FORKLIFT_INSPECTION,
-                );
+            $monthlyForklift = $this->forklift_inspection->find($id);
+            $document_no =  $this->document_reference->find($monthlyForklift->document_reference_id);
 
-                $statuslog = $this->statusLog->selectOne($id, MONTHLY_FORKLIFT_INSPECTION);
+            // general details
 
-                if (count($statuslog) > 0) {
-                    foreach ($statuslog as $key => $status) {
-                        $statuslog[$key]->from_status = getInspectionStatus($status->from_status);
-                        $statuslog[$key]->to_status = getInspectionStatus($status->to_status);
-                        $statuslog[$key]->remarks = $status->remarks;
-                        $statuslog[$key]->approved_by = getUsername($status->approved_by);
-                        $statuslog[$key]->created_by = getUsername($status->created_by);
-                        $statuslog[$key]->created_at = Displaydateformat($status->created_at);
-                    }
-                } else {
-                    $statuslog = null;
-                }
+            $forklift_inspection = [
+                'id' => $id,
+                'document_number' => $document_no->doc_no,
+                'issue_date' => Displaydateformat($document_no->issue_date),
+                'rev_dt' => $document_no->rev_dt,
+                'date_of_inspection' => Displaydateformat($monthlyForklift->date_of_inspection),
+                'location' => getLocationname($monthlyForklift->location),
+                'shift' => getShift($monthlyForklift->shift),
+                'next_due_on' => Displaydateformat($monthlyForklift->next_due),
+                'unit' => getUnitname($monthlyForklift->unit),
+                'frequency' => getFrequencyname($monthlyForklift->frequency),
+                'identification_serial_no' => $monthlyForklift->identification_no,
+                'forklift_type' => GetForkLiftType($monthlyForklift->forklift_type),
+                'capacity' => $monthlyForklift->capacity
 
-                $inspection_details = [
-                    'id' => $inspection->inspection_id,
-                    'issue_date' => Displaydateformat($inspection->issue_date),
-                    'doc_no' => $inspection->doc_no,
-                    'rev_dt' => $inspection->rev_dt,
-                    'date_of_inspection' => Displaydateformat($inspection->date_of_inspection),
-                    'next_due' => Displaydateformat($inspection->next_due),
-                    'location' => getLocationname($inspection->location),
-                    'shift' => getShiftname($inspection->shift),
-                    'unit' => getUnitname($inspection->unit),
-                    'frequency' => getFrequencyname($inspection->frequency),
-                    'identification_no' => $inspection->identification_no,
-                    'forklift_type' => GetForkLiftType($inspection->forklift_type),
-                    'capacity' => $inspection->capacity,
-                    'remarks' => $inspection->remarks ?? '',
-                    'responses' => $responses,
-                    'inspection_creator_signature' => admin_url($signature),
+            ];
+
+            // checklist
+
+            $checkList =  json_decode($monthlyForklift->responses, true);
+
+            $forklift_checklist = [];
+
+            foreach ($checkList as $data) {
+                $forklift_checklist[] = [
+                    'question_name' => GetChecklistTypeDate($data['question_id']),
+                    'yes_or_no' => $data['answer'],
+                    'remarks' => $data['remarks'],
                 ];
-
-                if (!empty($inspection->verified_by)) {
-                    $updated_time = GetSafetyUpdatedTime(
-                        $inspection->verified_by,
-                        $inspection->inspection_id,
-                        MONTHLY_FORKLIFT_INSPECTION,
-                        WAITING_FOR_EHS_OFFICER_VERIFICATION,
-                    );
-
-                    $verifier_signature = GetSafetySignature(
-                        $inspection->verified_by,
-                        $inspection->inspection_id,
-                        MONTHLY_FORKLIFT_INSPECTION,
-                    );
-
-                    $inspection_details += [
-                        'inspection_verified_by' => getUsername($inspection->verified_by),
-                        'inspection_verified_at' => Displaydateformat($updated_time->created_at),
-                        'verifier_signature' => admin_url($verifier_signature),
-                        'capa_recomendation' => !empty($inspection->capa_recomendation) ? $inspection->capa_recomendation : $inspection->remarks,
-                    ];
-                }
-                // CAPA Remarks by Inspection Creator
-                if (!empty($inspection->capa_remarks)) {
-                    $capa_creator_time = GetSafetyUpdatedTime(
-                        $inspection->inspection_created_by,
-                        $inspection->inspection_id,
-                        MONTHLY_FORKLIFT_INSPECTION,
-                        WAITING_FOR_CAPA_ACTION,
-                    );
-
-                    $inspection_details += [
-                        'capa_remarks' => $inspection->capa_remarks,
-                        'capa_created_by' => getUsername($inspection->inspection_created_by),
-                        'capa_created_at' => Displaydateformat($capa_creator_time->created_at),
-                        'capa_creator_signature' => admin_url($signature),
-                    ];
-                }
-
-                if (!empty($inspection->capa_ehs_remarks) && !empty($inspection->verified_by)) {
-                    $ehs_updated_time = GetSafetyUpdatedTime(
-                        $inspection->verified_by,
-                        $inspection->inspection_id,
-                        MONTHLY_FORKLIFT_INSPECTION,
-                        WAITING_FOR_CAPA_VERIFICATION,
-                    );
-
-                    $ehs_signature = GetSafetySignature(
-                        $inspection->verified_by,
-                        $inspection->inspection_id,
-                        MONTHLY_FORKLIFT_INSPECTION,
-                    );
-
-                    $inspection_details += [
-                        'capa_ehs_remarks' => $inspection->capa_ehs_remarks,
-                        'capa_ehs_by' => getUsername($inspection->verified_by),
-                        'capa_ehs_at' => Displaydateformat($ehs_updated_time->created_at),
-                        'capa_ehs_signature' => admin_url($ehs_signature),
-                    ];
-                }
-
-
-                if (!empty($inspection->l1_manager_verified_by)) {
-                    $l1_signature = GetSafetySignature(
-                        $inspection->l1_manager_verified_by,
-                        $inspection->inspection_id,
-                        MONTHLY_FORKLIFT_INSPECTION,
-                    );
-
-                    $l1_updated_time = GetSafetyUpdatedTime(
-                        $inspection->l1_manager_verified_by,
-                        $inspection->inspection_id,
-                        MONTHLY_FORKLIFT_INSPECTION,
-                        WAITING_FOR_L1_VERIFICATION,
-                    );
-
-                    $inspection_details += [
-                        'l1_verified_by' => getUsername($inspection->l1_manager_verified_by),
-                        'l1_remarks' => $inspection->level_one_manager_remarks ?? '',
-                        'l1_updated_time' => Displaydateformat($l1_updated_time->created_at),
-                        'l1_signature' => admin_url($l1_signature),
-                    ];
-                }
-
-                if ($inspection->inspection_status == INSPECTION_APPROVED && !empty($inspection->approved_by)) {
-
-                    if (!empty($inspection->l2_manager_verified_by)) {
-                        $l2_signature = GetSafetySignature(
-                            $inspection->l2_manager_verified_by,
-                            $inspection->inspection_id,
-                            SAFETY_GALLERY_INSPECTION,
-                        );
-
-                        $inspection_details += [
-                            'l2_verified_by'   => getUsername($inspection->l2_manager_verified_by),
-                            'l2_remarks'       => $inspection->level_two_manager_remarks ?? '',
-                            'l2_updated_time'  => Displaydateformat($inspection->inspection_updated_at),
-                            'l2_signature'     => !empty($l2_signature) ? admin_url($l2_signature) : '',
-                        ];
-                    } else {
-                        $approver_signature = GetSafetySignature(
-                            $inspection->approved_by,
-                            $inspection->inspection_id,
-                            SAFETY_GALLERY_INSPECTION,
-                        );
-
-                        $inspection_details += [
-                            'approved_by'           => getUsername($inspection->approved_by),
-                            'approved_remarks'      => $inspection->remarks ?? '',
-                            'approved_updated_time' => Displaydateformat($inspection->inspection_updated_at),
-                            'approved_signature'    => !empty($approver_signature) ? admin_url($approver_signature) : '',
-                        ];
-                    }
-                }
-
-                $success = [
-                    'id' => $inspection->inspection_id,
-                    'inspection_details' => $inspection_details,
-                    '$statuslog' => $statuslog,
-                ];
-                return $this->sendResponse($success, 'Inspection Details');
-            } else {
-                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
+
+            // ehs verification
+
+            $updated_time = GetSafetyUpdatedTime(
+                $monthlyForklift->verified_by,
+                $id,
+                MONTHLY_FORKLIFT_INSPECTION,
+                WAITING_FOR_EHS_OFFICER_VERIFICATION,
+            );
+
+            $ehs_verification = [
+                'verified_by' => getUsername($monthlyForklift->verified_by),
+                'Date' => Displaydateformat($updated_time->created_at),
+                'capa' => getYesNoStatus($monthlyForklift->is_passed),
+                'remarks'=>$monthlyForklift->capa_recommendation,
+            ];
+
+            // approval logs
+
+            $statuslog = $this->statusLog->selectOne($id, MONTHLY_FORKLIFT_INSPECTION);
+
+            $approvalLogs = [];
+
+            if (!empty($statuslog)) {
+                foreach ($statuslog as $logs) {
+                    $approvalLogs[] = [
+                        'from_status'   => getInspectionStatus($logs->from_status),
+                        'to_status'     => getInspectionStatus($logs->to_status),
+                        'approver_name' => getUsername($logs->approved_by),
+                        'created_by'    => getUsername($logs->created_by),
+                        'created_at'    => Displaydateformat($logs->created_at),
+                    ];
+                }
+            }
+
+
+
+
+            $success = [
+                'forklift_inspection' => $forklift_inspection,
+                'forklift_checklist' => $forklift_checklist,
+                'ehs_verification' =>  $ehs_verification,
+                'approvalLogs' => $approvalLogs,
+
+            ];
+            return $this->sendResponse($success, 'Monthly Forklift Inspection Details');
         } catch (Exception $ex) {
-            report($ex);
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+            dd($ex);
+            return $this->sendError('Unauthorized.', ['error' => 'Something went Wrong please try again after some time']);
         }
     }
-
 
     public function store(Request $request)
     {
