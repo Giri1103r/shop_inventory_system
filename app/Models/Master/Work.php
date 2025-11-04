@@ -228,7 +228,8 @@ class Work extends Model
                     continue;
                 }
 
-                $companyExists = DB::table('company_management')->where('short_name', $item['company'])->first();
+                $companyExists = DB::table('company_management')->where('company_name', $item['company'])->first();
+                dd($companyExists );
                 // if (!$companyExists) {
                 //     continue;
                 // }

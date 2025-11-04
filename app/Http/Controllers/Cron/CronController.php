@@ -370,7 +370,7 @@ class CronController extends Controller
                 return response()->json(['message' => 'No data found in API response.']);
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
         }
     }
