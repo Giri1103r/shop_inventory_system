@@ -110,94 +110,6 @@ class ForkliftInspection extends BaseController
         }
     }
 
-
-    public function view(Request $request)
-    {
-        try {
-            if (Auth::user()) {
-                $id = $request->id;
-                $inspections = $this->forklift_inspection
-                    ->where('inspection_safety_forklift_inspection.id', $id)
-                    ->leftJoin(
-                        'inspection_static_docno',
-                        'inspection_safety_forklift_inspection.document_reference_id',
-                        '=',
-                        'inspection_static_docno.id'
-                    )
-                    ->select(
-                        'inspection_safety_forklift_inspection.*',
-                        'inspection_static_docno.*',
-                        'inspection_safety_forklift_inspection.id as inspection_id',
-                        'inspection_safety_forklift_inspection.created_by as inspection_created_by',
-                        'inspection_safety_forklift_inspection.updated_at as inspection_updated_at',
-                        'inspection_safety_forklift_inspection.updated_by as inspection_updated_by',
-                    )
-                    ->first();
-                $inspection_details = $this->forklift_inspection_details->GetDetails($id);
-
-
-                $signature = GetSafetySignature(
-                    $inspections->inspection_created_by,
-                    $inspections->inspection_id,
-                    FORKLIFT_INSPECTION,
-                );
-
-                $inspection = [
-                    'document_no' => $inspections->doc_no,
-                    'issue_date' => Displaydateformat($inspections->issue_date),
-                    'date_of_inspection' => Displaydateformat($inspections->inspection_date),
-                    'rev_dt' => ($inspections->rev_dt),
-                    'signature' => admin_url($signature),
-                ];
-                $inspection_details_array = [];
-                foreach ($inspection_details as $inspection) {
-                    $inspection_array = [
-                        'id' => $inspection->inspection_id,
-                        'department_name' => getDepartment($inspection->department_id),
-                        'unit_name' => getUnitname($inspection->unit_id),
-                        'identification_no' => $inspection->identification_no,
-                        'observation' => ($inspection->observation),
-                        'correction_preventive_action' => ($inspection->correction_preventive_action),
-                        'responsibility' => getUsername($inspection->responsibility),
-                        'date_of_compliance' => Displaydateformat($inspection->date_of_compliance),
-                        'observation_status' => ($inspection->observation_status == "1" ? 'Active' : 'InActive'),
-                        'remarks' => $inspection->remarks,
-                    ];
-                    $inspection_details_array[] = $inspection_array;
-                }
-
-                $approval_array = null;
-                if ($inspections->observation_status != OBSERVATION_PENDING) {
-                    $signature = GetSafetySignature(
-                        $inspections->inspection_updated_by,
-                        $inspections->inspection_id,
-                        FORKLIFT_INSPECTION,
-                    );
-                    $approval_array = [
-                        'approval_updated_by' => getUsername($inspections->inspection_updated_by),
-                        'approval_updated_at' => Displaydateformat($inspections->inspection_updated_at),
-                        'approver_signature' => admin_url($signature),
-                        'approval_remarks' => $inspections->approval_remarks,
-                    ];
-                }
-
-                $success = [
-                    'id' => $inspections->inspection_id,
-                    'inspection' => $inspections,
-                    'inspection_details' => $inspection_details,
-                    'approvals' => $approval_array,
-                ];
-                return $this->sendResponse($success, 'Inspection Details');
-            } else {
-                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
-            }
-        } catch (Exception $ex) {
-            report($ex);
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
-        }
-    }
-
-
     public function store(Request $request)
     {
 
@@ -287,6 +199,145 @@ class ForkliftInspection extends BaseController
             return $this->sendResponse($success, 'Inspection Created');
         } catch (Exception $ex) {
             report($ex);
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
+
+    public function view(Request $request)
+    {
+        try {
+            if (Auth::user()) {
+                $id = $request->id;
+                $type = FORKLIFT_INSPECTION;
+                $inspections = $this->forklift_inspection->selectOne($id);
+                $inspection_details = $this->forklift_inspection_details->GetDetails($inspections->id);
+                $document_no = $this->document_reference->selectOne($inspections->document_reference_id);
+
+                $signature = GetSafetySignature(
+                    $inspections->inspection_created_by,
+                    $inspections->inspection_id,
+                    FORKLIFT_INSPECTION,
+                );
+
+                $inspection = [
+                    'document_no' => $document_no->doc_no,
+                    'issue_date' => Displaydateformat($document_no->issue_date),
+                    'rev_dt' => ($document_no->rev_dt),
+                    'date_of_inspection' => Displaydateformat($document_no->inspection_date),
+                    // 'signature' => admin_url($signature),
+                ];
+                $inspection_details_array = [];
+                foreach ($inspection_details as $inspection) {
+                    $inspection_array = [
+                        'id' => $inspection->inspection_id,
+                        'department_name' => getDepartment($inspection->department_id),
+                        'unit_name' => getUnitname($inspection->unit_id),
+                        'identification_no' => $inspection->identification_no,
+                        'observation' => ($inspection->observation),
+                        'correction_preventive_action' => ($inspection->correction_preventive_action),
+                        'responsibility' => getUsername($inspection->responsibility),
+                        'date_of_compliance' => Displaydateformat($inspection->date_of_compliance),
+                        'observation_status' => ($inspection->observation_status == "1" ? 'Active' : 'InActive'),
+                        'remarks' => $inspection->remarks,
+                    ];
+                    $inspection_details_array[] = $inspection_array;
+                }
+
+                $approval_array = null;
+                if ($inspections->observation_status != OBSERVATION_PENDING) {
+                    $signature = GetSafetySignature(
+                        $inspections->inspection_updated_by,
+                        $inspections->inspection_id,
+                        FORKLIFT_INSPECTION,
+                    );
+                    $approval_array = [
+                        'approval_updated_by' => getUsername($inspections->inspection_updated_by),
+                        'approval_updated_at' => Displaydateformat($inspections->inspection_updated_at),
+                        // 'approver_signature' => admin_url($signature),
+                        'approval_remarks' => $inspections->approval_remarks,
+                    ];
+                }
+
+                $status_logs = $this->statusLog->selectOne($id, $type);
+                $logs = [];
+                foreach ($status_logs as $log_index => $status) {
+                    $logs[$log_index] = [
+                        'id' => $status->id,
+                        'type' => $status->type,
+                        'from_status' => getForkLiftInspectionStatus($status->from_status),
+                        'to_status' => getForkLiftInspectionStatus($status->to_status),
+                        'remarks' => $status->remarks ?? 'N/A',
+                        'approved_by' => $status->approved_by ? getUsername($status->approved_by) : '-',
+                        'created_by' => $status->created_by ? getUsername($status->created_by) : '-',
+                        'created_at' => Displaydateformat($status->created_at),
+                    ];
+                }
+
+                $data = [
+                    'inspection' => $inspections,
+                    'inspection_details' => $inspection_details,
+                    'approvals' => $approval_array,
+                    'logs' => $logs
+                ];
+
+                return $this->sendResponse($data, 'Forklift Inspection Details');
+            } else {
+                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+            }
+        } catch (Exception $ex) {
+            report($ex);
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
+
+    public function EhsapprovalSubmit(Request $request)
+    {
+        try {
+            $id = ($request->id);
+            $status = $request->action == 'approve' ? 1 : 0;
+            $remarks = $request->capa_remarks;
+            $eye_wash_inspection = $this->forklift_inspection->approvalSubmit($id, $status, $remarks);
+            $inspection_details = $this->forklift_inspection->selectOne($id);
+            // $signature_update = $this->signature->signatureUpload(FORKLIFT_INSPECTION, $id);
+            $created_by = [$inspection_details->created_by];
+            if ($status == 1) {
+                $message = 'FORKLIFT INSPECTION - OBSERVATION APPROVED';
+                $to_status = OBSERVATION_APPROVED;
+            } else {
+                $message = 'FORKLIFT INSPECTION - OBSERVATION REJECTED';
+                $to_status = OBSERVATION_REJECTED;
+            }
+            $web_link =   admin_url('safety/forklift-inspection/view/' . encryptId($inspection_details->id));
+            $mailsubject = 'FORKLIFT INSPECTION';
+            $notificationData = array(
+                'notification_type' => SAFETY_INSPECTION,
+                'module_type' => 3,
+                'notification_message' => $mailsubject,
+                'mobile_notification' => json_encode(array(
+                    'title' => $mailsubject,
+                    'message' => $message,
+                    'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                    'id' => $inspection_details->id,
+                    'module' => 1,
+                )),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($created_by),
+                'created_by' => Auth::id(),
+            );
+
+            notificationSave($notificationData);
+            $insert_array = [
+                'type' => FORKLIFT_INSPECTION,
+                'inspection_id' => $inspection_details->id,
+                'from_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
+                'to_status' => $to_status,
+                'remarks' => $remarks,
+                'approved_by' => Auth::id(),
+            ];
+            $this->statusLog->create($insert_array);
+
+            return $this->sendResponse($eye_wash_inspection, 'Forklift Inspection has been Completed');
+        } catch (Exception $ex) {
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

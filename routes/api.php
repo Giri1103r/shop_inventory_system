@@ -249,14 +249,6 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 });
             });
 
-            // Route::group(['prefix' => 'safety'], function () {
-            //     Route::group(['prefix' => 'monthly-eye-wash-inspection'], function () {
-            //         Route::post('list', [MonthlyEyeWashController::class, 'List']);
-            //         Route::post('add', [MonthlyEyeWashController::class, 'Add']);
-            //         Route::post('view', [MonthlyEyeWashController::class, 'View']);
-            //     });
-            // });
-
             // OHC
             Route::group(['prefix' => 'ohc/'], function () {
 
@@ -312,6 +304,7 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 Route::post('list', [ForkliftInspection::class, 'list']);
                 Route::post('add', [ForkliftInspection::class, 'store']);
                 Route::post('view', [ForkliftInspection::class, 'view']);
+                Route::post('ehs-head-approval', [ForkliftInspection::class, 'EhsapprovalSubmit']);
             });
 
             Route::prefix('monthly-forklift-inspection')->group(function () {

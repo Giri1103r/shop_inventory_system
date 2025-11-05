@@ -45,7 +45,7 @@ class OHSPlantSummary extends BaseController
                 $search = ($search);
                 $query->where(function ($query) use ($search) {
                     $query->orWhereRaw("DATE_FORMAT(inspection_safety_ohs_report.inspection_date, '%d-%m-%Y') LIKE ?", ["%{$search}%"])
-                        ->orWhere('inspection_shift_option.updated_frequency', $search);
+                        ->orWhere('inspection_safety_ohs_report.updated_frequency', $search);
                 });
             }
 
@@ -96,24 +96,8 @@ class OHSPlantSummary extends BaseController
         try {
             if (Auth::user()) {
                 $id = $request->id;
-                $inspections = $this->ohsreport
-                    ->where('inspection_safety_ohs_report.id', $id)
-                    ->leftJoin(
-                        'inspection_static_docno',
-                        'inspection_safety_ohs_report.document_reference_id',
-                        '=',
-                        'inspection_static_docno.id'
-                    )
-                    ->select(
-                        'inspection_safety_ohs_report.*',
-                        'inspection_static_docno.*',
-                        'inspection_safety_ohs_report.id as inspection_id',
-                        'inspection_safety_ohs_report.created_by as inspection_created_by',
-                        'inspection_safety_ohs_report.updated_at as inspection_updated_at',
-                        'inspection_safety_ohs_report.updated_by as inspection_updated_by',
-                    )
-                    ->first();
-
+                $inspections = $this->ohsreport->selectOne($id);
+                $document_no = $this->document_reference->selectOne($inspections->document_reference_id);
 
                 //Quantity Details
                 $quantity_details = json_decode($inspections->quantity_details, true);
@@ -132,7 +116,6 @@ class OHSPlantSummary extends BaseController
                     ];
                 }
 
-
                 //Fire Pump Details
                 $fire_pump_details = json_decode($inspections->fire_water_pump_details, true);
                 $fire_pump_details_array = [];
@@ -149,20 +132,20 @@ class OHSPlantSummary extends BaseController
                 }
 
                 $inspection = [
-                    'document_no' => $inspections->doc_no,
-                    'issue_date' => Displaydateformat($inspections->issue_date),
+                    'document_no' => $document_no->doc_no,
+                    'issue_date' => Displaydateformat($document_no->issue_date),
                     'date_of_inspection' => Displaydateformat($inspections->inspection_date),
-                    'rev_dt' => ($inspections->rev_dt),
+                    'rev_dt' => ($document_no->rev_dt),
                     'updated_frequency' => ($inspections->updated_frequency),
                 ];
 
                 $success = [
-                    'id' => $inspections->inspection_id,
                     'inspection' => $inspection,
                     'quantity_details' => $quantity_details,
                     'fire_pump_details' => $fire_pump_details,
                 ];
-                return $this->sendResponse($success, 'Inspection Details');
+
+                return $this->sendResponse($success, 'OHS Plan Summary Details');
             } else {
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
@@ -210,7 +193,6 @@ class OHSPlantSummary extends BaseController
             ];
             return $this->sendResponse($success, 'Inspection Created');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
