@@ -124,7 +124,7 @@
                                     @php
                                         $user_response = json_decode($inspection_details->responses, true);
                                     @endphp
-                                    <table class="container p-5" style="width: 100%; border-collapse: collapse;">
+                                    <table class="container mb-2 p-5" style="width: 100%; border-collapse: collapse;">
                                         <thead>
                                             <tr>
                                                 <th

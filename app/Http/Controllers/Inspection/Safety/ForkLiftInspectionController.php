@@ -236,7 +236,7 @@ class ForkLiftInspectionController extends Controller
             Session::flash('success', 'Forklift Inspection added successfully!');
             return redirect(admin_url('safety/forklift-inspection/list'));
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             Session::flash('error', 'Something went wrong!');
             return redirect(admin_url('safety/forklift-inspection/list'));
         }

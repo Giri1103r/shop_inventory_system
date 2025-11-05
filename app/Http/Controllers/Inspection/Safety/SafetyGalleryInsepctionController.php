@@ -79,6 +79,12 @@ class SafetyGalleryInsepctionController extends Controller
                         ->addColumn('inspection_date', function ($row) {
                             return Displaydateformat($row->date_of_inspection);
                         })
+                          ->addColumn('unit', function ($row) {
+                            return getUnitname($row->unit);
+                        })
+                          ->addColumn('location', function ($row) {
+                            return getLocationname($row->location);
+                        })
                         ->addColumn('created_by', function ($row) {
                             return getUsername($row->created_by);
                         })

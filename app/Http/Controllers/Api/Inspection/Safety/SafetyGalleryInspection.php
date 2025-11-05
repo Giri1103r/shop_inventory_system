@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Mail;
 use App\Models\Inspection\Master\Shift;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\Api\BaseController;
+use App\Mail\Inspection\Safety\SafetyGalleryEmail;
 use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Safety\SafetyStatusLog;
@@ -50,32 +51,46 @@ class SafetyGalleryInspection extends BaseController
                     $search = $request->search;
                 }
             }
-            $query = SafetySafetyGalleryInspection::select(
-                'inspection_safety_gallery.*',
-                'masters_unit.*',
-                'masters_location.*',
-                'inspection_safety_gallery.id as inspection_id',
-                'inspection_safety_gallery.created_at as inspection_created_at'
-            )
+            $query = SafetySafetyGalleryInspection::select('inspection_safety_gallery.*', 'masters_unit.unit_name', 'masters_location.location_name', 'inspection_safety_gallery.id as inspection_id', 'inspection_safety_gallery.created_at as inspection_created_at')
                 ->leftJoin('masters_location', 'inspection_safety_gallery.location', '=', 'masters_location.id')
-                ->leftJoin('masters_unit', 'inspection_safety_gallery.unit', '=', 'masters_unit.id')
-                ->leftJoin('inspection_static_docno', 'inspection_safety_gallery.document_reference_id', '=', 'inspection_static_docno.id');
-
-            $org_total_counts = $query->count();
+                ->leftJoin('masters_unit', 'inspection_safety_gallery.unit', '=', 'masters_unit.id');
 
 
-            if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_OFFICER) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
-            } else if (CheckUserRole(ROLE_FIRE_ASSOCIATES)) {
+
+            if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_EHS_HEAD) || CheckUserRole(ROLE_L1_MANAGER) || CheckUserRole(ROLE_L2_MANAGER)) {
+            } else if (CheckUserRole(ROLE_EHS_OFFICER)) {
                 $query->where('inspection_safety_gallery.created_by', Auth::id());
             }
 
+            $search = $request->input('search', '');
+
             if (!empty($search)) {
-                $search = ($search);
-                $query->where(function ($query) use ($search) {
-                    $query->orWhere('masters_unit.unit_name', $search)
-                        ->orWhere('masters_location.location_name', $search);
+                $audit_response = [
+                    "Waiting For Level Two Manager Approval" => 1,
+                    "Approved by the Level Two Manager" => 2,
+                    "Rejected By the Level Two Manager" => 3,
+                    "EHS Head Approval Pending" => 4,
+                    "Closed" => 5,
+                    "EHS Head Rejected" => 6,
+                ];
+
+                $query->where(function ($query) use ($search, $audit_response) {
+                    $query->orWhere('masters_unit.unit_name', 'LIKE', "%{$search}%")
+                        ->orWhere('masters_location.location_name', 'LIKE', "%{$search}%")
+                        ->orWhere('inspection_safety_gallery.resource_code', 'LIKE', "%{$search}%");
+
+
+                    if (isset($audit_response[$search])) {
+                        $query->orWhere('inspection_safety_gallery.inspection_status', $audit_response[$search]);
+                    }
+
+
+                    if (strtotime($search)) {
+                        $query->orWhereDate('inspection_safety_gallery.date_of_inspection', '=', $search);
+                    }
                 });
             }
+
 
             $query_array = $query->orderBy('inspection_safety_gallery.id', 'DESC')->paginate($request->input('per_page', 10));
 
@@ -88,12 +103,12 @@ class SafetyGalleryInspection extends BaseController
             $data_array = [];
             foreach ($inspection_list['data'] as $datas) {
                 $data = [];
-                $data['id'] = $datas['id'] ?? '';
+                $data['id'] = $datas['inspection_id'] ?? '';
                 $data['date_of_inspection'] = Displaydateformat($datas['date_of_inspection']);
                 $data['location_name'] = ($datas['location_name'] ?? '');
                 $data['resource_code'] = ($datas['resource_code'] ?? '');
                 $data['unit_name'] = ($datas['unit_name'] ?? '');
-                $data['inspection_status'] = getInspectionStatus($datas['inspection_status'] ?? '');
+                $data['inspection_status'] = getSafetyGalleryinspectionstatus($datas['inspection_status'] ?? '');
                 $data['created_by'] = getUsername($datas['created_by'] ?? '');
                 $data['created_at'] = Displaydateformat($datas['created_at'] ?? '');
                 $data_array[] = $data;
@@ -110,242 +125,194 @@ class SafetyGalleryInspection extends BaseController
             ];
 
             $success = [
-                'inspection_details' => $inspection_details
+                'safety_gallery_inspection' => $inspection_details
             ];
-            return $this->sendResponse($success, 'Inspection Details');
+            return $this->sendResponse($success, 'Safety Gallery Inspection');
         } else {
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
 
+    // view
 
     public function view(Request $request)
     {
         try {
-            if (Auth::user()) {
-                $id = $request->id;
-                $inspection = $this->safetygallery
-                    ->leftJoin('inspection_static_docno', 'inspection_safety_gallery.document_reference_id', '=', 'inspection_static_docno.id')
-                    ->where('inspection_safety_gallery.id', $id)
-                    ->select(
-                        'inspection_safety_gallery.*',
-                        'inspection_static_docno.*',
-                        'inspection_safety_gallery.id as inspection_id',
-                        'inspection_safety_gallery.created_by as inspection_created_by',
-                        'inspection_safety_gallery.updated_at as inspection_updated_at',
-                    )
-                    ->first();
+            $id = $request->id;
+            $safety_gallery_inspection = $this->safetygallery->find($id);
 
-                $inspection_responses = json_decode($inspection->responses, true);
-
-                $responses = [];
-                foreach ($inspection_responses as $inspection_response) {
-                    $data = [
-                        'question_name' => GetChecklistTypeDate($inspection_response['question_id']),
-                        'answer' => $inspection_response['answer'],
-                        'remarks' => $inspection_response['remarks'],
-                    ];
-                    $responses[] = $data;
-                }
-                $signature = GetSafetySignature(
-                    $inspection->inspection_created_by,
-                    $inspection->inspection_id,
-                    SAFETY_GALLERY_INSPECTION,
-                );
-
-                $statuslog = $this->statusLog->selectOne($id, SAFETY_GALLERY_INSPECTION);
-
-                if (count($statuslog) > 0) {
-                    foreach ($statuslog as $key => $status) {
-                        $statuslog[$key]->from_status = getInspectionStatus($status->from_status);
-                        $statuslog[$key]->to_status = getInspectionStatus($status->to_status);
-                        $statuslog[$key]->remarks = ($status->remarks);
-                        $statuslog[$key]->approved_by = getUsername($status->approved_by);
-                        $statuslog[$key]->created_by = getUsername($status->created_by);
-                        $statuslog[$key]->created_at = Displaydateformat($status->created_at);
-                    }
-                } else {
-                    $statuslog = null;
-                }
-
-                $inspection_details = [
-                    'id' => $inspection->inspection_id,
-                    'issue_date' => Displaydateformat($inspection->issue_date),
-                    'doc_no' => $inspection->doc_no,
-                    'rev_dt' => $inspection->rev_dt,
-                    'date_of_inspection' => Displaydateformat($inspection->date_of_inspection),
-                    'location' => getLocationname($inspection->location),
-                    'unit' => getUnitname($inspection->unit),
-                    'resource_code' => $inspection->resource_code,
-                    'responses' => $responses,
-                    'inspection_creator_signature' => admin_url($signature),
-                ];
-
-                if (!empty($inspection->verified_by)) {
-                    $updated_time = GetSafetyUpdatedTime(
-                        $inspection->verified_by,
-                        $inspection->inspection_id,
-                        SAFETY_GALLERY_INSPECTION,
-                        WAITING_FOR_EHS_OFFICER_VERIFICATION,
-                    );
-
-                    $verifier_signature = GetSafetySignature(
-                        $inspection->verified_by,
-                        $inspection->inspection_id,
-                        SAFETY_GALLERY_INSPECTION,
-                    );
-
-                    $inspection_details += [
-                        'inspection_verified_by' => getUsername($inspection->verified_by),
-                        'inspection_verified_at' => Displaydateformat($updated_time->created_at),
-                        'verifier_signature' => admin_url($verifier_signature),
-                        'capa_recomendation' => !empty($inspection->capa_recomendation) ? $inspection->capa_recomendation : $inspection->remarks,
-                    ];
-                }
-                // CAPA Remarks by Inspection Creator
-                if (!empty($inspection->capa_remarks)) {
-                    $capa_creator_time = GetSafetyUpdatedTime(
-                        $inspection->inspection_created_by,
-                        $inspection->inspection_id,
-                        SAFETY_GALLERY_INSPECTION,
-                        WAITING_FOR_CAPA_ACTION,
-                    );
-
-                    $inspection_details += [
-                        'capa_remarks' => $inspection->capa_remarks,
-                        'capa_created_by' => getUsername($inspection->inspection_created_by),
-                        'capa_created_at' => Displaydateformat($capa_creator_time->created_at),
-                        'capa_creator_signature' => admin_url($signature),
-                    ];
-                }
-
-                if (!empty($inspection->capa_ehs_remarks) && !empty($inspection->verified_by)) {
-                    $ehs_updated_time = GetSafetyUpdatedTime(
-                        $inspection->verified_by,
-                        $inspection->inspection_id,
-                        SAFETY_GALLERY_INSPECTION,
-                        WAITING_FOR_CAPA_VERIFICATION,
-                    );
-
-                    $ehs_signature = GetSafetySignature(
-                        $inspection->verified_by,
-                        $inspection->inspection_id,
-                        SAFETY_GALLERY_INSPECTION,
-                    );
-
-                    $inspection_details += [
-                        'capa_ehs_remarks' => $inspection->capa_ehs_remarks,
-                        'capa_ehs_by' => getUsername($inspection->verified_by),
-                        'capa_ehs_at' => Displaydateformat($ehs_updated_time->created_at),
-                        'capa_ehs_signature' => admin_url($ehs_signature),
-                    ];
-                }
-
-
-                if (!empty($inspection->l1_manager_verified_by)) {
-                    $l1_signature = GetSafetySignature(
-                        $inspection->l1_manager_verified_by,
-                        $inspection->inspection_id,
-                        SAFETY_GALLERY_INSPECTION,
-                    );
-
-                    $l1_updated_time = GetSafetyUpdatedTime(
-                        $inspection->l1_manager_verified_by,
-                        $inspection->inspection_id,
-                        SAFETY_GALLERY_INSPECTION,
-                        WAITING_FOR_L1_VERIFICATION,
-                    );
-
-                    $inspection_details += [
-                        'l1_verified_by' => getUsername($inspection->l1_manager_verified_by),
-                        'l1_remarks' => $inspection->level_one_manager_remarks ?? '',
-                        'l1_updated_time' => Displaydateformat($l1_updated_time->created_at),
-                        'l1_signature' => admin_url($l1_signature),
-                    ];
-                }
-
-                if ($inspection->inspection_status == INSPECTION_APPROVED && !empty($inspection->approved_by)) {
-
-                    if (!empty($inspection->l2_manager_verified_by)) {
-                        $l2_signature = GetSafetySignature(
-                            $inspection->l2_manager_verified_by,
-                            $inspection->inspection_id,
-                            SAFETY_GALLERY_INSPECTION,
-                        );
-
-                        $inspection_details += [
-                            'l2_verified_by'   => getUsername($inspection->l2_manager_verified_by),
-                            'l2_remarks'       => $inspection->level_two_manager_remarks ?? '',
-                            'l2_updated_time'  => Displaydateformat($inspection->inspection_updated_at),
-                            'l2_signature'     => !empty($l2_signature) ? admin_url($l2_signature) : '',
-                        ];
-                    } else {
-                        $approver_signature = GetSafetySignature(
-                            $inspection->approved_by,
-                            $inspection->inspection_id,
-                            SAFETY_GALLERY_INSPECTION,
-                        );
-
-                        $inspection_details += [
-                            'approved_by'           => getUsername($inspection->approved_by),
-                            'approved_remarks'      => $inspection->remarks ?? '',
-                            'approved_updated_time' => Displaydateformat($inspection->inspection_updated_at),
-                            'approved_signature'    => !empty($approver_signature) ? admin_url($approver_signature) : '',
-                        ];
-                    }
-                }
-
-
-                $success = [
-                    'id' => $inspection->inspection_id,
-                    'inspection_details' => $inspection_details,
-                    '$statuslog' => $statuslog,
-                ];
-                return $this->sendResponse($success, 'Inspection Details');
-            } else {
-                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+            if (!$safety_gallery_inspection) {
+                return $this->sendError('Record not found.', [], 404);
             }
+
+            $doc_no = $this->document_reference->find($safety_gallery_inspection->document_reference_id);
+
+            $success['safety_gallery_inspection'] = [
+                'doc_no' => $doc_no->doc_no ?? '',
+                'issue_date' => Displaydateformat($doc_no->issue_date ?? ''),
+                'rev_dt' => $doc_no->rev_dt ?? '',
+                'date_of_inspection' => Displaydateformat($safety_gallery_inspection->date_of_inspection ?? ''),
+                'resource_code' => $safety_gallery_inspection->resource_code ?? '',
+                'location' => getLocationname($safety_gallery_inspection->location ?? ''),
+                'unit' => getUnitname($safety_gallery_inspection->unit ?? ''),
+                'excat_location' => $safety_gallery_inspection->excat_location ?? '',
+            ];
+            // checklist
+            $checkList = json_decode($safety_gallery_inspection->responses, true) ?? [];
+            $safety_gallery_checklist = [];
+
+            foreach ($checkList as $data) {
+                $safety_gallery_checklist[] = [
+                    'question_name' => GetChecklistTypeDate($data['question_id']),
+                    'yes_or_no' => $data['answer'] ?? '',
+                    'remarks' => $data['remarks'] ?? '',
+                ];
+            }
+            $success['safety_gallery_checklist'] = $safety_gallery_checklist;
+            // level two manager verification
+            if ($safety_gallery_inspection->remarks) {
+                $success['level_two_manager_verification'] = [
+                    'approver_name' => getUsername($safety_gallery_inspection->verified_by),
+                    'approver_date' => Displaydateformat($safety_gallery_inspection->verified_date),
+                    'remarks' => $safety_gallery_inspection->remarks,
+                ];
+            }
+
+            // ehs head verification
+            if ($safety_gallery_inspection->level_two_manager_remarks) {
+                $success['ehs_head_verification'] = [
+                    'approver_name' => getUsername($safety_gallery_inspection->l2_manager_verified_by),
+                    'approver_date' => Displaydateformat($safety_gallery_inspection->approved_date),
+                    'remarks' => $safety_gallery_inspection->level_two_manager_remarks,
+                ];
+            }
+            // approval logs
+            $statuslog = $this->statusLog->selectOne($id, SAFETY_GALLERY_INSPECTION);
+            if (!empty($statuslog)) {
+                $approvalLogs = [];
+                foreach ($statuslog as $logs) {
+                    $approvalLogs[] = [
+                        'from_status'   => getSafetyGalleryinspectionstatus($logs->from_status),
+                        'to_status'     => getSafetyGalleryinspectionstatus($logs->to_status),
+                        'approver_name' => getUsername($logs->approved_by),
+                        'created_by'    => getUsername($logs->created_by),
+                        'created_at'    => Displaydateformat($logs->created_at),
+                    ];
+                }
+                $success['approvalLogs'] = $approvalLogs;
+            }
+
+            return $this->sendResponse($success, 'Safety Gallery Inspection Details');
         } catch (Exception $ex) {
-            dd($ex);
             report($ex);
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+            return $this->sendError('Unauthorized', ['error' => 'Something went wrong, please try again later.']);
         }
     }
 
-
-    public function store(Request $request)
+    public function leveloneverification(Request $request)
     {
+
         try {
-            $rules = [
-                'doc_no' => 'required',
-                'issue_date' => 'required',
-                'resource_code' => 'required',
-                'location_id' => 'required',
-                'unit_id' => 'required',
-                'inspection_date' => 'required',
-            ];
-
-            $messages = [
-                'doc_no.required' => 'Document number is required.',
-                'issue_date.required' => 'Issue Date is Required',
-                'resource_code.required' => 'Resource code is Required',
-                'location_id.required' => 'Location is Required',
-                'inspection_date.required' => 'Inspection Date is Required',
-                'unit_id.required' => 'Unit is Required',
-            ];
-
-            $validator = Validator::make($request->all(), $rules, $messages);
-
-            if ($validator->fails()) {
-                return $this->sendError('Validation Error', $validator->errors(), 422);
+            $id = $request->id;
+            $remarks = $request->remarks;
+            $date = $request->verified_date;
+            $action = $request->action == 'approve' ? 1 : 0;
+            $inspection_updates = $this->safetygallery->EHSOfficerUpdateAPI($id, $date, $remarks, $action);
+            $inspection_details = $this->safetygallery->selectOne($id);
+            if ($action == 1) {
+                $message = 'Safety gallery Inspeciton Approved Successfully';
+                $web_link =   admin_url('safety/safety-gallery-inspection/view/' . encryptId($inspection_details->id));
+                $to_status = SAFETY_EHS_HEAD_APPROVAL_PENDING;
+            } else {
+                $message = 'Safety gallery Inspeciton Rejected Successfully';
+                $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $to_status = SAFETY_L2_MANAGER_REJECTED;
             }
 
-            $safety_gallery_inspection = $this->safetygallery->store_api();
-            $id = $safety_gallery_inspection->id;
-            $signature_update = $this->signature->signatureUpload_api(SAFETY_GALLERY_INSPECTION, $safety_gallery_inspection->id);
-
-            $ehsOfficer = GetEHSOfficer();
+            $mailsubject = 'Safety Gallery inspection';
+            $ehsOfficer = GetEHSHead();
             $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
+            // $signature_update = $this->signature->signatureUpload(SAFETY_GALLERY_INSPECTION, $safety_gallery_inspection->id);
+            $mailsubject = 'Safety Gallery inspection';
+
+
+
+            $title = 'Safety Gallery Inspection Created';
+            if ($ehsOfficer->isNotEmpty()) {
+                foreach ($ehsOfficers as $user) {
+                    $email_id = getUseremail($user);
+                    $url = admin_url('safety/safety-gallery-inspection/verification/' . encryptId($id) . '/ehs');
+                    $details = array(
+                        'safety_type' => 'Safety Gallery Inspection',
+                        'email' => $email_id,
+                        'mail_subject' => $mailsubject,
+                        'title' => $title,
+                        'url' => $url,
+                        'data' => $inspection_details
+                    );
+                    Mail::to($email_id)->queue(new SafetyGalleryEmail($details));
+                }
+
+                $notificationData = array(
+                    'notification_type' => SAFETY_INSPECTION,
+                    'module_type' => 3,
+                    'notification_message' => $mailsubject,
+                    'mobile_notification' => json_encode(array(
+                        'title' => $mailsubject,
+                        'message' => "Safety Gallery Inspection Created",
+                        'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
+                        'id' => $inspection_details->id,
+                        'module' => 1,
+                    )),
+                    'web_link' => admin_url('safety/safety-gallery-inspection/view/' . encryptId($inspection_details->id)),
+                    'assigned_user' => implode(',', $ehsOfficers), // fixed array to string
+                    'created_by' => Auth::id(),
+                );
+
+                notificationSave($notificationData);
+            }
+
+            $insert_array = [
+                'type' => SAFETY_GALLERY_INSPECTION,
+                'inspection_id' => $inspection_details->id,
+                'from_status' => SAFETY_L2_MANAGER_APPROVAL_PENDING,
+                'to_status' => $to_status,
+                'approved_by' => Auth::id(),
+                'remarks' => $request->remarks,
+            ];
+            $this->statusLog->create($insert_array);
+            $success = [
+                'safety_gallery_inspection' => $id
+            ];
+            return $this->sendResponse($success, 'Level Two Verification Completed Successfully !');
+        } catch (Exception $ex) {
+            report($ex);
+            return $this->sendError('Unauthorized', ['error' => 'Something went wrong, please try again later.']);
+        }
+    }
+
+    public function ehsheadapproval(Request $request)
+    {
+
+        try {
+            $id = $request->id;
+            $remarks = $request->remarks;
+            $date = $request->verified_date;
+            $action = $request->action == 'approve' ? 1 : 0;
+            $inspection_updates = $this->safetygallery->finalapprovalapi($id,$date, $remarks, $action);
+            $inspection_details = $this->safetygallery->selectOne($id);
+            if ($action == 1) {
+                $message = 'Safety gallery Inspeciton Approved Successfully';
+                $web_link =   admin_url('safety/safety-gallery-inspection/view/' . encryptId($inspection_details->id));
+                $to_status = SAFETY_EHS_HEAD_APPROVED;
+            } else {
+                $message = 'Safety gallery Inspeciton Rejected Successfully';
+                $web_link =   admin_url('safety/safety-gallery-inspection/verification/' . encryptId($inspection_details->id) . '/capa');
+                $to_status = SAFETY_EHS_HEAD_REJECTED;
+            }
+            $userIds = [
+                'users' => $inspection_details->created_by,
+            ];
             $mailsubject = 'Safety Gallery inspection';
             $notificationData = array(
                 'notification_type' => SAFETY_INSPECTION,
@@ -353,48 +320,47 @@ class SafetyGalleryInspection extends BaseController
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Fire Associate create the Safety Gallery Inspection",
+                    'message' => $message,
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $safety_gallery_inspection->id,
+                    'id' => $inspection_details->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('safety/safety-gallery-inspection/view/' . encryptId($safety_gallery_inspection->id)),
-                'assigned_user' => array_to_string($ehsOfficers),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($userIds),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
 
-            $title = 'Fire Associate create the Safety Gallery Inspection';
-            foreach ($ehsOfficers as $user) {
-                $email_id = getUseremail($user);
-                $url = admin_url('safety/safety-gallery-inspection/verification/' . encryptId($id) . '/ehs');
-                $details = array(
-                    'safety_type' => 'Safety Gallery Inspection',
-                    'email' => $email_id,
-                    'mail_subject' => $mailsubject,
-                    'title' => $title,
-                    'url' => $url,
-                    'data' => $safety_gallery_inspection
-                );
-                Mail::to($email_id)->queue(new SafetyInspection($details));
-            }
+            $title = $message;
+            $user = $inspection_details->created_by;
+            $email_id = getUseremail($user);
+            $url = admin_url('safety/safety-gallery-inspection/monthly/verification/' . encryptId($id) . '/capa');
+            $details = array(
+                'safety_type' => 'Safety Gallery Inspection',
+                'email' => $email_id,
+                'mail_subject' => $mailsubject,
+                'title' => $title,
+                'url' => $url,
+                'data' => $inspection_details
+            );
+            Mail::to($email_id)->queue(new SafetyGalleryEmail($details));
 
             $insert_array = [
                 'type' => SAFETY_GALLERY_INSPECTION,
-                'inspection_id' => $safety_gallery_inspection->id,
-                'from_status' => 0,
-                'to_status' => WAITING_FOR_EHS_OFFICER_VERIFICATION,
-                'created_by' => Auth::id(),
+                'inspection_id' => $inspection_details->id,
+                'from_status' => SAFETY_EHS_HEAD_APPROVAL_PENDING,
+                'to_status' => $to_status,
+                'approved_by' => Auth::id(),
+                'remarks' => $request->ehs_remarks,
             ];
             $this->statusLog->create($insert_array);
-
             $success = [
-                "success" => $safety_gallery_inspection,
+                'safety_gallery_inspection' => $id
             ];
-            return $this->sendResponse($success, 'Inspection Created');
+            return $this->sendResponse($success, 'EHS Head Approval Completed Successfully !');
         } catch (Exception $ex) {
             report($ex);
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+            return $this->sendError('Unauthorized', ['error' => 'Something went wrong, please try again later.']);
         }
     }
 }
