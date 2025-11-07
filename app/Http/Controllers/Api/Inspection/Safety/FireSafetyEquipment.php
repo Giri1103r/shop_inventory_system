@@ -113,28 +113,13 @@ class FireSafetyEquipment extends BaseController
         try {
             if (Auth::user()) {
                 $id = $request->id;
-                $equipments = $this->safety_equipment
-                    ->where('inspection_safety_equipment.id', $id)
-                    ->leftJoin(
-                        'inspection_static_docno',
-                        'inspection_safety_equipment.document_reference_id',
-                        '=',
-                        'inspection_static_docno.id'
-                    )
-                    ->select(
-                        'inspection_safety_equipment.*',
-                        'inspection_static_docno.*',
-                        'inspection_safety_equipment.id as inspection_id',
-                        'inspection_safety_equipment.created_by as inspection_created_by',
-                        'inspection_safety_equipment.updated_at as inspection_updated_at',
-                        'inspection_safety_equipment.updated_by as inspection_updated_by',
-                    )
-                    ->first();
+                $equipments = $this->safety_equipment->selectOne($id);
+                $document_no = $this->document_reference->selectOne($equipments->document_reference_id);
 
                 $equipment_view = [
-                    'document_no' => $equipments->doc_no,
-                    'issue_date' => Displaydateformat($equipments->issue_date),
-                    'rev_dt' => ($equipments->rev_dt),
+                    'document_no' => $document_no->doc_no,
+                    'issue_date' => Displaydateformat($document_no->issue_date),
+                    'rev_dt' => ($document_no->rev_dt),
                     'equipment_name' => getEquipmentName($equipments->equipment_id),
                     'item_code' => ($equipments->item_code),
                     'economic_order_quantity' => ($equipments->economic_order_quantity),
@@ -148,10 +133,10 @@ class FireSafetyEquipment extends BaseController
                 ];
 
                 $success = [
-                    'id' => $equipments->inspection_id,
+                    'id' => $id,
                     'inspection' => $equipment_view,
                 ];
-                return $this->sendResponse($success, 'Inspection Details');
+                return $this->sendResponse($success, 'Inspection Equipment Details');
             } else {
                 return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
             }
