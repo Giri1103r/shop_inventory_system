@@ -50,7 +50,7 @@ class PrescribetoPatientController extends Controller
     private $medicine_issuance;
     private $medicine_receiving;
     private $work;
-    private $employee;
+    private     $employee;
     private $suggestedBy;
     private $refered_vechicle;
     private $patient_status;

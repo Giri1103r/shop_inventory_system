@@ -41,7 +41,8 @@ class HealthInstrumentCalibrationDetails extends Model
 
 
 
-    public function store($id){
+    public function store($id)
+    {
         $request = request();
         $health_instrument_details = $request->input('health_instrument');
 
@@ -70,42 +71,35 @@ class HealthInstrumentCalibrationDetails extends Model
         }
     }
 
-    public function getInspectionDetails($id) {
-           $data = $this->where('health_instrument_id',$id)->get();
-           return $data;
+    public function getInspectionDetails($id)
+    {
+        $data = $this->where('health_instrument_id', $id)->get();
+        return $data;
     }
 
-     public function storeApi($id){
+    public function storeApi($id)
+    {
         $request = request();
-        $health_instrument_details = $request->input('health_instrument');
 
-        if (!empty($health_instrument_details) && is_array($health_instrument_details)) {
-            $insertedData = [];
-            foreach ($health_instrument_details as $health) {
-                $data = [
-                    'health_instrument_id' => $id,
-                    'instrument_name' => $health['instrument_name'],
-                    'resource_code' => $health['resource_code'],
-                    'exact_location' => $health['exact_location'],
-                    'instrument_serial_no' => $health['instrument_serial_no'],
-                    'make' => $health['make'],
-                    'model' => $health['model'],
-                    'instrument_range' => $health['instrument_range'],
-                    'calibration_frequency' => $health['frequency_id'],
-                    'date_of_calibration' => DBdateformat($health['date_of_calibration']),
-                    'due_date_of_calibration' => DBdateformat($health['due_date_of_calibration']),
-                    'remarks' => $health['instrument_remarks'],
-                    'created_by' => Auth::id(),
-                ];
+        $data = $request->input('data');
 
-                $insertedData[] = $this->create($data);
-            }
-            return $insertedData;
+        foreach ($data as $health) {
+
+            HealthInstrumentCalibrationDetails::create([
+                'health_instrument_id' => $id,
+                'instrument_name' => $health['instrument_name'],
+                'resource_code' => $health['resource_code'],
+                'exact_location' => $health['excat_location'],
+                'instrument_serial_no' => $health['instrument_sr_no'],
+                'make' => $health['make'],
+                'model' => $health['model'],
+                'instrument_range' => $health['instrument_range'],
+                'calibration_frequency' => ($health['frequency']),
+                'date_of_calibration' => DBdateformat($health['date_of_calibiration']),
+                'due_date_of_calibration' => DBdateformat($health['next_due_date']),
+                'remarks' => $health['remark'],
+                'created_by' => Auth::id(),
+            ]);
         }
     }
-
 }
-
-
-
-

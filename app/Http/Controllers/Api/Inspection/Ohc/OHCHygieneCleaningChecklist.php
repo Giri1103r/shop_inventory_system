@@ -13,6 +13,9 @@ use App\Models\Inspection\Ohc\OhcSignature;
 use App\Mail\Inspection\Safety\SafetyInspection;
 use App\Models\Inspection\InspectionStaticDocno;
 use App\Models\Inspection\Ohc\OHCHygieneCleaningChecklist as OhcOHCHygieneCleaningChecklist;
+use Exception;
+use App\Models\Inspection\Ohc\InspectionOhcStatuslog;
+use KitLoong\MigrationsGenerator\Repositories\Repository;
 
 class OHCHygieneCleaningChecklist extends BaseController
 {
@@ -20,12 +23,14 @@ class OHCHygieneCleaningChecklist extends BaseController
     private $shift;
     private $signature;
     private $document_reference;
+    private $inspection_ohc_status_log;
 
 
     public function __construct()
     {
         $this->ohc_hygiene = new OhcOHCHygieneCleaningChecklist();
         $this->shift = new Shift();
+        $this->inspection_ohc_status_log = new InspectionOhcStatuslog();
         $this->signature = new OhcSignature();
         $this->document_reference = new InspectionStaticDocno();
     }
@@ -100,162 +105,120 @@ class OHCHygieneCleaningChecklist extends BaseController
     public function view(Request $request)
     {
         try {
-            if (Auth::user()) {
-                $id = $request->id;
-                $inspections = $this->ohc_hygiene
-                    ->where('inspection_ohc_hygiene_checklist.id', $id)
-                    ->select(
-                        'inspection_ohc_hygiene_checklist.*',
-                        'inspection_ohc_hygiene_checklist.id as inspection_id',
-                        'inspection_ohc_hygiene_checklist.created_by as inspection_created_by',
-                        'inspection_ohc_hygiene_checklist.updated_at as inspection_updated_at',
-                        'inspection_ohc_hygiene_checklist.updated_by as inspection_updated_by',
-                    )
-                    ->first();
+            $id = $request->id;
+            $ohc_hygiene_cleaning_checklist = $this->ohc_hygiene->find($id);
 
-                dd($inspections);
-
-                $signature = GetOHCSignature(
-                    $inspections->inspection_created_by,
-                    $inspections->inspection_id,
-                    DAILY_OHC_HYGIENE_CLEANING_CHECKLIST,
-                );
-
-
-                $inspection = [
-                    'document_no' => $inspections->doc_no,
-                    'issue_date' => Displaydateformat($inspections->issue_date),
-                    'date_of_inspection' => Displaydateformat($inspections->date),
-                    'rev_dt' => ($inspections->rev_dt),
-                    'shift_name' => getShiftname($inspections->shift_id),
-                    'unit_name' => getUnitname($inspections->unit),
-                    'month' => ($inspections->month),
-                    'safety_walk_taken_by' => getUsername($inspections->safety_walk_taken_by),
-                    'signature' => admin_url($signature),
-                ];
-
-                $inspection_details_array = [];
-                foreach ($inspection_details as $inspection) {
-                    $images = GetSafetyWalkImage($inspection->id);
-                    $inspection_array = [
-                        'id' => $inspection->id,
-                        'location_name' => getLocationname($inspection->location),
-                        'observation_date' => Displaydateformat($inspection->observation_date),
-                        'observation' => $inspection->observation,
-                        'recomended_action' => ($inspection->recomended_action),
-                        'responsibility' => getUsername($inspection->responsibility),
-                        'date_of_compliance' => Displaydateformat($inspection->date_of_compliance),
-                        'observation_status' => ($inspection->observation_status == "1" ? 'Active' : 'InActive'),
-                        'remarks' => $inspection->remarks,
-                        'image' =>  admin_url($images),
-                    ];
-                    $inspection_details_array[] = $inspection_array;
-                }
-
-                $approval_array = null;
-                if ($inspections->observation_status != CLEANER_SUBMITTED_THE_CHECKLIST) {
-                    $signature = GetOHCSignature(
-                        $inspections->inspection_updated_by,
-                        $inspections->inspection_id,
-                        DAILY_OHC_HYGIENE_CLEANING_CHECKLIST,
-                    );
-                    $approval_array = [
-                        'approval_updated_by' => getUsername($inspections->inspection_updated_by),
-                        'approval_updated_at' => Displaydateformat($inspections->inspection_updated_at),
-                        'approver_signature' => admin_url($signature),
-                        'approval_remarks' => $inspections->approval_remarks,
+            $ohc_hygiene = [
+                'date' => Displaydateformat($ohc_hygiene_cleaning_checklist->issue_date),
+                'shift_id' => getShift($ohc_hygiene_cleaning_checklist->shift_id),
+                'created_by' => getUsername($ohc_hygiene_cleaning_checklist->created_by),
+                'created_at' => Displaydateformat($ohc_hygiene_cleaning_checklist->created_at),
+                'checklist_question' => $ohc_hygiene_cleaning_checklist->inspection_question,
+                'inspection_value' => getYesNoStatus($ohc_hygiene_cleaning_checklist->inspection_value),
+                'cleaner_remarks' => $ohc_hygiene_cleaning_checklist->cleaner_remarks,
+            ];
+            $success = [
+                'ohc_hygiene' => $ohc_hygiene,
+            ];
+            $type = DAILY_OHC_HYGIENE_CLEANING_CHECKLIST;
+            $status_log = $this->inspection_ohc_status_log->getStatuslog($id, $type);
+            if (!empty($statuslog)) {
+                $approvalLogs = [];
+                foreach ($statuslog as $logs) {
+                    $approvalLogs[] = [
+                        'from_status'   => getOhcHygieneCleaningStatus($logs->from_status),
+                        'to_status'     => getOhcHygieneCleaningStatus($logs->to_status),
+                        'remarks'     => ($logs->remarks) ?? '-',
+                        'approver_name' => getUsername($logs->approved_by),
+                        'created_by'    => getUsername($logs->created_by),
+                        'created_at'    => Displaydateformat($logs->created_at),
                     ];
                 }
-
-                $success = [
-                    'id' => $inspections->inspection_id,
-                    'inspection' => $inspections,
-                    'inspection_details' => $inspection_details,
-                    'approvals' => $approval_array,
-                ];
-                return $this->sendResponse($success, 'Safety Walk Observation Details');
-            } else {
-                return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+                $success['approvalLogs'] = $approvalLogs;
             }
+
+            return $this->sendResponse($success, 'OHC Hygiene Cleaning Checklist Fetched Successfully');
         } catch (Exception $ex) {
             report($ex);
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+            return $this->sendError('Server Error', ['error' => $ex->getMessage()], 500);
         }
     }
 
-
-    public function store(Request $request)
+    public function approval(Request $request)
     {
-
         try {
+            $id = ($request->id);
+            $status = $request->action == 'approve' ? 1 : 0;
+            $remarks = $request->capa_remarks;
 
-            $rules = [
-                'issue_date' => 'required',
-                'shift_id' => 'required',
-                'inspection' => 'required',
-                'remarks' => 'required',
-            ];
-
-            $messages = [
-                'issue_date.required' => 'Issue Date is required.',
-                'shift_id.required' => 'Shift ID is required.',
-                'inspection.required' => 'Inspection is required.',
-                'remarks.required' => 'Remarks is required.',
-            ];
-
-
-            $validator = Validator::make($request->all(), $rules, $messages);
-
-            if ($validator->fails()) {
-                return $this->sendError('Validation Error', $validator->errors(), 422);
+            if ($status == 1) {
+                $message = 'OHC HYGIENE CLEANING CHECKLIST - APPROVED';
+                $to_status = NURSING_OFFICER_SUBMITTED_THE_CHECKLIST;
+            } else {
+                $message = 'OHC HYGIENE CLEANING CHECKLIST - REJECTED';
+                $to_status = NURSING_OFFICER_REJECTED;
             }
-            $safety_walk = $this->safety_walk->store_api();
-            $id = $safety_walk->id;
-            $forklift_observation_details = $this->observation_details->store_api($safety_walk->id);
-            $signature_update = $this->signature->signatureUpload_api(DAILY_OHC_HYGIENE_CLEANING_CHECKLIST, $safety_walk->id);
 
-            $ehsOfficer = GetEHSOfficer();
-            $ehsOfficers = $ehsOfficer->pluck('id')->toArray();
-            $mailsubject = 'Safety Walk Observation';
+            $ohc_hygiene_checklist = $this->ohc_hygiene->approvalSubmit($id, $to_status, $remarks);
+
+            $inspection_details = $this->ohc_hygiene->selectOne($id);
+            $ehsOfficer = [$inspection_details->created_by];
+            $web_link =   admin_url('ohc/ohc-hygiene-cleaning-checklist/view/' . encryptId($inspection_details->id));
+            $mailsubject = 'OHC HYGIENE CLEANING CHECKLIST';
             $notificationData = array(
-                'notification_type' => SAFETY_INSPECTION,
-                'module_type' => 7,
+                'notification_type' => OHC_INSPECTION,
+                'module_type' => 1,
                 'notification_message' => $mailsubject,
                 'mobile_notification' => json_encode(array(
                     'title' => $mailsubject,
-                    'message' => "Safety Walk Observation - Observation Has been Created",
+                    'message' => $message,
                     'icon' =>  admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $safety_walk->id,
+                    'id' => $inspection_details->id,
                     'module' => 1,
                 )),
-                'web_link' =>  admin_url('safety/safety-walk-observation/approval/' . encryptId($safety_walk->id)),
-                'assigned_user' => array_to_string($ehsOfficers),
+                'web_link' =>  $web_link,
+                'assigned_user' => array_to_string($ehsOfficer),
                 'created_by' => Auth::id(),
             );
             notificationSave($notificationData);
 
-            $title = 'SAFETY INSPECTION - Observation has been Created';
-            foreach ($ehsOfficers as $user) {
-                $email_id = getUseremail($user);
-                $url = admin_url('safety/safety-walk-observation/approval/' . encryptId($safety_walk->id));
-                $details = array(
-                    'safety_type' => 'Safety Walk Observation',
-                    'email' => $email_id,
-                    'mail_subject' => $mailsubject,
-                    'title' => $title,
-                    'url' => $url,
-                    'data' => $safety_walk
-                );
-                Mail::to($email_id)->queue(new SafetyInspection($details));
-            }
+            $title = 'OHC HYGIENE CLEANING CHECKLIST';
+            $email_id = getUseremail($ehsOfficer);
+            $url = admin_url('ohc/ohc-hygiene-cleaning-checklist/view/' . encryptId($inspection_details->id));
+            $details = array(
+                'safety_type' => 'OHC HYGIENE CLEANING CHECKLIST',
+                'email' => $email_id,
+                'mail_subject' => $mailsubject,
+                'title' => $title,
+                'url' => $url,
+                'data' => $inspection_details
+            );
+            Mail::to($email_id)->queue(new SafetyInspection($details));
 
-            $success = [
-                "success" => $safety_walk,
+            $data = [
+                'type' => DAILY_OHC_HYGIENE_CLEANING_CHECKLIST,
+                'from_status' => CLEANER_SUBMITTED_THE_CHECKLIST,
+                'to_status' => $to_status,
+                'reference_id' => $inspection_details->id,
+                'remarks' => $remarks,
+                'approved_by' => Auth::id(),
+                'created_by' => $inspection_details->created_by,
+
             ];
-            return $this->sendResponse($success, 'Safety Walk Inspection Created');
+
+
+            $this->inspection_ohc_status_log->store($data);
+            $success = [
+                'ohc_hygiene_cleaning_checklist' => $id,
+            ];
+            if($status == 1 ){
+                return $this->sendResponse($success, 'OHC Hygiene Cleaning Checklist has been approved Successfully');
+            }else{
+                  return $this->sendResponse($success, 'OHC Hygiene Cleaning Checklist has been rejected Successfully');
+            }
         } catch (Exception $ex) {
             report($ex);
-            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+            return $this->sendError('Server Error', ['error' => $ex->getMessage()], 500);
         }
     }
 }

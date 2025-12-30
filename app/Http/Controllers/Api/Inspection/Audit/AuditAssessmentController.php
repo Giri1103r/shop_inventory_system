@@ -53,58 +53,48 @@ class AuditAssessmentController extends BaseController
                     $search = $request->search;
                 }
             }
+            $query = AuditAssessment::select('inspection_audit_assessment.*', 'masters_employee.emp_name')->leftjoin('masters_employee', 'masters_employee.id', '=', 'inspection_audit_assessment.floor_executive');
 
-            $audit_assessment_array = AuditAssessment::select('inspection_audit_assessment.*', 'masters_employee.emp_name')->leftjoin('masters_employee', 'masters_employee.id', '=', 'inspection_audit_assessment.floor_executive');
+            $org_total_counts = $query->count();
 
-            $org_total =  $audit_assessment_array;
-            $org_total_counts = $org_total->count();
-
-            if (isset($request->search) && isset($request->search['value']) && $request->search['value'] != '') {
-                $search = $request->search['value'];
-                $audit_assessment_array->where(function ($query) use ($search) {
-                    $query->orWhereRaw('audit_id LIKE "%' . $search . '%"')
-                        ->orWhereRaw('floor_name LIKE "%' . $search . '%"');
+            if (!empty($search)) {
+                $search = ($search);
+                $query->where(function ($query) use ($search) {
+                    $query->orWhere('inspection_audit_assessment.audit_date', $search)
+                        ->orWhere('inspection_audit_assessment.floor_name', $search)
+                        ->orWhere('inspection_audit_assessment.audit_id', $search);
                 });
             }
 
-            $audit_assessment_array = $audit_assessment_array->orderBy('inspection_audit_assessment.id', 'DESC')->paginate($request->input('per_page', 10));
+            $query_array = $query->orderBy('inspection_audit_assessment.id', 'DESC')->paginate($request->input('per_page', 10));
 
-            $audit_assessment_list = $audit_assessment_array->toArray();
+            $audit_assessment = $query_array->toArray();
 
-            if (empty($audit_assessment_list['data'])) {
-                return $this->sendError('No records found.', [], 404);
-            }
-
-            if (empty($audit_assessment_list['data'])) {
+            if (empty($audit_assessment['data'])) {
                 return $this->sendError('No records found.', [], 404);
             }
 
 
             $data_array = [];
-            foreach ($audit_assessment_list['data'] as $listdata) {
+            foreach ($audit_assessment['data'] as $datas) {
                 $data = [];
-                $data['id'] = $listdata['id'] ?? '';
-                $data['audit_id'] = ($listdata['audit_id'] ?? '');
-                $data['audit_date'] = Displaydateformat($listdata['audit_date'] ?? '');
-                $data['shop_floor'] = ($listdata['floor_name'] ?? '');
-                $data['floor_executive'] = getUsername($listdata['floor_executive'] ?? '');
-                $data['status'] = $listdata['status'] == 1 ? 'Active' : 'In-Active';
-                $data['created_by'] = getUsername($listdata['created_by'] ?? '');
-                $data['created_at'] = Displaydateformat($listdata['created_at'] ?? '');
-
-
-
+                $data['id'] = $datas['id'] ?? '';
+                $data['audit_id'] = ($datas['audit_id']);
+                $data['audit_date'] = Displaydateformat($datas['audit_date'] ?? '');
+                $data['floor_name'] = ($datas['floor_name'] ?? '');
+                $data['floor_executive'] = getEmployeename($datas['floor_executive'] ?? '');
+                $data['created_by'] = getUsername($datas['created_by'] ?? '');
+                $data['created_at'] = Displaydateformat($datas['created_at'] ?? '');
                 $data_array[] = $data;
             }
 
-
             $audit_assessment_details = [
-                'per_page' => $audit_assessment_list['per_page'] ?? 0,
-                'current_page' => $audit_assessment_list['current_page'] ?? 0,
-                'from' => $audit_assessment_list['from'] ?? 0,
-                'to' => $audit_assessment_list['to'] ?? 0,
-                'total' => $audit_assessment_list['total'] ?? 0,
-                'total_page' => $audit_assessment_list['last_page'] ?? 0,
+                'per_page' => $inspection_list['per_page'] ?? 0,
+                'current_page' => $inspection_list['current_page'] ?? 0,
+                'from' => $inspection_list['from'] ?? 0,
+                'to' => $inspection_list['to'] ?? 0,
+                'total' => $inspection_list['total'] ?? 0,
+                'total_page' => $inspection_list['last_page'] ?? 0,
                 'list' => $data_array,
             ];
 
@@ -112,11 +102,13 @@ class AuditAssessmentController extends BaseController
                 'audit_assessment_details' => $audit_assessment_details
             ];
 
-            return $this->sendResponse($success, 'Audit Assessment Details ');
+            return $this->sendResponse($success, 'Audit Assessment Details');
         } else {
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }
+
+
 
 
     public function view(Request $request)
@@ -153,8 +145,8 @@ class AuditAssessmentController extends BaseController
                     'shift_id' => getShift($details->shift_id),
                     'floor_executive' => getUsername($details->floor_executive),
                     'checklist' => $formattedChecklist,
-                    'total_score'=>$details->total_score,
-                    'obtained_score'=>$details->obtained_score,
+                    'total_score' => $details->total_score,
+                    'obtained_score' => $details->obtained_score,
                 ];
 
                 return $this->sendResponse($success, 'Audit Assessment Details');
@@ -206,7 +198,7 @@ class AuditAssessmentController extends BaseController
                 return $this->sendResponse($success, 'Audit Assessment Details Created Successfully');
             }
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
         }
     }

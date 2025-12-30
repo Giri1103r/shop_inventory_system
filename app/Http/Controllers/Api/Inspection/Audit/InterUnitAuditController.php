@@ -132,34 +132,46 @@ class InterUnitAuditController extends BaseController
                 $formattedChecklist = [];
 
                 foreach ($inter_unit_audit_checklist as $subcategory => $questions) {
-                    $subtypeName = GetSubChecklistTypeName($subcategory);
+                    $subtypeName = GetChecklistTypeDate($subcategory);
 
-                    foreach ($questions as $questionId => $answer) {
-                        $formattedChecklist[$subtypeName][] = [
-                            'question' => GetChecklistTypeDate($questionId),
-                            'checked' => $answer
-                        ];
-                    }
+                    $formattedChecklist[] = [
+                        'check_points' => $subtypeName,
+                        'sub_type_name' => GetSubChecklistTypeName($questions['sub_type_id']),
+                        'response' => $questions['response'],
+                        'remarks' => $questions['remarks'],
+                    ];
                 }
+
 
                 $audit_inter_unit_monthly = [
                     'audit_id' => $inter_unit_audit->audit_id,
                     'safety_officer' => $inter_unit_audit->safety_officer,
                     'audit_date' => Displaydateformat($inter_unit_audit->audit_date),
                     'unit_id' => getUnitname($inter_unit_audit->unit_id),
+                    'inter_unit_checklist' => $formattedChecklist,
 
                 ];
 
-                // $success = [
-                //     'audit_inter_unit_monthly' => $audit_inter_unit_monthly,
+                $success = [
+                    'audit_inter_unit_monthly' => $audit_inter_unit_monthly,
 
-                // ];
+                ];
 
-                // return $this->sendResponse($success, 'Audit Inter Unit Monthly Details');
+                return $this->sendResponse($success, 'Audit Inter Unit Monthly Details');
             }
         } catch (Exception $ex) {
             report($ex);
             return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
+
+    public function store(Request $request) {
+        try{
+
+
+        }catch(Exception $ex){
+            report($ex);
+            return $this->sendError('error','Something Went Wrong Please try again after some time');
         }
     }
 }

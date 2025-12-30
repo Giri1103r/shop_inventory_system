@@ -41,37 +41,6 @@
                                         <h4 class="text-white">OHC HYGIENE CLEANING CHECKLIST</h4>
                                     </div>
                                 </div>
-
-                                <div class="row">
-
-
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('inspection.issue_date') }}</label>
-                                        <div class="view_data">
-                                            {{ Displaydateformat(isset($inspection_details->issue_date) ? $inspection_details->issue_date : '') }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('inspection.rev_date') }}</label>
-                                        <div class="view_data">
-                                            {{ getShiftname(isset($inspection_details->shift_id) ? $inspection_details->shift_id : '') }}
-                                        </div>
-                                    </div>
-
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('common.created_by') }}</label>
-                                        <div class="view_data">
-                                            {{ getUsername(isset($inspection_details->created_by) ? $inspection_details->created_by : '') }}
-                                        </div>
-                                    </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('common.created_date') }}</label>
-                                        <div class="view_data">
-                                            {{ displaydateformat(isset($inspection_details->created_at) ? $inspection_details->created_at : '') }}
-                                        </div>
-                                    </div>
-                                </div>
-
                                 <div class="table-responsive container mb-3">
                                     <table class="container p-5">
                                         <thead>

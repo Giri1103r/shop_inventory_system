@@ -199,7 +199,7 @@ class MonthlyAuditPlan extends Model
                 'audit_plan_status'     => $request->status[$index],
                 'points'                => $request->points[$index],
                 'auditor_name'          => $request->auditor_name[$index],
-                'audit_date'            => DBdateformat($request->audit_date[$index]), 
+                'audit_date'            => DBdateformat($request->audit_date[$index]),
                 'audit_time'            => $request->audit_time[$index],
                 'remarks'               => $request->remark[$index],
                 'created_by'            => Auth::id(),
@@ -215,35 +215,25 @@ class MonthlyAuditPlan extends Model
     public function storeApi()
     {
         $request = request();
+        $data = $request->input('data');
 
-        $auditee_name = $request->auditee_name;
-        $unit_id = $request->unit_id;
-        $task_name = $request->task_name;
-        $compliance_category = $request->compliance_category;
-        $reference_doc_no = $request->reference_doc_no;
-        $frequency_id = $request->frequency_id;
-        $direct_in_direct = $request->direct_in_direct;
-        $status = $request->status;
-        $points = $request->points;
-        $remark = $request->remark;
-
-        foreach ($auditee_name as $index => $auditee_name) {
-            $data = [
-                'auditee_name' => $auditee_name,
-                'unit_id' => $unit_id[$index],
-                'task_id' => $task_name[$index],
-                'compliance_category_id' => $compliance_category[$index],
-                'reference_doc_no' => $reference_doc_no[$index],
-                'frequency_id' => $frequency_id[$index],
-                'direct_in_direct' => $direct_in_direct[$index],
-                'audit_plan_status' => $status[$index],
-                'points' => $points[$index],
-                'remarks' => $remark[$index],
-                'created_by' => Auth::id(),
-            ];
-
-
-            $this->create($data);
+        foreach ($data as $item) {
+            MonthlyAuditPlan::create([
+                'auditee_name' => $item['auditee_name'],
+                'unit_id' => $item['unit_id'],
+                'task_id' => $item['task_name'],
+                'compliance_category_id' => $item['compliance_category'],
+                'reference_doc_no' => $item['reference_doc_no'],
+                'frequency_id' => $item['frequency_id'],
+                'direct_in_direct' => $item['direct_in_direct'],
+                'status' => $item['status'],
+                'points' => $item['points'],
+                'auditor_name' => $item['auditor_name'],
+                'audit_date' => DBdateformat($item['audit_date']),
+                'audit_time' => $item['audit_time'],
+                'remarks' => $item['remark'],
+                'created_by'=> Auth::id(),
+            ]);
         }
 
         return back()->with('success', 'Data saved successfully');

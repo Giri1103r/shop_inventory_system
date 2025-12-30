@@ -351,7 +351,7 @@ class SafetyGalleryInspection extends BaseController
                 'from_status' => SAFETY_EHS_HEAD_APPROVAL_PENDING,
                 'to_status' => $to_status,
                 'approved_by' => Auth::id(),
-                'remarks' => $request->ehs_remarks,
+                'remarks' => $remarks,
             ];
             $this->statusLog->create($insert_array);
             $success = [

@@ -163,12 +163,12 @@ class MonthlyAuditPlanController extends Controller
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
-
+// dd($request->all());
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $data = $this->monthly_audit_plan->store();
+            $data = $this->monthly_audit_plan->storeApi();
 
 
             Session::flash('success', 'Your data has been created successfully!');

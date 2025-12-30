@@ -69,6 +69,9 @@ class MonthlyAuditController extends BaseController
                     'audit_plan_status' => $monthly_audit_plan->audit_plan_status == 1 ? 'Yes' : 'No',
                     'direct_in_direct' => $monthly_audit_plan->direct_in_direct == 1 ? 'Direct' : 'Indirect',
                     'points' => $monthly_audit_plan->points,
+                    'auditor_name' => $monthly_audit_plan->auditor_name,
+                    'audit_date' =>Displaydateformat($monthly_audit_plan->audit_date),
+                    'audit_time' => $monthly_audit_plan->audit_time,
                     'remarks' => $monthly_audit_plan->remarks,
                     'created_by' => getUsername($monthly_audit_plan->created_by),
                     'created_date' => Displaydateformat($monthly_audit_plan->created_at)
@@ -95,6 +98,7 @@ class MonthlyAuditController extends BaseController
     public function store(Request $request)
     {
         try {
+
              $rules = [
                 'monthly_audit.*.auditee_name' => 'required',
                 'monthly_audit.*.unit_id' => 'required',
@@ -132,7 +136,7 @@ class MonthlyAuditController extends BaseController
             ];
             return $this->sendResponse($success, 'Monthly Audit Plan Created');
         } catch (Exception $ex) {
-            dd($ex);
+            report($ex);
             return $this->sendError(
                 'Unauthorised.',
                 ['error' => 'Please try again after sometimes'],

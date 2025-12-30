@@ -62,7 +62,7 @@ class EmergencyBuyerFirstAidBagChecklistController extends BaseController
                 $inspection = $this->emergency_buyer_first_aid_bag->selectOne($id);
                 $inspection_data = json_decode($inspection->inspection_data);
                 $inspection_type = OHC_TYPE_EMERGENCY_BUYER_FIRST_AID_BAG_CHECKLIST;
-                $inspection_file = GetOHCSignature($inspection->created_by, $inspection->id, $inspection_type);
+
 
                 $medicine_data = [];
                 foreach ($inspection_data as $details) {
@@ -79,12 +79,11 @@ class EmergencyBuyerFirstAidBagChecklistController extends BaseController
                     'id' => $inspection->id,
                     'date_of_inspection' => Displaydateformat($inspection->date_of_inspection),
                     'location_first_aid_bag' => $inspection->location_first_aid_bag,
-                    'shift_name' => getShift($inspection->shift_is),
+                    'shift_name' => getShift($inspection->shift_id),
                     'due_date' => Displaydateformat($inspection->due_date),
                     'unit_name' => getUnitname($inspection->unit_id),
                     'frequency' => getFrequencyname($inspection->frequency_id),
                     'medicine_details' => $medicine_data,
-                    'signature' => admin_url($inspection_file),
                     'remark_by' => $inspection->remark_by
 
                 ];
@@ -107,23 +106,22 @@ class EmergencyBuyerFirstAidBagChecklistController extends BaseController
         }
     }
 
-    public function Store(Request $request)
+    public function store(Request $request)
     {
         try {
-
             $rules = [
-                'date_of_inspection' => 'required',
-                'location_first_aid_bag' => 'required',
-                'shift' => 'required',
-                'next_due_date' => 'required',
-                'unit_id' => 'required',
-                'frequency_id' => 'required',
-                'medicine_id.*' => 'required',
-                'freeze_quantity.*' => 'required',
-                'available_quantity.*' => 'required',
-                'expired_date.*' => 'required',
-                'remarks.*' => 'required',
-                'remark_by' => 'required',
+                'date_of_inspection' => 'required|date_format:d-m-Y',
+                'location_first_aid_bag' => 'required|string',
+                'shift' => 'required|string',
+                'next_due_date' => 'required|date_format:d-m-Y',
+                'unit' => 'required',
+                'frequency' => 'required|string',
+                'data.*.medicine_name' => 'required|string',
+                'data.*.freeze_quantity' => 'required|numeric',
+                'data.*.available_quantity' => 'required|numeric',
+                'data.*.expired_date' => 'required|date_format:d-m-Y',
+                'data.*.remarks' => 'nullable|string',
+                'remarks_by' => 'required|string',
             ];
 
             $messages = [
@@ -131,14 +129,9 @@ class EmergencyBuyerFirstAidBagChecklistController extends BaseController
                 'location_first_aid_bag.required' => 'Location of the first aid bag is required.',
                 'shift.required' => 'Shift selection is required.',
                 'next_due_date.required' => 'Next due date is required.',
-                'unit_id.required' => 'Unit selection is required.',
-                'frequency_id.required' => 'Frequency is required.',
-                'medicine_id.*.required' => 'Medicine ID is required.',
-                'freeze_quantity.*.required' => 'Freeze quantity is required.',
-                'available_quantity.*.required' => 'Available quantity is required.',
-                'expired_date.*.required' => 'Expired date is required.',
-                'remarks.*.required' => 'Remarks are required.',
-                'remark_by.required' => 'Remark by is required.',
+                'unit.required' => 'Unit selection is required.',
+                'frequency.required' => 'Frequency is required.',
+                'remarks_by.required' => 'Remark by is required.',
             ];
 
             $validator = Validator::make($request->all(), $rules, $messages);
@@ -147,24 +140,38 @@ class EmergencyBuyerFirstAidBagChecklistController extends BaseController
                 return $this->sendError('Validation Error', $validator->errors(), 422);
             }
 
-            $inspection_data = $this->emergency_buyer_first_aid_bag->storeApi();
-            $inspection_type = OHC_TYPE_EMERGENCY_BUYER_FIRST_AID_BAG_CHECKLIST;
-            $inspection_details = $this->emergency_buyer_first_aid_bag->selectOne($inspection_data->id);
-            $files = $this->signature->requestorsignatureUpload_api($inspection_type, $inspection_details->id);
+            $inspection_data = [];
+            foreach ($request->data as $row) {
+                $inspection_data[] = [
+                    'medicine_id'      => $row['medicine_name'],
+                    'freeze_quantity'    => $row['freeze_quantity'],
+                    'available_quantity' => $row['available_quantity'],
+                    'expired_date'        => DBdateformat($row['expired_date']),
+                    'remarks'            => $row['remarks'] ?? null,
+                ];
+            }
 
+
+            EmergencyBuyerFirstAidChecklist::create([
+                'date_of_inspection' => DBdateformat($request->date_of_inspection),
+                'due_date' => DBdateformat($request->next_due_date),
+                'unit_id' => $request->unit,
+                'location_first_aid_bag' => $request->location_first_aid_bag,
+                'frequency_id' => $request->frequency,
+                'shift_id' => $request->shift,
+                'remark_by' => $request->remarks_by,
+                'created_by' => Auth::id(),
+                'inspection_data'    => json_encode($inspection_data),
+            ]);
 
             return response()->json([
                 'success' => true,
-                'message' => 'Inspection data stored successfully',
+                'message' => 'Emergency First Aid Bag Checklist data Created successfully',
                 'data' => $inspection_data
             ], 201);
         } catch (\Exception $ex) {
             report($ex);
-            return $this->sendError(
-                'Unauthorised.',
-                ['error' => 'Please try again after sometimes'],
-                404
-            );
+            return $this->sendError('Server Error', ['error' => $ex->getMessage()], 500);
         }
     }
 }

@@ -130,6 +130,8 @@ class FirstAiderList extends Model
         return $datas;
     }
 
+
+
     public function store()
     {
 
@@ -188,7 +190,7 @@ class FirstAiderList extends Model
         if (isset($request->status) && $request->status) {
             $query = $query->where('inspection_ohc_first_aider.status',   decryptId($request->status));
         }
-  if ($request->has('from_date') && !empty($request->from_date)) {
+        if ($request->has('from_date') && !empty($request->from_date)) {
 
             $startDate = Carbon::createFromFormat('d-m-Y', $request->from_date)->startOfDay()->format('Y-m-d H:i:s');
             $query->where('inspection_ohc_first_aider.created_at', '>=', $startDate);
@@ -234,5 +236,50 @@ class FirstAiderList extends Model
         $query->orderBy('inspection_ohc_first_aider.id', 'DESC');
 
         return  $query->get();
+    }
+
+    // for API  list
+    public function listApi()
+    {
+        $request = request();
+        $search = '';
+
+        $query = $this->select('inspection_ohc_first_aider.*');
+        $org_total =  $query;
+
+        $user = Auth::user();
+        $userRole = string_to_array($user->role);
+        $empId = $user->employee_id;
+
+
+
+        $org_total_counts = $org_total->count();
+
+        if ($request->search != null || $request->search != '') {
+            $search = $request->search;
+            $query->where(function ($query) use ($search) {
+                $query
+                    ->orWhere('inspection_ohc_first_aider.next_review_date', 'LIKE', '%' . $search . '%')
+                    ->orWhere('inspection_ohc_first_aider.last_updated_date', 'LIKE', '%' . $search . '%');
+            });
+        }
+
+
+        $data = $query->orderby('inspection_ohc_first_aider.id')->get();
+        $first_aider_data = $data->toArray();
+        $data_array = [];
+        $refined_data = [];
+
+
+        foreach ($first_aider_data as $index => $data) {
+            $data_array['id'] = $data['id'];
+            $data_array['next_review_date'] = Displaydateformat($data['next_review_date']);
+            $data_array['last_updated_date'] = Displaydateformat($data['last_updated_date']);
+            $data_array['status'] = ($data['status'] == 1) ? 'Active' : 'Inactive';
+            $data_array['created_at'] = Displaydateformat($data['created_at']);
+            $data_array['created_by'] = getUsername($data['created_by']);
+            $refined_data[$index] = $data_array;
+        }
+        return $refined_data;
     }
 }

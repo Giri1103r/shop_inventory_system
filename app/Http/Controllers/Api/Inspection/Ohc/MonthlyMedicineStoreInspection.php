@@ -164,4 +164,14 @@ class MonthlyMedicineStoreInspection extends BaseController
             );
         }
     }
+
+     public function ehsapproval(Request $request)
+    {
+        try {
+            $id = $request->id;
+        } catch (Exception $ex) {
+            report($ex);
+            return $this->sendError('Unauthorised.', ['error' => 'Unauthorised'], 401);
+        }
+    }
 }

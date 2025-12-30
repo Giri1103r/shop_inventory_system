@@ -2549,6 +2549,21 @@ if (!function_exists('getMonth')) {
         }
     }
 
+    if (!function_exists('getFirstAidOpdAPIStatus')) {
+        function getFirstAidOpdAPIStatus($id)
+        {
+            if ($id == 1) {
+                return "Waiting For EHS Officer Verification";
+            } else if ($id == 2) {
+                return "EHS Officer Rejected";
+            } else if ($id == 3) {
+                return "Approved by Ehs officer";
+            } else {
+                return "Inspection Creation";
+            }
+        }
+    }
+
     if (!function_exists('getMonthlyMedicineStatus')) {
         function getMonthlyMedicineStatus($id)
         {
@@ -3171,6 +3186,37 @@ if (!function_exists('getMonth')) {
             return null;
         }
     }
+
+    // mulptiple user name
+
+    if (!function_exists('getMultipleUsername')) {
+        function getMultipleUsername($ids)
+        {
+
+            if (empty($ids)) {
+                return '';
+            }
+
+
+            if (is_string($ids)) {
+                $idArray = array_filter(explode(',', $ids));
+            } elseif (is_array($ids)) {
+                $idArray = $ids;
+            } else {
+                return '';
+            }
+
+
+            $names = DB::table('users')
+                ->whereIn('id', $idArray)
+                ->pluck('name')
+                ->toArray();
+
+
+            return implode(', ', $names);
+        }
+    }
+
 
 
     // Get Fire Signature
@@ -3981,10 +4027,10 @@ if (!function_exists('GetOPOrNonOP')) {
     }
 }
 
-if (!function_exists('GetInspectionWater')){
+if (!function_exists('GetInspectionWater')) {
     function GetInspectionWater($value)
     {
-        switch ($value){
+        switch ($value) {
             case GOOD:
                 return 'Good';
             case FAIR:
@@ -3992,7 +4038,7 @@ if (!function_exists('GetInspectionWater')){
             case POOR:
                 return 'poor';
             default:
-            return 'Unkown';
+                return 'Unkown';
         }
     }
 }

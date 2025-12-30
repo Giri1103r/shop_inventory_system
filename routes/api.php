@@ -42,6 +42,12 @@ use App\Http\Controllers\Api\Inspection\Safety\FireSafetyEquipment;
 use App\Http\Controllers\Api\Inspection\Safety\SafetyWalkObservation;
 use App\Http\Controllers\Api\Ims\InitialIncidentController;
 use App\Http\Controllers\Api\Inspection\Master\InspectionMasterController;
+use App\Http\Controllers\Api\Inspection\MSDS\MSDSController;
+use App\Http\Controllers\Api\Inspection\Ohc\FirstAidBagChecklistController;
+use App\Http\Controllers\Api\Inspection\Ohc\FirstAiderListController;
+use App\Http\Controllers\Api\Inspection\Ohc\FirstAidOpdMedicineController;
+use App\Http\Controllers\Api\Inspection\Ohc\MonthlyOhcStoreMedicineController;
+use App\Http\Controllers\Api\Inspection\Ohc\OHCFloorStretcherChecklistController;
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
@@ -167,14 +173,10 @@ Route::middleware('api')->prefix('v1')->group(function () {
 
                 Route::post('task-master/list', [TaskMasterController::class, 'list']);
                 Route::post('compilance-category/list', [TaskMasterController::class, 'compilancelist']);
+                Route::post('employee-name', [TaskMasterController::class, 'employeename']);
             });
 
-            // gembaWalk
-            Route::group(['prefix' => 'gemba-walk/'], function () {
-                Route::post('list', [GembaWalkController::class, 'list']);
-                Route::post('add', [GembaWalkController::class, 'store']);
-                Route::post('view', [GembaWalkController::class, 'view']);
-            });
+
 
             Route::group(['prefix' => 'fire/'], function () {
                 Route::group(['prefix' => 'hooter-inspection/'], function () {
@@ -255,35 +257,92 @@ Route::middleware('api')->prefix('v1')->group(function () {
                 // Master
                 Route::post('first-aid-stock/list', [FirstAidContoller::class, 'medicine_stock_list']);
                 Route::post('first-aid-medicine/list', [FirstAidMedicineController::class, 'medicine_list']);
-                Route::post('first-aider', [WeeklyFirstAidBoxController::class, 'getFirstAiderName']);
+                Route::post('first-aider/list', [WeeklyFirstAidBoxController::class, 'getFirstAiderName']);
 
-                // Emergency Buyer
-                Route::group(['prefix' => 'emergency-buyer-first-bag-checklist/'], function () {
-                    Route::post('list', [EmergencyBuyerFirstAidBagChecklistController::class, 'List']);
-                    Route::post('view', [EmergencyBuyerFirstAidBagChecklistController::class, 'View']);
-                    Route::post('add', [EmergencyBuyerFirstAidBagChecklistController::class, 'Store']);
+                // first aid medicine store
+
+                Route::group(['prefix' => 'first-aid-opd-medicine/'], function () {
+                    Route::post('list', [FirstAidOpdMedicineController::class, 'list']);
+                    Route::post('view', [FirstAidOpdMedicineController::class, 'view']);
+                    Route::post('add', [FirstAidOpdMedicineController::class, 'store']);
+                    Route::post('approval', [FirstAidOpdMedicineController::class, 'ehsapproval']);
                 });
 
-                // HealthInstrument
+                // monthly ohc medicine store
+                Route::group(['prefix' => 'monthly-ohc-medicine-store/'], function () {
+                    Route::post('list', [MonthlyOhcStoreMedicineController::class, 'list']);
+                    Route::post('view', [MonthlyOhcStoreMedicineController::class, 'view']);
+                    Route::post('view', [MonthlyOhcStoreMedicineController::class, 'view']);
+                    Route::post('approval', [MonthlyOhcStoreMedicineController::class, 'ehsapproval']);
+                });
+                // health instrument calibration
                 Route::group(['prefix' => 'health-instrument-calibration/'], function () {
                     Route::post('list', [HealthInstrumentCalibrationController::class, 'list']);
                     Route::post('view', [HealthInstrumentCalibrationController::class, 'view']);
                     Route::post('add', [HealthInstrumentCalibrationController::class, 'store']);
                 });
 
-                // weeklyFirstAidBox
-                Route::group(['prefix' => 'weekly-first-aid-box/'], function () {
-                    Route::post('list', [WeeklyFirstAidBoxController::class, 'list']);
-                    Route::post('view', [WeeklyFirstAidBoxController::class, 'view']);
-                    Route::post('add', [WeeklyFirstAidBoxController::class, 'store']);
+                // first aid bag checklist
+                Route::group(['prefix' => 'first-aid-bag-checklist/'], function () {
+                    Route::post('list', [FirstAidBagChecklistController::class, 'list']);
+                    Route::post('view', [FirstAidBagChecklistController::class, 'view']);
+                    Route::post('add', [FirstAidBagChecklistController::class, 'store']);
                 });
+
+                // Emergency First Aid Bag Checklist
+
+                Route::group(['prefix' => 'emergency-first-aid-bag-checklist/'], function () {
+                    Route::post('list', [EmergencyBuyerFirstAidBagChecklistController::class, 'list']);
+                    Route::post('view', [EmergencyBuyerFirstAidBagChecklistController::class, 'view']);
+                    Route::post('add', [EmergencyBuyerFirstAidBagChecklistController::class, 'store']);
+                });
+                // ohc hygiene cleaning checklist
 
                 Route::group(['prefix' => 'ohc-hygiene-cleaning-checklist/'], function () {
                     Route::post('list', [OHCHygieneCleaningChecklist::class, 'list']);
                     Route::post('view', [OHCHygieneCleaningChecklist::class, 'view']);
                     Route::post('add', [OHCHygieneCleaningChecklist::class, 'store']);
+                    Route::post('approval', [OHCHygieneCleaningChecklist::class, 'approval']);
                 });
+
+                // ohc floor stretcher
+
+                Route::controller(OHCFloorStretcherChecklistController::class)
+                    ->prefix('ohc-floor-stretcher-checklist')
+                    ->group(function () {
+                        Route::post('list', 'list');
+                        Route::post('view', 'view');
+                        Route::post('add', 'store');
+                    });
+                // weekly first aid box
+                Route::controller(WeeklyFirstAidBoxController::class)
+                    ->prefix('weekly-first-aid-box')
+                    ->group(function () {
+                        Route::post('list', 'list');
+                        Route::post('view', 'view');
+                        Route::post('add', 'store');
+                    });
+
+                Route::controller(FirstAiderListController::class)
+                    ->prefix('first-aider-list')
+                    ->group(function () {
+                        Route::post('list', 'list');
+                        Route::post('view', 'view');
+                        Route::post('add', 'store');
+                    });
             });
+
+            Route::controller(GembaWalkController::class)
+                ->prefix('gemba-walk')
+                ->group(function () {
+                    Route::post('list', 'list');
+                    Route::post('view', 'view');
+                    Route::post('add', 'store');
+                });
+
+            // msds
+            Route::post('msds/list', [MSDSController::class, 'list']);
+            Route::post('msds/view', [MSDSController::class, 'view']);
         });
 
         //Master -  Safety
@@ -334,8 +393,9 @@ Route::middleware('api')->prefix('v1')->group(function () {
 
             Route::prefix('safety-walk-observation')->group(function () {
                 Route::post('list', [SafetyWalkObservation::class, 'list']);
-                Route::post('add', [SafetyWalkObservation::class, 'store']);
                 Route::post('view', [SafetyWalkObservation::class, 'view']);
+                Route::post('ehs-head', [SafetyWalkObservation::class, 'ehsHead']);
+                Route::post('responsible-person', [SafetyWalkObservation::class, 'responsibleperson']);
             });
 
             Route::prefix('eye-wash-inspection/monthly')->group(function () {

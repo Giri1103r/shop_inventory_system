@@ -64,13 +64,12 @@ class WeeklyFirstAidBoxController extends BaseController
 
                 $inspection = $this->weekly_first_aid->getInspectionData($id);
                 $inspection_type = OHC_TYPE_WEEEKLY_FIRST_AID_MEDICINE_STORE;
-                $inspection_data = json_decode($inspection->inspection_data, true);
-                $inspection_file = GetOHCSignature($inspection->created_by, $inspection->id, $inspection_type);
+
 
                 $inspection_data =  [
                     'inspection_id' => $inspection->id,
                     'document_no' => $inspection->doc_no,
-                    'issue_date' => $inspection->issue_date,
+                    'issue_date' => Displaydateformat($inspection->issue_date),
                     'revision_date' => $inspection->rev_dt,
                     'date_of_inspection' => $inspection->date_of_inspection,
                     'location' => getLocationname($inspection->location),
@@ -78,16 +77,26 @@ class WeeklyFirstAidBoxController extends BaseController
                     'first_aid_box_no' => $inspection->first_aid_box_no,
                     'first_aider_name' => getFirstAider($inspection->first_aider),
                     'shift' => getShift($inspection->shift),
-                    'inspection_data' => $inspection_data,
-                    'signature' => admin_url($inspection_file),
                     'remark_by' => $inspection->remark_by
 
-
                 ];
+                $checklist = json_decode($inspection->inspection_data, true) ?? [];
+
+                $weekly_first_aid = [];
+                foreach ($checklist as $data) {
+                    $weekly_first_aid[] = [
+                        'medicine_name'      => isset($data['medicine_id']) ? getMedicinename($data['medicine_id']) : null,
+                        'freeze_quantity' => $data['freeze_quantity'] ?? null,
+                        'available_quantity' => $data['available_quantity'] ?? null,
+                        'expired_date'       => isset($data['expired_date']) ? Displaydateformat($data['expired_date']) : null,
+                        'remarks'            => $data['remarks'] ?? null,
+                    ];
+                }
 
                 $success = [
                     'id' => $inspection->id,
                     'inspection_data' => $inspection_data,
+                    'weekly_first_aid' => $weekly_first_aid,
                 ];
 
                 return $this->sendResponse($success, 'Date Received Successfully');
@@ -141,4 +150,7 @@ class WeeklyFirstAidBoxController extends BaseController
             report($ex);
         }
     }
+
+    
+
 }

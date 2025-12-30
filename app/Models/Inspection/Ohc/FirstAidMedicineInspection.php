@@ -181,28 +181,33 @@ class FirstAidMedicineInspection extends Model
     public function store_api()
     {
         $request = request();
-        $id = $request->id;
-        foreach ($id as $index => $value) {
-            $id = ($value);
-            $updated_medicine_checklist[$id] = [
-                'medicine_id' => $id,
-                'available_quantity' => $request->available_quantity[$index],
-                'expired_date' => dbdateformat($request->expired_date[$index]),
-                'emp_id' => $request->emp_id[$index],
-                'remarks' => $request->remarks[$index],
-            ];
+
+        $updated_medicine_checklist = [];
+
+        if ($request->has('data')) {
+            foreach ($request->data as $index => $item) {
+                $medicineId = $item['medicine_name'];
+
+                $updated_medicine_checklist[$medicineId] = [
+                    'medicine_id' => $medicineId,
+                    'available_quantity' => $item['available_quantity'],
+                    'expired_date' => dbdateformat($item['expiry_date']),
+                    'emp_id' => ($item['inpected_by']),
+                    'remarks' => $item['remarks'],
+                ];
+            }
         }
-        $updated_medicine_checklist = json_encode($updated_medicine_checklist);
+
         $data = [
-            'inspection_date' => DBdateformat($request->inspection_date),
-            'next_due' => DBdateformat($request->next_due),
-            'inspection_data' =>  $updated_medicine_checklist,
-            'created_by' =>  Auth::id(),
+            'inspection_date' => DBdateformat($request->date_of_inspection),
+            'next_due' => DBdateformat($request->next_due_date),
+            'inspection_data' => json_encode($updated_medicine_checklist),
+            'created_by' => Auth::id(),
             'inspection_status' => OBSERVATION_PENDING,
         ];
-        return  $this->create($data);
-    }
 
+        return $this->create($data);
+    }
     public function selectOne($id)
     {
         return $this->where('id', $id)->first();

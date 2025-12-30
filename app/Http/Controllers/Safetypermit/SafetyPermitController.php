@@ -349,11 +349,11 @@ class SafetyPermitController extends Controller
                 $mailsubject = 'Safety Permit has been submitted';
                 $user_role = ROLE_EHS_OFFICER;
 
-                // $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->pluck('id')->toArray();
-                // $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->get();
+                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('location_id', $safetypermit->location_id)->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('location_id', $safetypermit->location_id)->get();
 
-                $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+                // $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+                // $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
 
 
                 if (count($users) > 0) {
@@ -602,11 +602,11 @@ class SafetyPermitController extends Controller
             $mailsubject = 'Safety Permit has been submitted';
             $user_role = ROLE_EHS_OFFICER;
 
-            // $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->pluck('id')->toArray();
-            // $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('unit_id', $safetypermit->unit_id)->get();
+                          $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('location_id', $safetypermit->location_id)->pluck('id')->toArray();
+                $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->where('location_id', $safetypermit->location_id)->get();
 
-            $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
-            $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
+            // $userids = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->pluck('id')->toArray();
+            // $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
 
             if (count($users) > 0) {
 
@@ -1130,6 +1130,7 @@ class SafetyPermitController extends Controller
                 $mailsubject = 'Plant Head Approved';
                 $Assignedusers = User::whereRaw('FIND_IN_SET(' . ROLE_EHS_HEAD . ', role)')
                     ->orWhere('id', $safetypermit->created_by)
+                    ->orWhere('location_id', $safetypermit->location_id)
                     ->select('name', 'email')
                     ->get()
                     ->unique('email');
@@ -1312,6 +1313,7 @@ class SafetyPermitController extends Controller
 
             foreach ($user_roles as $user_role) {
                 $roleUsers = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')
+                ->where('location_id', $safetypermit->location_id)
                     ->get();
 
                 $userids = array_merge($userids, $roleUsers->pluck('id')->toArray());

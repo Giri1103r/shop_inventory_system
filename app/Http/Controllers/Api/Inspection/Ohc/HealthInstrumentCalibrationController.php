@@ -111,63 +111,25 @@ class HealthInstrumentCalibrationController extends BaseController
     {
         try {
 
-            $rules = [
-                'audit_id' => 'required',
-                'document_no' => 'required',
-                'issue_date' => 'required',
-                'unit_id' => 'required',
-                'review_date' => 'required',
-                'health_instrument.*.instrument_name' => 'required',
-                'health_instrument.*.resource_code' => 'required',
-                'health_instrument.*.exact_location' => 'required',
-                'health_instrument.*.instrument_serial_no' => 'required',
-                'health_instrument.*.make' => 'required',
-                'health_instrument.*.model' => 'required',
-                'health_instrument.*.instrument_range' => 'required',
-                'health_instrument.*.frequency_id' => 'required',
-                'health_instrument.*.date_of_calibration' => 'required',
-                'health_instrument.*.due_date_of_calibration' => 'required',
-                'health_instrument.*.instrument_remarks' => 'required',
-            ];
 
-            $messages = [
-                'document_no.required' => 'Document number is required.',
-                'issue_date.required' => 'Issue date is required.',
-                'review_date.required' => 'Review date is required.',
-                'unit_id.required' => 'Please select a unit.',
-                'health_instrument.*.instrument_name.required' => 'Please enter the instrument name.',
-                'health_instrument.*.resource_code.required' => 'Please enter the resource code.',
-                'health_instrument.*.exact_location.required' => 'Please specify the exact location.',
-                'health_instrument.*.instrument_serial_no.required' => 'Instrument serial number is required.',
-                'health_instrument.*.make.required' => 'Please enter the make of the instrument.',
-                'health_instrument.*.model.required' => 'Please enter the model of the instrument.',
-                'health_instrument.*.instrument_range.required' => 'Instrument range is required.',
-                'health_instrument.*.frequency_id.required' => 'Calibration frequency is required.',
-                'health_instrument.*.date_of_calibration.required' => 'Please select the date of calibration.',
-                'health_instrument.*.due_date_of_calibration.required' => 'Please select the due date of calibration.',
-                'health_instrument.*.instrument_remarks.required' => 'Remarks are required.',
-            ];
-
-            $validator = Validator::make($request->all(), $rules, $messages);
-
-
-            if ($validator->fails()) {
-                return $this->sendError('Validation Error', $validator->errors(), 422);
-            }
 
             $health_instrument = $this->health_instrument_calibration->storeApi();
             $id = $health_instrument->id;
 
             $health_instrument_details = $this->health_instrument_calibration_details->storeApi($id);
 
-             return response()->json([
+            return response()->json([
                 'success' => true,
                 'message' => 'Inspection data stored successfully',
                 'data' => $health_instrument
             ], 201);
-
         } catch (Exception $ex) {
-            report($ex);
+            dd($ex);
+            return $this->sendError(
+                'Unauthorised.',
+                ['error' => 'Please try again after sometimes'],
+                404
+            );
         }
     }
 }
