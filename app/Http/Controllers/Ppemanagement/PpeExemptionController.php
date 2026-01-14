@@ -143,7 +143,7 @@ class PpeExemptionController extends Controller
 
                     return response()->json($datatables->getData());
                 } catch (Exception $ex) {
-                    report($ex);
+                    dd($ex);
                     return response()->json(['status' => 'error', 'msg' => __('Please try after some time')], 406);
                 }
             }
