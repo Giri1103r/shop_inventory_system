@@ -44,8 +44,8 @@ class PpeExemption extends Model
         $request = request();
 
         $today = now()->toDateString(); // Gets current date as 'YYYY-MM-DD'
-dd( $today);
-        $this->where('to_date', '<', $today)
+$todays = Displaydateformat($today);
+        $this->where('to_date', '<', $todays)
             ->where('status', 1)
             ->where('trash', 'NO')
             ->update(['status' => 0]);
