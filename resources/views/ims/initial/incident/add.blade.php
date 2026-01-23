@@ -448,7 +448,7 @@
                                                     <label class="form-label require">IIR Type</label>
                                                     <div class="row">
                                                         @foreach ($incTypeList as $incType)
-                                                            <div class="col-4"> 
+                                                            <div class="col-4">
                                                                 <div class="form-check">
                                                                     <input type="radio" name="iir_type"
                                                                         id="iir_type_{{ $incType->id }}"
@@ -616,7 +616,8 @@
                                                         </div>
 
                                                         <div class="col-md-2 form-input">
-                                                            <label for="inputFirstName" class="form-label">Location of
+                                                            <label for="inputFirstName"
+                                                                class="form-label require">Location of
                                                                 the
                                                                 Injury</label>
                                                             <br>
@@ -626,7 +627,8 @@
                                                                 alt="0"><i class="fa fa-male"
                                                                     aria-hidden="true"></i></span>
                                                         </div>
-
+                                                        <span id="injury_body_part_0-error"
+                                                            class="error invalid-feedback">This field is required.</span>
                                                         <div class="col-md-2 text-right">
                                                             <button type="button"
                                                                 class="btn btn-danger btn-sm removeInjuryDetails"
@@ -1292,8 +1294,8 @@
                     </form>
                 </div>
                 <!--<div class="modal-footer">
-                                                                                                              <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                                                                               </div>-->
+                                                                                                                  <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                                                                                   </div>-->
             </div>
         </div>
     </div>
@@ -1559,20 +1561,20 @@
                 if ($(this).val() == '1') {
                     $('.injuryDetails').show();
 
-                    // $('.injuryDetails').find('input, select').each(function() {
-                    //     $(this).addClass('require');
-                    //     $(this).attr('required', true);
-                    // });
+                    $('.injuryDetails').find('input, select').each(function() {
+                        $(this).addClass('require');
+                        $(this).attr('required', true);
+                    });
                 } else {
                     $('.injuryDetails').hide();
-                    // $('.injuryDetails').find('input, select').each(function() {
-                    //     // $(this).removeClass('require');
-                    //     // $(this).removeAttr('required');
-                    //     $(this).val('');
-                    //     if ($(this).hasClass('single-select')) {
-                    //         $(this).val('').trigger('change');
-                    //     }
-                    // });
+                    $('.injuryDetails').find('input, select').each(function() {
+                        // $(this).removeClass('require');
+                        // $(this).removeAttr('required');
+                        $(this).val('');
+                        if ($(this).hasClass('single-select')) {
+                            $(this).val('').trigger('change');
+                        }
+                    });
                 }
             });
             $('input[name="anyone_injured"]:checked').trigger('change');
