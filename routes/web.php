@@ -144,6 +144,8 @@ use App\Http\Controllers\Admin\{LoginController, NotificationController, AdminCo
 use App\Http\Controllers\Inspection\Fire\Master\FireExtinguisherTypeController;
 use App\Http\Controllers\KPI\LeadingLaggingDashboardController;
 use App\Http\Controllers\Master\{PpeTypeController, PpeTypeMasterController, UserLogController, UserPermissionController, UploadLogController, UserController, UserRoleController};
+use App\Http\Controllers\PWAController;
+
 
 Route::get('cache', function () {
     Artisan::call('optimize:clear');
@@ -226,7 +228,7 @@ Route::get('incident/initial-incident/body-part/edit/{randomId}/{rowId}', [Initi
 
 Route::get('incident/initial-incident/api/getbodyEmpdetails', [InitialIncidentController::class, 'apigetbodyEmpdetails']);
 Route::post('incident/initial-incident/addInjury/api', [InitialIncidentController::class, 'addInjury_api']);
-
+Route::get('/manifest.json', [PWAController::class, 'manifest']);
 
 Route::middleware(['securityheader'])->group(function () {
 
@@ -245,7 +247,6 @@ Route::middleware(['securityheader'])->group(function () {
 
         Route::get('Account_Activate/{token}', [LoginController::class, 'Account_Activate']);
         Route::post('SubmitAccountActivate', [LoginController::class, 'SubmitAccountActivate']);
-
         Route::get('login', [LoginController::class, 'showLoginForm']);
         Route::post('logintry', [LoginController::class, 'authenticate']);
         Route::post('logout', [LoginController::class, 'logout']);
@@ -1034,7 +1035,7 @@ Route::middleware(['securityheader'])->group(function () {
 
             Route::group(['prefix' => 'inspection/gemba-walk/'], function () {
                 Route::get('list', [GembaWalkController::class, 'index']);
-                  Route::post('list', [GembaWalkController::class, 'index']);
+                Route::post('list', [GembaWalkController::class, 'index']);
                 Route::get('add', [GembaWalkController::class, 'add']);
                 Route::post('add/submit', [GembaWalkController::class, 'store']);
                 Route::get('view/{id}', [GembaWalkController::class, 'view']);

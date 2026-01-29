@@ -8,6 +8,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') | KARAM</title>
+    <meta name="theme-color" content="#0d6efd">
+    <link rel="manifest" href="{{ url('manifest.json') }}">
+
 
     <link rel="shortcut icon" href="{{ url('public/assets/images/logo-dark.png') }}">
 
@@ -347,7 +350,14 @@
 
     @stack('scripts')
 
-   
+    <script>
+        // console.log(123);
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('public/sw.js')
+                .then(reg => console.log('Service Worker registered', reg))
+                .catch(err => console.error('Service Worker failed', err));
+        }
+    </script>
 
     @if (app()->environment('production') && getConstant('template_constant') == PRODUCTION)
         <script>
