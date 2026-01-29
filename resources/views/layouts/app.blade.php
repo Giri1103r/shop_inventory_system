@@ -10,6 +10,7 @@
     <title>@yield('title') | KARAM</title>
 
     <link rel="shortcut icon" href="{{ url('public/assets/images/logo-dark.png') }}">
+    <link rel="manifest" href="{{ url('manifest') }}">
 
     <!-- App css -->
     <link href="{{ url('public/assets/css/roboto-fontface.css') }}" rel="stylesheet" type="text/css"  />
@@ -64,6 +65,14 @@
     <script src="{{ public_plugins('jqueryvalidation/additional-methods.min.js') }}"></script>
 
     @stack('scripts')
+    <script>
+        // console.log(123);
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('public/sw.js')
+                .then(reg => console.log('Service Worker registered', reg))
+                .catch(err => console.error('Service Worker failed', err));
+        }
+    </script>
 
     <script type="text/javascript" nonce="projectcab">
         var toastMixin = Swal.mixin({

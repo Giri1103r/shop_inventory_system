@@ -9,6 +9,7 @@
     <meta name="author" content="">
     <link rel="icon" href="{{ url('public/assets/images/logo-dark.png') }}">
 
+
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
