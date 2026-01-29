@@ -228,7 +228,7 @@ Route::get('incident/initial-incident/body-part/edit/{randomId}/{rowId}', [Initi
 
 Route::get('incident/initial-incident/api/getbodyEmpdetails', [InitialIncidentController::class, 'apigetbodyEmpdetails']);
 Route::post('incident/initial-incident/addInjury/api', [InitialIncidentController::class, 'addInjury_api']);
-Route::get('/manifest.json', [PWAController::class, 'manifest']);
+Route::get('manifest', [PWAController::class, 'manifestJson']);
 
 Route::middleware(['securityheader'])->group(function () {
 

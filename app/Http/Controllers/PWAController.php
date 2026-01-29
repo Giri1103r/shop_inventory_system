@@ -7,7 +7,7 @@ use App\Http\Controllers\Controller;
 
 class PWAController extends Controller
 {
-    public function manifest()
+    public function manifestJson()
     {
         $url = admin_url(); // automatically handles local/UAT/prod
         // dd($url);

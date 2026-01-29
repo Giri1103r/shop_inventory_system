@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') | KARAM</title>
     <meta name="theme-color" content="#0d6efd">
-    <link rel="manifest" href="{{ url('manifest.json') }}">
+    <link rel="manifest" href="{{ url('manifest') }}">
 
 
     <link rel="shortcut icon" href="{{ url('public/assets/images/logo-dark.png') }}">
