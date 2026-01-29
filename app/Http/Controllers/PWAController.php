@@ -12,8 +12,8 @@ class PWAController extends Controller
         $url = admin_url(); // automatically handles local/UAT/prod
         // dd($url);
         $manifest = [
-            "name" => "NeoEHS",
-            "short_name" => "NeoEHS",
+            "name" => "KARAM EHS",
+            "short_name" => "KARAM EHS",
             "start_url" => $url,
             "scope" => $url,
             "display" => "standalone",
