@@ -1,6 +1,29 @@
 @extends('admin.layouts.admin')
 @section('title', 'Hooter Inspection')
 @section('pageurl', admin_url('fire/hooter-inspection/list'))
+@push('style')
+    <style>
+        .card-header {
+            position: relative;
+        }
+
+        .align-back-btc {
+            display: flex;
+        }
+
+        @media (max-width: 480px) {
+            .align-back-btc {
+                width: 100%;
+            }
+
+            .align-back-btc x-button-back,
+            .align-back-btc button {
+                width: auto;
+                max-width: 100%;
+            }
+        }
+    </style>
+@endpush
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -17,10 +40,13 @@
                 <div class="col-12">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
+                            {{-- <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back href="{{ admin_url('fire/hooter-inspection/list') }}"></x-button-back>
                                 </div>
+                            </div> --}}
+                            <div class="card-header d-flex justify-content-end align-items-center">
+                                <x-button-back href="{{ admin_url('fire/hooter-inspection/list') }}"></x-button-back>
                             </div>
 
                             <div class="card-body">

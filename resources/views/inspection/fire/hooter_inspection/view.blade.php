@@ -1,6 +1,29 @@
 @extends('admin.layouts.admin')
 @section('title', 'Hooter Inspection')
 @section('pageurl', admin_url('fire/hooter-inspection/list'))
+@push('style')
+    <style>
+        .card-header {
+            position: relative;
+        }
+
+        .align-back-btc {
+            display: flex;
+        }
+
+        @media (max-width: 480px) {
+            .align-back-btc {
+                width: 100%;
+            }
+
+            .align-back-btc x-button-back,
+            .align-back-btc button {
+                width: auto;
+                max-width: 100%;
+            }
+        }
+    </style>
+@endpush
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -12,12 +35,14 @@
             <div class="row">
                 <div class="col-12">
                     <div class="card">
-                        <div class="card-header">
+                        {{-- <div class="card-header">
                             <div class="align-back-btc">
                                 <x-button-back href="{{ admin_url('fire/hooter-inspection/list') }}"></x-button-back>
                             </div>
+                        </div> --}}
+                        <div class="card-header d-flex justify-content-end align-items-center">
+                            <x-button-back href="{{ admin_url('fire/hooter-inspection/list') }}"></x-button-back>
                         </div>
-
                         <div class="card-body">
                             <div class="basic-form mx-3">
                                 {{-- Basic Information Section --}}
@@ -139,7 +164,7 @@
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">{{ __('inspection.exact_location') }}</label>
-                                                    <div class="view_data">{{ ($details->exact_location) }}</div>
+                                                    <div class="view_data">{{ $details->exact_location }}</div>
                                                 </div>
                                             </div>
                                             <div class="col-md-12 mb-2">
@@ -540,12 +565,12 @@
                                                         <thead>
                                                             <tr>
                                                                 <th>{{ __('common.sno') }}</th>
-                                                            <th>{{ __('common.from_status') }}</th>
-                                                            <th>{{ __('common.to_status') }}</th>
-                                                            <th>{{ __('common.remarks') }}</th>
-                                                            <th>{{ __('common.approve_or_reject') }}</th>
-                                                            <th>{{ __('common.created_by') }}</th>
-                                                            <th>{{ __('common.created_date') }}</th>
+                                                                <th>{{ __('common.from_status') }}</th>
+                                                                <th>{{ __('common.to_status') }}</th>
+                                                                <th>{{ __('common.remarks') }}</th>
+                                                                <th>{{ __('common.approve_or_reject') }}</th>
+                                                                <th>{{ __('common.created_by') }}</th>
+                                                                <th>{{ __('common.created_date') }}</th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>

@@ -1,6 +1,29 @@
 @extends('admin.layouts.admin')
 @section('title', 'Hooter Inspection')
 @section('pageurl', admin_url('fire/hooter-inspection/list'))
+@push('style')
+    <style>
+        .card-header {
+            position: relative;
+        }
+
+        .align-back-btc {
+            display: flex;
+        }
+
+        @media (max-width: 480px) {
+            .align-back-btc {
+                width: 100%;
+            }
+
+            .align-back-btc x-button-back,
+            .align-back-btc button {
+                width: auto;
+                max-width: 100%;
+            }
+        }
+    </style>
+@endpush
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -17,12 +40,14 @@
                 <div class="col-12">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
+                            {{-- <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back href="{{ admin_url('fire/hooter-inspection/list') }}"></x-button-back>
                                 </div>
+                            </div> --}}
+                            <div class="card-header d-flex justify-content-end align-items-center">
+                                <x-button-back href="{{ admin_url('fire/hooter-inspection/list') }}"></x-button-back>
                             </div>
-
                             <div class="card-body">
 
                                 <div class="basic-form mx-3">
@@ -165,9 +190,10 @@
                                                 </div>
                                                 <div class="col-md-4 mb-2">
                                                     <div class="form-group form-input">
-                                                        <label class="form-label">{{ __('inspection.exact_location') }}</label>
+                                                        <label
+                                                            class="form-label">{{ __('inspection.exact_location') }}</label>
                                                         <div class="view_data">
-                                                            {{ ($details->exact_location) }}
+                                                            {{ $details->exact_location }}
                                                         </div>
 
                                                     </div>
@@ -313,9 +339,10 @@
                                                 @if (isset($inspection->is_passed))
                                                     <div class="col-md-4 mb-2">
                                                         <div class="form-group form-input">
-                                                            <label class="form-label ">{{ __('ohc_management.capa') }}</label>
+                                                            <label
+                                                                class="form-label ">{{ __('ohc_management.capa') }}</label>
                                                             <div class="view_data">
-                                                                {{  isset($inspection->is_passed) && $inspection->is_passed == 1 ? 'Yes' : 'NO' }}
+                                                                {{ isset($inspection->is_passed) && $inspection->is_passed == 1 ? 'Yes' : 'NO' }}
                                                             </div>
                                                         </div>
                                                     </div>
