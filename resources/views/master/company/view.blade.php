@@ -2,7 +2,29 @@
 @section('title', 'Company Master Show')
 @section('pageurl', admin_url('company/list'))
 
+@push('style')
+    <style>
+        .card-header {
+            position: relative;
+        }
 
+        .align-back-btc {
+            display: flex;
+        }
+
+        @media (max-width: 480px) {
+            .align-back-btc {
+                width: 100%;
+            }
+
+            .align-back-btc x-button-back,
+            .align-back-btc button {
+                width: auto;
+                max-width: 100%;
+            }
+        }
+    </style>
+@endpush
 @section('content')
     <div class="clearfix"></div>
     <div class="page-titles">
@@ -10,7 +32,7 @@
             {{-- <h4 class="text-black">{{ __('Company Show') }}</h4> --}}
 
         </div>
-       
+
     </div>
 
     <div class="content-body  default-height">
@@ -21,15 +43,16 @@
                 <div class="col-12">
                     <div class="col-12">
                         <div class="card">
-                            <div class="card-header">
-                                {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
+                            {{-- <div class="card-header">
                                 <div class="align-back-btc">
                                     <x-button-back href="{{ admin_url('company/list') }}"></x-button-back>
 
                                 </div>
+                            </div> --}}
+
+                            <div class="card-header d-flex justify-content-end align-items-center">
+                                <x-button-back href="{{ admin_url('company/list') }}"></x-button-back>
                             </div>
-
-
                             <div class="card-body ">
 
                                 <div class="row">
