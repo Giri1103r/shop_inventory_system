@@ -28,7 +28,7 @@
         type="text/css" />
     <link href="{{ public_plugins('datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
         rel="stylesheet" type="text/css" />
-    <link href="{{ public_plugins('datatables.net-select-bs5/css/select.bootstrap5.min.css') }}"rel="stylesheet"
+    <link href="{{ public_plugins('datatables.net-select-bs5/css/select.bootstrap5.min.css') }}" rel="stylesheet"
         type="text/css" />
     <link href="{{ public_plugins('admin-resources/rwd-table/rwd-table.min.css') }}" rel="stylesheet"
         type="text/css" />
@@ -225,9 +225,18 @@
             background-color: #000;
             color: #fff;
             border-radius: 8px;
-              margin-top: 2px;
+            margin-top: 2px;
         }
 
+        body[data-leftbar-color=dark] .left-side-menu .nav-second-level li a.active,
+        body[data-leftbar-color=dark] .left-side-menu .nav-second-level li a:active,
+        body[data-leftbar-color=dark] .left-side-menu .nav-thrid-level li a:active,
+        body[data-leftbar-color=dark] .left-side-menu .nav-thrid-level li a:active {
+            background-color: #000;
+            color: #fff;
+            border-radius: 8px;
+            margin-top: 2px;
+        }
     </style>
     @stack('style')
 
@@ -289,7 +298,8 @@
     <div class="rightbar-overlay"></div>
 
     <script nonce="projectcab">
-        var pageurl = '@yield('pageurl')';
+        var pageurl = '@yield('
+        pageurl ')';
     </script>
 
     <!-- Vendor -->
@@ -366,79 +376,79 @@
     </script>
 
     @if (app()->environment('production') && getConstant('template_constant') == PRODUCTION)
-        <script>
-            document.addEventListener('contextmenu', function(e) {
-                e.preventDefault();
-            });
+    <script>
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+        });
 
-            document.addEventListener('keydown', function(e) {
-                if ((e.ctrlKey && e.keyCode === 65) || (e.ctrlKey && e.keyCode === 67)) {
-                    return;
-                }
-
-                if (e.keyCode === 123 ||
-                    (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
-                    (e.ctrlKey && e.keyCode === 85) ||
-                    (e.ctrlKey && (e.keyCode === 83 || e.keyCode === 80))
-                ) {
-                    e.preventDefault();
-                }
-            });
-
-            (function() {
-                var devtoolsOpen = false;
-                var threshold = 160;
-                var interval = setInterval(function() {
-                    var widthThreshold = window.outerWidth - window.innerWidth > threshold;
-                    var heightThreshold = window.outerHeight - window.innerHeight > threshold;
-
-                    if ((widthThreshold || heightThreshold) && !devtoolsOpen) {
-                        var startTime = new Date();
-                        debugger;
-                        var endTime = new Date();
-                        if (endTime - startTime > 100) {
-                            devtoolsOpen = true;
-                            logBlockedUser();
-                        }
-                    } else if (!(widthThreshold || heightThreshold) && devtoolsOpen) {
-                        devtoolsOpen = false;
-                    }
-                }, 5000);
-            })();
-
-            document.addEventListener('dragstart', function(e) {
-                e.preventDefault();
-            });
-
-            document.addEventListener('mousedown', function(e) {
-                if (e.button == 1) {
-                    e.preventDefault();
-                }
-            });
-
-            function logBlockedUser() {
-                $.ajax({
-                    url: "{{ url('blocked-save') }}",
-                    type: "POST",
-                    headers: {
-                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                    },
-                    data: {
-                        _token: "{{ csrf_token() }}",
-                    },
-                    dataType: "json",
-                    success: function(response) {
-                        if (response.success) {
-                            window.location.href = "{{ url('blocked') }}";
-                        }
-                    },
-                    error: function(xhr) {
-                        console.error(xhr.responseText);
-                        alert("AJAX Error: " + xhr.responseText);
-                    }
-                });
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey && e.keyCode === 65) || (e.ctrlKey && e.keyCode === 67)) {
+                return;
             }
-        </script>
+
+            if (e.keyCode === 123 ||
+                (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
+                (e.ctrlKey && e.keyCode === 85) ||
+                (e.ctrlKey && (e.keyCode === 83 || e.keyCode === 80))
+            ) {
+                e.preventDefault();
+            }
+        });
+
+        (function() {
+            var devtoolsOpen = false;
+            var threshold = 160;
+            var interval = setInterval(function() {
+                var widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                var heightThreshold = window.outerHeight - window.innerHeight > threshold;
+
+                if ((widthThreshold || heightThreshold) && !devtoolsOpen) {
+                    var startTime = new Date();
+                    debugger;
+                    var endTime = new Date();
+                    if (endTime - startTime > 100) {
+                        devtoolsOpen = true;
+                        logBlockedUser();
+                    }
+                } else if (!(widthThreshold || heightThreshold) && devtoolsOpen) {
+                    devtoolsOpen = false;
+                }
+            }, 5000);
+        })();
+
+        document.addEventListener('dragstart', function(e) {
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousedown', function(e) {
+            if (e.button == 1) {
+                e.preventDefault();
+            }
+        });
+
+        function logBlockedUser() {
+            $.ajax({
+                url: "{{ url('blocked-save') }}",
+                type: "POST",
+                headers: {
+                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                },
+                data: {
+                    _token: "{{ csrf_token() }}",
+                },
+                dataType: "json",
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = "{{ url('blocked') }}";
+                    }
+                },
+                error: function(xhr) {
+                    console.error(xhr.responseText);
+                    alert("AJAX Error: " + xhr.responseText);
+                }
+            });
+        }
+    </script>
     @endif
 
     <script type="text/javascript" nonce="projectcab">
@@ -448,7 +458,8 @@
             },
             statusCode: {
                 419: function() {
-                    window.location.href = '{{ url('') }}';
+                    window.location.href = '{{ url('
+                    ') }}';
                 }
             }
         });
@@ -475,7 +486,11 @@
             });
         }
 
-        function getEndDate(fromdate, addValue, type = {{ ADD_DATE }}, endDate = "") {
+        function getEndDate(fromdate, addValue, type = {
+            {
+                ADD_DATE
+            }
+        }, endDate = "") {
 
             var fromdate = moment(fromdate, 'DD-MM-YYYY').toDate();
 
@@ -606,22 +621,22 @@
                 }
             });
 
-            @if ($message = Session::get('success'))
-                toastMixin.fire({
-                    icon: 'success',
-                    animation: true,
-                    title: '{{ $message }}',
-                    showCloseButton: true,
-                });
+            @if($message = Session::get('success'))
+            toastMixin.fire({
+                icon: 'success',
+                animation: true,
+                title: '{{ $message }}',
+                showCloseButton: true,
+            });
             @endif
 
-            @if ($message = Session::get('error'))
-                toastMixin.fire({
-                    icon: 'error',
-                    animation: true,
-                    title: '{{ $message }}',
-                    showCloseButton: true,
-                });
+            @if($message = Session::get('error'))
+            toastMixin.fire({
+                icon: 'error',
+                animation: true,
+                title: '{{ $message }}',
+                showCloseButton: true,
+            });
             @endif
 
             /** Tooltips **/
