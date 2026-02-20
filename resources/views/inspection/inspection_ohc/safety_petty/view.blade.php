@@ -28,7 +28,7 @@
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <div class="align-back-btc">
+                                <div class="align-back-btc d-flex justify-content-end align-items-center">
                                     <x-button-back href="{{ admin_url('ohc/safety-petty-logbook/list') }}"></x-button-back>
 
                                 </div>

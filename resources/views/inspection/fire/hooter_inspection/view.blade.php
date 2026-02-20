@@ -7,17 +7,17 @@
             position: relative;
         }
 
-        .align-back-btc {
+        .align-back-btc d-flex justify-content-end align-items-center {
             display: flex;
         }
 
         @media (max-width: 480px) {
-            .align-back-btc {
+            .align-back-btc d-flex justify-content-end align-items-center {
                 width: 100%;
             }
 
-            .align-back-btc x-button-back,
-            .align-back-btc button {
+            .align-back-btc d-flex justify-content-end align-items-center x-button-back,
+            .align-back-btc d-flex justify-content-end align-items-center button {
                 width: auto;
                 max-width: 100%;
             }
@@ -36,7 +36,7 @@
                 <div class="col-12">
                     <div class="card">
                         {{-- <div class="card-header">
-                            <div class="align-back-btc">
+                            <div class="align-back-btc d-flex justify-content-end align-items-center">
                                 <x-button-back href="{{ admin_url('fire/hooter-inspection/list') }}"></x-button-back>
                             </div>
                         </div> --}}
