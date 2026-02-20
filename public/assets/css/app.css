@@ -13911,7 +13911,7 @@ li.menuitem-active>a:not(.collapsed)>span.menu-arrow {
 }
 
 body[data-leftbar-size=condensed] .logo-box {
-  width: 70px !important;
+  width: 50px !important;
 }
 
 body[data-leftbar-size=condensed] .logo span.logo-lg {

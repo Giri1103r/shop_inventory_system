@@ -191,13 +191,15 @@
         .logo span.logo-lg {
             display: block;
             padding: 0px;
-            height: auto;
+            height: 50px;
             background-color: #fff
         }
 
         body[data-leftbar-color=dark] .left-side-menu {
             background-color: #fff8f8 !important;
             color: #000 !important;
+            margin-bottom: 3px;
+            padding: 10px;
         }
 
         body[data-leftbar-color=dark] .left-side-menu #sidebar-menu>ul>li>a:hover,
@@ -205,10 +207,11 @@
         body[data-leftbar-color=dark] .left-side-menu #sidebar-menu>ul>li>a:active {
             color: #fff;
             background-color: #000;
+            border-radius: 8px;
+
         }
 
         .logo-box {
-            height: 80px;
             width: 240px;
             float: left;
             transition: all 0.1s ease-out;
@@ -221,7 +224,10 @@
         body[data-leftbar-color=dark] .left-side-menu .nav-thrid-level li a:hover {
             background-color: #000;
             color: #fff;
+            border-radius: 8px;
+              margin-top: 2px;
         }
+
     </style>
     @stack('style')
 
