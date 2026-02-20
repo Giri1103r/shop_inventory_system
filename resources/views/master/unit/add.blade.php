@@ -34,14 +34,14 @@
                                         @csrf
 
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit ID</label>
                                                     <input type="text" name ="unit_id" class="form-control"
                                                         placeholder="Unit ID" value="{{ getsequence('unit') }}" readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
                                                     <select name="company_id" id="company_id"
@@ -55,7 +55,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Location Name</label>
                                                     <select name="location_id" id="location_id"
@@ -65,7 +65,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit Name</label>
                                                     <input type="text" name="unit_name" id="unit_name"

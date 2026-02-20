@@ -61,7 +61,7 @@
                                             value="{{ encryptId($company->id) }}">
 
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company ID</label>
                                                     <input type="text" name ="company_id" id="company_name"
@@ -69,14 +69,14 @@
                                                         value="{{ $company->company_id }}" readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
                                                     <input type="text" name="company_name" class="form-control"
                                                         placeholder="Company Name" value="{{ $company->company_name }}">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Short Name</label>
                                                     <input type="text" name="short_name" class="form-control"

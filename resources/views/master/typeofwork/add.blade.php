@@ -74,13 +74,13 @@
                                                 <input type="file" name="typeofwork_upload" id="typeofwork_upload"   accept="image/png, image/jpeg, image/jpg"
                                                     class="form-control" placeholder="Signature">
                                             </div>
-                                            <div class="table-wrapper">
+                                            <div class="table-wrapper table-responsive">
                                                 <div class="table-container">
                                                     <h3>
                                                         Protective Equipment's To be Worn
                                                     </h3>
 
-                                                    <div>
+                                                    <div class="table-responsive">
                                                         <table class="table view_card">
                                                             <thead>
                                                                 <tr>
@@ -133,12 +133,12 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="table-container">
+                                                <div class="table-container table-responsive">
                                                     <h3>
                                                         Equipment Involved
                                                     </h3>
 
-                                                    <div>
+                                                    <div class="table-responsive">
                                                         <table class="table view_card">
                                                             <thead>
                                                                 <tr>
@@ -195,13 +195,13 @@
                                             </div>
 
 
-                                            <div class="table-wrapper">
+                                            <div class="table-wrapper table-responsive">
 
                                                 <div class="table-container">
                                                     <h3>
                                                        Precaution to be taken</h3>
 
-                                                    <div>
+                                                    <div class="table-responsive">
                                                         <table class="table view_card">
                                                             <thead>
                                                                 <tr>
@@ -254,11 +254,11 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="table-container">
+                                                <div class="table-container table-responsive">
                                                     <h3>
                                                        Equipment Inspection</h3>
 
-                                                    <div>
+                                                    <div class="table-responsive">
                                                         <table class="table view_card">
                                                             <thead>
                                                                 <tr>
@@ -314,12 +314,12 @@
                                             </div>
 
 
-                                            <div class="table-wrapper">
+                                            <div class="table-wrapper table-responsive">
                                                 <div class="table-container">
                                                     <h3>
                                                        Safe Work Instructions </h3>
 
-                                                    <div style="overflow-y: auto; max-height: 400px;">
+                                                    <div class="" style="overflow-y: auto; max-height: 400px;">
                                                         <table class="table view_card">
                                                             <thead>
                                                                 <tr>

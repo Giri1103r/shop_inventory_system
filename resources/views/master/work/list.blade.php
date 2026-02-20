@@ -10,7 +10,7 @@
 
                 <div class="card">
                     <h4 class="card-title"></h4>
-                    <div class="align-add-btc" style="margin-left: 90%;">
+                    <div class="d-flex justify-content-end align-items-center me-2">
 
                         <x-button-filter dataId="" class="search" href=""></x-button-filter>
                     </div>

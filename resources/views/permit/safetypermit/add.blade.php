@@ -286,346 +286,356 @@
                                         </div>
 
                                         <hr>
-
-                                        <div class="row border p-3 mx-1">
-                                            <div class="col-12 col-md-6 mb-3">
-                                                <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/power-off.png') }}"
-                                                        class="img-fluid"
-                                                        style="width: 50px; height: 50px; margin-right: 30px;">
-                                                    <label for = "shutdown-checkbox" class="form-label mb-0"
-                                                        style="margin-right: 58px;">Shut Down
-                                                        Required (Yes/No)</label>
-                                                    <input type="checkbox" id="shutdown-checkbox"
-                                                        class="shutdown-checkbox" name="shutdown_req" value="1">
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6 mb-3">
-                                                <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
-                                                        class="img-fluid" style="width: 50px; height: 50px;">
-                                                    <label class="form-label mb-0">Taken By (Name & Department)</label>
-                                                    <div class="gap-2">
-                                                        <label class="form-check form-check-inline">
-                                                            <input type="radio" name="request_for_shut_down"
-                                                                id="request_for_employee" class="form-check-input"
-                                                                value="1">
-                                                            <span class="form-check-label">Employee</span>
-                                                        </label>
-                                                        <label class="form-check form-check-inline">
-                                                            <input type="radio" name="request_for_shut_down"
-                                                                id="request_for_worker" class="form-check-input"
-                                                                value="2">
-                                                            <span class="form-check-label">Worker</span>
-                                                        </label>
-                                                        <label class="form-check form-check-inline">
-                                                            <input type="radio" name="request_for_shut_down"
-                                                                id="request_for_visitor" class="form-check-input"
-                                                                value="3">
-                                                            <span class="form-check-label">Visitor</span>
-                                                        </label>
+                                        <div class="table-responsive">
+                                            <div class="row border p-3 mx-1">
+                                                <div class="col-12 col-md-6 mb-3">
+                                                    <div class="form-group d-flex align-items-center gap-3">
+                                                        <img src="{{ url('public/assets/images/safetypermit/power-off.png') }}"
+                                                            class="img-fluid"
+                                                            style="width: 50px; height: 50px; margin-right: 30px;">
+                                                        <label for = "shutdown-checkbox" class="form-label mb-0"
+                                                            style="margin-right: 58px;">Shut Down
+                                                            Required (Yes/No)</label>
+                                                        <input type="checkbox" id="shutdown-checkbox"
+                                                            class="shutdown-checkbox" name="shutdown_req" value="1">
+                                                        <div class="text-danger"></div>
                                                     </div>
-                                                    <select name="shut_down_takenby" id="employeenameshutdown"
-                                                        class="form-control shutdowncheckbox" disabled>
-                                                        <option value="">Select Person</option>
-                                                    </select>
-                                                    <div class="text-danger"></div>
                                                 </div>
-                                            </div>
-
-
-                                        </div>
-
-                                        <div class="row border p-3 mx-1">
-                                            <div class="col-12 col-md-6 mb-3">
-                                                <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/process.png') }}"
-                                                        class="img-fluid"
-                                                        style="width: 50px; height: 50px; margin-right: 30px;">
-                                                    <label for = "loto-checkbox" class="form-label mb-0"
-                                                        style="margin-right: 34px;">Isolation/LOTO Required
-                                                        (Yes/No)</label>
-                                                    <input type="checkbox" id="loto-checkbox" class="loto-checkbox"
-                                                        name="loto_req">
-                                                    <div class="text-danger"></div>
-                                                </div>
-                                            </div>
-                                            <div class="col-12 col-md-6 mb-3">
-                                                <div class="form-group d-flex align-items-center gap-3">
-                                                    <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
-                                                        class="img-fluid" style="width: 50px; height: 50px;">
-                                                    <label class="form-label mb-0">Taken By (Name & Department)</label>
-
-                                                    <div class="gap-2">
-                                                        <label class="form-check form-check-inline">
-                                                            <input type="radio" name="request_for_loto_down"
-                                                                id="loto_request_for_employee" class="form-check-input"
-                                                                value="1">
-                                                            <span class="form-check-label">Employee</span>
-                                                        </label>
-                                                        <label class="form-check form-check-inline">
-                                                            <input type="radio" name="request_for_loto_down"
-                                                                id="loto_request_for_worker" class="form-check-input"
-                                                                value="2">
-                                                            <span class="form-check-label">Worker</span>
-                                                        </label>
-                                                        <label class="form-check form-check-inline">
-                                                            <input type="radio" name="request_for_loto_down"
-                                                                id="loto_request_for_visitor" class="form-check-input"
-                                                                value="3">
-                                                            <span class="form-check-label">Visitor</span>
-                                                        </label>
+                                                <div class="col-12 col-md-6 mb-3">
+                                                    <div class="form-group d-flex align-items-center gap-3">
+                                                        <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
+                                                            class="img-fluid" style="width: 50px; height: 50px;">
+                                                        <label class="form-label mb-0">Taken By (Name & Department)</label>
+                                                        <div class="gap-2">
+                                                            <label class="form-check form-check-inline">
+                                                                <input type="radio" name="request_for_shut_down"
+                                                                    id="request_for_employee" class="form-check-input"
+                                                                    value="1">
+                                                                <span class="form-check-label">Employee</span>
+                                                            </label>
+                                                            <label class="form-check form-check-inline">
+                                                                <input type="radio" name="request_for_shut_down"
+                                                                    id="request_for_worker" class="form-check-input"
+                                                                    value="2">
+                                                                <span class="form-check-label">Worker</span>
+                                                            </label>
+                                                            <label class="form-check form-check-inline">
+                                                                <input type="radio" name="request_for_shut_down"
+                                                                    id="request_for_visitor" class="form-check-input"
+                                                                    value="3">
+                                                                <span class="form-check-label">Visitor</span>
+                                                            </label>
+                                                        </div>
+                                                        <select name="shut_down_takenby" id="employeenameshutdown"
+                                                            class="form-control shutdowncheckbox" disabled>
+                                                            <option value="">Select Person</option>
+                                                        </select>
+                                                        <div class="text-danger"></div>
                                                     </div>
-                                                    <select name="loto_takenby" id="employeenameloto"
-                                                        class="form-control lotocheckbox" disabled>
-                                                        <option value="">Select Person</option>
-                                                    </select>
-                                                    <div class="text-danger"></div>
-
                                                 </div>
+
+
                                             </div>
 
-                                        </div>
+                                            <div class="row border p-3 mx-1">
+                                                <div class="col-12 col-md-6 mb-3">
+                                                    <div class="form-group d-flex align-items-center gap-3">
+                                                        <img src="{{ url('public/assets/images/safetypermit/process.png') }}"
+                                                            class="img-fluid"
+                                                            style="width: 50px; height: 50px; margin-right: 30px;">
+                                                        <label for = "loto-checkbox" class="form-label mb-0"
+                                                            style="margin-right: 34px;">Isolation/LOTO Required
+                                                            (Yes/No)</label>
+                                                        <input type="checkbox" id="loto-checkbox" class="loto-checkbox"
+                                                            name="loto_req">
+                                                        <div class="text-danger"></div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-12 col-md-6 mb-3">
+                                                    <div class="form-group d-flex align-items-center gap-3">
+                                                        <img src="{{ url('public/assets/images/safetypermit/profile.png') }}"
+                                                            class="img-fluid" style="width: 50px; height: 50px;">
+                                                        <label class="form-label mb-0">Taken By (Name & Department)</label>
 
-                                        <div class="row border p-3 mx-1">
-                                            <div class="col-md-6 mb-3">
-                                                <div class="form-group d-flex align-items-center">
-                                                    <label class="form-label mb-0" style="margin-right: 50px">Loto
-                                                        No</label>
-                                                    <div class="col-sm-6 p-0">
-                                                        <input type="text" name="loto_no"
-                                                            class="form-control lotocheckbox" placeholder="Loto No"
-                                                            disabled>
-
+                                                        <div class="gap-2">
+                                                            <label class="form-check form-check-inline">
+                                                                <input type="radio" name="request_for_loto_down"
+                                                                    id="loto_request_for_employee"
+                                                                    class="form-check-input" value="1">
+                                                                <span class="form-check-label">Employee</span>
+                                                            </label>
+                                                            <label class="form-check form-check-inline">
+                                                                <input type="radio" name="request_for_loto_down"
+                                                                    id="loto_request_for_worker" class="form-check-input"
+                                                                    value="2">
+                                                                <span class="form-check-label">Worker</span>
+                                                            </label>
+                                                            <label class="form-check form-check-inline">
+                                                                <input type="radio" name="request_for_loto_down"
+                                                                    id="loto_request_for_visitor" class="form-check-input"
+                                                                    value="3">
+                                                                <span class="form-check-label">Visitor</span>
+                                                            </label>
+                                                        </div>
+                                                        <select name="loto_takenby" id="employeenameloto"
+                                                            class="form-control lotocheckbox" disabled>
+                                                            <option value="">Select Person</option>
+                                                        </select>
+                                                        <div class="text-danger"></div>
 
                                                     </div>
-                                                    <div class="text-danger"></div>
                                                 </div>
 
                                             </div>
-                                            <div class="col-md-4 mb-3 " style="margin-right: 50px">
-                                                <div class="form-group d-flex align-items-center ps-5 ">
-                                                    <label for = "tagfield" class="form-label mb-0"
-                                                        style="margin-right:30px;">Tag Field
-                                                        properly (Yes/No)</label>
-                                                    <input type="checkbox" id = "tagfield" class=" shutdowncheckbox"
-                                                        name="tagfield" disabled>
 
-                                                </div>
-                                                <div class="text-danger"></div>
-                                            </div>
-                                        </div>
+                                            <div class="row border p-3 mx-1">
+                                                <div class="col-md-6 mb-3">
+                                                    <div class="form-group d-flex align-items-center">
+                                                        <label class="form-label mb-0" style="margin-right: 50px">Loto
+                                                            No</label>
+                                                        <div class="col-sm-6 p-0">
+                                                            <input type="text" name="loto_no"
+                                                                class="form-control lotocheckbox" placeholder="Loto No"
+                                                                disabled>
 
-                                        <div class="row col-md-12 d-flex mt-3">
-                                            <!-- Left Side: Scrollable on X-Axis -->
-
-                                            <div class="col-md-4">
-                                                <p class="fw-bold fs-5 mt-3">State of Isolation & LOTO</p>
-                                                <div class="scroll-container border p-3"
-                                                    style="overflow-x: auto; white-space: nowrap; width: 100%;">
-                                                    <!-- First Row -->
-                                                    <div class="row mb-3 d-flex flex-nowrap align-items-center">
-                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
-                                                            style="min-width: 200px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/person.png') }}"
-                                                                class="img-fluid"
-                                                                style="width: 50px; height: 50px; margin-right: 20px">
-                                                            <label for= "air_checkbox" class="form-label mb-0 "
-                                                                style="margin-right: 100px;">Air</label>
-                                                            <input type="checkbox" class=" shutdowncheckbox"
-                                                                id="air_checkbox" name="state_isolation_loto[]"
-                                                                value="Air" disabled>
-                                                        </div>
-                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
-                                                            style="min-width: 200px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/natural-gas.png') }}"
-                                                                class="img-fluid"
-                                                                style="width: 50px; height: 50px; margin-right: 20px">
-                                                            <label for= "gas_checkbox" class="form-label mb-0"
-                                                                style="margin-right: 115px;">Gas</label>
-                                                            <input type="checkbox" class=" shutdowncheckbox"
-                                                                id="gas_checkbox" name="state_isolation_loto[]"
-                                                                value="Gas" disabled>
-                                                        </div>
-                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
-                                                            style="min-width: 200px;">
-                                                            <label class="form-label mb-0">Others if any please
-                                                                specify</label>
-                                                        </div>
-                                                    </div>
-
-                                                    <!-- Second Row -->
-                                                    <div class="row mb-3 d-flex flex-nowrap align-items-center">
-                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
-                                                            style="min-width: 200px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}"
-                                                                class="img-fluid"
-                                                                style="width: 50px; height: 50px; margin-right: 20px;">
-                                                            <label for= "electrical_checkbox" class="form-label mb-0"
-                                                                style="margin-right: 58px;">Electrical</label>
-                                                            <input type="checkbox" class=" shutdowncheckbox"
-                                                                id="electrical_checkbox" name="state_isolation_loto[]"
-                                                                value="Electrical" disabled>
-                                                        </div>
-                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
-                                                            style="min-width: 200px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/leak.png') }}"
-                                                                class="img-fluid"
-                                                                style="width: 50px; height: 50px; margin-right: 20px">
-                                                            <label for= "water_checkbox" class="form-label mb-0"
-                                                                style="margin-right: 58px;">Water/Liquid</label>
-                                                            <input type="checkbox" class=" shutdowncheckbox"
-                                                                id="water_checkbox" name="state_isolation_loto[]"
-                                                                value="Water/Liquid" disabled>
-                                                        </div>
-                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
-                                                            style="min-width: 200px;">
-                                                            <textarea class="form-control shutdowncheckbox" name="state_isolation_loto[]" placeholder="Specify others" disabled></textarea>
-                                                            <div class="text-danger" id="shutdowncheckbox_description">
-                                                            </div>
 
                                                         </div>
                                                         <div class="text-danger"></div>
                                                     </div>
 
-                                                    <div class="row mb-3 d-flex flex-nowrap align-items-center">
-                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
-                                                            style="min-width: 200px;">
-                                                            <img src="{{ url('public/assets/images/safetypermit/fire.png') }}"
-                                                                class="img-fluid"
-                                                                style="width: 50px; height: 50px; margin-right: 20px;">
-                                                            <label for= "isolationpanel_checkbox" class="form-label mb-0"
-                                                                style="margin-right: 58px;">Isolation fire panel</label>
-                                                            <input type="hidden" name="isolationpanel_checkbox"
-                                                                value="0">
-                                                            <input type="checkbox" class="shutdowncheckbox"
-                                                                id="isolationpanel_checkbox"
-                                                                name="isolationpanel_checkbox" value="1" disabled>
-                                                        </div>
+                                                </div>
+                                                <div class="col-md-4 mb-3 " style="margin-right: 50px">
+                                                    <div class="form-group d-flex align-items-center ps-5 ">
+                                                        <label for = "tagfield" class="form-label mb-0"
+                                                            style="margin-right:30px;">Tag Field
+                                                            properly (Yes/No)</label>
+                                                        <input type="checkbox" id = "tagfield" class=" shutdowncheckbox"
+                                                            name="tagfield" disabled>
 
-                                                        <div class="d-flex flex-shrink-0 align-items-center gap-1"
-                                                            style="min-width: 200px;">
-                                                            <input type="text"
-                                                                class="form-control isolationpanel_description"
-                                                                name="isolationpanel_description"
-                                                                placeholder="Isolation fire panel" disabled>
-                                                        </div>
                                                     </div>
+                                                    <div class="text-danger"></div>
                                                 </div>
                                             </div>
 
-                                            <div id="section-1" class="col-md-8">
-                                                <p class="fw-bold fs-5 mt-3">Applicable for Confined Space Entry</p>
+                                            <div class="row col-md-12 d-flex mt-3">
+                                                <!-- Left Side: Scrollable on X-Axis -->
 
-                                                <div class="row border rounded p-2 mx-1">
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group d-flex align-items-center">
-                                                            <label class="form-label mb-0"
-                                                                style="margin-right: 20px">O2%</label>
-                                                            <input type="text"
-                                                                name="confined_space_entry[o2_percentage]"
-                                                                class="form-control" disabled>
+                                                <div class="col-md-4">
+                                                    <p class="fw-bold fs-5 mt-3">State of Isolation & LOTO</p>
+                                                    <div class="scroll-container border p-3"
+                                                        style="overflow-x: auto; white-space: nowrap; width: 100%;">
+                                                        <!-- First Row -->
+                                                        <div class="row mb-3 d-flex flex-nowrap align-items-center">
+                                                            <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                                style="min-width: 200px;">
+                                                                <img src="{{ url('public/assets/images/safetypermit/person.png') }}"
+                                                                    class="img-fluid"
+                                                                    style="width: 50px; height: 50px; margin-right: 20px">
+                                                                <label for= "air_checkbox" class="form-label mb-0 "
+                                                                    style="margin-right: 100px;">Air</label>
+                                                                <input type="checkbox" class=" shutdowncheckbox"
+                                                                    id="air_checkbox" name="state_isolation_loto[]"
+                                                                    value="Air" disabled>
+                                                            </div>
+                                                            <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                                style="min-width: 200px;">
+                                                                <img src="{{ url('public/assets/images/safetypermit/natural-gas.png') }}"
+                                                                    class="img-fluid"
+                                                                    style="width: 50px; height: 50px; margin-right: 20px">
+                                                                <label for= "gas_checkbox" class="form-label mb-0"
+                                                                    style="margin-right: 115px;">Gas</label>
+                                                                <input type="checkbox" class=" shutdowncheckbox"
+                                                                    id="gas_checkbox" name="state_isolation_loto[]"
+                                                                    value="Gas" disabled>
+                                                            </div>
+                                                            <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                                style="min-width: 200px;">
+                                                                <label class="form-label mb-0">Others if any please
+                                                                    specify</label>
+                                                            </div>
                                                         </div>
-                                                    </div>
 
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group d-flex align-items-center">
-                                                            <label for= "system_isolated" class="form-label mb-0"
-                                                                style="margin-right: 20px">System
-                                                                Isolated</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[system_isolated]"
-                                                                value="0">
-                                                            <input type="checkbox" id = "system_isolated"
-                                                                name="confined_space_entry[system_isolated]"
-                                                                value="1">
+                                                        <!-- Second Row -->
+                                                        <div class="row mb-3 d-flex flex-nowrap align-items-center">
+                                                            <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                                style="min-width: 200px;">
+                                                                <img src="{{ url('public/assets/images/safetypermit/electrician.png') }}"
+                                                                    class="img-fluid"
+                                                                    style="width: 50px; height: 50px; margin-right: 20px;">
+                                                                <label for= "electrical_checkbox" class="form-label mb-0"
+                                                                    style="margin-right: 58px;">Electrical</label>
+                                                                <input type="checkbox" class=" shutdowncheckbox"
+                                                                    id="electrical_checkbox" name="state_isolation_loto[]"
+                                                                    value="Electrical" disabled>
+                                                            </div>
+                                                            <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                                style="min-width: 200px;">
+                                                                <img src="{{ url('public/assets/images/safetypermit/leak.png') }}"
+                                                                    class="img-fluid"
+                                                                    style="width: 50px; height: 50px; margin-right: 20px">
+                                                                <label for= "water_checkbox" class="form-label mb-0"
+                                                                    style="margin-right: 58px;">Water/Liquid</label>
+                                                                <input type="checkbox" class=" shutdowncheckbox"
+                                                                    id="water_checkbox" name="state_isolation_loto[]"
+                                                                    value="Water/Liquid" disabled>
+                                                            </div>
+                                                            <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                                style="min-width: 200px;">
+                                                                <textarea class="form-control shutdowncheckbox" name="state_isolation_loto[]" placeholder="Specify others" disabled></textarea>
+                                                                <div class="text-danger"
+                                                                    id="shutdowncheckbox_description">
+                                                                </div>
+
+                                                            </div>
+                                                            <div class="text-danger"></div>
                                                         </div>
-                                                    </div>
 
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div
-                                                            class="form-group d-flex align-items-center justify-content-between">
-                                                            <label for= "rescue_system" class="form-label mb-0">Rescue
-                                                                System Available</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[rescue_system]" value="0">
-                                                            <input type="checkbox" id= "rescue_system"
-                                                                name="confined_space_entry[rescue_system]" value="1">
+                                                        <div class="row mb-3 d-flex flex-nowrap align-items-center">
+                                                            <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                                style="min-width: 200px;">
+                                                                <img src="{{ url('public/assets/images/safetypermit/fire.png') }}"
+                                                                    class="img-fluid"
+                                                                    style="width: 50px; height: 50px; margin-right: 20px;">
+                                                                <label for= "isolationpanel_checkbox"
+                                                                    class="form-label mb-0"
+                                                                    style="margin-right: 58px;">Isolation fire
+                                                                    panel</label>
+                                                                <input type="hidden" name="isolationpanel_checkbox"
+                                                                    value="0">
+                                                                <input type="checkbox" class="shutdowncheckbox"
+                                                                    id="isolationpanel_checkbox"
+                                                                    name="isolationpanel_checkbox" value="1"
+                                                                    disabled>
+                                                            </div>
+
+                                                            <div class="d-flex flex-shrink-0 align-items-center gap-1"
+                                                                style="min-width: 200px;">
+                                                                <input type="text"
+                                                                    class="form-control isolationpanel_description"
+                                                                    name="isolationpanel_description"
+                                                                    placeholder="Isolation fire panel" disabled>
+                                                            </div>
                                                         </div>
                                                     </div>
                                                 </div>
 
-                                                <div class="row border rounded p-2 mx-1">
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group d-flex align-items-center">
-                                                            <label for= "confined_attendant"
-                                                                class="form-label col-md-5 mb-0 mr-2 pe-2">Confined
-                                                                Space Attendant</label>
-                                                            <input type="hidden"
-                                                                name="confined_space_entry[confined_attendant]"
-                                                                value="0">
-                                                            <input type="checkbox"
-                                                                name="confined_space_entry[confined_attendant]"
-                                                                id= "confined_attendant" value="1">
+                                                <div id="section-1" class="col-md-8">
+                                                    <p class="fw-bold fs-5 mt-3">Applicable for Confined Space Entry</p>
+
+                                                    <div class="row border rounded p-2 mx-1">
+                                                        <div class="col-12 col-md-4 mb-3">
+                                                            <div class="form-group d-flex align-items-center">
+                                                                <label class="form-label mb-0"
+                                                                    style="margin-right: 20px">O2%</label>
+                                                                <input type="text"
+                                                                    name="confined_space_entry[o2_percentage]"
+                                                                    class="form-control" disabled>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-12 col-md-4 mb-3">
+                                                            <div class="form-group d-flex align-items-center">
+                                                                <label for= "system_isolated" class="form-label mb-0"
+                                                                    style="margin-right: 20px">System
+                                                                    Isolated</label>
+                                                                <input type="hidden"
+                                                                    name="confined_space_entry[system_isolated]"
+                                                                    value="0">
+                                                                <input type="checkbox" id = "system_isolated"
+                                                                    name="confined_space_entry[system_isolated]"
+                                                                    value="1">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-12 col-md-4 mb-3">
+                                                            <div
+                                                                class="form-group d-flex align-items-center justify-content-between">
+                                                                <label for= "rescue_system" class="form-label mb-0">Rescue
+                                                                    System Available</label>
+                                                                <input type="hidden"
+                                                                    name="confined_space_entry[rescue_system]"
+                                                                    value="0">
+                                                                <input type="checkbox" id= "rescue_system"
+                                                                    name="confined_space_entry[rescue_system]"
+                                                                    value="1">
+                                                            </div>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div
-                                                            class="form-group d-flex align-items-center justify-content-between">
-                                                            <label class="form-label col-md-6 mb-0 "
-                                                                style="margin-right: 10px;">Attendant Name</label>
-                                                            <input type="text"
-                                                                name="confined_space_entry[attendant_name]"
-                                                                class="form-control" placeholder="Search by Employee Name"
-                                                                disabled>
+                                                    <div class="row border rounded p-2 mx-1">
+                                                        <div class="col-12 col-md-4 mb-3">
+                                                            <div class="form-group d-flex align-items-center">
+                                                                <label for= "confined_attendant"
+                                                                    class="form-label col-md-5 mb-0 mr-2 pe-2">Confined
+                                                                    Space Attendant</label>
+                                                                <input type="hidden"
+                                                                    name="confined_space_entry[confined_attendant]"
+                                                                    value="0">
+                                                                <input type="checkbox"
+                                                                    name="confined_space_entry[confined_attendant]"
+                                                                    id= "confined_attendant" value="1">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-12 col-md-4 mb-3">
+                                                            <div
+                                                                class="form-group d-flex align-items-center justify-content-between">
+                                                                <label class="form-label col-md-6 mb-0 "
+                                                                    style="margin-right: 10px;">Attendant Name</label>
+                                                                <input type="text"
+                                                                    name="confined_space_entry[attendant_name]"
+                                                                    class="form-control"
+                                                                    placeholder="Search by Employee Name" disabled>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-12 col-md-4 mb-3">
+                                                            <div
+                                                                class="form-group d-flex align-items-center justify-content-between">
+                                                                <label for= "register_entry_exits" class="form-label mb-0"
+                                                                    style="margin-right: 20px">Register for entry &
+                                                                    exits</label>
+                                                                <input type="checkbox" id= "register_entry_exits"
+                                                                    name="confined_space_entry[register_entry_exits]"
+                                                                    disabled>
+                                                            </div>
                                                         </div>
                                                     </div>
 
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div
-                                                            class="form-group d-flex align-items-center justify-content-between">
-                                                            <label for= "register_entry_exits" class="form-label mb-0"
-                                                                style="margin-right: 20px">Register for entry &
-                                                                exits</label>
-                                                            <input type="checkbox" id= "register_entry_exits"
-                                                                name="confined_space_entry[register_entry_exits]" disabled>
+                                                    <div class="row border rounded p-2 mx-1 mb-3">
+                                                        <div class="col-12 col-md-4 mb-3">
+                                                            <div class="form-group d-flex align-items-center">
+                                                                <label class="form-label mb-0">Any Other Gas / PPM</label>
+                                                                <input type="text"
+                                                                    name="confined_space_entry[other_gas]"
+                                                                    class="form-control" placeholder="Any Other Gas / PPM"
+                                                                    disabled>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-4 mb-3">
+                                                            <div class="form-group d-flex align-items-center">
+                                                                <label class="form-label mb-0">PPM and is therefore safe to
+                                                                    enter from</label>
+                                                                <input type="text"
+                                                                    name="confined_space_entry[ppm_entry_date]"
+                                                                    class="form-control" id="from_PPMTime" disabled>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-12 col-md-4 mb-3">
+                                                            <div class="form-group d-flex align-items-center">
+                                                                <label class="form-label mb-0">PPM and is therefore safe to
+                                                                    enter to</label>
+                                                                <input type="text"
+                                                                    name="confined_space_entry[ppm_entry_to]"
+                                                                    class="form-control" id="to_PPMTime" disabled>
+                                                            </div>
                                                         </div>
                                                     </div>
+
                                                 </div>
-
-                                                <div class="row border rounded p-2 mx-1 mb-3">
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group d-flex align-items-center">
-                                                            <label class="form-label mb-0">Any Other Gas / PPM</label>
-                                                            <input type="text" name="confined_space_entry[other_gas]"
-                                                                class="form-control" placeholder="Any Other Gas / PPM"
-                                                                disabled>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group d-flex align-items-center">
-                                                            <label class="form-label mb-0">PPM and is therefore safe to
-                                                                enter from</label>
-                                                            <input type="text"
-                                                                name="confined_space_entry[ppm_entry_date]"
-                                                                class="form-control" id="from_PPMTime" disabled>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-12 col-md-4 mb-3">
-                                                        <div class="form-group d-flex align-items-center">
-                                                            <label class="form-label mb-0">PPM and is therefore safe to
-                                                                enter to</label>
-                                                            <input type="text"
-                                                                name="confined_space_entry[ppm_entry_to]"
-                                                                class="form-control" id="to_PPMTime" disabled>
-                                                        </div>
-                                                    </div>
-                                                </div>
-
                                             </div>
                                         </div>
+
 
                                         <p class="fw-bold fs-5 mt-3">Protective Equipment's to be Worn (<i
                                                 class="fas fa-check text-primary"></i>)

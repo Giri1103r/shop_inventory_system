@@ -76,7 +76,7 @@
                                         @csrf
 
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company ID</label>
                                                     <input type="text" name ="company_id" class="form-control"
@@ -84,14 +84,14 @@
                                                         readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
                                                     <input type="text" name="company_name" id="company_name"
                                                         class="form-control" placeholder="Company Name">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Short Name</label>
                                                     <input type="text" name="short_name" class="form-control"

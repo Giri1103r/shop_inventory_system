@@ -13,8 +13,7 @@
                     <div class="d-flex justify-content-end p-2">
 
                         <x-button-filter dataId="" class="search  me-1" href=""></x-button-filter>
-                        <x-button-add dataId="" class="add btn btn-primary ms-1"
-                            href="{{ admin_url('administration/role/add') }}">Add</x-button-add>
+                        {{-- --}}
                     </div>
                     <div id="search" class="collapse">
                         <form action="" id="formsearch">
@@ -30,7 +29,7 @@
                                             <input type="text" name="role_name" id="role_name" class="form-control" placeholder="Role Name">
                                         </div>
                                       
-                                        <div class="col-md-3 mb-3 form-input">
+                                        {{-- <div class="col-md-3 mb-3 form-input">
                                             <label for="status" class="form-label ">{{ __('common.status') }}</label>
                                             <select name="status" id="status" style="width: 100%"
                                                 class="form-control single-select">
@@ -38,7 +37,7 @@
                                                 <option value="{{ encryptId(1) }}">Active</option>
                                                 <option value="{{ encryptId(0) }}">In-Active</option>
                                             </select>
-                                        </div>
+                                        </div> --}}
                                         <div class="col-md-3 mt-3">
                                             <x-button-search></x-button-search>
                                             <x-button-reset></x-button-reset>
@@ -61,7 +60,7 @@
                                         <th>{{ __('common.sno') }}</th>
                                         <th>Role ID</th>
                                         <th>Role Name</th>
-                                        <th>{{ __('common.status') }}</th>
+                                        {{-- <th>{{ __('common.status') }}</th> --}}
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
                                     </tr>
@@ -143,10 +142,7 @@
                             data: 'role_name',
                             name: 'role_name'
                         },
-                        {
-                            data: 'status',
-                            name: 'status'
-                        },
+                       
                         {
                             data: 'created_by',
                             name: 'created_by'

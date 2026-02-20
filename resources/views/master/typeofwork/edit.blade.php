@@ -70,7 +70,7 @@
                                                     </div>
                                                 @endif
                                             </div>
-                                            <div class="table-wrapper">
+                                            <div class="table-wrapper table-responsive">
                                                 <div class="table-container">
                                                     <h3>
                                                         Protective Equipment's To be Worn
@@ -133,7 +133,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="table-container">
+                                                <div class="table-container table-responsive">
                                                     <h3>
                                                         Equipment Involved
                                                     </h3>
@@ -202,7 +202,7 @@
                                             </div>
 
 
-                                            <div class="table-wrapper">
+                                            <div class="table-wrapper table-responsive">
 
                                                 <div class="table-container">
                                                     <h3>
@@ -267,7 +267,7 @@
                                                     </div>
                                                 </div>
 
-                                                <div class="table-container">
+                                                <div class="table-container table-responsive">
                                                     <h3>
                                                       Equipment Inspection</h3>
 
@@ -335,7 +335,7 @@
                                             </div>
 
 
-                                            <div class="table-wrapper">
+                                            <div class="table-wrapper table-responsive">
                                                 <div class="table-container">
                                                     <h3>
                                                       Safe Work Instructions </h3>

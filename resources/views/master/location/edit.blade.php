@@ -36,7 +36,7 @@
                                             value="{{ encryptId($location->id) }}">
 
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Location ID</label>
                                                     <input type="text" name ="location_id" class="form-control"
@@ -44,7 +44,7 @@
                                                         readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
                                                     <select name="company_id" id="company_id"
@@ -59,7 +59,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Location Name</label>
                                                     <input type="text" name="location_name" id="location_name"

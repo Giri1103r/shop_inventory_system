@@ -56,19 +56,16 @@
                                                 </span>
                                             </li>
                                             <li class="list-group-item d-flex align-items-center">
-                                                <div class="row w-100">
-                                                    <div class="col-sm-4">
-                                                        <button class="btn btn-outline-primary w-100" data-bs-toggle="modal"
+                                                <div class="row w-100 ">
+                                                    <div class="col-sm-4 mb-2">
+                                                        <button class="btn btn-outline-primary w-100 " data-bs-toggle="modal"
                                                             id="chpi" data-bs-target="#profileImageModal">Change Image</button>
                                                     </div>
                                                     <div class="col-sm-4">
                                                         <button class="btn btn-outline-secondary w-100" data-bs-toggle="modal"
                                                             id="chpw" data-bs-target="#changePasswordLargeModal">Change Password</button>
                                                     </div>
-                                                    <div class="col-sm-4">
-                                                        <button class="btn btn-outline-secondary w-100" data-bs-toggle="modal"
-                                                            id="chpw" data-bs-target="#signatureModal">Signature Upload</button>
-                                                    </div>
+                                                   
                                                 </div>
                                             </li>
 

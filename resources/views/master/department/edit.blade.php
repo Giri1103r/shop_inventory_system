@@ -38,7 +38,7 @@
                                             value="{{ encryptId($department->id) }}">
 
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department ID</label>
                                                     <input type="text" name ="department_id" class="form-control"
@@ -46,7 +46,7 @@
                                                         readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
                                                     <select name="company_id" id="company_id"
@@ -61,7 +61,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Location Name</label>
                                                     <select name="location_id" id="location_id"
@@ -71,7 +71,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit Name</label>
                                                     <select name="unit_id" id="unit_id"
@@ -81,7 +81,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department Name</label>
                                                     <input type="text" name="department_name" id = "department_name"

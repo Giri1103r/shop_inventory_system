@@ -182,7 +182,7 @@
                                             <h4 class="text-white">{{ __('ppe_management.ppe_previous_history') }}</h4>
                                         </div>
                                     </div>
-                                    <div class="col-md-12 mb-3">
+                                    <div class="col-md-12 mb-3 table-responsive">
                                         <table class="table table-bordered table-hover">
                                             <thead>
                                                 <tr>

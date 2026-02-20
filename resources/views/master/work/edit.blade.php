@@ -37,21 +37,21 @@
                                             value="{{ encryptId($work->id) }}">
 
                                         <div class="row">
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Worker ID</label>
                                                     <input type="text" name ="emp_id" class="form-control"
                                                         placeholder="Worker ID" value="{{ $work->emp_id }}" readonly>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Worker Name</label>
                                                     <input type="text" name ="emp_name" class="form-control"
                                                         placeholder="Worker Name" value="{{ $work->emp_name }}">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Gender</label>
                                                     <select name="gender" id="gender" class="form-control single-select"
@@ -65,21 +65,21 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Nationality</label>
                                                     <input type="text" name ="nationality" class="form-control"
                                                         placeholder="Nationality" value="{{ $work->nationality }}">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Biometric Code</label>
                                                     <input type="text" name ="biometric_code" class="form-control"
                                                         placeholder="Biometric Code" value="{{ $work->biometric_code }}">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">DOI</label>
                                                     <input type="text" name="doi" id="doi-datetime-datepicker"
@@ -88,7 +88,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label">Exit Date</label>
                                                     <input type="text" name ="exit_date"
@@ -97,14 +97,14 @@
                                                         value="{{ $work->exit_date ? Displaydatetimeformat($work->exit_date) : '' }}">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Mobile No</label>
                                                     <input type="text" name ="mobile_no" class="form-control"
                                                         placeholder="Mobile No" value="{{ $work->mobile_no }}">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Company Name</label>
                                                     <select name="company" id="company_id"
@@ -119,7 +119,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Location Name</label>
                                                     <select name="location" id="location_id"
@@ -129,7 +129,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Unit Name</label>
                                                     <select name="unit" id="unit_id"
@@ -139,7 +139,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department Name</label>
                                                     <select name="department" id="department_id"
@@ -150,7 +150,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">SubDepartment Name</label>
                                                     <input type="text" name ="subdepartment" class="form-control"
@@ -158,21 +158,21 @@
                                                         value="{{ $work->subdepartment }}">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Designation </label>
                                                     <input type="text" name ="designation" class="form-control"
                                                         placeholder="Designation " value="{{ $work->designation }}">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">WFEmptype </label>
                                                     <input type="text" name ="wfemptype" class="form-control"
                                                         placeholder="WFEmptype " value="{{ $work->wfemptype }}">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4">
+                                            <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Skill </label>
                                                     <input type="text" name ="skill" class="form-control"
