@@ -190,7 +190,7 @@
         body[data-leftbar-color=dark] .left-side-menu {
             background-color: #fff8f8 !important;
             color: #000 !important;
-                margin-bottom: 3px;
+            margin-bottom: 3px;
             padding: 10px;
         }
 
@@ -225,7 +225,7 @@
 
         }
 
-         body[data-leftbar-color=dark] .left-side-menu .nav-second-level li a.active,
+        body[data-leftbar-color=dark] .left-side-menu .nav-second-level li a.active,
         body[data-leftbar-color=dark] .left-side-menu .nav-second-level li a.activ,
         body[data-leftbar-color=dark] .left-side-menu .nav-thrid-level li a.activ,
         body[data-leftbar-color=dark] .left-side-menu .nav-thrid-level li a.active {
@@ -647,16 +647,30 @@
          * Menu Active dynamically
          */
 
-        $(function() {
-            baseurl = "@yield('title')";
-            $('.sidebar-menu a').each(function() {
-                var $this = $(this);
-                if ($this.attr('href') === baseurl) {
-                    $this.parent().addClass('active');
-                    $this.closest('.treeview').addClass('active menu-open');
-                }
-            });
+    $(function () {
+    // Current page URL from Blade
+    let baseurl = "@yield('pageurl')";
+
+    if ($("#side-menu").length) {
+
+        $('#side-menu .collapse').on('show.bs.collapse', function (event) {
+            let parentCollapse = $(event.target).parents('.collapse.show');
+            $('#side-menu .collapse.show').not(parentCollapse).collapse('hide');
         });
+
+        $("#side-menu a").each(function () {
+
+            if (this.href === baseurl) {
+              
+                $(this).addClass("active");
+
+
+                $(this).parents('li').addClass("menuitem-active");
+                $(this).parents('.collapse').addClass("show");
+            }
+        });
+    }
+});
 
         /*
          * Theme mode change
