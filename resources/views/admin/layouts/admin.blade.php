@@ -8,9 +8,6 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') | KARAM</title>
-    <meta name="theme-color" content="#0d6efd">
-    <link rel="manifest" href="{{ url('manifest') }}">
-
 
     <link rel="shortcut icon" href="{{ url('public/assets/images/logo-dark.png') }}">
 
@@ -28,7 +25,7 @@
         type="text/css" />
     <link href="{{ public_plugins('datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css') }}"
         rel="stylesheet" type="text/css" />
-    <link href="{{ public_plugins('datatables.net-select-bs5/css/select.bootstrap5.min.css') }}" rel="stylesheet"
+    <link href="{{ public_plugins('datatables.net-select-bs5/css/select.bootstrap5.min.css') }}"rel="stylesheet"
         type="text/css" />
     <link href="{{ public_plugins('admin-resources/rwd-table/rwd-table.min.css') }}" rel="stylesheet"
         type="text/css" />
@@ -163,11 +160,6 @@
             color: red;
         }
 
-        .error {
-            color: red;
-            padding-top: 3px;
-        }
-
 
         /* Tooltip styling */
         .fc-event:hover .custom-tooltip {
@@ -191,14 +183,14 @@
         .logo span.logo-lg {
             display: block;
             padding: 0px;
-            height: 50px;
+            height: 70px;
             background-color: #fff
         }
 
         body[data-leftbar-color=dark] .left-side-menu {
             background-color: #fff8f8 !important;
             color: #000 !important;
-            margin-bottom: 3px;
+                margin-bottom: 3px;
             padding: 10px;
         }
 
@@ -209,9 +201,13 @@
             background-color: #000;
             border-radius: 8px;
 
+
         }
 
+
+
         .logo-box {
+
             width: 240px;
             float: left;
             transition: all 0.1s ease-out;
@@ -226,16 +222,18 @@
             color: #fff;
             border-radius: 8px;
             margin-top: 2px;
+
         }
 
-        body[data-leftbar-color=dark] .left-side-menu .nav-second-level li a.active,
-        body[data-leftbar-color=dark] .left-side-menu .nav-second-level li a:active,
-        body[data-leftbar-color=dark] .left-side-menu .nav-thrid-level li a:active,
-        body[data-leftbar-color=dark] .left-side-menu .nav-thrid-level li a:active {
+         body[data-leftbar-color=dark] .left-side-menu .nav-second-level li a.active,
+        body[data-leftbar-color=dark] .left-side-menu .nav-second-level li a.activ,
+        body[data-leftbar-color=dark] .left-side-menu .nav-thrid-level li a.activ,
+        body[data-leftbar-color=dark] .left-side-menu .nav-thrid-level li a.active {
             background-color: #000;
             color: #fff;
             border-radius: 8px;
             margin-top: 2px;
+
         }
     </style>
     @stack('style')
@@ -298,8 +296,7 @@
     <div class="rightbar-overlay"></div>
 
     <script nonce="projectcab">
-        var pageurl = '@yield('
-        pageurl ')';
+        var pageurl = '@yield('pageurl')';
     </script>
 
     <!-- Vendor -->
@@ -366,89 +363,80 @@
 
     @stack('scripts')
 
-    <script>
-        // console.log(123);
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('public/sw.js')
-                .then(reg => console.log('Service Worker registered', reg))
-                .catch(err => console.error('Service Worker failed', err));
-        }
-    </script>
-
     @if (app()->environment('production') && getConstant('template_constant') == PRODUCTION)
-    <script>
-        document.addEventListener('contextmenu', function(e) {
-            e.preventDefault();
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if ((e.ctrlKey && e.keyCode === 65) || (e.ctrlKey && e.keyCode === 67)) {
-                return;
-            }
-
-            if (e.keyCode === 123 ||
-                (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
-                (e.ctrlKey && e.keyCode === 85) ||
-                (e.ctrlKey && (e.keyCode === 83 || e.keyCode === 80))
-            ) {
+        <script>
+            document.addEventListener('contextmenu', function(e) {
                 e.preventDefault();
-            }
-        });
+            });
 
-        (function() {
-            var devtoolsOpen = false;
-            var threshold = 160;
-            var interval = setInterval(function() {
-                var widthThreshold = window.outerWidth - window.innerWidth > threshold;
-                var heightThreshold = window.outerHeight - window.innerHeight > threshold;
-
-                if ((widthThreshold || heightThreshold) && !devtoolsOpen) {
-                    var startTime = new Date();
-                    debugger;
-                    var endTime = new Date();
-                    if (endTime - startTime > 100) {
-                        devtoolsOpen = true;
-                        logBlockedUser();
-                    }
-                } else if (!(widthThreshold || heightThreshold) && devtoolsOpen) {
-                    devtoolsOpen = false;
+            document.addEventListener('keydown', function(e) {
+                if ((e.ctrlKey && e.keyCode === 65) || (e.ctrlKey && e.keyCode === 67)) {
+                    return;
                 }
-            }, 5000);
-        })();
 
-        document.addEventListener('dragstart', function(e) {
-            e.preventDefault();
-        });
-
-        document.addEventListener('mousedown', function(e) {
-            if (e.button == 1) {
-                e.preventDefault();
-            }
-        });
-
-        function logBlockedUser() {
-            $.ajax({
-                url: "{{ url('blocked-save') }}",
-                type: "POST",
-                headers: {
-                    'X-CSRF-TOKEN': "{{ csrf_token() }}"
-                },
-                data: {
-                    _token: "{{ csrf_token() }}",
-                },
-                dataType: "json",
-                success: function(response) {
-                    if (response.success) {
-                        window.location.href = "{{ url('blocked') }}";
-                    }
-                },
-                error: function(xhr) {
-                    console.error(xhr.responseText);
-                    alert("AJAX Error: " + xhr.responseText);
+                if (e.keyCode === 123 ||
+                    (e.ctrlKey && e.shiftKey && (e.keyCode === 73 || e.keyCode === 74)) ||
+                    (e.ctrlKey && e.keyCode === 85) ||
+                    (e.ctrlKey && (e.keyCode === 83 || e.keyCode === 80))
+                ) {
+                    e.preventDefault();
                 }
             });
-        }
-    </script>
+
+            (function() {
+                var devtoolsOpen = false;
+                var threshold = 160;
+                var interval = setInterval(function() {
+                    var widthThreshold = window.outerWidth - window.innerWidth > threshold;
+                    var heightThreshold = window.outerHeight - window.innerHeight > threshold;
+
+                    if ((widthThreshold || heightThreshold) && !devtoolsOpen) {
+                        var startTime = new Date();
+                        debugger;
+                        var endTime = new Date();
+                        if (endTime - startTime > 100) {
+                            devtoolsOpen = true;
+                            logBlockedUser();
+                        }
+                    } else if (!(widthThreshold || heightThreshold) && devtoolsOpen) {
+                        devtoolsOpen = false;
+                    }
+                }, 5000);
+            })();
+
+            document.addEventListener('dragstart', function(e) {
+                e.preventDefault();
+            });
+
+            document.addEventListener('mousedown', function(e) {
+                if (e.button == 1) {
+                    e.preventDefault();
+                }
+            });
+
+            function logBlockedUser() {
+                $.ajax({
+                    url: "{{ url('blocked-save') }}",
+                    type: "POST",
+                    headers: {
+                        'X-CSRF-TOKEN': "{{ csrf_token() }}"
+                    },
+                    data: {
+                        _token: "{{ csrf_token() }}",
+                    },
+                    dataType: "json",
+                    success: function(response) {
+                        if (response.success) {
+                            window.location.href = "{{ url('blocked') }}";
+                        }
+                    },
+                    error: function(xhr) {
+                        console.error(xhr.responseText);
+                        alert("AJAX Error: " + xhr.responseText);
+                    }
+                });
+            }
+        </script>
     @endif
 
     <script type="text/javascript" nonce="projectcab">
@@ -458,8 +446,7 @@
             },
             statusCode: {
                 419: function() {
-                    window.location.href = '{{ url('
-                    ') }}';
+                    window.location.href = '{{ url('') }}';
                 }
             }
         });
@@ -486,11 +473,7 @@
             });
         }
 
-        function getEndDate(fromdate, addValue, type = {
-            {
-                ADD_DATE
-            }
-        }, endDate = "") {
+        function getEndDate(fromdate, addValue, type = {{ ADD_DATE }}, endDate = "") {
 
             var fromdate = moment(fromdate, 'DD-MM-YYYY').toDate();
 
@@ -621,22 +604,22 @@
                 }
             });
 
-            @if($message = Session::get('success'))
-            toastMixin.fire({
-                icon: 'success',
-                animation: true,
-                title: '{{ $message }}',
-                showCloseButton: true,
-            });
+            @if ($message = Session::get('success'))
+                toastMixin.fire({
+                    icon: 'success',
+                    animation: true,
+                    title: '{{ $message }}',
+                    showCloseButton: true,
+                });
             @endif
 
-            @if($message = Session::get('error'))
-            toastMixin.fire({
-                icon: 'error',
-                animation: true,
-                title: '{{ $message }}',
-                showCloseButton: true,
-            });
+            @if ($message = Session::get('error'))
+                toastMixin.fire({
+                    icon: 'error',
+                    animation: true,
+                    title: '{{ $message }}',
+                    showCloseButton: true,
+                });
             @endif
 
             /** Tooltips **/
