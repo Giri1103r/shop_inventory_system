@@ -195,60 +195,18 @@ class Location extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select('masters_location.*', 'master_company.company_name')->leftJoin('master_company', 'masters_location.company_id', '=', 'master_company.id')
+        $data = $this->select('masters_location.*')
             ->where('masters_location.id', $id)
             ->first();
 
         return $data;
     }
 
-    public function ajaxList($locationId , $companyId = '')
-    {
-        $query = $this->select('id', 'location_name')->where('status', 1);
 
-        if ($companyId != '') {
-            $query->where('company_id', $companyId);
-        }
-        if (!empty($companyId) && !empty($locationId)) {
-            $query = $query->where('company_id', $companyId)->where('status', 1)->orWhere(function ($query) use ($locationId, $companyId) {
-                $query->where('company_id', $companyId)->where('id', $locationId);
-            });
-        }
-        $datas = $query->get();
 
-        $list = [];
-        foreach ($datas as $data) {
-            $listvalue = [];
-            $listvalue['id'] = encryptId($data->id);
-            $listvalue['name'] = $data->location_name;
-            $list[] = $listvalue;
-        }
 
-        return $list;
-    }
-
-    public function ajaxallList($companyId = '')
-    {
-        $query = $this->select('id', 'location_name')->where('status', 1);
-
-        if ($companyId != '') {
-
-            $query = $query->where('company_id', $companyId);
-        }
-
-        $datas = $query->get();
-
-        $list = [];
-        foreach ($datas as $data) {
-            $listvalue = [];
-            $listvalue['id'] = encryptId($data->id);
-            $listvalue['name'] = $data->location_name;
-            $list[] = $listvalue;
-        }
-        return $list;
-    }
-    public function getLocationName(){
-        $data = $this->select('id','location_name')->where('status',1)->get();
+    public function getlocation(){
+        $data = $this->where('status',1)->get();
         return $data;
     }
 

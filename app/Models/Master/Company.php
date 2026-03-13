@@ -43,7 +43,7 @@ class Company extends Model
         $request = request();
         $search = '';
         $query = $this->select('master_company.*');
-        // dd($query);
+       
         $org_total =  $query;
         $org_total_counts = $org_total->count();
 

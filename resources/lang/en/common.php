@@ -72,7 +72,7 @@ return [
     'appr_rej_date' => 'Approval / Rejection Date',
     'approve' => 'Approve',
     'approved_by' => 'Approved By',
-    'approve_or_reject'=> 'Approve / Rejected By',
+    'approve_or_reject' => 'Approve / Rejected By',
 
     'approve_success_msg' => 'Approved Successfully!!!',
     'approve_reject_msg' => 'Rejected Successfully!!!',
@@ -84,8 +84,8 @@ return [
 
     'created_msg' => 'Your Data has been Created Successfully!',
     'updated_msg' => 'Your Data has been Updated Successfully!',
-    'file_upload_success_msg'=>'File Uploaded Succefully!',
-    'file_upload_fails_msg'=>'File Uploads Failed!',
+    'file_upload_success_msg' => 'File Uploaded Succefully!',
+    'file_upload_fails_msg' => 'File Uploads Failed!',
 
 
 
@@ -93,6 +93,7 @@ return [
     'page_expired' => 'Your session has expired. Please refresh the page and try again.',
     'server_error' => 'Server error. Please try again later.',
     'something_went_wrong' => 'Something went Wrong!',
+    'error_msg' => 'Something went Wrong.Please try again later!',
     'unauthorized' => 'Access denied. You don\'t have permission to view this page.',
 
 
@@ -106,6 +107,30 @@ return [
     'financial_year' => 'Financial Year',
     'leading_lagging' => 'Leading and Lagging Indicator',
     'hsc_inputs' => 'HSC Inputs',
+
+
+    // Master
+
+    'company_id' => 'Company Id',
+    'company' => 'Company Name',
+    'short_name' => 'Short Name',
+    'address' => 'Address',
+    'location_id' => 'Location Id',
+    'Location' => 'Location',
+    'unit_id' => 'Unit Id',
+    'unit' => 'Unit',
+    'department_id' => 'Department Id',
+    'department' => 'Department',
+    'file' => 'File',
+
+    // title
+    'commany_details' => 'Company Details',
+    'location_details' => 'Location Details',
+    'unit_details' => 'Unit Details',
+    'department_details' => 'Department Details',
+    'employee_details' => 'Employee Details',
+
+
 
 
 ];

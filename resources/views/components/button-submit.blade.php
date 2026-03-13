@@ -38,8 +38,4 @@
         font-size: 15px;
     }
 </style>
-
-<a href="{{ $href }}" class="btn btn-submit">
-
-    <span>{{ __('common.submit') }}</span>
-</a>
+<button type="submit" class="btn btn-submit ">{{ __('common.submit') }}</button>

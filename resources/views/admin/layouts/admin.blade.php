@@ -277,6 +277,53 @@
         body.sidebar-mini .nav-second-level {
             display: none !important;
         }
+
+        .fa-solid.fa-eye {
+            color: #0867a6;
+            font-size: 15px;
+        }
+
+        .fa-file-excel {
+            color: #1c7430 !important;
+            font-size: 15px;
+        }
+
+        .fa-ban {
+            color: red !important;
+            font-size: 15px;
+        }
+
+        .fa-clone {
+            color: #8406be;
+            font-size: 15px;
+        }
+
+        .fa-solid.fa-pen-to-square {
+            color: #f9c306;
+            font-size: 15px;
+        }
+
+        .fa-solid.fa-check-to-slot {
+            color: rgb(7, 177, 7);
+            font-size: 15px;
+        }
+
+
+        .fa-solid.fa-file-pdf {
+            color: #fb4b54;
+            font-size: 15px;
+        }
+
+        .fa-solid.fa-square-plus {
+            color: rgb(7, 177, 7);
+            font-size: 17px;
+        }
+
+
+        .fa-solid.fa-trash {
+            color: red !important;
+            font-size: 15px;
+        }
     </style>
     @stack('style')
 

@@ -199,6 +199,8 @@ File: Main Css File
   --ct-menu-item-hover-color-dark: #c8cddc;
   --ct-menu-item-active-color-dark: #fff;
   --ct-menu-item: #6e768e;
+  --ct-in-active-btn-color:red;
+  --ct-active-btn-color:#1c7430;
   --ct-menu-item-hover: #71b6f9;
   --ct-menu-item-active: #ffffff;
   --ct-menu-sub-item-active: #71b6f9;

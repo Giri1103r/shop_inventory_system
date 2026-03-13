@@ -24,7 +24,7 @@ use Illuminate\Support\Facades\Session;
 
 //  class ImportCompanyJob
 
-class ImportCompanyJob implements ShouldQueue
+class ImportCompanyJob 
 {
 
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;

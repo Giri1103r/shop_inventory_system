@@ -190,7 +190,7 @@ if (!function_exists('getsequence')) {
             case 'company':
                 $count = Company::withoutGlobalScopes()->count();
                 $count = $count + 1;
-                $sequence = 'COMPANY-' . getautogen($count);
+                $sequence = 'CMP-' . getautogen($count);
                 break;
             case 'location':
                 $count = Location::withoutGlobalScopes()->count();

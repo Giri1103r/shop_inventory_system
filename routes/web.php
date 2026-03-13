@@ -8,22 +8,17 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Cron\CronController;
 
-use App\Http\Controllers\Master\UnitController;
-use App\Http\Controllers\Master\WorkController;
-use App\Http\Controllers\Master\TopicController;
-use App\Http\Controllers\Master\VenueController;
+use App\Http\Controllers\Admin\Master\UnitController;
+use App\Http\Controllers\Admin\Master\WorkController;
 
-use App\Http\Controllers\Master\CompanyController;
-use App\Http\Controllers\IMS\Master\HiraController;
-use App\Http\Controllers\Master\EmployeeController;
-use App\Http\Controllers\Master\LocationController;
-use App\Http\Controllers\Master\SafeWorkController;
 
-use App\Http\Controllers\Master\ChecklistController;
-use App\Http\Controllers\Master\WorkerLogController;
-use App\Http\Controllers\Master\DepartmentController;
+use App\Http\Controllers\Admin\Master\CompanyController;
 
-use App\Http\Controllers\Master\EmployeeLogController;
+use App\Http\Controllers\Admin\Master\EmployeeController;
+use App\Http\Controllers\Admin\Master\LocationController;
+use App\Http\Controllers\Admin\Master\WorkerLogController;
+use App\Http\Controllers\Admin\Master\DepartmentController;
+use App\Http\Controllers\Admin\Master\EmployeeLogController;
 
 
 
@@ -35,7 +30,7 @@ use App\Http\Controllers\Master\EmployeeLogController;
 use App\Http\Controllers\{SettingsController, LocalizationController, TestController};
 
 use App\Http\Controllers\Admin\{LoginController, NotificationController, AdminController, BlockedController};
-use App\Http\Controllers\Master\{ UserLogController, UserPermissionController, UploadLogController, UserController, UserRoleController};
+use App\Http\Controllers\Master\{UserLogController, UserPermissionController, UploadLogController, UserController, UserRoleController};
 use App\Http\Controllers\PWAController;
 
 
@@ -122,7 +117,7 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('profile/update', [AdminController::class, 'Update']);
             Route::post('profile/password/update', [AdminController::class, 'changeProfilePassword']);
 
-         
+
             Route::group(['prefix' => 'dashboard/'], function () {
                 // card totals
 
@@ -195,7 +190,7 @@ Route::middleware(['securityheader'])->group(function () {
              * KPI
              */
 
-         
+
 
             /**
              * User Access Log
@@ -275,185 +270,240 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('notification/view/{id}', [NotificationController::class, 'notificationView']);
 
             /**
-             * company master
+             *  master
              */
-            Route::group(['prefix' => 'company'], function () {
-                Route::get('/list', [CompanyController::class, 'index']);
-                Route::post('/list', [CompanyController::class, 'index']);
-                Route::get('/add', [CompanyController::class, 'add'])->middleware('role:company,add');
-                Route::post('/add/submit', [CompanyController::class, 'store']);
-                Route::get('/edit/{id}', [CompanyController::class, 'edit'])->middleware('role:company,edit');
-                Route::post('/edit/submit', [CompanyController::class, 'update']);
-                Route::get('/view/{id}', [CompanyController::class, 'view'])->middleware('role:company,view');
-                Route::post('/delete', [CompanyController::class, 'delete'])->middleware('role:company,delete');
-                Route::get('/export/excel', [CompanyController::class, 'exportExcel']);
-                Route::get('/export/pdf', [CompanyController::class, 'exportPdf']);
-                Route::get('/sampledownload', [CompanyController::class, 'DownloadSample']);
-                Route::get('/import', [CompanyController::class, 'import'])->middleware('role:company,import');
-                Route::post('/import/submit', [CompanyController::class, 'importSubmit']);
-                Route::post('/status', [CompanyController::class, 'statusChange']);
-                Route::post('/unique', [CompanyController::class, 'Uniquecheck']);
+            Route::group(['prefix' => 'master/'], function () {
+
+                Route::controller(CompanyController::class)
+                    ->prefix('company')
+                    ->group(function () {
+
+                        Route::get('list', 'index');
+                        Route::post('list', 'index');
+
+                        Route::get('add', 'add');
+                        Route::post('add/submit', 'store');
+
+                        Route::get('edit/{id}', 'edit');
+                        Route::post('edit/submit', 'update');
+
+                        Route::get('view/{id}', 'view');
+
+                        Route::post('delete', 'delete');
+
+                        Route::get('export/excel', 'exportExcel');
+                        Route::get('export/pdf', 'exportPdf');
+
+                        Route::get('import', 'import');
+                        Route::post('import/submit', 'importSubmit');
+
+                        Route::post('status', 'statusChange');
+                        Route::post('unique', 'Uniquecheck');
+
+                        Route::get('sampledownload', 'DownloadSample');
+                    });
+                Route::controller(LocationController::class)
+                    ->prefix('location')
+                    ->group(function () {
+
+                        Route::get('list', 'index');
+                        Route::post('list', 'index');
+
+                        Route::get('add', 'add');
+                        Route::post('add/submit', 'store');
+
+                        Route::get('edit/{id}', 'edit');
+                        Route::post('edit/submit', 'update');
+
+                        Route::get('view/{id}', 'view');
+
+                        Route::post('delete', 'delete');
+
+                        Route::get('export/excel', 'exportExcel');
+                        Route::get('export/pdf', 'exportPdf');
+
+                        Route::get('import', 'import');
+                        Route::post('import/submit', 'importSubmit');
+
+                        Route::post('status', 'statusChange');
+                        Route::post('unique', 'Uniquecheck');
+
+                        Route::get('sampledownload', 'DownloadSample');
+                    });
+                Route::controller(UnitController::class)
+                    ->prefix('unit')
+                    ->group(function () {
+
+                        Route::get('list', 'index');
+                        Route::post('list', 'index');
+
+                        Route::get('add', 'add');
+                        Route::post('add/submit', 'store');
+
+                        Route::get('edit/{id}', 'edit');
+                        Route::post('edit/submit', 'update');
+
+                        Route::get('view/{id}', 'view');
+
+                        Route::post('delete', 'delete');
+
+                        Route::get('export/excel', 'exportExcel');
+                        Route::get('export/pdf', 'exportPdf');
+
+                        Route::get('import', 'import');
+                        Route::post('import/submit', 'importSubmit');
+
+                        Route::post('status', 'statusChange');
+                        Route::post('unique', 'Uniquecheck');
+
+                        Route::get('sampledownload', 'DownloadSample');
+                    });
+
+                Route::controller(DepartmentController::class)
+                    ->prefix('department')
+                    ->group(function () {
+
+                        Route::get('list', 'index');
+                        Route::post('list', 'index');
+
+                        Route::get('add', 'add');
+                        Route::post('add/submit', 'store');
+
+                        Route::get('edit/{id}', 'edit');
+                        Route::post('edit/submit', 'update');
+
+                        Route::get('view/{id}', 'view');
+
+                        Route::post('delete', 'delete');
+
+                        Route::get('export/excel', 'exportExcel');
+                        Route::get('export/pdf', 'exportPdf');
+
+                        Route::get('import', 'import');
+                        Route::post('import/submit', 'importSubmit');
+
+                        Route::post('status', 'statusChange');
+                        Route::post('unique', 'Uniquecheck');
+
+                        Route::get('sampledownload', 'DownloadSample');
+                    });
+
+                Route::controller(EmployeeController::class)
+                    ->prefix('employee')
+                    ->group(function () {
+
+                        Route::get('list', 'index');
+                        Route::post('list', 'index');
+
+                        Route::get('add', 'add');
+                        Route::post('add/submit', 'store');
+
+                        Route::get('edit/{id}', 'edit');
+                        Route::post('edit/submit', 'update');
+
+                        Route::get('view/{id}', 'view');
+
+                        Route::post('delete', 'delete');
+
+                        Route::get('export/excel', 'exportExcel');
+                        Route::get('export/pdf', 'exportPdf');
+
+                        Route::get('import', 'import');
+                        Route::post('import/submit', 'importSubmit');
+
+                        Route::post('status', 'statusChange');
+                        Route::post('unique', 'Uniquecheck');
+
+                        Route::get('sampledownload', 'DownloadSample');
+                    });
+
+                Route::controller(WorkController::class)
+                    ->prefix('work')
+                    ->group(function () {
+
+                        Route::get('list', 'index');
+                        Route::post('list', 'index');
+
+                        Route::get('add', 'add');
+                        Route::post('add/submit', 'store');
+
+                        Route::get('edit/{id}', 'edit');
+                        Route::post('edit/submit', 'update');
+
+                        Route::get('view/{id}', 'view');
+
+                        Route::post('delete', 'delete');
+
+                        Route::get('export/excel', 'exportExcel');
+                        Route::get('export/pdf', 'exportPdf');
+
+                        Route::get('import', 'import');
+                        Route::post('import/submit', 'importSubmit');
+
+                        Route::post('status', 'statusChange');
+                        Route::post('unique', 'Uniquecheck');
+
+                        Route::get('sampledownload', 'DownloadSample');
+                    });
             });
 
-            /**
-             * Location Master
-             */
-
-            Route::get('location/list', [LocationController::class, 'index']);
-            Route::post('location/list', [LocationController::class, 'index']);
-            Route::get('location/add', [LocationController::class, 'add'])->middleware('role:location,add');
-            Route::post('location/add/submit',  [LocationController::class, 'store']);
-            Route::get('location/view/{id}', [LocationController::class, 'view'])->middleware('role:location,view');
-            Route::get('location/edit/{id}',  [LocationController::class, 'edit'])->middleware('role:location,edit');
-            Route::post('location/edit/submit', [LocationController::class, 'update']);
-            Route::post('location/unique', [LocationController::class, 'uniqueCheck']);
-            Route::post('location/status', [LocationController::class, 'statusChange']);
-            Route::post('location/delete',  [LocationController::class, 'delete'])->middleware('role:location,delete');
-            Route::get('location/export/excel', [LocationController::class, 'exportExcel']);
-            Route::get('location/export/pdf', [LocationController::class, 'exportPdf']);
-            Route::get('location/import', [LocationController::class, 'import'])->middleware('role:location,import');
-            Route::post('location/import/submit', [LocationController::class, 'importSubmit']);
-            Route::get('location/alllist/{companyId}', [LocationController::class, 'alllist']);
-            Route::get('location/ajax-list/{companyId}/{id}', [LocationController::class, 'list']);
-            Route::get('location/sampledownload', [LocationController::class, 'DownloadSample']);
-
-            /**
-             * unit master
-             */
-            Route::group(['prefix' => 'unit'], function () {
-                Route::get('/list', [UnitController::class, 'index']);
-                Route::post('/list', [UnitController::class, 'index']);
-                Route::get('/add', [UnitController::class, 'add'])->middleware('role:unit,add');
-                Route::post('/add/submit', [UnitController::class, 'store']);
-                Route::get('/edit/{id}', [UnitController::class, 'edit'])->middleware('role:unit,edit');
-                Route::post('/edit/submit', [UnitController::class, 'update']);
-                Route::get('/view/{id}', [UnitController::class, 'view'])->middleware('role:unit,view');
-                Route::post('/delete', [UnitController::class, 'delete'])->middleware('role:unit,delete');
-                Route::get('/export/excel', [UnitController::class, 'exportExcel']);
-                Route::get('/export/pdf', [UnitController::class, 'exportPdf']);
-                Route::get('/sampledownload', [UnitController::class, 'DownloadSample']);
-                Route::get('/import', [UnitController::class, 'import'])->middleware('role:unit,import');
-                Route::post('/import/submit', [UnitController::class, 'importSubmit']);
-                Route::post('/status', [UnitController::class, 'statusChange']);
-                Route::post('/unique', [UnitController::class, 'Uniquecheck']);
-                Route::get('/alllist/{locationId}', [UnitController::class, 'alllist']);
-                Route::get('/ajax-list/{locationId}/{id}', [UnitController::class, 'list']);
-                Route::get('/get-unit-data/{companyId}/{id}', [UnitController::class, 'unitData']);
-            });
-
-            /**
-             *  Department master
-             */
-            Route::group(['prefix' => 'department'], function () {
-                Route::get('/list', [DepartmentController::class, 'index']);
-                Route::post('/list', [DepartmentController::class, 'index']);
-                Route::get('/add', [DepartmentController::class, 'add'])->middleware('role:department,add');
-                Route::post('/add/submit', [DepartmentController::class, 'store']);
-                Route::get('/edit/{id}', [DepartmentController::class, 'edit'])->middleware('role:department,edit');
-                Route::post('/edit/submit', [DepartmentController::class, 'update']);
-                Route::get('/view/{id}', [DepartmentController::class, 'view'])->middleware('role:department,view');
-                Route::post('/delete', [DepartmentController::class, 'delete'])->middleware('role:department,delete');
-                Route::get('/export/excel', [DepartmentController::class, 'exportExcel']);
-                Route::get('/export/pdf', [DepartmentController::class, 'exportPdf']);
-                Route::get('/sampledownload', [DepartmentController::class, 'DownloadSample']);
-                Route::get('/import', [DepartmentController::class, 'import'])->middleware('role:department,import');
-                Route::post('/import/submit', [DepartmentController::class, 'importSubmit']);
-                Route::post('/status', [DepartmentController::class, 'statusChange']);
-                Route::post('/unique', [DepartmentController::class, 'Uniquecheck']);
-                Route::get('/alllist/{unitId}', [DepartmentController::class, 'alllist']);
-                Route::get('/ajax-list/{unit_id}/{id}', [DepartmentController::class, 'list']);
-                Route::get('/multiple-ajax-list/{unit_id}', [DepartmentController::class, 'multipleList']);
-            });
 
 
-            Route::group(['prefix' => 'work'], function () {
-                Route::get('/list', [WorkController::class, 'index']);
-                Route::post('/list', [WorkController::class, 'index']);
-                Route::post('/add/submit', [WorkController::class, 'store']);
-                Route::get('/edit/{id}', [WorkController::class, 'edit']);
-                Route::post('/edit/submit', [WorkController::class, 'update']);
-                Route::get('/view/{id}', [WorkController::class, 'view']);
-                Route::get('/export/excel', [WorkController::class, 'exportExcel']);
-                Route::get('/export/pdf', [WorkController::class, 'exportPdf']);
-                Route::post('/status', [WorkController::class, 'statusChange']);
-            });
-            Route::group(['prefix' => 'employee'], function () {
-                Route::get('/list', [EmployeeController::class, 'index']);
-                Route::post('/list', [EmployeeController::class, 'index']);
-                Route::post('/add/submit', [EmployeeController::class, 'store']);
-                Route::get('/edit/{id}', [EmployeeController::class, 'edit']);
-                Route::post('/edit/submit', [EmployeeController::class, 'update']);
-                Route::get('/view/{id}', [EmployeeController::class, 'view']);
-                Route::get('/export/excel', [EmployeeController::class, 'exportExcel']);
-                Route::get('/export/pdf', [EmployeeController::class, 'exportPdf']);
-                Route::post('/status', [EmployeeController::class, 'statusChange']);
-                Route::post('/unique', [EmployeeController::class, 'Uniquecheck']);
-                Route::get('/passwordchange/{id}', [EmployeeController::class, 'PasswordUpdate']);
-                Route::post('/passwordchange/submit', [EmployeeController::class, 'PasswordUpdateSubmit']);
-                Route::post('/company-ajax', [EmployeeController::class, 'companyajax']);
-                Route::get('/ajax-list/{unit_id}/{id}', [EmployeeController::class, 'list']);
-            });
-
-          
 
 
-          
-
-
-           
 
             /**
              * Topic master
              */
-           
-
-           
-          
-
-         
-          
-           
-
-           
 
 
 
-          
-
-          
-
-          
-
-           
 
 
-          
-        
-           
-           
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
             // OHC Management
 
-           
 
 
 
-         
-
-        
-         
-           
-
-          
 
 
 
-          
-          
 
-          
+
+
+
+
+
+
+
+
+
+
+
         });
     });
 });

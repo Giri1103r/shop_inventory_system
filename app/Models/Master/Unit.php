@@ -210,85 +210,15 @@ class Unit extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select('masters_unit.*', 'master_company.company_name',  'masters_location.location_name')->leftJoin('master_company', 'masters_unit.company_id', '=', 'master_company.id')->leftJoin('masters_location', 'masters_unit.location_id', '=', 'masters_location.id')
-            ->where('masters_unit.id', $id)
+        $data = $this->select('masters_unit.*')->where('masters_unit.id', $id)
             ->first();
 
         return $data;
     }
 
 
-    public function ajaxList($unit_id, $locationId = '')
-    {
-        $query = $this->select('id', 'unit_name')->where('status', 1);
-
-        if ($locationId != '') {
-            $query->where('location_id', $locationId);
-        }
-        if (!empty($locationId) && !empty($unit_id)) {
-            $query = $query->where('location_id', $locationId)->where('status', 1)->orWhere(function ($query) use ($unit_id, $locationId) {
-                $query->where('location_id', $locationId)->where('id', $unit_id);
-            });
-        }
-        $datas = $query->get();
-
-        $list = [];
-        foreach ($datas as $data) {
-            $listvalue = [];
-            $listvalue['id'] = encryptId($data->id);
-            $listvalue['name'] = $data->unit_name;
-            $list[] = $listvalue;
-        }
-
-        return $list;
-    }
 
 
-
-    public function unitajaxList($unit_id, $companyId = '')
-    {
-        $query = $this->select('id', 'unit_name')->where('status', 1);
-
-        if ($companyId != '') {
-            $query->where('company_id', $companyId);
-        }
-        if (!empty($companyId) && !empty($unit_id)) {
-            $query = $query->where('company_id', $companyId)->where('status', 1)->orWhere(function ($query) use ($unit_id, $companyId) {
-                $query->where('company_id', $companyId)->where('id', $unit_id);
-            });
-        }
-        $datas = $query->get();
-
-        $list = [];
-        foreach ($datas as $data) {
-            $listvalue = [];
-            $listvalue['id'] = encryptId($data->id);
-            $listvalue['name'] = $data->unit_name;
-            $list[] = $listvalue;
-        }
-
-        return $list;
-    }
-    public function ajaxallList($locationId = '')
-    {
-        $query = $this->select('id', 'unit_name')->where('status', 1);
-
-        if ($locationId != '') {
-
-            $query = $query->where('location_id', $locationId);
-        }
-
-        $datas = $query->get();
-
-        $list = [];
-        foreach ($datas as $data) {
-            $listvalue = [];
-            $listvalue['id'] = encryptId($data->id);
-            $listvalue['name'] = $data->unit_name;
-            $list[] = $listvalue;
-        }
-        return $list;
-    }
     public function getunit()
     {
         return Unit::where('trash', 'NO')->where('status', '!=', 0)->get();
@@ -304,37 +234,5 @@ class Unit extends Model
         });
     }
 
-    public function getuserunit()
-    {
 
-        return Unit::where('trash', 'NO')->where('id', '!=', 1)->where('status', '!=', 0)->get();
-    }
-
-    public function getUnitcount()
-    {
-        return $this->where('status', 1)->where('trash', 'NO')->pluck('id');
-    }
-
-    public function getUnitList()
-    {
-        return $this->select('id', 'unit_name')->where('status', 1)->get();
-    }
-
-    public function getUnitBasedLocation($id)
-    {
-        return $this->where('location_id', $id)->get();
-    }
-
-    public function getAllUnit()
-    {
-        $data =  $this->get();
-        $decryptedArray = [];
-        foreach ($data as $data) {
-            $decryptedArray[] = [
-                'id' => encryptId($data->id),
-                'unit_name' => $data->unit_name,
-            ];
-        }
-        return $decryptedArray;
-    }
 }
