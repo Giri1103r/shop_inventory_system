@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\LeftMenu;
 use App\Models\UserPermission;
 use App\Models\Master\UserRole;
+use Illuminate\Support\Facades\Session as FacadesSession;
 
 class UserPermissionController extends Controller
 {
@@ -62,104 +63,96 @@ class UserPermissionController extends Controller
 
     public function getUserPermission(Request $request)
     {
+
         try {
+
             $menu_permission_list = [];
             $roleId = decryptId($request->id);
+
             $roleDetails = $this->userrole->find($roleId);
 
             if ($roleDetails->role_permission == null || $roleDetails->role_permission == '') {
-                $menuParent = $childPermission = $userpermission = [];
+                $menuParent = $childPermission =  $userpermission = [];
             } else {
                 $userpermission = string_to_array($roleDetails->role_permission);
                 $menuParent = $this->leftmenu->whereIn('id', $userpermission)->where('is_parent', 1)->get();
+
                 $childPermission = $this->userpermission->where('role_id', $roleId)->get();
             }
+
             if (count($menuParent) > 0) {
+
                 foreach ($menuParent as $menu) {
+
                     $menu_permission_list[] = 'menu_' . $menu->id . '_all';
                 }
             }
 
             if (count($childPermission) > 0) {
+
                 foreach ($childPermission as $childmenu) {
 
-                    $rolePermissions = $childmenu->role_permissions;
-                    $rolePermissions = json_decode($rolePermissions, true);
-                    if (json_last_error() === JSON_ERROR_NONE) {
-
-                        if (isset($rolePermissions['add']) && $rolePermissions['add'] == 1) {
-                            $menu_permission_list[] = 'menu_' . $childmenu->menu_id . '_add';
-                        }
-                        if (isset($rolePermissions['edit']) && $rolePermissions['edit'] == 1) {
-                            $menu_permission_list[] = 'menu_' . $childmenu->menu_id . '_edit';
-                        }
-                        if (isset($rolePermissions['delete']) && $rolePermissions['delete'] == 1) {
-                            $menu_permission_list[] = 'menu_' . $childmenu->menu_id . '_delete';
-                        }
-                        if (isset($rolePermissions['view']) && $rolePermissions['view'] == 1) {
-                            $menu_permission_list[] = 'menu_' . $childmenu->menu_id . '_view';
-                        }
-                        if (isset($rolePermissions['export']) && $rolePermissions['export'] == 1) {
-                            $menu_permission_list[] = 'menu_' . $childmenu->menu_id . '_export';
-                        }
-                        if (isset($rolePermissions['import']) && $rolePermissions['import'] == 1) {
-                            $menu_permission_list[] = 'menu_' . $childmenu->menu_id . '_import';
-                        }
-                    } else {
-                        // Log JSON decoding error
-                        Log::error('Failed to decode role permissions JSON for child menu ID ' . $childmenu->menu_id . ': ' . json_last_error_msg());
-                        // Handle JSON decoding error
-                        throw new Exception('Failed to decode role permissions JSON: ' . json_last_error_msg());
-                    }
+                    $childmenu->add == 1 ? $menu_permission_list[] = 'menu_' . $childmenu->menu_id . '_add' : "";
+                    $childmenu->edit == 1 ? $menu_permission_list[] = 'menu_' . $childmenu->menu_id . '_edit' : "";
+                    $childmenu->delete == 1 ? $menu_permission_list[] = 'menu_' . $childmenu->menu_id . '_delete' : "";
+                    $childmenu->view == 1 ? $menu_permission_list[] = 'menu_' . $childmenu->menu_id . '_view' : "";
+                    $childmenu->export == 1 ? $menu_permission_list[] = 'menu_' . $childmenu->menu_id . '_export' : "";
                 }
             }
 
             return response()->json(['status' => 'success', 'userpermission' => $menu_permission_list], 200);
         } catch (Exception $ex) {
-            report($ex);
-            Log::error('Error fetching user permissions: ' . $ex->getMessage());
-            return response()->json(['status' => 'error', 'msg' => 'Please try after some time. Error: ' . $ex->getMessage()], 406);
+
+            dd($ex);
+            return response()->json(['status' => 'error', 'msg' => 'Please try after some time'], 406);
         }
     }
 
-
     public function updateUserPermission(Request $request)
     {
-
+dd(1);
         try {
+            dd(1);
             $menuItems = [];
             $permission = [];
             $permission[] = 1;
 
             $role_id = decryptId($request->role);
 
-            $this->userpermission->where('role_id', $role_id)->update([
-                'role_permissions' => json_encode([
-                    'add' => 0,
-                    'edit' => 0,
-                    'delete' => 0,
-                    'view' => 0,
-                    'export' => 0
-                ])
-            ]);
+            $updatePermissiontodefault = array(
+                'add' => 0,
+                'edit' => 0,
+                'delete' => 0,
+                'view' => 0,
+                'export' => 0,
+            );
+
+            $this->userpermission->where('role_id', $role_id)->update($updatePermissiontodefault);
 
             foreach ($request->input() as $key => $value) {
                 if (str_starts_with($key, 'menu_')) {
                     $menudetails = string_to_array($key, '_');
+
                     if (!str_ends_with($key, '_all')) {
                         $menuItems[$menudetails[1]]['role_id'] = $role_id;
                         $menuItems[$menudetails[1]]['menu_id'] = $menudetails[1];
-                        $menuItems[$menudetails[1]]['role_permissions'][$menudetails[2]] = 1;
-
+                        $menuItems[$menudetails[1]][$menudetails[2]] = 1;
                     }
                     $permission[] = $menudetails[1];
                 }
             }
-            $permission_unique = array_unique($permission);
-            $this->userrole->where('id', $role_id)->update(['role_permission' => array_to_string($permission_unique)]);
+            $permission_uniquee = array_unique($permission);
+
+            $this->userrole->where('id', $role_id)->update(['role_permission' => array_to_string($permission_uniquee)]);
+
+            // $update_array = array(
+            //     'status' => 1,
+            //     'trash' => 'YES',
+            // );
+
+            // $this->userpermission->where('role_id', $role_id)->update($update_array);
 
             foreach ($menuItems as $menu) {
-                $menu['role_permissions'] = json_encode($menu['role_permissions']);
                 $menu['created_by'] = Auth::id();
                 $menu['updated_by'] = Auth::id();
                 $menu['status'] = 1;
@@ -171,12 +164,13 @@ class UserPermissionController extends Controller
                 );
             }
 
-            Session::flash('success', 'User Role Permision successfully updated!');
+            FacadesSession::flash('success', 'User Role Permision successfully updated!');
 
             return redirect(admin_url('administration/permission/list'));
         } catch (\Throwable $th) {
 
-            Session::flash('error', 'Something went wrong, Please try after sometimes');
+            dd($th);
+            FacadesSession::flash('error', 'Something went wrong, Please try after sometimes');
 
             return redirect(admin_url('administration/permission/list'));
         }

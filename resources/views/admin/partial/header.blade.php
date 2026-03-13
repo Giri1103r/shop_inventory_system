@@ -133,25 +133,25 @@
     <div class="logo-box">
         <a href="{{ url('/dashboard') }}" class="logo logo-light text-center">
             <span class="logo-sm">
-                <img src="{{ url('public/assets/images/klogo.jpg') }}" alt="" height="22">
+                <img src="{{ url('public/assets/images/logo2.png') }}" alt="" style="width: 50%;height: 50%;">
             </span>
             <span class="logo-lg">
-                <img src="{{ url('public/assets/images/logo-dark.png') }}" alt="" style="width: 50%;height: 50%;">
+                <img src="{{ url('public/assets/images/logo.png') }}" alt="" style="width: 50%;height: 50%;">
             </span>
         </a>
         <a href="{{ url('/dashboard') }}" class="logo logo-dark text-center">
             <span class="logo-sm">
-                <img src="{{ url('public/assets/images/klogo.jpg') }}" alt="" height="40" width ="50">
+                <img src="{{ url('public/assets/images/logo2.png') }}" alt="" style="width: 50%;height: 50%;">
             </span>
             <span class="logo-lg">
-                <img src="{{ url('public/assets/images/logo-dark.png') }}" alt="" height="10">
+                <img src="{{ url('public/assets/images/logo.png') }}" alt="" style="width: 50%;height: 50%;">
             </span>
         </a>
     </div>
 
     <ul class="list-unstyled topnav-menu topnav-menu-left mb-0">
         <li>
-            <button class="button-menu-mobile disable-btn waves-effect">
+            <button class="button-menu-mobile  waves-effect">
                 <i class="fe-menu"></i>
             </button>
         </li>

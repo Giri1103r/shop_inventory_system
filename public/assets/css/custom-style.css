@@ -6,7 +6,7 @@
 }
 
 .view_card .card-header {
-    background-color: #e21e23;
+    background-color: #2F8F8B;
     color: #FFFFFF;
     padding: 10px;
     display: flex;
@@ -20,6 +20,7 @@
     display: flex;
     justify-content: space-between;
 }
+
 
 #ptw_open_close_countDiv,
 #IncidentTypeChartDiv, #training_open_close,#LoadPPEAvailabilityChartCountDiv {
@@ -63,7 +64,7 @@
 }
 
 .view_card th {
-    background-color: #e21e23 !important;
+    background-color: #2F8F8B !important;
     color: #FFFFFF;
 }
 

@@ -10,18 +10,17 @@
 
                 <div class="card">
                     <h4 class="card-title"></h4>
-                    <div class="d-flex justify-content-end p-2">
+                    <div class="d-flex flex-wrap justify-content-end gap-2 p-2">
 
-                        <x-button-filter dataId="" class="search me-1" href=""></x-button-filter>
+                        <x-button-add dataId="" class="add" href="{{ admin_url('company/add') }}">
+                            Add
+                        </x-button-add>
 
-                        @if (CheckUserPermission('import'))
-                            <x-button-import href="{{ admin_url('company/import') }}"></x-button-import>
-                        @endif
+                        <x-button-filter dataId="" class="search" href="">
+                        </x-button-filter>
 
-                        @if (CheckUserPermission('add'))
-                            <x-button-add dataId="" class="add btn btn-primary ms-1"
-                                href="{{ admin_url('company/add') }}">Add</x-button-add>
-                        @endif
+                        <x-button-import href="{{ admin_url('company/import') }}">
+                        </x-button-import>
 
                     </div>
 
@@ -140,11 +139,11 @@
 
                     },
                     error: function(xhr, error, code) {
-                            if (xhr.status === 419) {
-                                alert('Session has expired. You will be redirected to the login page.');
-                                window.location.href = "{{ url('') }}"; // Redirect to login page
-                            }
+                        if (xhr.status === 419) {
+                            alert('Session has expired. You will be redirected to the login page.');
+                            window.location.href = "{{ url('') }}"; // Redirect to login page
                         }
+                    }
                 },
                 columns: [{
                         data: 'DT_RowIndex',

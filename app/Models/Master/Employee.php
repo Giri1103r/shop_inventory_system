@@ -59,8 +59,8 @@ class Employee extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_employee.*', 'company_management.company_name', 'masters_department.department_name', 'masters_unit.unit_name');
-        $query = $query->leftJoin('company_management', 'masters_employee.company', '=', 'company_management.id');
+        $query = $this->select('masters_employee.*', 'master_company.company_name', 'masters_department.department_name', 'masters_unit.unit_name');
+        $query = $query->leftJoin('master_company', 'masters_employee.company', '=', 'master_company.id');
         $query = $query->leftJoin('masters_department', 'masters_employee.department', '=', 'masters_department.id');
         $query = $query->leftJoin('masters_unit', 'masters_employee.unit', '=', 'masters_unit.id');
 
@@ -331,8 +331,8 @@ class Employee extends Model
         $request = request();
 
         $search = '';
-        $query = $this->select('masters_employee.*', 'company_management.company_name', 'masters_department.department_name', 'masters_unit.unit_name');
-        $query = $query->leftJoin('company_management', 'masters_employee.company', '=', 'company_management.id');
+        $query = $this->select('masters_employee.*', 'master_company.company_name', 'masters_department.department_name', 'masters_unit.unit_name');
+        $query = $query->leftJoin('master_company', 'masters_employee.company', '=', 'master_company.id');
         $query = $query->leftJoin('masters_department', 'masters_employee.department', '=', 'masters_department.id');
         $query = $query->leftJoin('masters_unit', 'masters_employee.unit', '=', 'masters_unit.id');
         $query = $query->where('masters_employee.status', 1);
@@ -387,8 +387,8 @@ class Employee extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select('masters_employee.*', 'company_management.company_name', 'masters_department.department_name', 'masters_unit.unit_name', 'template_user_role.role_name')
-            ->leftJoin('company_management', 'masters_employee.company', '=', 'company_management.id')
+        $data = $this->select('masters_employee.*', 'master_company.company_name', 'masters_department.department_name', 'masters_unit.unit_name', 'template_user_role.role_name')
+            ->leftJoin('master_company', 'masters_employee.company', '=', 'master_company.id')
             ->leftJoin('masters_department', 'masters_employee.department', '=', 'masters_department.id')
             ->leftJoin('masters_unit', 'masters_employee.unit', '=', 'masters_unit.id')
             ->leftJoin('template_user_role', 'masters_employee.user_role', '=', 'template_user_role.id')

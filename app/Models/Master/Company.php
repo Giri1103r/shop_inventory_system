@@ -15,7 +15,7 @@ class Company extends Model
     use  HasFactory;
 
 
-    protected $table = 'company_management';
+    protected $table = 'master_company';
     protected $primaryKey = 'id';
 
     protected $fillable = [
@@ -42,7 +42,7 @@ class Company extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('company_management.*');
+        $query = $this->select('master_company.*');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -162,7 +162,7 @@ class Company extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('company_management.*');
+        $query = $this->select('master_company.*');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -190,9 +190,9 @@ class Company extends Model
     {
 
         $data = $this->select(
-            'company_management.*'
+            'master_company.*'
         )
-            ->where('company_management.id', $id)
+            ->where('master_company.id', $id)
             ->first();
 
         return $data;
@@ -214,7 +214,7 @@ class Company extends Model
 
     protected static function booted()
     {
-        static::addGlobalScope(new TrashScope('company_management'));
+        static::addGlobalScope(new TrashScope('master_company'));
 
         static::created(function ($model) {
 

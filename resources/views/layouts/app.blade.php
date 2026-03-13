@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title') | KARAM</title>
 
-    <link rel="shortcut icon" href="{{ url('public/assets/images/logo-dark.png') }}">
+    <link rel="shortcut icon" href="{{ url('public/assets/images/logo.png') }}">
     <link rel="manifest" href="{{ url('manifest') }}">
 
     <!-- App css -->
@@ -34,7 +34,7 @@
                 <div class="col-md-8 col-lg-6 col-xl-4">
                     <div class="text-center">
                         <a href="{{ url('/') }}">
-                            <img src="{{ url('public/assets/images/logo-dark.png') }}" alt="logo" class="mx-auto">
+                            <img src="{{ url('public/assets/images/logo.png') }}" alt="logo" class="mx-auto">
                         </a>
                         <p class="text-muted mt-2 mb-4"></p>
                     </div>

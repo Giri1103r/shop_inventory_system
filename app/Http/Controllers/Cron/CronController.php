@@ -5,44 +5,21 @@ namespace App\Http\Controllers\Cron;
 use Illuminate\Http\Request;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\OhcManagement\MedicineReceivingController;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Session;
-use App\Mail\ContractExpireEmail;
-use App\Mail\ContractExpireListEmail;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
-
 use Carbon\Carbon;
 use App\Models\Master\Worktemp;
 use App\Models\Master\EmployeeTemp;
-
 use App\Models\User;
 use App\Models\Master\Work;
 use App\Models\Master\Employee;
-use App\Models\Master\PpeStockinventory;
-use App\Models\Permit\SafetyPermit;
-use App\Models\Master\PpeExemption;
-use App\Mail\EmployeeRegisterEmail;
-use App\Mail\Ohc\MedicineRequestEmail;
-use App\Mail\Ohc\MedicineStockEmail;
-use App\Mail\Ohc\MedicineStockRequestEmail;
-use App\Mail\PermitExpiryEmail;
-use App\Mail\SafetyPermitEmail;
-use App\Models\Inspection\GembaWalk\GembaWalk;
-use App\Models\Inspection\GembaWalk\GembaWalkStatusLog;
 use App\Models\Master\Company;
-use App\Models\Master\PpeTypeMaster;
-use App\Models\OhcManagement\Master\Medicine;
-use App\Models\OhcManagement\MedicineReceiving;
-use App\Models\OhcManagement\MedicineStock;
-use App\Models\OhcManagement\Report\Inventory;
-use App\Models\Permit\Statuslog;
-use App\Models\WorkerCompanyDetails;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 
@@ -55,33 +32,26 @@ class CronController extends Controller
     private $employee;
     private $company;
     private $user;
-    private $ppestock;
-    private $ppeexemption;
-    private $safetypermit;
-    private $statuslog;
-    private $ppetypemaster;
-    private $medicine;
-    private $medicine_stock;
-    private $medicine_receiving;
-    private $worker_details;
+ 
+
+ 
+
+   
+    
+
+    
+
 
 
     public function __construct()
     {
-        $this->safetypermit = new SafetyPermit();
+      
         $this->worktemp = new Worktemp();
         $this->emp_temp = new EmployeeTemp();
         $this->work = new Work();
         $this->employee = new Employee();
         $this->user = new User();
-        $this->ppestock = new PpeStockinventory();
-        $this->statuslog = new Statuslog();
-        $this->ppeexemption = new PpeExemption();
-        $this->ppetypemaster = new PpeTypeMaster();
-        $this->medicine = new Medicine();
-        $this->medicine_stock = new MedicineStock();
-        $this->medicine_receiving = new MedicineReceiving();
-        $this->worker_details = new WorkerCompanyDetails();
+  
         $this->company = new Company();
     }
     public function queueHigh()
@@ -649,421 +619,12 @@ class CronController extends Controller
     }
 
 
-    public function storeItem()
-    {
-        try {
-            $itemcodes = $this->ppetypemaster->getppetypemaster();
 
-            foreach ($itemcodes as $itemCode) {
-                $apiUrl = "https://vmsapi.karam.in/emp.asmx/GetPPEInventory?TokenId=123&Orgid=86&Item={$itemCode}";
 
-                $response = Http::get($apiUrl);
 
-                if ($response->successful()) {
-                    $data = $response->json();
 
-                    if (!empty($data)) {
-                        foreach ($data as $item) {
-                            try {
-                                $this->ppestock->store($item);
-                            } catch (\Exception $e) {
-                                Log::error('Failed to store item: ', [
-                                    'item' => $item,
-                                    'error' => $e->getMessage()
-                                ]);
-                            }
-                        }
-                    }
-                } else {
-                    return response()->json([
-                        'message' => 'Failed to fetch data from API.',
-                        'status' => $response->status(),
-                    ]);
-                }
-            }
 
-            return response()->json(['message' => 'Data saved successfully.']);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json([
-                'message' => 'An error occurred.',
-                'error' => $ex->getMessage(),
-            ]);
-        }
-    }
-
-
-    public function stockrequest()
-    {
-        try {
-            $medicinestock = Inventory::whereColumn('balance', '<', 'threshold_limit')
-                ->where('status', 1)
-                ->where('unit_id', 1)
-                ->get();
-
-            $ids = $medicinestock->pluck('medicine_id')->toArray();
-
-
-            $receivedMedicineIds = MedicineReceiving::whereIn('medicine_id', $ids)->orderByDesc('id')->pluck('medicine_id')->toArray();
-            $filteredIds = array_diff($ids, $receivedMedicineIds);
-
-            $mailsubject = 'Medicine Stock Request';
-            $user_role = ROLE_PARAMEDICS;
-            $users = User::whereRaw('FIND_IN_SET(' . $user_role . ', role)')->get();
-
-            if ($users->isNotEmpty() && !empty($filteredIds)) {
-                foreach ($users as $user) {
-                    $email_id = $user->email;
-
-                    if (!empty($email_id)) {
-                        foreach ($filteredIds as $medicineId) {
-                            $medicinedetails = $this->medicine->selectone($medicineId);
-                            $dataArray = Inventory::where('unit_id', 1)->where('medicine_id', $medicineId)->first();
-
-                            if ($dataArray) {
-                                $data = $dataArray->toArray();
-                                $details  = $medicinedetails->toArray();
-
-                                $details['name'] = $user->name;
-                                $details['email_id'] =  $email_id;
-                                $details['mail_subject'] = $mailsubject;
-
-                                Mail::to($details['email_id'])->queue(new MedicineStockEmail($details, $data));
-                            }
-                        }
-                    }
-                }
-            }
-
-            $notificationData = array(
-                'notification_type' => 4,
-                'module_type' => 1,
-                'notification_message' => $mailsubject,
-                'mobile_notification' => json_encode(array(
-                    'title' => $mailsubject,
-                    'message' => 'Medicine has less than the Threshold Limit',
-                    'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                    'id' => $medicineId ?? null,
-                    'module' => 1,
-                )),
-                'web_link' => admin_url('ohc/inventory-tabular-view/list'),
-                'assigned_user' => array_to_string([$user->id]),
-                'created_by' => Auth::id(),
-            );
-
-            notificationSave($notificationData);
-            return response()->json(['message' => 'Request sent successfully.']);
-        } catch (Exception $ex) {
-            report($ex);
-            return response()->json([
-                'message' => 'An error occurred.',
-                'error' => $ex->getMessage(),
-            ]);
-        }
-    }
-
-
-    public function stockupdate()
-    {
-        try {
-            $eighthoursAhead = Carbon::now()->addHour(8);
-            $data = MedicineReceiving::where('approve_status', STATUS_OHC_OPEN)
-                ->where('status', 1)
-                ->where('cron_time', '<', $eighthoursAhead->toTimeString())
-                ->get();
-
-
-            if ($data->isEmpty()) {
-                return response()->json(['message' => 'No pending stock updates.']);
-            }
-
-            $ehsofficer = $this->user->findEhsofficer();
-            $ehsEmail = $ehsofficer->pluck('email')->toArray();
-            $EhsId = $this->user->assigneduser($ehsofficer);
-
-            $ehshead = $this->user->findEhsHead();
-            $ehsHeadEmail = $ehshead->pluck('email')->toArray();
-            $EhsHeadId = $ehshead->pluck('id')->toArray();
-
-            $message = 'Stock Update for the Medicine';
-
-            foreach ($data as $medicine) {
-                $medicineDetails = $this->medicine_receiving->SelectOne($medicine->id);
-
-                $crontime = $this->medicine_receiving->update(['cron_time' => Carbon::now()]);
-                $medicineDetails['mail_subject'] = "Stock Update Alert";
-                $medicineDetails['medicine_name'] = getMedicinename($medicine->medicine_id);
-
-
-                $recipients = array_merge($ehsEmail, $ehsHeadEmail);
-                if (!empty($recipients)) {
-                    Mail::to($recipients)->queue(new MedicineStockRequestEmail($medicineDetails));
-                }
-
-
-
-                $notificationData = [
-                    'notification_type' => 4,
-                    'module_type' => 1,
-                    'notification_message' => $message,
-                    'mobile_notification' => json_encode([
-                        'title' => $message,
-                        'message' => "{$medicineDetails['medicine_name']} has not been updated. The status is still open.",
-                        'icon' => admin_url('public/assets/icons/occupational-therapy.png'),
-                        'module' => 1,
-                        'style' => 'font-size: 1rem;'
-                    ]),
-                    'web_link' => url('ohc/medicine-receiving-form/list'),
-                    'assigned_user' => array_to_string(array_merge($EhsId, $EhsHeadId)),
-                    'created_by' => 1,
-                ];
-
-                notificationSave($notificationData);
-            }
-
-            return response()->json(['message' => 'Emails and notifications sent successfully.']);
-        } catch (Exception $ex) {
-            return response()->json([
-                'message' => 'An error occurred.',
-                'error' => $ex->getMessage(),
-            ]);
-        }
-    }
-    public function prevoiusmonthstock()
-    {
-        try {
-
-            $yesterday = Carbon::yesterday();
-
-
-            $lastDayOfMonth = $yesterday->copy()->endOfMonth()->toDateString();
-
-            if ($yesterday->toDateString() === $lastDayOfMonth) {
-
-                Inventory::query()->update([
-                    'previous_month_total' => DB::raw('balance')
-                ]);
-            }
-
-            return response()->json(['message' => 'Previous month balance updated']);
-        } catch (Exception $ex) {
-            return response()->json([
-                'message' => 'An error occurred.',
-                'error' => $ex->getMessage(),
-            ]);
-        }
-    }
-
-    public function getMedicineName()
-    {
-        try {
-            $inventoryItems = Inventory::select('medicine_id')->get();
-
-            foreach ($inventoryItems as $item) {
-                $medicineName = Medicine::where('id', $item->medicine_id)
-                    ->value('medicine');
-
-                if ($medicineName) {
-                    Inventory::where('medicine_id', $item->medicine_id)
-                        ->update(['medicine_name' => $medicineName]);
-                }
-            }
-
-            return response()->json(['message' => 'Medicine names updated successfully.']);
-        } catch (Exception $ex) {
-            return response()->json([
-                'message' => 'An error occurred.',
-                'error'   => $ex->getMessage(),
-            ]);
-        }
-    }
-
-
-    public function permitExpiry()
-    {
-        try {
-            $currentTime = Carbon::now()->format('H:i:s');
-            $permits = SafetyPermit::where('trash', 'NO')
-                ->where('permit_status', '!=', STATUS_CLOSED)
-                ->where('permit_status', '!=', STATUS_PERMIT_EXPIRED)
-                ->whereDate('to_date', Carbon::today())
-                ->where('time_to', '<', $currentTime)
-                ->get();
-
-            // Log::info("Fetched permits for expiry", ['count' => $permits->count(), 'permit_ids' => $permits->pluck('id')]);
-
-            if ($permits->isNotEmpty()) {
-                foreach ($permits as $permit) {
-                    // Update permit status
-                    Log::info("Processing permit", ['permit_id' => $permit->id]);
-                    $permit->permit_status = STATUS_PERMIT_EXPIRED;
-                    $permit->save();
-
-                    // Add status log
-                    $insert_array = [
-                        'permit_type' => 1,
-                        'permit_id' => $permit->id,
-                        'from_status' => $permit->permit_status,
-                        'to_status' => STATUS_PERMIT_EXPIRED,
-                        'is_reject' => null,
-                        'remarks' => 'Permit Expired',
-                        'approved_by' => null,
-                    ];
-                    $this->statuslog->create($insert_array);
-
-                    // Fetch assigned user
-                    $assignedUser = User::where('id', $permit->created_by)
-                        ->select('name', 'email')
-                        ->first();
-
-                    if ($assignedUser && $assignedUser->email) {
-                        $mailsubject = 'Permit is Expired';
-                        $safetypermitdetails = $this->safetypermit->selectmail($permit->id);
-
-                        $permitrray = $safetypermitdetails->toArray();
-                        $permitrray['name'] = $assignedUser->name;
-                        $permitrray['email_id'] = $assignedUser->email;
-                        $permitrray['mail_subject'] = $mailsubject;
-
-                        Mail::to($permitrray['email_id'])->queue(new SafetyPermitEmail($permitrray));
-                        Log::info("Email queued", ['email' => $assignedUser->email, 'permit_id' => $permit->id]);
-                    }
-
-                    // Send notification
-                    $UserId = User::where('id', $permit->created_by)->pluck('id')->toArray();
-                    $notificationData = [
-                        'notification_type' => 3,
-                        'module_type' => 1,
-                        'notification_message' => $mailsubject,
-                        'mobile_notification' => json_encode([
-                            'title' => $mailsubject,
-                            'message' => 'Safety Permit is expired',
-                            'icon' => admin_url('public/assets/icons/permit_to_work.png'),
-                            'module' => 1,
-                        ]),
-                        'web_link' => admin_url('safetypermit/view/' . encryptId($permit->id)),
-                        'assigned_user' => array_to_string($UserId),
-                        'created_by' => 1,
-                    ];
-                    notificationSave($notificationData);
-                    Log::info("Notification sent", ['permit_id' => $permit->id]);
-                }
-
-                // Log::info('Expired permits updated successfully.', ['count' => $permits->count()]);
-                return response()->json(['message' => 'Expired permits updated successfully.']);
-            } else {
-                Log::info('No permits found for expiry update.');
-                return response()->json(['message' => 'No expired permits found.']);
-            }
-        } catch (Exception $ex) {
-            report($ex);
-            Log::error('Error in permitExpiry cron job.', ['error' => $ex->getMessage()]);
-            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
-        }
-    }
-
-    public function getVerifiedDate()
-    {
-        try {
-            $verifiedDate = GembaWalkStatusLog::where('to_status', 5)
-                ->where('status', 1)
-                ->get();
-
-            foreach ($verifiedDate as $date) {
-                GembaWalk::where('id', $date->gemba_walk_id)
-                    ->update([
-                        'approved_date' => $date->created_at
-                    ]);
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Approved dates updated successfully'
-            ]);
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Error occurred while updating approved dates',
-                'error'   => $e->getMessage(),
-                'line'    => $e->getLine(),
-                'file'    => $e->getFile()
-            ], 500);
-        }
-    }
-
-
-
-    public function permitClose()
-    {
-        try {
-            // Log::info('PermitClose function started.');
-
-            $currentTime = Carbon::now();
-            $timeThirtyMinutesAhead = Carbon::now()->addMinutes(30);
-
-            $permits = SafetyPermit::where('trash', 'NO')
-                ->where('permit_status', '!=', STATUS_CLOSED)
-                ->where('permit_status', '!=', STATUS_EHS_APPROVE_PENDING)
-                ->whereDate('date', Carbon::today())
-                ->whereTime('time_to', '>=', $currentTime->toTimeString())
-                ->whereTime('time_to', '<=', $timeThirtyMinutesAhead->toTimeString())
-                ->get();
-
-            // Log::info('Fetched permits: ', ['count' => $permits->count()]);
-
-            $mailsubject = 'Permit is going to expire in 30 minutes';
-
-            foreach ($permits as $permit) {
-                $assignedUser = User::where('id', $permit->created_by)
-                    ->select('name', 'email')
-                    ->first();
-
-                if ($assignedUser && $assignedUser->email) {
-                    $safetypermitdetails = $this->safetypermit->selectmail($permit->id);
-                    $extensionLink = url('safetypermit/permitExtension/' . encryptId($permit->id));
-
-                    $permitrray = $safetypermitdetails->toArray();
-
-                    $permitrray['name'] = $assignedUser->name;
-                    $permitrray['email_id'] = $assignedUser->email;
-                    $permitrray['mail_subject'] = $mailsubject;
-                    $permitrray['extension_link'] = $extensionLink;
-
-                    Mail::to($permitrray['email_id'])->queue(new PermitExpiryEmail($permitrray));
-
-                    $UserId = User::where('id', $permit->created_by)->pluck('id')->toArray();
-
-                    $notificationData = array(
-                        'notification_type' => 3,
-                        'module_type' => 1,
-                        'notification_message' => $mailsubject,
-                        'mobile_notification' => json_encode(array(
-                            'title' => $mailsubject,
-                            'message' => 'Permit is going to expire in 30 minutes',
-                            'icon' => admin_url('public/assets/icons/permit_to_work.png'),
-                            'module' => 1,
-                        )),
-                        'web_link' =>  admin_url('safetypermit/view/' . encryptId($permit->id)),
-                        'assigned_user' => array_to_string($UserId),
-                        'created_by' => 1,
-                    );
-                    notificationSave($notificationData);
-
-                    // Log::info("Permit expiry email sent.", [
-                    //     'email' => $assignedUser->email,
-                    //     'permit_id' => $permit->permit_id,
-                    // ]);
-                } else {
-                    Log::warning("No user or email found for permit.", ['permit_id' => $permit->permit_id]);
-                }
-            }
-        } catch (Exception $ex) {
-
-            report($ex);
-            Log::error('Error in permitClose cron job.', ['error' => $ex->getMessage()]);
-            return response()->json(['message' => 'An error occurred.', 'error' => $ex->getMessage()]);
-        }
-    }
+  
 
     public function queueNominationProcessImport()
     {

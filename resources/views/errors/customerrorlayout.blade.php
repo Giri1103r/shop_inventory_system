@@ -158,7 +158,7 @@
 <body>
     <div class="container">
         <div class="message">
-            <img id="dark-logo" src="{{ public_image('logo-dark.png') }}" alt="Logo">
+            <img id="dark-logo" src="{{ public_image('logo.png') }}" alt="Logo">
             <div class="code" style="margin-top:-12px;">
                 @yield('code')
             </div>

@@ -11,9 +11,9 @@
         "guzzlehttp/guzzle": "^7.9",
         "kitloong/laravel-migrations-generator": "^7.0",
         "kreait/firebase-php": "^7.15",
-        "kreait/laravel-firebase": "^5.9",
+        "kreait/laravel-firebase": "6.0",
         "ladumor/laravel-pwa": "^0.0.5",
-        "laravel/framework": "^11.9",
+        "laravel/framework": "^12.8",
         "laravel/passport": "^12.4",
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.5",
@@ -35,7 +35,7 @@
         "spatie/laravel-failed-job-monitor": "^4.3",
         "spatie/laravel-permission": "*",
         "spatie/simple-excel": "^3.7",
-        "yajra/laravel-datatables-oracle": "^11.1"
+        "yajra/laravel-datatables-oracle": "^12.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

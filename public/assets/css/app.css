@@ -75,6 +75,8 @@ File: Main Css File
   --ct-form-range-thumb-disabled-bg: #adb5bd;
   --ct-form-file-button-color: var(--ct-input-color);
   --ct-form-file-button-bg: #f7f7f7;
+ --ct-form-btn-add: #dc3545;
+--ct-form-btn-add-hover: #b02a37;
   --ct-form-file-button-hover-bg: #ebebeb;
   --ct-nav-link-disabled-color: #98a6ad;
   --ct-nav-tabs-border-color: #dee2e6;
@@ -185,8 +187,9 @@ File: Main Css File
   --ct-code-color: #ff8acc;
   --ct-kbd-color: #fff;
   --ct-kbd-bg: #323a46;
-  --ct-pre-color: ;
-  --ct-bg-leftbar: #fff;
+  --ct-pre-color:#008274 ;
+  --ct-bg-leftbar: #2C3E50;
+  --ct-leftbar-color: #ffffff;
   --ct-bg-leftbar-dark: #343a40;
   --ct-bg-leftbar-brand: #4a81d4;
   --ct-bg-leftbar-gradient: #5b69bc;
@@ -197,7 +200,7 @@ File: Main Css File
   --ct-menu-item-active-color-dark: #fff;
   --ct-menu-item: #6e768e;
   --ct-menu-item-hover: #71b6f9;
-  --ct-menu-item-active: #71b6f9;
+  --ct-menu-item-active: #ffffff;
   --ct-menu-sub-item-active: #71b6f9;
   --ct-hori-menu-item-color: #6e7488;
   --ct-rightbar-bg: #fff;
@@ -205,7 +208,7 @@ File: Main Css File
   --ct-bg-topbar-dark: #38414a;
   --ct-box-shadow-condensed: 3px 5px 10px 0 rgba(154, 161, 171, .2);
   --ct-page-title-color: #f8f9fa;
-  --ct-topbar-search-bg: #e2e6ea;
+  --ct-topbar-search-bg: #197bdd;
   --ct-topbar-search-bg-dark: #414b56;
   --ct-footer-bg: #e3e9ed;
   --ct-footer-color: #6c757d;
@@ -13902,6 +13905,10 @@ body {
   content: "\f0141";
 }
 
+[dir=rtl] .button-menu-mobile .header-link .header-link-icon {
+    transform: rotate(180deg);
+}
+
 li>a[aria-expanded=true]>span.menu-arrow {
   transform: rotate(90deg);
 }
@@ -14218,7 +14225,7 @@ body[data-leftbar-color=dark] .left-side-menu #sidebar-menu .menuitem-active>a {
 }
 
 body[data-leftbar-color=dark] .left-side-menu #sidebar-menu .menuitem-active .active {
-  color: var(--ct-menu-item-active);
+  color: white;
 }
 
 body[data-leftbar-color=dark] .left-side-menu .nav-second-level li a,

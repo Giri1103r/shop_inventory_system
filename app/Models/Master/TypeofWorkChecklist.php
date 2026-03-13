@@ -658,7 +658,7 @@ class TypeofWorkChecklist extends Model
         }
         if ($request->has('status') && $request->status) {
 
-            $query = $query->where('company_management.status', decryptId($request->status));
+            $query = $query->where('master_company.status', decryptId($request->status));
         }
 
         return  $query->get();

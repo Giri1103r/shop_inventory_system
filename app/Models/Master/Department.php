@@ -41,8 +41,8 @@ class Department extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_department.*', 'company_management.company_name',  'masters_location.location_name', 'masters_unit.unit_name');
-        $query = $query->leftJoin('company_management', 'masters_department.company_id', '=', 'company_management.id');
+        $query = $this->select('masters_department.*', 'master_company.company_name',  'masters_location.location_name', 'masters_unit.unit_name');
+        $query = $query->leftJoin('master_company', 'masters_department.company_id', '=', 'master_company.id');
         $query = $query->leftJoin('masters_location', 'masters_department.location_id', '=', 'masters_location.id');
         $query = $query->leftJoin('masters_unit', 'masters_department.unit_id', '=', 'masters_unit.id');
         // dd($query);
@@ -56,7 +56,7 @@ class Department extends Model
                 $query
                     ->orWhere('department_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('department_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('master_company.company_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
             });
@@ -247,8 +247,8 @@ class Department extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_department.*', 'company_management.company_name',  'masters_location.location_name', 'masters_unit.unit_name');
-        $query = $query->leftJoin('company_management', 'masters_department.company_id', '=', 'company_management.id');
+        $query = $this->select('masters_department.*', 'master_company.company_name',  'masters_location.location_name', 'masters_unit.unit_name');
+        $query = $query->leftJoin('master_company', 'masters_department.company_id', '=', 'master_company.id');
         $query = $query->leftJoin('masters_location', 'masters_department.location_id', '=', 'masters_location.id');
         $query = $query->leftJoin('masters_unit', 'masters_department.unit_id', '=', 'masters_unit.id');
         if ($request->search != null || $request->search != '') {
@@ -258,7 +258,7 @@ class Department extends Model
                 $query
                     ->orWhere('department_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('department_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('master_company.company_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%');
             });
@@ -289,7 +289,7 @@ class Department extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select('masters_department.*', 'company_management.company_name',  'masters_location.location_name', 'masters_unit.unit_name')->leftJoin('company_management', 'masters_department.company_id', '=', 'company_management.id')->leftJoin('masters_location', 'masters_department.location_id', '=', 'masters_location.id')->leftJoin('masters_unit', 'masters_department.unit_id', '=', 'masters_unit.id')
+        $data = $this->select('masters_department.*', 'master_company.company_name',  'masters_location.location_name', 'masters_unit.unit_name')->leftJoin('master_company', 'masters_department.company_id', '=', 'master_company.id')->leftJoin('masters_location', 'masters_department.location_id', '=', 'masters_location.id')->leftJoin('masters_unit', 'masters_department.unit_id', '=', 'masters_unit.id')
             ->where('masters_department.id', $id)
             ->first();
 

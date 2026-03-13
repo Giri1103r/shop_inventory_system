@@ -20,6 +20,11 @@ class UserPermission extends Model
     protected $fillable = [
         'role_id',
         'menu_id',
+        'add',
+        'edit',
+        'delete',
+        'view',
+        'export',
         'role_permissions',
         'status',
         'trash',
@@ -38,7 +43,7 @@ class UserPermission extends Model
     // protected $casts = [
     //     'role_permissions' => 'array',
     // ];
-    
+
 
 
     protected static function booted()

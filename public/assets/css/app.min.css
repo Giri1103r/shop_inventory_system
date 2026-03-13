@@ -2,6 +2,7 @@
 
 :root {
     --ct-link-color: #71b6f9;
+    --ct-primary-color: #272c66;
     --ct-link-hover-color: #609bd4;
     --ct-border-color: #dee2e6;
     --ct-box-shadow: 0px 0px 35px 0px rgba(154, 161, 171, 0.15);
@@ -13746,7 +13747,9 @@ body {
 }
 
 #sidebar-menu>ul>li>a>span {
-    vertical-align: middle
+    vertical-align: middle;
+    font-style: 15px;
+    font-weight: bold;
 }
 
 #sidebar-menu>ul>li>a i {
@@ -13917,7 +13920,8 @@ body[data-leftbar-size=condensed] .left-side-menu #sidebar-menu>ul>li>a:hover {
 }
 
 body[data-leftbar-size=condensed] .left-side-menu #sidebar-menu>ul>li>a i {
-    font-size: 1rem;
+    font-size: 10rem;
+    font-weight: 100px;
     margin-right: 20px;
     margin-left: 5px
 }
@@ -14477,7 +14481,7 @@ body[data-layout-color=dark] .user-pro-dropdown {
 }
 
 .navbar-custom {
-    background-color: #e21e23;
+    background-color: #2F8F8B;
     padding: 0 calc(1.5rem / 2) 0 0;
     position: fixed;
     left: 0;

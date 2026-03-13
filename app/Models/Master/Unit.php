@@ -40,8 +40,8 @@ class Unit extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_unit.*', 'company_management.company_name',  'masters_location.location_name');
-        $query = $query->leftJoin('company_management', 'masters_unit.company_id', '=', 'company_management.id');
+        $query = $this->select('masters_unit.*', 'master_company.company_name',  'masters_location.location_name');
+        $query = $query->leftJoin('master_company', 'masters_unit.company_id', '=', 'master_company.id');
         $query = $query->leftJoin('masters_location', 'masters_unit.location_id', '=', 'masters_location.id');
         // dd($query);
         $org_total =  $query;
@@ -54,7 +54,7 @@ class Unit extends Model
                 $query
                     ->orWhere('unit_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('unit_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('master_company.company_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
             });
         }
@@ -170,8 +170,8 @@ class Unit extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_unit.*', 'company_management.company_name',  'masters_location.location_name');
-        $query = $query->leftJoin('company_management', 'masters_unit.company_id', '=', 'company_management.id');
+        $query = $this->select('masters_unit.*', 'master_company.company_name',  'masters_location.location_name');
+        $query = $query->leftJoin('master_company', 'masters_unit.company_id', '=', 'master_company.id');
         $query = $query->leftJoin('masters_location', 'masters_unit.location_id', '=', 'masters_location.id');
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
@@ -180,7 +180,7 @@ class Unit extends Model
                 $query
                     ->orWhere('unit_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('unit_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('master_company.company_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%');
             });
         }
@@ -210,7 +210,7 @@ class Unit extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select('masters_unit.*', 'company_management.company_name',  'masters_location.location_name')->leftJoin('company_management', 'masters_unit.company_id', '=', 'company_management.id')->leftJoin('masters_location', 'masters_unit.location_id', '=', 'masters_location.id')
+        $data = $this->select('masters_unit.*', 'master_company.company_name',  'masters_location.location_name')->leftJoin('master_company', 'masters_unit.company_id', '=', 'master_company.id')->leftJoin('masters_location', 'masters_unit.location_id', '=', 'masters_location.id')
             ->where('masters_unit.id', $id)
             ->first();
 
@@ -243,7 +243,7 @@ class Unit extends Model
         return $list;
     }
 
-    
+
 
     public function unitajaxList($unit_id, $companyId = '')
     {

@@ -39,8 +39,8 @@ class Location extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_location.*', 'company_management.company_name');
-        $query = $query->leftJoin('company_management', 'masters_location.company_id', '=', 'company_management.id');
+        $query = $this->select('masters_location.*', 'master_company.company_name');
+        $query = $query->leftJoin('master_company', 'masters_location.company_id', '=', 'master_company.id');
         // dd($query);
         $org_total =  $query;
         $org_total_counts = $org_total->count();
@@ -52,7 +52,7 @@ class Location extends Model
                 $query
                     ->orWhere('location_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('location_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('master_company.company_name', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('location_id') && $request->location_id) {
@@ -160,8 +160,8 @@ class Location extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_location.*', 'company_management.company_name');
-        $query = $query->leftJoin('company_management', 'masters_location.company_id', '=', 'company_management.id');
+        $query = $this->select('masters_location.*', 'master_company.company_name');
+        $query = $query->leftJoin('master_company', 'masters_location.company_id', '=', 'master_company.id');
 
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
@@ -170,7 +170,7 @@ class Location extends Model
                 $query
                     ->orWhere('location_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('location_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%');
+                    ->orWhere('master_company.company_name', 'LIKE', '%' . $search . '%');
             });
         }
         if ($request->has('location_id') && $request->location_id) {
@@ -195,7 +195,7 @@ class Location extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select('masters_location.*', 'company_management.company_name')->leftJoin('company_management', 'masters_location.company_id', '=', 'company_management.id')
+        $data = $this->select('masters_location.*', 'master_company.company_name')->leftJoin('master_company', 'masters_location.company_id', '=', 'master_company.id')
             ->where('masters_location.id', $id)
             ->first();
 

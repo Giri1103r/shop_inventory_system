@@ -56,8 +56,8 @@ class Work extends Model
     {
         $request = request();
         $search = '';
-        $query = $this->select('masters_work.*', 'company_management.company_name', 'masters_location.location_name', 'masters_department.department_name', 'masters_unit.unit_name');
-        $query = $query->leftJoin('company_management', 'masters_work.company', '=', 'company_management.id');
+        $query = $this->select('masters_work.*', 'master_company.company_name', 'masters_location.location_name', 'masters_department.department_name', 'masters_unit.unit_name');
+        $query = $query->leftJoin('master_company', 'masters_work.company', '=', 'master_company.id');
         $query = $query->leftJoin('masters_location', 'masters_work.location', '=', 'masters_location.id');
         $query = $query->leftJoin('masters_unit', 'masters_work.unit', '=', 'masters_unit.id');
         $query = $query->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id');
@@ -72,7 +72,7 @@ class Work extends Model
                 $query
                     ->orWhere('masters_work.emp_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_work.emp_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('master_company.company_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%');
@@ -152,11 +152,11 @@ class Work extends Model
     //     foreach ($chunks as $chunk) {
     //         foreach ($chunk as $item) {
 
-    //             // $companyExists = DB::table('company_management')->where('company_name', $item['company'])->first();
+    //             // $companyExists = DB::table('master_company')->where('company_name', $item['company'])->first();
     //             // $unitExists = DB::table('masters_unit')->where('unit_name', $item['unit'])->first();
     //             // $departmentExists = DB::table('masters_department')->where('department_name', $item['department'])->first();
 
-    //             $companyExists =DB::table('company_management')->where('company_name', $item['company'])->exists();
+    //             $companyExists =DB::table('master_company')->where('company_name', $item['company'])->exists();
     //             $unitExists =DB::table('masters_unit')->where('unit_name', $item['unit'])->exists();
     //             $departmentExists =DB::table('masters_department')->where('department_name', $item['department'])->exists();
 
@@ -226,7 +226,7 @@ class Work extends Model
             }
 
             // Step 1: Check company
-            $companyExists = DB::table('company_management')
+            $companyExists = DB::table('master_company')
                 ->where('short_name', $item['company'])
                 ->first();
 
@@ -406,8 +406,8 @@ class Work extends Model
         $request = request();
 
         $search = '';
-        $query = $this->select('masters_work.*', 'company_management.company_name', 'masters_location.location_name', 'masters_department.department_name', 'masters_unit.unit_name');
-        $query = $query->leftJoin('company_management', 'masters_work.company', '=', 'company_management.id');
+        $query = $this->select('masters_work.*', 'master_company.company_name', 'masters_location.location_name', 'masters_department.department_name', 'masters_unit.unit_name');
+        $query = $query->leftJoin('master_company', 'masters_work.company', '=', 'master_company.id');
         $query = $query->leftJoin('masters_unit', 'masters_work.unit', '=', 'masters_unit.id');
         $query = $query->leftJoin('masters_location', 'masters_work.location', '=', 'masters_location.id');
         $query = $query->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id');
@@ -420,7 +420,7 @@ class Work extends Model
                 $query
                     ->orWhere('masters_work.emp_id', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_work.emp_name', 'LIKE', '%' . $search . '%')
-                    ->orWhere('company_management.company_name', 'LIKE', '%' . $search . '%')
+                    ->orWhere('master_company.company_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_location.location_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_unit.unit_name', 'LIKE', '%' . $search . '%')
                     ->orWhere('masters_department.department_name', 'LIKE', '%' . $search . '%');
@@ -462,8 +462,8 @@ class Work extends Model
     public function selectOne($id)
     {
 
-        $data = $this->select('masters_work.*', 'company_management.company_name', 'masters_location.location_name', 'masters_department.department_name', 'masters_unit.unit_name')
-            ->leftJoin('company_management', 'masters_work.company', '=', 'company_management.id')
+        $data = $this->select('masters_work.*', 'master_company.company_name', 'masters_location.location_name', 'masters_department.department_name', 'masters_unit.unit_name')
+            ->leftJoin('master_company', 'masters_work.company', '=', 'master_company.id')
             ->leftJoin('masters_location', 'masters_work.location', '=', 'masters_location.id')
             ->leftJoin('masters_unit', 'masters_work.unit', '=', 'masters_unit.id')
             ->leftJoin('masters_department', 'masters_work.department', '=', 'masters_department.id')

@@ -7,9 +7,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title') | KARAM</title>
+    <title>@yield('title') | NeoEHS Product</title>
 
-    <link rel="shortcut icon" href="{{ url('public/assets/images/logo-dark.png') }}">
+    <link rel="shortcut icon" href="{{ url('public/assets/images/logo2.png') }}">
 
     <link href="{{ url('public/assets/css/roboto-fontface.css') }}" rel="stylesheet" type="text/css" />
     <link href="{{ url('public/assets/css/karla.css') }}" rel="stylesheet" type="text/css" />
@@ -46,22 +46,24 @@
     @stack('styless')
     <style>
         :root {
-            --dt-header-background-color: #b8cde2 !important;
-            --dt-header-text-color: #3375b4 !important;
+            --dt-header-background-color: #2b3d4f !important;
+            --dt-header-text-color: #ffffff !important;
         }
 
         body.dark-skin {
-            --dt-header-background-color: #1a233a !important;
+            --dt-header-background-color: #2b3d4f !important;
             --dt-header-text-color: #a5b2cb !important;
         }
 
-        .select2-container--default .select2-selection--single {
-            border: 1px solid #d9d9d9;
-            border-radius: 5px;
-            padding: 1px 5px;
+        .select2-container {
+            width: 100% !important;
         }
 
         .select2-container--default .select2-selection--single {
+            width: 100%;
+            border: 1px solid #d9d9d9;
+            border-radius: 5px;
+            padding: 1px 5px;
             height: 35px;
             border-color: #688cb4;
         }
@@ -134,7 +136,6 @@
 
         table.dataTable.dtr-inline.collapsed>tbody>tr.parent>td:first-child:before,
         table.dataTable.dtr-inline.collapsed>tbody>tr.parent>th:first-child:before {
-
             background-color: var(--dt-header-background-color);
         }
 
@@ -160,13 +161,11 @@
             color: red;
         }
 
-
         /* Tooltip styling */
+
         .fc-event:hover .custom-tooltip {
             display: block;
         }
-
-
 
         .custom-tooltip {
             display: none;
@@ -187,53 +186,96 @@
             background-color: #fff
         }
 
+        body.sidebar-mini .logo-lg {
+            display: none;
+        }
+
+        body.sidebar-mini .logo-sm {
+            display: block;
+            text-align: center;
+        }
+
         body[data-leftbar-color=dark] .left-side-menu {
-            background-color: #fff8f8 !important;
-            color: #000 !important;
+            background-color: var(--ct-bg-leftbar);
+            color: var(--ct-leftbar-color);
             margin-bottom: 3px;
-            padding: 10px;
+            width: 240px;
+            transition: all .3s;
+            padding: 20px;
         }
 
         body[data-leftbar-color=dark] .left-side-menu #sidebar-menu>ul>li>a:hover,
         body[data-leftbar-color=dark] .left-side-menu #sidebar-menu>ul>li>a:focus,
         body[data-leftbar-color=dark] .left-side-menu #sidebar-menu>ul>li>a:active {
-            color: #fff;
-            background-color: #000;
+            color: #ffff;
+            background-color: #2F8F8B;
             border-radius: 8px;
-
-
         }
 
-
-
         .logo-box {
-
             width: 240px;
             float: left;
             transition: all 0.1s ease-out;
         }
 
-
         body[data-leftbar-color=dark] .left-side-menu .nav-second-level li a:focus,
         body[data-leftbar-color=dark] .left-side-menu .nav-second-level li a:hover,
         body[data-leftbar-color=dark] .left-side-menu .nav-thrid-level li a:focus,
         body[data-leftbar-color=dark] .left-side-menu .nav-thrid-level li a:hover {
-            background-color: #000;
+            background-color: #2F8F8B;
             color: #fff;
+            font-weight: 50px;
             border-radius: 8px;
             margin-top: 2px;
-
         }
 
         body[data-leftbar-color=dark] .left-side-menu .nav-second-level li a.active,
         body[data-leftbar-color=dark] .left-side-menu .nav-second-level li a.activ,
         body[data-leftbar-color=dark] .left-side-menu .nav-thrid-level li a.activ,
         body[data-leftbar-color=dark] .left-side-menu .nav-thrid-level li a.active {
-            background-color: #000;
+            background-color: #2F8F8B;
             color: #fff;
+            font-size: 15px;
+            font-weight: bold;
             border-radius: 8px;
             margin-top: 2px;
+        }
 
+
+        /* ================= Sidebar Collapse Feature ================= */
+
+        body.sidebar-mini .left-side-menu {
+            width: 70px !important;
+            padding: 20px 5px;
+        }
+
+        body.sidebar-mini .logo-box {
+            width: 70px !important;
+        }
+
+        body.sidebar-mini #sidebar-menu ul li a span {
+            display: none;
+        }
+
+        body.sidebar-mini #sidebar-menu ul li a {
+            text-align: center;
+        }
+
+        body.sidebar-mini #sidebar-menu ul li a i {
+            margin-right: 0;
+            font-size: 18px;
+        }
+
+        body.sidebar-mini .content-page {
+            margin-left: 70px !important;
+        }
+
+        body.sidebar-mini .menu-arrow {
+            display: none;
+        }
+
+        body.sidebar-mini .nav-second-level {
+            display: none !important;
         }
     </style>
     @stack('style')
@@ -647,30 +689,34 @@
          * Menu Active dynamically
          */
 
-    $(function () {
-    // Current page URL from Blade
-    let baseurl = "@yield('pageurl')";
-
-    if ($("#side-menu").length) {
-
-        $('#side-menu .collapse').on('show.bs.collapse', function (event) {
-            let parentCollapse = $(event.target).parents('.collapse.show');
-            $('#side-menu .collapse.show').not(parentCollapse).collapse('hide');
+        $('.button-menu-mobile').on('click', function() {
+            $('body').toggleClass('sidebar-mini');
         });
 
-        $("#side-menu a").each(function () {
+        $(function() {
+            // Current page URL from Blade
+            let baseurl = "@yield('pageurl')";
 
-            if (this.href === baseurl) {
-              
-                $(this).addClass("active");
+            if ($("#side-menu").length) {
+
+                $('#side-menu .collapse').on('show.bs.collapse', function(event) {
+                    let parentCollapse = $(event.target).parents('.collapse.show');
+                    $('#side-menu .collapse.show').not(parentCollapse).collapse('hide');
+                });
+
+                $("#side-menu a").each(function() {
+
+                    if (this.href === baseurl) {
+
+                        $(this).addClass("active");
 
 
-                $(this).parents('li').addClass("menuitem-active");
-                $(this).parents('.collapse').addClass("show");
+                        $(this).parents('li').addClass("menuitem-active");
+                        $(this).parents('.collapse').addClass("show");
+                    }
+                });
             }
         });
-    }
-});
 
         /*
          * Theme mode change
