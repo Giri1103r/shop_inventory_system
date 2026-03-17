@@ -76,10 +76,10 @@ class DepartmentController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             if (CheckUserPermission('view')) {
-                                $btn = '<a href="' . admin_url('master/department/listview/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                                $btn = '<a href="' . admin_url('master/department/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             }
                             if (CheckUserPermission('edit')) {
-                                $btn .= '<a href="' . admin_url('master/department/listedit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                                $btn .= '<a href="' . admin_url('master/department/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             }
                             // if (CheckUserPermission('delete')) {
                             //     $btn .= '<a href="javascript:void(0);"  data-id="' . encryptId($row->id) . '"  data-login_id="' . encryptId($row->login_id) . '" class="recordDelete" title="Delete"><i class="fa-solid fa-trash text-danger" ></i></i></a> ';
@@ -120,8 +120,8 @@ class DepartmentController extends Controller
             return view('admin.master.department.add', $data);
         } catch (Exception $ex) {
             report($ex);
-            Session::flash('error', __('common.error_msg'));
-            return redirect(admin_url('master/department/listlist'));
+                Session::flash('error', __('common.error_msg'));
+            return redirect(admin_url('master/department/list'));
         }
     }
 
@@ -155,13 +155,13 @@ class DepartmentController extends Controller
             DB::commit();
 
             Session::flash('success', 'Your data has been created successfully!');
-            return redirect(admin_url('master/department/listlist'));
+            return redirect(admin_url('master/department/list'));
         } catch (Exception $ex) {
 
             report($ex);
             DB::rollBack();
             Session::flash('error', __('common.error_msg'));
-            return redirect(admin_url('master/department/listlist'));
+            return redirect(admin_url('master/department/list'));
         }
     }
 
@@ -212,14 +212,14 @@ class DepartmentController extends Controller
 
             $id = decryptId($request->id);
             $rules = [
-                'department_id' => 'required',
+               
                 'company_id' => 'required',
                 'location_id' => 'required',
                 'unit_id' => 'required',
                 'department_name' => 'required',
             ];
             $messages = [
-                'department_id.required' => 'Please enter Department ID',
+
                 'company_id.required' => 'Please Select Company ',
                 'location_id.required' => 'Please Select Location ',
                 'unit_id.required' => 'Please Select Unit',
@@ -235,12 +235,12 @@ class DepartmentController extends Controller
             DB::commit();
 
             Session::flash('success', __('common.updated_msg'));
-            return redirect(admin_url('master/department/listlist'));
+            return redirect(admin_url('master/department/list'));
         } catch (Exception $ex) {
             report($ex);
             DB::rollBack();
             Session::flash('error', __('common.error_msg'));
-            return redirect(admin_url('master/department/listlist'));
+            return redirect(admin_url('master/department/list'));
         }
     }
 
@@ -330,7 +330,7 @@ class DepartmentController extends Controller
 
             report($ex);
             Session::flash('error', __('common.error_msg'));
-            return redirect(admin_url('master/department/listlist'));
+            return redirect(admin_url('master/department/list'));
         }
     }
 
@@ -389,7 +389,7 @@ class DepartmentController extends Controller
 
             report($ex);
             Session::flash('error', __('common.error_msg'));
-            return redirect(admin_url('master/department/listlist'));
+            return redirect(admin_url('master/department/list'));
         }
     }
     public function Import(Request $request)
@@ -467,11 +467,11 @@ class DepartmentController extends Controller
 
             Session::flash('success', __('common.file_upload_success_msg'));
 
-            return redirect(admin_url('master/department/listlist'));
+            return redirect(admin_url('master/department/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('success', __('common.file_upload_success_msg'));
-            return redirect(admin_url('master/department/listlist'));
+            return redirect(admin_url('master/department/list'));
         }
     }
     public function DownloadSample(Request $request)
