@@ -20,11 +20,6 @@ class UserPermission extends Model
     protected $fillable = [
         'role_id',
         'menu_id',
-        'add',
-        'edit',
-        'delete',
-        'view',
-        'export',
         'role_permissions',
         'status',
         'trash',

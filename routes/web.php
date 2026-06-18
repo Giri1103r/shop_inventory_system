@@ -1,23 +1,11 @@
 <?php
 
 
-use App\Models\KPI\HSCInputs;
-
 use Illuminate\Support\Facades\Route;
 
 use Illuminate\Support\Facades\Artisan;
 use App\Http\Controllers\Cron\CronController;
-
-use App\Http\Controllers\Admin\Master\UnitController;
-use App\Http\Controllers\Admin\Master\WorkController;
-
-
-use App\Http\Controllers\Admin\Master\CompanyController;
-
-use App\Http\Controllers\Admin\Master\EmployeeController;
-use App\Http\Controllers\Admin\Master\LocationController;
 use App\Http\Controllers\Admin\Master\WorkerLogController;
-use App\Http\Controllers\Admin\Master\DepartmentController;
 use App\Http\Controllers\Admin\Master\EmployeeLogController;
 
 
@@ -30,6 +18,14 @@ use App\Http\Controllers\Admin\Master\EmployeeLogController;
 use App\Http\Controllers\{SettingsController, LocalizationController, TestController};
 
 use App\Http\Controllers\Admin\{LoginController, NotificationController, AdminController, BlockedController};
+use App\Http\Controllers\Admin\Master\CategoryController;
+use App\Http\Controllers\Admin\Master\DepartmentController;
+use App\Http\Controllers\Admin\Master\ManufacturerController;
+use App\Http\Controllers\Admin\Master\MedicineController;
+use App\Http\Controllers\Admin\Master\SupplierController;
+use App\Http\Controllers\Admin\Master\TaxController;
+use App\Http\Controllers\Admin\Master\uomController;
+use App\Http\Controllers\Admin\Master\WarehouseController;
 use App\Http\Controllers\Master\{UserLogController, UserPermissionController, UploadLogController, UserController, UserRoleController};
 use App\Http\Controllers\PWAController;
 
@@ -118,77 +114,7 @@ Route::middleware(['securityheader'])->group(function () {
             Route::post('profile/password/update', [AdminController::class, 'changeProfilePassword']);
 
 
-            Route::group(['prefix' => 'dashboard/'], function () {
-                // card totals
 
-                Route::get('get-pperequest-total', [AdminController::class, 'getpperequest']);
-                Route::get('get-ppe-exemption-total', [AdminController::class, 'getExemption']);
-                Route::get('get-safety-permit-total', [AdminController::class, 'getSafetytotal']);
-                Route::get('get-training-schedule-total', [AdminController::class, 'getTrainingTotal']);
-
-                Route::get('get-audit-assessment-total', [AdminController::class, 'getAuditAssessmentTotal']);
-                Route::get('get-audit-analysis-total', [AdminController::class, 'getAuditAnanlysisTotal']);
-                Route::get('get-monthly-audit-total', [AdminController::class, 'getMonthlyTotal']);
-                Route::get('get-inter-audit-total', [AdminController::class, 'getInterTotal']);
-
-                Route::get('get-opd-total', [AdminController::class, 'getopdTotal']);
-                Route::get('get-first-aid-total', [AdminController::class, 'getFirstaidTotal']);
-                Route::get('get-minor-accident-total', [AdminController::class, 'getminorAccident']);
-                Route::get('get-major-accident-total', [AdminController::class, 'getmajorAccident']);
-
-                Route::get('get-near-miss-total', [AdminController::class, 'getNearmiss']);
-                Route::get('get-unsafe-act-total', [AdminController::class, 'getUnsafeTotal']);
-                Route::get('get-gemba-walk-total', [AdminController::class, 'getGembaWalk']);
-                Route::get('get-unsafe-condition-total', [AdminController::class, 'getUnsafeConditionTotal']);
-
-                Route::get('get-fire-incidence-total', [AdminController::class, 'getFireincidence']);
-                Route::get('get-fire-inspection-total', [AdminController::class, 'getFireinspection']);
-                Route::get('get-ohc-inspection-total', [AdminController::class, 'getOhcinspection']);
-                Route::get('get-safety-inspection-total', [AdminController::class, 'getSafetyinspection']);
-
-
-
-                Route::get('inspection-count', [AdminController::class, 'InspectionWiseCount']);
-                // PTW
-                Route::get('ptw-open-close', [AdminController::class, 'PTWActiveVsClose']);
-                Route::get('ptw-type-wise-count', [AdminController::class, 'PTWTypeWiseCount']);
-                Route::get('ptw-hold-violation', [AdminController::class, 'ptwholdviolation']);
-                Route::get('PTWAvgTimeChart', [AdminController::class, 'getPTWAvgTimeChart']);
-                Route::get('unitwiseptw', [AdminController::class, 'unitwiseptw']);
-                Route::get('monthwiseptw', [AdminController::class, 'monthwiseptw']);
-                // PPE Managment
-                Route::get('PPEIssuanceGroupWise', [AdminController::class, 'getPPEIssuanceGroupWise']);
-                Route::get('PPEAvailabilityChart', [AdminController::class, 'getPPEAvailabilityChart']);
-
-                // Incident management system
-                Route::get('total-incident', [AdminController::class, 'getTotalIncident']);
-                Route::get('heatmap-of-imsData', [AdminController::class, 'getHeatmapImsData']);
-                Route::get('incident-type-chart', [AdminController::class, 'getIncidentTypeChart']);
-                Route::get('TypeofIIRCount', [AdminController::class, 'getTypeofIIRCount']);
-                Route::get('accident-report-unit-wise', [AdminController::class, 'getAccidentReportUnitWiseCount']);
-                Route::get('injurypart', [AdminController::class, 'getInjurypart']);
-                Route::post('getbodycount', [AdminController::class, 'injurybodycount']);
-                Route::get('IIRTypeWiseUAUC', [AdminController::class, 'IIRTypeWiseUAUC']);
-                Route::get('uauc-static-report', [AdminController::class, 'uaucStaticReport']);
-                Route::get('near-miss-frequency', [AdminController::class, 'nearMissFrequency']);
-                Route::get('auditFindings', [AdminController::class, 'auditFindings']);
-                Route::get('IIRTypeWiseRCPA', [AdminController::class, 'IIRTypeWiseRCPA']);
-
-
-                // Inspection --> gemba walk
-                Route::get('gemba-walk-observation', [AdminController::class, 'gembaWalkObservation']);
-                // Training Management
-                Route::get('department', [AdminController::class, 'getDepartment']);
-                Route::get('training-open-close-total', [AdminController::class, 'getTrainingOpenClose']);
-                Route::get('training-hour-topic-wise', [AdminController::class, 'trainingTopicWise']);
-                Route::get('month-wise-training-count', [AdminController::class, 'getmonthwiseTraining']);
-                Route::get('trainingStatusCount', [AdminController::class, 'gettrainingStatusCount']);
-                // Route::get('dailyObservation', [AdminController::class, 'DailyObservationMonthCount']);
-            });
-
-            /**
-             * KPI
-             */
 
 
 
@@ -272,189 +198,183 @@ Route::middleware(['securityheader'])->group(function () {
             /**
              *  master
              */
-            Route::group(['prefix' => 'master/'], function () {
-
-                Route::controller(CompanyController::class)
-                    ->prefix('company')
-                    ->group(function () {
-
-                        Route::get('list', 'index');
-                        Route::post('list', 'index');
-
-                        Route::get('add', 'add');
-                        Route::post('add/submit', 'store');
-
-                        Route::get('edit/{id}', 'edit');
-                        Route::post('edit/submit', 'update');
-
-                        Route::get('view/{id}', 'view');
-
-                        Route::post('delete', 'delete');
-
-                        Route::get('export/excel', 'exportExcel');
-                        Route::get('export/pdf', 'exportPdf');
-
-                        Route::get('import', 'import');
-                        Route::post('import/submit', 'importSubmit');
-
-                        Route::post('status', 'statusChange');
-                        Route::post('unique', 'Uniquecheck');
-
-                        Route::get('sampledownload', 'DownloadSample');
-                    });
-                Route::controller(LocationController::class)
-                    ->prefix('location')
-                    ->group(function () {
-
-                        Route::get('list', 'index');
-                        Route::post('list', 'index');
-
-                        Route::get('add', 'add');
-                        Route::post('add/submit', 'store');
-
-                        Route::get('edit/{id}', 'edit');
-                        Route::post('edit/submit', 'update');
-
-                        Route::get('view/{id}', 'view');
-
-                        Route::post('delete', 'delete');
-
-                        Route::get('export/excel', 'exportExcel');
-                        Route::get('export/pdf', 'exportPdf');
-
-                        Route::get('import', 'import');
-                        Route::post('import/submit', 'importSubmit');
-
-                        Route::post('status', 'statusChange');
-                        Route::post('unique', 'Uniquecheck');
-
-                        Route::get('sampledownload', 'DownloadSample');
-                    });
-                Route::controller(UnitController::class)
-                    ->prefix('unit')
-                    ->group(function () {
-
-                        Route::get('list', 'index');
-                        Route::post('list', 'index');
-
-                        Route::get('add', 'add');
-                        Route::post('add/submit', 'store');
-
-                        Route::get('edit/{id}', 'edit');
-                        Route::post('edit/submit', 'update');
-
-                        Route::get('view/{id}', 'view');
-
-                        Route::post('delete', 'delete');
-
-                        Route::get('export/excel', 'exportExcel');
-                        Route::get('export/pdf', 'exportPdf');
-
-                        Route::get('import', 'import');
-                        Route::post('import/submit', 'importSubmit');
-
-                        Route::post('status', 'statusChange');
-                        Route::post('unique', 'Uniquecheck');
-
-                        Route::get('sampledownload', 'DownloadSample');
-                    });
-
-                Route::controller(DepartmentController::class)
-                    ->prefix('department')
-                    ->group(function () {
-
-                        Route::get('list', 'index');
-                        Route::post('list', 'index');
-
-                        Route::get('add', 'add');
-                        Route::post('add/submit', 'store');
-
-                        Route::get('edit/{id}', 'edit');
-                        Route::post('edit/submit', 'update');
-
-                        Route::get('view/{id}', 'view');
-
-                        Route::post('delete', 'delete');
-
-                        Route::get('export/excel', 'exportExcel');
-                        Route::get('export/pdf', 'exportPdf');
-
-                        Route::get('import', 'import');
-                        Route::post('import/submit', 'importSubmit');
-
-                        Route::post('status', 'statusChange');
-                        Route::post('unique', 'Uniquecheck');
-
-                        Route::get('sampledownload', 'DownloadSample');
-                    });
-
-                Route::controller(EmployeeController::class)
-                    ->prefix('employee')
-                    ->group(function () {
-
-                        Route::get('list', 'index');
-                        Route::post('list', 'index');
-
-                        Route::get('add', 'add');
-                        Route::post('add/submit', 'store');
-
-                        Route::get('edit/{id}', 'edit');
-                        Route::post('edit/submit', 'update');
-
-                        Route::get('view/{id}', 'view');
-
-                        Route::post('delete', 'delete');
-
-                        Route::get('export/excel', 'exportExcel');
-                        Route::get('export/pdf', 'exportPdf');
-
-                        Route::get('import', 'import');
-                        Route::post('import/submit', 'importSubmit');
-
-                        Route::post('status', 'statusChange');
-                        Route::post('unique', 'Uniquecheck');
-
-                        Route::get('sampledownload', 'DownloadSample');
-                    });
-
-                Route::controller(WorkController::class)
-                    ->prefix('work')
-                    ->group(function () {
-
-                        Route::get('list', 'index');
-                        Route::post('list', 'index');
-
-                        Route::get('add', 'add');
-                        Route::post('add/submit', 'store');
-
-                        Route::get('edit/{id}', 'edit');
-                        Route::post('edit/submit', 'update');
-
-                        Route::get('view/{id}', 'view');
-
-                        Route::post('delete', 'delete');
-
-                        Route::get('export/excel', 'exportExcel');
-                        Route::get('export/pdf', 'exportPdf');
-
-                        Route::get('import', 'import');
-                        Route::post('import/submit', 'importSubmit');
-
-                        Route::post('status', 'statusChange');
-                        Route::post('unique', 'Uniquecheck');
-
-                        Route::get('sampledownload', 'DownloadSample');
-                    });
-            });
-
-
-
-
 
 
             /**
-             * Topic master
+             *  Category master
              */
+
+
+            Route::prefix('master/category')->controller(CategoryController::class)->group(function () {
+                Route::get('list', 'index');
+                Route::post('list', 'index');
+
+                Route::get('add', 'add');
+                Route::post('add/submit', 'store');
+
+                Route::get('edit/{id}', 'edit');
+                Route::post('edit/submit', 'update');
+                Route::post('unique', 'Uniquecheck');
+
+                Route::get('view/{id}', 'view');
+                Route::post('delete', 'delete');
+
+                Route::get('export/excel', 'exportExcel');
+                Route::get('export/pdf', 'exportPdf');
+
+                Route::get('import', 'import');
+                Route::post('import/submit', 'importSubmit');
+
+                Route::post('status', 'statusChange');
+            });
+            Route::prefix('master/manufacturer')->controller(ManufacturerController::class)->group(function () {
+                Route::get('list', 'index');
+                Route::post('list', 'index');
+
+                Route::get('add', 'add');
+                Route::post('add/submit', 'store');
+
+                Route::get('edit/{id}', 'edit');
+                Route::post('edit/submit', 'update');
+
+                Route::get('view/{id}', 'view');
+                Route::post('delete', 'delete');
+
+                Route::get('export/excel', 'exportExcel');
+                Route::get('export/pdf', 'exportPdf');
+
+                Route::get('import', 'import');
+                Route::post('import/submit', 'importSubmit');
+
+                Route::post('status', 'statusChange');
+            });
+            Route::prefix('master/uom')->controller(uomController::class)->group(function () {
+                Route::get('list', 'index');
+                Route::post('list', 'index');
+
+                Route::get('add', 'add');
+                Route::post('add/submit', 'store');
+
+                Route::get('edit/{id}', 'edit');
+                Route::post('edit/submit', 'update');
+
+                Route::get('view/{id}', 'view');
+                Route::post('delete', 'delete');
+
+                Route::get('export/excel', 'exportExcel');
+                Route::get('export/pdf', 'exportPdf');
+
+                Route::get('import', 'import');
+                Route::post('import/submit', 'importSubmit');
+
+                Route::post('status', 'statusChange');
+            });
+            Route::prefix('master/tax')->controller(TaxController::class)->group(function () {
+                Route::get('list', 'index');
+                Route::post('list', 'index');
+
+                Route::get('add', 'add');
+                Route::post('add/submit', 'store');
+
+                Route::get('edit/{id}', 'edit');
+                Route::post('edit/submit', 'update');
+
+                Route::get('view/{id}', 'view');
+                Route::post('delete', 'delete');
+
+                Route::get('export/excel', 'exportExcel');
+                Route::get('export/pdf', 'exportPdf');
+
+                Route::get('import', 'import');
+                Route::post('import/submit', 'importSubmit');
+
+                Route::post('status', 'statusChange');
+            });
+            Route::prefix('master/medicine')->controller(MedicineController::class)->group(function () {
+                Route::get('list', 'index');
+                Route::post('list', 'index');
+
+                Route::get('add', 'add');
+                Route::post('add/submit', 'store');
+
+                Route::get('edit/{id}', 'edit');
+                Route::post('edit/submit', 'update');
+
+                Route::get('view/{id}', 'view');
+                Route::post('delete', 'delete');
+
+                Route::get('export/excel', 'exportExcel');
+                Route::get('export/pdf', 'exportPdf');
+
+                Route::get('import', 'import');
+                Route::post('import/submit', 'importSubmit');
+
+                Route::post('status', 'statusChange');
+            });
+            Route::prefix('master/supplier')->controller(SupplierController::class)->group(function () {
+                Route::get('list', 'index');
+                Route::post('list', 'index');
+
+                Route::get('add', 'add');
+                Route::post('add/submit', 'store');
+
+                Route::get('edit/{id}', 'edit');
+                Route::post('edit/submit', 'update');
+
+                Route::get('view/{id}', 'view');
+                Route::post('delete', 'delete');
+
+                Route::get('export/excel', 'exportExcel');
+                Route::get('export/pdf', 'exportPdf');
+
+                Route::get('import', 'import');
+                Route::post('import/submit', 'importSubmit');
+
+                Route::post('status', 'statusChange');
+            });
+            Route::prefix('master/warehouse')->controller(WarehouseController::class)->group(function () {
+                Route::get('list', 'index');
+                Route::post('list', 'index');
+
+                Route::get('add', 'add');
+                Route::post('add/submit', 'store');
+
+                Route::get('edit/{id}', 'edit');
+                Route::post('edit/submit', 'update');
+
+                Route::get('view/{id}', 'view');
+                Route::post('delete', 'delete');
+
+                Route::get('export/excel', 'exportExcel');
+                Route::get('export/pdf', 'exportPdf');
+
+                Route::get('import', 'import');
+                Route::post('import/submit', 'importSubmit');
+
+                Route::post('status', 'statusChange');
+            });
+            Route::prefix('master/department')->controller(DepartmentController::class)->group(function () {
+                Route::get('list', 'index');
+                Route::post('list', 'index');
+
+                Route::get('add', 'add');
+                Route::post('add/submit', 'store');
+
+                Route::get('edit/{id}', 'edit');
+                Route::post('edit/submit', 'update');
+
+                Route::get('view/{id}', 'view');
+                Route::post('delete', 'delete');
+
+                Route::get('export/excel', 'exportExcel');
+                Route::get('export/pdf', 'exportPdf');
+
+                Route::get('import', 'import');
+                Route::post('import/submit', 'importSubmit');
+
+                Route::post('status', 'statusChange');
+            });
+
 
 
 

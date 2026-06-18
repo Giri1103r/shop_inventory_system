@@ -1,15 +1,12 @@
 <?php
 
+use App\Models\Master\Category;
 use Carbon\Carbon;
 use App\Models\User;
-
-use App\Models\Master\Unit;
 use App\Models\Master\Work;
 use Illuminate\Support\Str;
-use App\Models\Master\Topic;
 use App\Models\Notification;
 use App\Models\Master\Company;
-use App\Models\IMS\Master\Hira;
 use App\Models\Master\Employee;
 use App\Models\Master\Location;
 
@@ -17,45 +14,7 @@ use App\Models\Master\UserRole;
 use App\Models\Master\Department;
 use App\Models\Master\PpeRequest;
 use Illuminate\Support\Facades\DB;
-use App\Models\Master\PpeExemption;
-use App\Models\Permit\SafetyPermit;
-use App\Models\Inspection\Fire\Fire;
-use Illuminate\Support\Facades\Crypt;
-use App\Models\IMS\Master\IncidentType;
-use App\Models\Master\TrainingSchedule;
-use App\Models\IMS\Incident\InjuryDetails;
-use App\Models\OhcManagement\Opd\FirstAid;
-use App\Models\IMS\Incident\AccidentReport;
-use Kreait\Firebase\Messaging\CloudMessage;
-use App\Models\IMS\Incident\InitialIncident;
-use App\Models\Inspection\audit\Master\Task;
-use Kreait\Firebase\Messaging\AndroidConfig;
-use Kreait\Firebase\Messaging\WebPushConfig;
-use App\Models\Inspection\GembaWalkChecklist;
-use App\Models\OhcManagement\Master\Medicine;
-use App\Models\IMS\Incident\IncidentBodyParts;
-use App\Models\Inspection\audit\AuditAnalysis;
-use App\Models\Inspection\GembaWalk\GembaWalk;
-use App\Models\Inspection\audit\InterUnitAudit;
-use App\Models\Inspection\Master\ChecklistType;
-use App\Models\OhcManagement\MedicineReceiving;
-use App\Models\IMS\Incident\InitialFireIncident;
-use App\Models\Inspection\audit\AuditAssessment;
-use App\Models\Inspection\audit\MonthlyAuditPlan;
-use App\Models\Inspection\Environment\Environment;
-use App\Models\Inspection\Master\ChecklistSubType;
-use App\Models\OhcManagement\UserMedicineIssuance;
-use App\Models\Inspection\Ohc\SafetyPettyChecklist;
-use App\Models\Inspection\Fire\FirePreNocInspection;
-use App\Models\OhcManagement\Opd\PrescribetoPatient;
-use App\Models\Inspection\Fire\FireCheckListFollowUp;
-use App\Models\OhcManagement\UserMedicineRequisition;
-use App\Models\Inspection\Fire\FireMockDrillInspection;
-use App\Models\Inspection\Safety\SafetyWalkObservation;
-use App\Models\Inspection\Fire\DailyFireHouseInspection;
-use App\Models\Inspection\Fire\FireExtinguisherType;
-use App\Models\Inspection\Ohc\HealthInstrumentCalibration;
-use App\Models\OhcManagement\Master\CertifiedFirstAider;
+
 
 /*
  * Menu bar start
@@ -187,10 +146,10 @@ if (!function_exists('getsequence')) {
             case 'user':
                 $sequence = Str::random(5);
                 break;
-            case 'company':
-                $count = Company::withoutGlobalScopes()->count();
+            case 'category':
+                $count = Category::withoutGlobalScopes()->count();
                 $count = $count + 1;
-                $sequence = 'CMP-' . getautogen($count);
+                $sequence = 'CAT-' . getautogen($count);
                 break;
             case 'location':
                 $count = Location::withoutGlobalScopes()->count();

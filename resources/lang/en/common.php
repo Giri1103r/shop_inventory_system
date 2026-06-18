@@ -111,17 +111,10 @@ return [
 
     // Master
 
-    'company_id' => 'Company Id',
-    'company' => 'Company Name',
-    'short_name' => 'Short Name',
-    'address' => 'Address',
-    'location_id' => 'Location Id',
-    'Location' => 'Location',
-    'unit_id' => 'Unit Id',
-    'unit' => 'Unit',
-    'department_id' => 'Department Id',
-    'department' => 'Department',
-    'file' => 'File',
+    'category_id' => 'Category Id',
+    'category_code' => 'Category Code',
+    'category_name' => 'Category Name',
+    'description' => 'Description',
 
     // title
     'commany_details' => 'Company Details',
