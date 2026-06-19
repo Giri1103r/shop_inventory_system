@@ -5,12 +5,12 @@ namespace App\Http\Controllers\Admin;
 use Exception;
 use Carbon\Carbon;
 use App\Models\User;
-use App\Models\Master\Unit;
+
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 
 use App\Models\Master\Employee;
-use App\Models\Master\Department;
+
 use Illuminate\Support\Facades\DB;
 
 use App\Http\Controllers\Controller;
@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Hash;
 
 use Illuminate\Support\Facades\Session;
 
-use App\Models\Master\Company;
 
 
 class AdminController extends Controller
@@ -35,12 +34,9 @@ class AdminController extends Controller
 
     public function __construct()
     {
-        
-  
-        $this->unit = new Unit();
-        $this->department = new Department();
-        $this->company = new Company();
-      
+
+
+
     }
 
     public function index(Request $request)
@@ -50,75 +46,10 @@ class AdminController extends Controller
                 $user = Auth::user();
                 $data = [];
 
-                if (CheckUserRole(ROLE_SUPERADMIN) || CheckUserRole(ROLE_ADMIN) || CheckUserRole(ROLE_EHS_HEAD) ||  CheckUserRole(ROLE_DASHBOARD_VIEWER)) {
-                    $masterLink = [
-                        [
-                            'link' => 'company/list',
-                            'name' => 'Company',
-                            'count' => gettotalCount('company'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-                        [
-                            'link' => 'location/list',
-                            'name' => 'Location',
-                            'count' => gettotalCount('location'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-                        [
-                            'link' => 'unit/list',
-                            'name' => 'Unit',
-                            'count' => gettotalCount('unit'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-
-                        [
-                            'link' => 'department/list',
-                            'name' => 'Department',
-                            'count' => gettotalCount('department'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
 
 
-                        [
-                            'link' => 'employee/list',
-                            'name' => 'Employees',
-                            'count' => gettotalCount('employee'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
 
-                        [
-                            'link' => 'work/list',
-                            'name' => 'Workers',
-                            'count' => gettotalCount('work'),
-                            'icon' => 'bx bx-message-square-detail',
-                            'icon_color' => 'text-primary',
-                        ],
-
-                    ];
-
-                    $companyList  = $this->company->where('status', '1')->get();
-                    $data = [
-                        'masterLink' => $masterLink,
-                        'companyList' => $companyList,
-                    ];
-                }
-
-
-                if (
-                    CheckUserRole(ROLE_SUPERADMIN) ||
-                    CheckUserRole(ROLE_ADMIN) ||
-                    CheckUserRole(ROLE_EHS_HEAD) ||
-                    CheckUserRole(ROLE_DASHBOARD_VIEWER)
-                ) {
-                    return view('admin.dashboard', $data);
-                } else {
-                    return view('admin.userdashboard', $data);
-                }
+                return view('admin.userdashboard', $data);
             }
         } catch (\Exception $ex) {
             report($ex);
@@ -259,7 +190,4 @@ class AdminController extends Controller
             return redirect()->back();
         }
     }
-
-
-   
 }

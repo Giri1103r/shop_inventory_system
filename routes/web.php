@@ -227,7 +227,7 @@ Route::middleware(['securityheader'])->group(function () {
 
                 Route::post('status', 'statusChange');
             });
-            Route::prefix('master/manufacturer')->controller(ManufacturerController::class)->group(function () {
+            Route::prefix('master/manufacture')->controller(ManufacturerController::class)->group(function () {
                 Route::get('list', 'index');
                 Route::post('list', 'index');
 
@@ -239,7 +239,8 @@ Route::middleware(['securityheader'])->group(function () {
 
                 Route::get('view/{id}', 'view');
                 Route::post('delete', 'delete');
-
+                Route::post('unique', 'Uniquecheck');
+                
                 Route::get('export/excel', 'exportExcel');
                 Route::get('export/pdf', 'exportPdf');
 

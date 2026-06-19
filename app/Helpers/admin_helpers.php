@@ -12,6 +12,7 @@ use App\Models\Master\Location;
 
 use App\Models\Master\UserRole;
 use App\Models\Master\Department;
+use App\Models\Master\Manufacturer;
 use App\Models\Master\PpeRequest;
 use Illuminate\Support\Facades\DB;
 
@@ -151,12 +152,12 @@ if (!function_exists('getsequence')) {
                 $count = $count + 1;
                 $sequence = 'CAT-' . getautogen($count);
                 break;
-            case 'location':
-                $count = Location::withoutGlobalScopes()->count();
+            case 'manufacture':
+                $count = Manufacturer::withoutGlobalScopes()->count();
                 $count = $count + 1;
-                $sequence = 'LOC-' . getautogen($count);
+                $sequence = 'MAF-' . getautogen($count);
                 break;
-            case 'unit':
+            case 'tax':
                 $count = Unit::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'Unit-' . getautogen($count);

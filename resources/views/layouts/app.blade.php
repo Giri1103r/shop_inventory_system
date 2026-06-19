@@ -7,7 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title') | KARAM</title>
+    <title>@yield('title') | INVENTORY</title>
 
     <link rel="shortcut icon" href="{{ url('public/assets/images/logo.png') }}">
     <link rel="manifest" href="{{ url('manifest') }}">

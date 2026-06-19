@@ -101,7 +101,7 @@ class Category extends Model
             'category_code' => $request->category_code,
             'category_name' => $request->category_name,
             'description' => $request->description,
-            'created_by' => Auth::id(),
+           'updated_by' => Auth::id(),
         ];
 
         $data = $this->where('id', $id)->update($update_array);

@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'Category Master')
-@section('pageurl', admin_url('master/category/list'))
+@section('title', 'UOM Master')
+@section('pageurl', admin_url('master/uom/list'))
 
 
 @section('content')
@@ -12,14 +12,14 @@
                     <h4 class="card-title"></h4>
                     <div class="d-flex flex-wrap justify-content-end gap-2 p-2">
 
-                        <x-button-add dataId="" class="add" href="{{ admin_url('master/category/add') }}">
+                        <x-button-add dataId="" class="add" href="{{ admin_url('master/uom/add') }}">
                             Add
                         </x-button-add>
 
                         <x-button-filter dataId="" class="search" href="">
                         </x-button-filter>
 
-                        <x-button-import href="{{ admin_url('master/category/import') }}">
+                        <x-button-import href="{{ admin_url('master/uom/import') }}">
                         </x-button-import>
 
                     </div>
@@ -31,34 +31,34 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="company_id"
-                                                class="form-label">{{ __('common.category_id') }}</label>
-                                            <select name="category_id" class="forn-control single-select" id="category_id">
+                                                class="form-label">Manufacture Id</label>
+                                            <select name="manufacture_id" class="forn-control single-select" id="manufacture_id">
                                                 <option value="">Select the option</option>
-                                                @foreach ($categoryList as $categoryId)
-                                                    <option value="{{ $categoryId->category_id }}">
-                                                        {{ $categoryId->category_id }}</option>
+                                                @foreach ($manufactureList as $manuId)
+                                                    <option value="{{ $manuId->manufacture_id }}">
+                                                        {{ $manuId->manufacture_id }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="company_id"
-                                                class="form-label">{{ __('common.category_code') }}</label>
-                                            <select name="category_code" class="forn-control single-select" id="category_code">
+                                                class="form-label">Manufacturer Name</label>
+                                            <select name="manufacturer_name" class="forn-control single-select" id="manufacturer_name">
                                                 <option value="">Select the option</option>
-                                                @foreach ($categoryList as $catCode)
-                                                    <option value="{{ $catCode->category_code }}">
-                                                        {{ $catCode->category_code }}</option>
+                                                @foreach ($manufactureList as $mafName)
+                                                    <option value="{{ $mafName->manufacturer_name }}">
+                                                        {{ $mafName->manufacturer_name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="company_name"
-                                                class="form-label">{{ __('common.category_name') }}</label>
-                                            <select name="category_name" class="forn-control single-select" id="category_name">
+                                                class="form-label">License Number</label>
+                                            <select name="license_number" class="forn-control single-select" id="license_number">
                                                 <option value="">Select the option</option>
-                                                @foreach ($categoryList as $catName)
-                                                    <option value="{{ $catName->category_name }}">
-                                                        {{ $catName->category_name }}</option>
+                                                 @foreach ($manufactureList as $l_no)
+                                                    <option value="{{ $l_no->license_number }}">
+                                                        {{ $l_no->license_number }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -93,9 +93,9 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>{{ __('common.category_id') }}</th>
-                                        <th>{{ __('common.category_code') }}</th>
-                                        <th>{{ __('common.category_name') }}</th>
+                                        <th>Manufacture id</th>
+                                        <th>Manufacturer Name</th>
+                                        <th>License Number</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -148,7 +148,7 @@
                 },
 
                 ajax: {
-                    url: "{{ admin_url('master/category/list') }}",
+                    url: "{{ admin_url('master/uom/list') }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -181,16 +181,16 @@
                         searchable: false,
                     },
                     {
-                        data: 'category_id',
-                        name: 'category_id'
+                        data: 'manufacture_id',
+                        name: 'manufacture_id'
                     },
                     {
-                        data: 'category_code',
-                        name: 'category_code'
+                        data: 'manufacturer_name',
+                        name: 'manufacturer_name'
                     },
                     {
-                        data: 'category_name',
-                        name: 'category_name'
+                        data: 'license_number',
+                        name: 'license_number'
                     },
 
                     {
@@ -236,7 +236,7 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var formData = $('#formsearch').serialize();
                                     var exportUrl =
-                                        "{{ admin_url('master/category/export/pdf') }}";
+                                        "{{ admin_url('master/uom/export/pdf') }}";
                                     window.location.href = exportUrl + '?search=' +
                                         searchValue + '&' +
                                         formData;
@@ -249,7 +249,7 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var formData = $('#formsearch').serialize();
                                     var exportUrl =
-                                        "{{ admin_url('master/category/export/excel') }}";
+                                        "{{ admin_url('master/uom/export/excel') }}";
                                     window.location.href = exportUrl + '?search=' +
                                         searchValue + '&' +
                                         formData;
@@ -288,12 +288,12 @@
                 var id = $(this).data('id');
                 var types = $(this).data('type');
                 if (types == 1) {
-                    var title = '{{ __('Do You want to In-Activate Category Details') }}';
+                    var title = '{{ __('Do You want to In-Activate Manufacturer Details') }}';
                     var text = '{{ __('common.inactive') }}';
                     var btncolor = '#00000'
 
                 } else {
-                    var title = '{{ __('Do You want to Activate Category Details') }}';
+                    var title = '{{ __('Do You want to Activate Manufacturer Details') }}';
                     var text = '{{ __('common.active') }}';
                     var btncolor = '#00000'
                 }
@@ -313,7 +313,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('master/category/status') }}",
+                            url: "{{ admin_url('master/uom/status') }}",
                             type: 'post',
 
                             data: {
@@ -381,7 +381,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('master/category/delete') }}",
+                            url: "{{ admin_url('master/uom/delete') }}",
                             type: 'post',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
