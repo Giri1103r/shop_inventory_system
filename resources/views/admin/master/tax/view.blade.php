@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'UOM Show')
-@section('pageurl', admin_url('master/uom/list'))
+@section('title', 'Tax Show')
+@section('pageurl', admin_url('master/tax/list'))
 
 @push('style')
     <style>
@@ -46,47 +46,79 @@
 
 
                             <div class="card-header d-flex justify-content-end align-items-center">
-                                <x-button-back href="{{ admin_url('master/uom/list') }}"></x-button-back>
+                                <x-button-back href="{{ admin_url('master/tax/list') }}"></x-button-back>
                             </div>
                             <div class="card-body ">
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white">{{ __('UOM Details') }}</h4>
+                                        <h4 class="text-white">{{ __('Ta Details') }}</h4>
                                     </div>
                                 </div>
                                 <div class="row">
 
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">UOM Id</label>
+                                        <label class="form-label view_label">Tax Id</label>
                                         <div class="view_data">
-                                            {{ isset($uom->uom_id ) ? $uom->uom_id  : '' }}
+                                            {{ isset($tax->tax_id ) ? $tax->tax_id  : '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">UOM Name</label>
+                                        <label class="form-label view_label">Tax Name</label>
                                         <div class="view_data">
-                                            {{ isset($uom->uom_name) ? $uom->uom_name : '' }}
+                                            {{ isset($tax->tax_name) ? $tax->tax_name : '' }}
                                         </div>
                                     </div>
-                                  
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">HSN Codes</label>
+                                        <div class="view_data">
+                                            {{ isset($tax->license_number) ? $tax->license_number : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Contact Person</label>
+                                        <div class="view_data">
+                                            {{ isset($tax->contact_person) ? $tax->contact_person : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Mobile Number</label>
+                                        <div class="view_data">
+                                            {{ isset($tax->mobile_no) ? $tax->mobile_no : '' }}
+                                        </div>
+                                    </div>
+                                    <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Email</label>
+                                        <div class="view_data">
+                                            {{ isset($tax->email) ? $tax->email : '' }}
+                                        </div>
+                                    </div>
+                                    @if(!empty($tax->address))
+                                         <div class="mb-3 col-md-4 form-input">
+                                        <label class="form-label view_label">Address</label>
+                                        <div class="view_data">
+                                            {{ isset($tax->address) ? $tax->address : '' }}
+                                        </div>
+                                    </div>
+                                    @endif
+                                   
 
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_by') }}</label>
                                         <div class="view_data">
-                                            {{ getusername($uom->created_by) }}
+                                            {{ getusername($tax->created_by) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.created_date') }}</label>
                                         <div class="view_data">
-                                            {{ displayDateformat($uom->created_at) }}
+                                            {{ displayDateformat($tax->created_at) }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.status') }}</label>
                                         <div class="view_data">
-                                            @if ($uom->status == 1)
+                                            @if ($tax->status == 1)
                                                 {{ __('common.active') }}
                                             @else
                                                 {{ __('common.inactive') }}

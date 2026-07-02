@@ -3,23 +3,31 @@
 namespace App\Http\Controllers\Admin\Master;
 
 use App\Http\Controllers\Controller;
+use App\Models\Master\UOM;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
+use Yajra\DataTables\Exceptions\Exception;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Validator;
+use Spatie\SimpleExcel\SimpleExcelWriter;
 
 class uomController extends Controller
 {
 
-    private $manufacture;
+    private $uom;
     public function __construct()
     {
 
-        $this->manufacture = new Manufacturer();
+        $this->uom = new UOM();
     }
     public function index(Request $request)
     {
         if (Auth::check()) {
             if ($request->ajax()) {
                 try {
-                    $data =  $this->manufacture->list();
+                    $data =  $this->uom->list();
 
                     $datatables = Datatables::of($data['data'])
                         ->addIndexColumn()
@@ -42,10 +50,10 @@ class uomController extends Controller
                         ->addColumn('action', function ($row) {
                             $btn = '';
                             // if (CheckUserPermission('view')) {
-                            $btn = '<a href="' . admin_url('master/manufacture/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
+                            $btn = '<a href="' . admin_url('master/uom/view/' . encryptId($row->id)) . '"   class="" title="View"><i class="fa-solid fa-eye"></i></a> ';
                             // }
                             // if (CheckUserPermission('edit')) {
-                            $btn .= '<a href="' . admin_url('master/manufacture/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
+                            $btn .= '<a href="' . admin_url('master/uom/edit/' . encryptId($row->id)) . '" class=" " title="Edit"><i class="fa-solid fa-pen-to-square"></i> ';
                             // }
 
 
@@ -64,37 +72,37 @@ class uomController extends Controller
                 }
             }
         }
-        $manufactureList = $this->manufacture->where('trash', 'No')->get();
+        $uomList = $this->uom->where('trash', 'No')->get();
         $data = array(
-            'manufactureList' => $manufactureList,
+            'uomList' => $uomList,
         );
-        return view('admin.master.manufacture.list', $data);
+        return view('admin.master.uom.list', $data);
     }
 
     public function add()
     {
         try {
             $data = [];
-            return view('admin.master.manufacture.add', $data);
+            return view('admin.master.uom.add', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error',);
-            return redirect(admin_url('master/manufacture/list'));
+            return redirect(admin_url('master/uom/list'));
         }
     }
     public function Edit(Request $request)
     {
         try {
             $id = decryptId($request->id);
-            $manufacture = $this->manufacture->find($id);
+            $uom = $this->uom->find($id);
             $data = [
-                'manufacture' => $manufacture,
+                'uom' => $uom,
             ];
-            return view('admin.master.manufacture.edit', $data);
+            return view('admin.master.uom.edit', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error',);
-            return redirect(admin_url('master/manufacture/list'));
+            return redirect(admin_url('master/uom/list'));
         }
     }
 
@@ -102,70 +110,46 @@ class uomController extends Controller
     {
         try {
             $rules = [
-                'manufacturer_id' => 'required',
-                'manufacture_name' => 'required',
-                'license_number' => 'required',
-                'contact_person' => 'required',
-                'email' => 'required',
-                'mobile_no' => 'required',
+                'uom_name' => 'required',
             ];
             $messages = [
-
-                'manufacturer_id.required' => 'Please Enter Manufacture Id',
-                'manufacture_name.required' => 'Please Enter Manufacture Name',
-                'license_number.required' => 'Please Enter License Number',
-                'contact_person.required' => 'Please Enter Contact Person',
-                'email.required' => 'Please Enter email',
-                'mobile_no.required' => 'Please Enter Mobile Number',
-
+                'uom_name.required' => 'Please Enter UOM Name',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
 
-            $manufacture = $this->manufacture->store();
+            $uom = $this->uom->store();
             Session::flash('Success', 'Your Data has been Created Successfully');
-            return redirect(admin_url('master/manufacture/list'));
+            return redirect(admin_url('master/uom/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Some thing went wrong Please try again after some time');
-            return redirect(admin_url('master/manufacture/list'));
+            return redirect(admin_url('master/uom/list'));
         }
     }
     public function update(Request $request)
     {
         try {
             $rules = [
-                'manufacturer_id' => 'required',
-                'manufacture_name' => 'required',
-                'license_number' => 'required',
-                'contact_person' => 'required',
-                'email' => 'required',
-                'mobile_no' => 'required',
+                'uom_name' => 'required',
             ];
             $messages = [
-
-                'manufacturer_id.required' => 'Please Enter Manufacture Id',
-                'manufacture_name.required' => 'Please Enter Manufacture Name',
-                'license_number.required' => 'Please Enter License Number',
-                'contact_person.required' => 'Please Enter Contact Person',
-                'email.required' => 'Please Enter email',
-                'mobile_no.required' => 'Please Enter Mobile Number',
-
+                'uom_name.required' => 'Please Enter UOM Name',
             ];
             $validator = Validator::make($request->all(), $rules, $messages);
             if ($validator->fails()) {
                 return redirect()->back()->withErrors($validator)->withInput();
             }
             $id = decryptId($request->id);
-            $category = $this->manufacture->updates($id);
+            $category = $this->uom->updates($id);
             Session::flash('Success', 'Your Data has been Created Successfully');
-            return redirect(admin_url('master/manufacture/list'));
+            return redirect(admin_url('master/uom/list'));
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Some thing went wrong Please try again after some time');
-            return redirect(admin_url('master/manufacture/list'));
+            return redirect(admin_url('master/uom/list'));
         }
     }
 
@@ -174,15 +158,15 @@ class uomController extends Controller
         try {
             $id = decryptId($request->id);
 
-            $manufacture =  $this->manufacture->selectOne($id);
+            $uom =  $this->uom->selectOne($id);
             $data = [
-                'manufacture' => $manufacture,
+                'uom' => $uom,
             ];
-            return view('admin.master.manufacture.view', $data);
+            return view('admin.master.uom.view', $data);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', 'Something went Wrong Please Try again After Some time');
-            return redirect(admin_url('master/manufacture/list'));
+            return redirect(admin_url('master/uom/list'));
         }
     }
 
@@ -191,21 +175,19 @@ class uomController extends Controller
         if ($request->ajax()) {
 
 
-            $mName = $request->manufacture_name;
-            $lNo = $request->license_number;
-            $email = $request->email;
+            $uom = $request->uom_name;
 
             $id = $request->id ? decryptId($request->id) : null;
 
             if (empty($id)) {
 
-                $exists = $this->manufacture
-                    ->uniqueCheck($mName, $lNo, $email)
+                $exists = $this->uom
+                    ->uniqueCheck($uom)
                     ->exists();
             } else {
 
-                $exists = $this->manufacture
-                    ->ExistuniqueCheck($mName, $lNo, $email, $id)
+                $exists = $this->uom
+                    ->ExistuniqueCheck($uom, $id)
                     ->exists();
             }
 
@@ -219,15 +201,14 @@ class uomController extends Controller
 
         try {
 
-            $allData = $this->manufacture->exportdata();
+            $allData = $this->uom->exportdata();
 
 
             $header = [
                 __("common.sno"),
-                'Manufacture Id',
-                'Manufacturer Name',
-                'License Number',
-                'Email',
+                'UOM Id',
+                'UOM  Name',
+                'Description',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -238,11 +219,9 @@ class uomController extends Controller
 
                 $export = [];
                 $export[] =  $i;
-                $export[] =  $data->manufacture_id;
-                $export[] =  $data->manufacturer_name;
-                $export[] =  $data->license_number;
-                $export[] =  $data->email;
-
+                $export[] =  $data->uom_id;
+                $export[] =  $data->uom_name;
+                $export[] =  $data->description;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
                 $export[] =  Displaydateformat($data->created_at);
@@ -252,7 +231,7 @@ class uomController extends Controller
                 $i++;
             }
 
-            $writer = SimpleExcelWriter::streamDownload('Manufacturer Details.xlsx')
+            $writer = SimpleExcelWriter::streamDownload('UOM Details.xlsx')
                 ->addHeader($header)
                 ->addRows(
                     $exportData
@@ -261,7 +240,7 @@ class uomController extends Controller
 
             report($ex);
             Session::flash('error', 'Something went Wrong Please Try again After Some time');
-            return redirect(admin_url('master/manufacture/list'));
+            return redirect(admin_url('master/uom/list'));
         }
     }
 
@@ -269,15 +248,14 @@ class uomController extends Controller
     {
         try {
 
-            $allData = $this->manufacture->exportdata();
+            $allData = $this->uom->exportdata();
 
 
             $header = [
                 __("common.sno"),
-                'Manufacture Id',
-                'Manufacturer Name',
-                'License Number',
-                'Email',
+                'UOM Id',
+                'UOM Name',
+                'Description',
                 __("common.status"),
                 __("common.created_by"),
                 __("common.created_date"),
@@ -286,7 +264,7 @@ class uomController extends Controller
             $data = array(
                 'header' => $header,
                 'content' => $allData,
-                'pagetitle' => "Manufacturer Details",
+                'pagetitle' => "UOM Details",
             );
 
             $property = [
@@ -301,19 +279,19 @@ class uomController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('admin.master.manufacture.pdf', $data);
+            $view = view('admin.master.uom.pdf', $data);
             $html = $view->render();
 
 
             $mpdf->WriteHTML($html);
 
-            $filename = "Manufacture.pdf";
+            $filename = "uom.pdf";
             $mpdf->Output($filename, 'D');
         } catch (Exception $ex) {
 
             report($ex);
             Session::flash('error', 'Something went Wrong Please Try again After Some time');
-            return redirect(admin_url('master/manufacture/list'));
+            return redirect(admin_url('master/uom/list'));
         }
     }
 }

@@ -168,10 +168,7 @@ class Manufacturer extends Model
         if ($request->has('status') && $request->status) {
             $query = $query->where('master_manufacture.status', decryptId($request->status));
         }
-        if ($request->length != -1) {
-            $query->offset($request->start)->limit($request->length);
-        }
-
+      
         $query->orderBy('id', 'DESC');
 
         return $query;

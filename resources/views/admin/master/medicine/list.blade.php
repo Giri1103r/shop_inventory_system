@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
-@section('title', 'UOM Master')
-@section('pageurl', admin_url('master/uom/list'))
+@section('title', 'Medicine Master')
+@section('pageurl', admin_url('master/medicine/list'))
 
 
 @section('content')
@@ -12,14 +12,14 @@
                     <h4 class="card-title"></h4>
                     <div class="d-flex flex-wrap justify-content-end gap-2 p-2">
 
-                        <x-button-add dataId="" class="add" href="{{ admin_url('master/uom/add') }}">
+                        <x-button-add dataId="" class="add" href="{{ admin_url('master/medicine/add') }}">
                             Add
                         </x-button-add>
 
                         <x-button-filter dataId="" class="search" href="">
                         </x-button-filter>
 
-                        <x-button-import href="{{ admin_url('master/uom/import') }}">
+                        <x-button-import href="{{ admin_url('master/medicine/import') }}">
                         </x-button-import>
 
                     </div>
@@ -31,23 +31,23 @@
                                     <div class="row">
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="company_id"
-                                                class="form-label">UOM Id</label>
-                                            <select name="uom_id" class="forn-control single-select" id="uom_id">
+                                                class="form-label">Medicine Id</label>
+                                            <select name="medicine_id" class="forn-control single-select" id="medicine_id">
                                                 <option value="">Select the option</option>
-                                                @foreach ($uomList as $uomId)
-                                                    <option value="{{ $uomId->uom_id }}">
-                                                        {{ $uomId->uom_id }}</option>
+                                                @foreach ($medicineList as $medicineId)
+                                                    <option value="{{ $medicineId->medicine_id }}">
+                                                        {{ $medicineId->medicine_id }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
                                         <div class="col-md-3 mb-3 form-input">
                                             <label for="company_id"
-                                                class="form-label">UOM Name</label>
-                                            <select name="uom_name" class="forn-control single-select" id="uom_name">
+                                                class="form-label">Medicine Name</label>
+                                            <select name="medicine_name" class="forn-control single-select" id="medicine_name">
                                                 <option value="">Select the option</option>
-                                                @foreach ($uomList as $uomName)
-                                                    <option value="{{ $uomName->uom_name }}">
-                                                        {{ $uomName->uom_name }}</option>
+                                                @foreach ($medicineList as $medicineName)
+                                                    <option value="{{ $medicineName->medicine_name }}">
+                                                        {{ $medicineName->medicine_name }}</option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -83,8 +83,8 @@
                                 <thead class="thead-primary">
                                     <tr>
                                         <th>{{ __('common.sno') }}</th>
-                                        <th>UOM id</th>
-                                        <th>UOM Name</th>
+                                        <th>Medicine Id</th>
+                                        <th>Medicine Name</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
                                         <th>{{ __('common.created_date') }}</th>
@@ -137,7 +137,7 @@
                 },
 
                 ajax: {
-                    url: "{{ admin_url('master/uom/list') }}",
+                    url: "{{ admin_url('master/medicine/list') }}",
                     type: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]')
@@ -170,12 +170,12 @@
                         searchable: false,
                     },
                     {
-                        data: 'uom_id',
-                        name: 'uom_id'
+                        data: 'medicine_id',
+                        name: 'medicine_id'
                     },
                     {
-                        data: 'uom_name',
-                        name: 'uom_name'
+                        data: 'medicine_name',
+                        name: 'medicine_name'
                     },
                     {
                         data: 'status',
@@ -220,7 +220,7 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var formData = $('#formsearch').serialize();
                                     var exportUrl =
-                                        "{{ admin_url('master/uom/export/pdf') }}";
+                                        "{{ admin_url('master/medicine/export/pdf') }}";
                                     window.location.href = exportUrl + '?search=' +
                                         searchValue + '&' +
                                         formData;
@@ -233,7 +233,7 @@
                                     var searchValue = $('#datatable-list_filter input').val();
                                     var formData = $('#formsearch').serialize();
                                     var exportUrl =
-                                        "{{ admin_url('master/uom/export/excel') }}";
+                                        "{{ admin_url('master/medicine/export/excel') }}";
                                     window.location.href = exportUrl + '?search=' +
                                         searchValue + '&' +
                                         formData;
@@ -297,7 +297,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('master/uom/status') }}",
+                            url: "{{ admin_url('master/medicine/status') }}",
                             type: 'post',
 
                             data: {
@@ -365,7 +365,7 @@
 
                     if (result.value) {
                         $.ajax({
-                            url: "{{ admin_url('master/uom/delete') }}",
+                            url: "{{ admin_url('master/medicine/delete') }}",
                             type: 'post',
                             headers: {
                                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]')

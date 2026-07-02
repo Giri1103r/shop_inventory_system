@@ -50,65 +50,32 @@
                             <div class="card-body">
 
                                 <div class="basic-form">
-                                    <form method="POST" id="edit_page"
-                                        action="{{ admin_url('master/uom/edit/submit') }}">
+                                    <form method="POST" id="edit_page" action="{{ admin_url('master/uom/edit/submit') }}">
                                         @csrf
                                         <input type="hidden" name="id" id="id"
-                                            value="{{ encryptId($manufacture->id) }}">
+                                            value="{{ encryptId($uom->id) }}">
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Manufacturer Id</label>
-                                                    <input type="text" name ="manufacturer_id" class="form-control"
-                                                        placeholder="Enter the Manufacuter Id"
-                                                        value="{{ $manufacture->manufacture_id }}" readonly>
+                                                    <label class="form-label require">UOM Id</label>
+                                                    <input type="text" name ="uom_id" class="form-control" value="{{$uom->uom_id}}"
+                                                        placeholder="Enter the UOM Id" 
+                                                        readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Manufacture Name</label>
-                                                    <input type="text" name="manufacture_name" id="manufacture_name"
-                                                        value="{{ $manufacture->manufacturer_name }}" class="form-control"
-                                                        placeholder="Enter the Manufacture Name">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">License Number</label>
-                                                    <input type="text" name="license_number" class="form-control"
-                                                        value="{{ $manufacture->license_number }}"
-                                                        placeholder="Enter the License Number">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Contact Person</label>
-                                                    <input type="text" name="contact_person" class="form-control"
-                                                        value="{{ $manufacture->contact_person }}"
-                                                        placeholder="Enter the Contact Person">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Mobile Number</label>
-                                                    <input type="number" name="mobile_no"
-                                                        class="form-control"value="{{ $manufacture->mobile_no }}"
-                                                        placeholder="Enter the mobile number">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Email</label>
-                                                    <input type="email" name="email" class="form-control"
-                                                        value="{{ $manufacture->email }}"
-                                                        placeholder="Enter the mobile number">
+                                                    <label class="form-label require">UOM Name</label>
+                                                    <input type="text" name="uom_name" id="uom_name" value="{{$uom->uom_name}}"
+                                                        class="form-control" placeholder="Enter the UOM Name">
                                                 </div>
                                             </div>
 
+
                                             <div class="col-md-12">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label ">Address</label>
-                                                    <textarea name="address" class="form-control" placeholder="Enter the Address">{{ $manufacture->address }}</textarea>
+                                                    <label class="form-label ">Description</label>
+                                                    <textarea name="description" class="form-control" placeholder="Enter the Description">{{$uom->description}}</textarea>
                                                 </div>
                                             </div>
                                         </div>

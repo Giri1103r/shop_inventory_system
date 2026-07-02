@@ -79,52 +79,25 @@
                                         <div class="row">
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Manufacturer Id</label>
-                                                    <input type="text" name ="manufacturer_id" class="form-control"
-                                                        placeholder="Enter the Manufacuter Id"
-                                                        value="{{ getsequence('manufacture') }}" readonly>
+                                                    <label class="form-label require">UOM Id</label>
+                                                    <input type="text" name ="uom_id" class="form-control"
+                                                        placeholder="Enter the UOM Id"
+                                                        value="{{ getsequence('uom') }}" readonly>
                                                 </div>
                                             </div>
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label require">Manufacture Name</label>
-                                                    <input type="text" name="manufacture_name" id="manufacture_name"
-                                                        class="form-control" placeholder="Enter the Manufacture Name">
+                                                    <label class="form-label require">UOM Name</label>
+                                                    <input type="text" name="uom_name" id="uom_name"
+                                                        class="form-control" placeholder="Enter the UOM Name">
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">License Number</label>
-                                                    <input type="text" name="license_number" class="form-control"
-                                                        placeholder="Enter the License Number">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Contact Person</label>
-                                                    <input type="text" name="contact_person" class="form-control"
-                                                        placeholder="Enter the Contact Person">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Mobile Number</label>
-                                                    <input type="number" name="mobile_no" class="form-control"
-                                                        placeholder="Enter the mobile number">
-                                                </div>
-                                            </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Email</label>
-                                                    <input type="email" name="email" class="form-control"
-                                                        placeholder="Enter the mobile number">
-                                                </div>
-                                            </div>
+                                           
 
                                             <div class="col-md-12">
                                                 <div class="form-group form-input">
-                                                    <label class="form-label ">Address</label>
-                                                    <textarea name="address" class="form-control" placeholder="Enter the Address"></textarea>
+                                                    <label class="form-label ">Description</label>
+                                                    <textarea name="description" class="form-control" placeholder="Enter the Description"></textarea>
                                                 </div>
                                             </div>
                                         </div>
@@ -158,76 +131,28 @@
         $(function() {
             $('#add_page').validate({
                 rules: {
-                    manufacture_name: {
+                    uom_name: {
                         required: true,
                         remote: {
                             url: '{{ admin_url('master/uom/unique') }}',
                             type: 'post',
                             data: {
-                                manufacture_name: function() {
-                                    return $('#manufacture_name').val();
+                                uom_name: function() {
+                                    return $('#uom_name').val();
                                 }
                             }
                         }
                     },
-                    license_number: {
-                        required: true,
-                        remote: {
-                            url: '{{ admin_url('master/uom/unique') }}',
-                            type: 'post',
-                            data: {
-                                license_number: function() {
-                                    return $('#license_number').val();
-                                }
-                            }
-                        }
-                    },
-                    email: {
-                        required: true,
-                        email: true,
-                        remote: {
-                            url: '{{ admin_url('master/uom/unique') }}',
-                            type: 'post',
-                            data: {
-                                email: function() {
-                                    return $('#email').val();
-                                }
-                            }
-                        }
-                    },
-                    mobile_no: {
-                        required: true,
-                        digits: true,
-                        rangelength: [10, 10]
-                    },
-                    contact_person: {
-                        required: true,
-                    },
+                  
 
                 },
                 messages: {
-                    license_number: {
-                        required: "License number is Required",
-                        remote: "License number is should be unique",
+                    uom_name: {
+                        required: "UOM Name is Required",
+                        remote: "UOM Name is should be unique",
 
                     },
-                    email: {
-                        required: "Please enter the email",
-                        remote: "Email should be unique",
-                    },
-                    mobile_no: {
-                        required: "Please enter the Mobile No",
-                        digits: "Only numbers are allowed",
-                        rangelength: "Mobile number must be exactly 10 digits"
-                    },
-                    contact_person: {
-                        required: "Please Enter the Contact Person"
-                    },
-                    manufacture_name: {
-                        required: "Manufacture name is Required",
-                        remote: "Manufacture name should be unique",
-
-                    },
+                   
 
                 },
                 errorElement: 'span',

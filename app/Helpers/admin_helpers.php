@@ -3,17 +3,15 @@
 use App\Models\Master\Category;
 use Carbon\Carbon;
 use App\Models\User;
-use App\Models\Master\Work;
 use Illuminate\Support\Str;
 use App\Models\Notification;
-use App\Models\Master\Company;
-use App\Models\Master\Employee;
-use App\Models\Master\Location;
+
 
 use App\Models\Master\UserRole;
-use App\Models\Master\Department;
 use App\Models\Master\Manufacturer;
-use App\Models\Master\PpeRequest;
+use App\Models\Master\Tax;
+use App\Models\Master\Medicine;
+use App\Models\Master\UOM;
 use Illuminate\Support\Facades\DB;
 
 
@@ -157,15 +155,20 @@ if (!function_exists('getsequence')) {
                 $count = $count + 1;
                 $sequence = 'MAF-' . getautogen($count);
                 break;
-            case 'tax':
-                $count = Unit::withoutGlobalScopes()->count();
+            case 'uom':
+                $count = UOM::withoutGlobalScopes()->count();
                 $count = $count + 1;
-                $sequence = 'Unit-' . getautogen($count);
+                $sequence = 'UOM-' . getautogen($count);
                 break;
-            case 'department':
-                $count = Department::withoutGlobalScopes()->count();
+            case 'tax':
+                $count = Tax::withoutGlobalScopes()->count();
                 $count = $count + 1;
-                $sequence = 'DEP-' . getautogen($count);
+                $sequence = 'TAX-' . getautogen($count);
+                break;
+            case 'medicine':
+                $count = Medicine::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'MED-' . getautogen($count);
                 break;
             case 'role':
                 $count = UserRole::withoutGlobalScopes()->count();
@@ -180,75 +183,6 @@ if (!function_exists('getsequence')) {
         return $sequence;
     }
 }
-
-if (!function_exists('gettotalCount')) {
-
-    function gettotalCount($type)
-    {
-
-        switch ($type) {
-
-            case 'company':
-                $count = Company::where('status', 1)->count();
-                break;
-            case 'location':
-                $count = Location::where('status', 1)->count();
-                break;
-            case 'unit':
-                $count = Unit::where('status', 1)->count();
-                break;
-            case 'department':
-                $count = Department::where('status', 1)->count();
-                break;
-            case 'employee':
-                $count = Employee::where('status', 1)->count();
-                break;
-            case 'work':
-                $count = Work::where('status', 1)->count();
-                break;
-
-            default:
-                $count = 0;
-                break;
-        }
-
-        return $count;
-    }
-}
-
-
-
-
-
-if (!function_exists('getYearArray')) {
-    function getYearArray($startYear = null)
-    {
-        $currentYear = date('Y');
-        $startYear = $startYear ?? $currentYear;
-        return range($startYear, 2023);
-    }
-}
-
-if (!function_exists('getMonthsArray')) {
-    function getMonthsArray()
-    {
-        return [
-            ['value' => 'January', 'name' => 'January'],
-            ['value' => 'February', 'name' => 'February'],
-            ['value' => 'March', 'name' => 'March'],
-            ['value' => 'April', 'name' => 'April'],
-            ['value' => 'May', 'name' => 'May'],
-            ['value' => 'June', 'name' => 'June'],
-            ['value' => 'July', 'name' => 'July'],
-            ['value' => 'August', 'name' => 'August'],
-            ['value' => 'September', 'name' => 'September'],
-            ['value' => 'October', 'name' => 'October'],
-            ['value' => 'November', 'name' => 'November'],
-            ['value' => 'December', 'name' => 'December'],
-        ];
-    }
-}
-
 
 /*
  * Menu bar start

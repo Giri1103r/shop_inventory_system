@@ -240,7 +240,7 @@ Route::middleware(['securityheader'])->group(function () {
                 Route::get('view/{id}', 'view');
                 Route::post('delete', 'delete');
                 Route::post('unique', 'Uniquecheck');
-                
+
                 Route::get('export/excel', 'exportExcel');
                 Route::get('export/pdf', 'exportPdf');
 
@@ -258,6 +258,7 @@ Route::middleware(['securityheader'])->group(function () {
 
                 Route::get('edit/{id}', 'edit');
                 Route::post('edit/submit', 'update');
+                Route::post('unique', 'Uniquecheck');
 
                 Route::get('view/{id}', 'view');
                 Route::post('delete', 'delete');
@@ -282,6 +283,7 @@ Route::middleware(['securityheader'])->group(function () {
 
                 Route::get('view/{id}', 'view');
                 Route::post('delete', 'delete');
+                Route::post('unique', 'Uniquecheck');
 
                 Route::get('export/excel', 'exportExcel');
                 Route::get('export/pdf', 'exportPdf');
@@ -300,6 +302,7 @@ Route::middleware(['securityheader'])->group(function () {
 
                 Route::get('edit/{id}', 'edit');
                 Route::post('edit/submit', 'update');
+                Route::post('unique', 'Uniquecheck');
 
                 Route::get('view/{id}', 'view');
                 Route::post('delete', 'delete');
@@ -312,69 +315,7 @@ Route::middleware(['securityheader'])->group(function () {
 
                 Route::post('status', 'statusChange');
             });
-            Route::prefix('master/supplier')->controller(SupplierController::class)->group(function () {
-                Route::get('list', 'index');
-                Route::post('list', 'index');
-
-                Route::get('add', 'add');
-                Route::post('add/submit', 'store');
-
-                Route::get('edit/{id}', 'edit');
-                Route::post('edit/submit', 'update');
-
-                Route::get('view/{id}', 'view');
-                Route::post('delete', 'delete');
-
-                Route::get('export/excel', 'exportExcel');
-                Route::get('export/pdf', 'exportPdf');
-
-                Route::get('import', 'import');
-                Route::post('import/submit', 'importSubmit');
-
-                Route::post('status', 'statusChange');
-            });
-            Route::prefix('master/warehouse')->controller(WarehouseController::class)->group(function () {
-                Route::get('list', 'index');
-                Route::post('list', 'index');
-
-                Route::get('add', 'add');
-                Route::post('add/submit', 'store');
-
-                Route::get('edit/{id}', 'edit');
-                Route::post('edit/submit', 'update');
-
-                Route::get('view/{id}', 'view');
-                Route::post('delete', 'delete');
-
-                Route::get('export/excel', 'exportExcel');
-                Route::get('export/pdf', 'exportPdf');
-
-                Route::get('import', 'import');
-                Route::post('import/submit', 'importSubmit');
-
-                Route::post('status', 'statusChange');
-            });
-            Route::prefix('master/department')->controller(DepartmentController::class)->group(function () {
-                Route::get('list', 'index');
-                Route::post('list', 'index');
-
-                Route::get('add', 'add');
-                Route::post('add/submit', 'store');
-
-                Route::get('edit/{id}', 'edit');
-                Route::post('edit/submit', 'update');
-
-                Route::get('view/{id}', 'view');
-                Route::post('delete', 'delete');
-
-                Route::get('export/excel', 'exportExcel');
-                Route::get('export/pdf', 'exportPdf');
-
-                Route::get('import', 'import');
-                Route::post('import/submit', 'importSubmit');
-
-                Route::post('status', 'statusChange');
-            });
+          
 
 
 

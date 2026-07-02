@@ -625,6 +625,174 @@
         //         minuteStep: 5,
         //     });
         // }
+        flatpickr('.date_time', {
+            dateFormat: 'd-m-Y H:i:S',
+            enableTime: true,
+            time_24hr: true,
+        });
+
+        flatpickr(".time_format", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "h:i K",
+            time_24hr: false,
+            onReady: function(selectedDates, dateStr, instance) {
+                instance.calendarContainer.classList.add("large-timepicker");
+            }
+        });
+
+        var startDateFromBackend = "{{ isset($start_date_from_dashboard) ? $start_date_from_dashboard : '' }}";
+        var endDateFromBackend = "{{ isset($end_date_from_dashboard) ? $end_date_from_dashboard : '' }}";
+
+        var endDatepickersearch_filter = flatpickr('#enddatepickersearch', {
+            dateFormat: "Y/m/d",
+            altInput: true,
+            altFormat: 'd-m-Y',
+            allowInput: true,
+            // minDate: startDateFromBackend ? new Date(startDateFromBackend) : null,
+            maxDate: new Date(), // Prevent future dates
+            defaultDate: endDateFromBackend || null
+        });
+
+        flatpickr("#datepickersearch", {
+            dateFormat: "Y/m/d",
+            altInput: true,
+            altFormat: 'd-m-Y',
+            allowInput: true,
+            maxDate: new Date(),
+            defaultDate: startDateFromBackend || null,
+            onChange: function(selectedDates) {
+                if (selectedDates.length > 0) {
+                    var startDate = selectedDates[0];
+                    var nextDay = new Date(startDate);
+                    // nextDay.setDate(nextDay.getDate() + 1);
+                    nextDay.setDate(nextDay.getDate());
+
+                    endDatepickersearch_filter.set('minDate', nextDay);
+                    endDatepickersearch_filter.clear();
+                }
+            }
+        });
+
+        var endDatepickersearch = flatpickr('.enddatepickersearch', {
+            dateFormat: "d-m-Y",
+            altFormat: 'd-m-Y',
+            // minDate: startDateFromBackend ? new Date(startDateFromBackend) : null,
+            maxDate: new Date(), // Prevent future dates
+            defaultDate: endDateFromBackend || null
+        });
+
+        flatpickr(".datepickersearch", {
+            dateFormat: "d-m-Y",
+            altFormat: 'd-m-Y',
+
+            maxDate: new Date(),
+            defaultDate: startDateFromBackend || null,
+            onChange: function(selectedDates) {
+                if (selectedDates.length > 0) {
+                    var startDate = selectedDates[0];
+                    var nextDay = new Date(startDate);
+                    nextDay.setDate(nextDay.getDate() + 1);
+
+                    endDatepickersearch.set('minDate', nextDay);
+                    endDatepickersearch.clear();
+                }
+            }
+        });
+
+        $(".date-start-today").flatpickr({
+            dateFormat: "d-m-Y",
+            minDate: "today",
+            allowInput: true,
+            onChange: function(selectedDates, dateStr, instance) {
+                $(instance.input).valid();
+            }
+        });
+
+
+        var projectEndDate = flatpickr("#project_end_date", {
+            dateFormat: "Y/m/d",
+            altInput: true,
+            altFormat: "d-m-Y",
+            allowInput: true
+        });
+
+        flatpickr("#project_start_date", {
+            dateFormat: "Y/m/d",
+            altInput: true,
+            altFormat: "d-m-Y",
+            allowInput: true,
+
+            onChange: function(selectedDates) {
+
+                if (selectedDates.length > 0) {
+
+                    var startDate = selectedDates[0];
+
+                    projectEndDate.set("minDate", startDate);
+
+                    $("#project_end_date").val("");
+                    projectEndDate.clear();
+                }
+            }
+        });
+
+
+
+        $(".date-past-one-month").flatpickr({
+            dateFormat: "d-m-Y",
+            minDate: new Date(new Date().setDate(new Date().getDate() - 30)),
+            maxDate: "today",
+            allowInput: false,
+            onChange: function(selectedDates, dateStr, instance) {
+                instance.input.value = dateStr;
+                $(instance.input).valid();
+            }
+        });
+
+        $(".date-range-picker").flatpickr({
+            mode: "range",
+            dateFormat: "d-m-Y",
+            allowInput: false,
+            onChange: function(selectedDates, dateStr, instance) {
+                instance.input.value = dateStr;
+                $(instance.input).valid();
+            }
+        });
+
+        flatpickr(".datePicker", {
+            dateFormat: "d-m-Y",
+            maxDate: "today",
+            allowInput: true,
+            altFormat: "d-m-Y",
+            disableMobile: true
+        });
+        flatpickr(".expDate", {
+            dateFormat: "Y-m-d",
+            minDate: "today",
+            allowInput: true,
+            altFormat: "d-m-Y",
+            disableMobile: true
+        });
+
+        flatpickr(".date-all", {
+            dateFormat: "d-m-Y",
+            allowInput: true
+        });
+
+        flatpickr(".date-six-month", {
+            dateFormat: "d-m-Y",
+            minDate: "today",
+            maxDate: new Date(new Date().setMonth(new Date().getMonth() + 6)),
+            allowInput: true
+        });
+
+        flatpickr(".date-14days", {
+            dateFormat: "d-m-Y",
+            minDate: "today",
+            maxDate: new Date(new Date().setDate(new Date().getDate() + 14)),
+            allowInput: true
+        });
 
         function datetimepickercall() {
             $(".datetimepicker").datetimepicker({
