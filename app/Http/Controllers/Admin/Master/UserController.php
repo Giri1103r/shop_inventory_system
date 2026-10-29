@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Master;
+namespace App\Http\Controllers\Admin\Master;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -20,10 +20,10 @@ use Response;
 use App\Models\Master\Designation;
 use App\Models\Master\Company;
 use App\Models\Master\Department;
-use App\Models\Master\UserRole;
+use App\Models\Administration\UserRole;
 
 use App\Models\User;
-use App\Models\UploadLog;
+use App\Models\Administration\UploadLog;
 
 
 class UserController extends Controller
@@ -110,7 +110,7 @@ class UserController extends Controller
 
         $data = array();
 
-        return view('master.user.list', $data);
+        return view('admin.master.user.list', $data);
     }
 
     public function ExportExcel(Request $request)
@@ -194,7 +194,7 @@ class UserController extends Controller
             );
 
             $property = [
-                'tempDir' => 'public/pdf/temp/',
+                'tempDir' => public_path('pdf/temp'),
                 'mode' => 'c',
                 'margin_left' => 10,
                 'margin_right' => 10,
@@ -205,15 +205,22 @@ class UserController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('master.user.pdf', $data);
+            $view = view('admin.master.user.pdf', $data);
             $html = $view->render();
 
 
 
             $mpdf->WriteHTML($html);
 
-            $filename = "master.user.pdf";
-            $mpdf->Output($filename, 'D');
+            $filename = "admin.master.user.pdf";
+
+            /* Hand the PDF back as a response instead of echoing it: mPDF sends
+               its own Content-Length and then returns, so letting the action fall
+               through made the framework append a second body to the download. */
+            return response($mpdf->Output($filename, \Mpdf\Output\Destination::STRING_RETURN), 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]);
         } catch (Exception $ex) {
             report($ex);
         }

@@ -6,11 +6,11 @@ use App\Models\User;
 use App\Models\FcmToken;
 use App\Models\LeftMenu;
 use Illuminate\Support\Str;
-use App\Models\Notification;
-use App\Models\UploadLogType;
-use App\Models\UserPermission;
+use App\Models\Administration\Notification;
+use App\Models\Administration\UploadLogType;
+use App\Models\Administration\UserPermission;
 use App\Models\Master\Employee;
-use App\Models\Master\UserRole;
+use App\Models\Administration\UserRole;
 
 
 use Illuminate\Support\Facades\DB;
@@ -395,13 +395,16 @@ if (!function_exists('getUsername')) {
     function getUsername($userid)
     {
 
+        // Called once per row on every listing, so keep the names for the request.
+        static $cache = [];
+
+        if (array_key_exists($userid, $cache)) {
+            return $cache[$userid];
+        }
+
         $user = DB::table('users')->select('name')->where('id', $userid)->where('trash', 'NO')->first();
 
-        if ($user == null) {
-            return '';
-        } else {
-            return $user->name;
-        }
+        return $cache[$userid] = ($user == null) ? '' : $user->name;
     }
 }
 
@@ -410,13 +413,16 @@ if (!function_exists('getEmployeename')) {
     function getEmployeename($userid)
     {
 
+        // Called once per row on every listing, so keep the names for the request.
+        static $cache = [];
+
+        if (array_key_exists($userid, $cache)) {
+            return $cache[$userid];
+        }
+
         $user = DB::table('masters_employee')->select('emp_name')->where('id', $userid)->where('trash', 'NO')->first();
 
-        if ($user == null) {
-            return '';
-        } else {
-            return $user->emp_name;
-        }
+        return $cache[$userid] = ($user == null) ? '' : $user->emp_name;
     }
 }
 if (!function_exists('getEmployeeType')) {
@@ -898,11 +904,19 @@ if (!function_exists('CheckUserRole')) {
     function CheckUserRole($roleId)
     {
 
-        $user =  User::find(Auth::id());
+        // Cache the user's role ids for the request; this is called many times per page.
+        static $cache = [];
+        $userId = Auth::id();
 
-        $userroleid = string_to_array($user->role);
+        if (!array_key_exists($userId, $cache)) {
+            $user =  User::find($userId);
 
-        $roleids = UserRole::whereIn('id', $userroleid)->pluck('id')->toArray();
+            $userroleid = string_to_array($user->role);
+
+            $cache[$userId] = UserRole::whereIn('id', $userroleid)->pluck('id')->toArray();
+        }
+
+        $roleids = $cache[$userId];
 
         if (in_array($roleId, $roleids)) {
             return TRUE;
@@ -915,15 +929,30 @@ if (!function_exists('CheckUserPermission')) {
 
     function CheckUserPermission($permissionType)
     {
-        $userRoleId = string_to_array(Auth::user()->role);
+        // Listings call this for every action button on every row, so the menu
+        // lookup and the answer itself are resolved once per request.
+        static $menuCache = [];
+        static $permissionCache = [];
 
         $currentPath = Request::path();
-        $menuId = LeftMenu::where('link', 'LIKE', "%{$currentPath}%")->select('id')->first();
+
+        if (!array_key_exists($currentPath, $menuCache)) {
+            $menuCache[$currentPath] = LeftMenu::where('link', 'LIKE', "%{$currentPath}%")->select('id')->first();
+        }
+
+        $menuId = $menuCache[$currentPath];
 
         if (!$menuId) {
             return false;
         }
 
+        $cacheKey = $currentPath . '|' . $permissionType;
+
+        if (array_key_exists($cacheKey, $permissionCache)) {
+            return $permissionCache[$cacheKey];
+        }
+
+        $userRoleId = string_to_array(Auth::user()->role);
         $leftmenu_id =  $menuId->id;
 
         $userPermission = UserPermission::whereIn('role_id', $userRoleId)
@@ -931,11 +960,7 @@ if (!function_exists('CheckUserPermission')) {
             ->where($permissionType, 1)
             ->exists();
 
-        if ($userPermission) {
-            return true;
-        }
-
-        return false;
+        return $permissionCache[$cacheKey] = $userPermission;
     }
 }
 

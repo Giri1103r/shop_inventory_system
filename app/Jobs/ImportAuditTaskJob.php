@@ -5,9 +5,9 @@ namespace App\Jobs;
 use App\Models\Inspection\audit\Master\Task;
 
 use Illuminate\Foundation\Queue\Queueable;
-use App\Models\UploadLog;
+use App\Models\Administration\UploadLog;
 use Shuchkin\SimpleXLSX;
-use App\Models\UploadLogError;
+use App\Models\Administration\UploadLogError;
 use Illuminate\Support\Facades\Session;
 
 use Illuminate\Queue\SerializesModels;

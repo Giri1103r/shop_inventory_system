@@ -18,7 +18,7 @@ use App\Models\Master\Unit;
 use App\Models\Master\Location;
 use App\Models\Master\Department;
 use App\Models\User;
-use App\Models\UploadLog;
+use App\Models\Administration\UploadLog;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
@@ -346,7 +346,7 @@ class LocationController extends Controller
             );
 
             $property = [
-                'tempDir' => 'public/pdf/temp/',
+                'tempDir' => public_path('pdf/temp'),
                 'mode' => 'c',
                 'margin_left' => 10,
                 'margin_right' => 10,
@@ -365,7 +365,14 @@ class LocationController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Location Master.pdf";
-            $mpdf->Output($filename, 'D');
+
+            /* Hand the PDF back as a response instead of echoing it: mPDF sends
+               its own Content-Length and then returns, so letting the action fall
+               through made the framework append a second body to the download. */
+            return response($mpdf->Output($filename, \Mpdf\Output\Destination::STRING_RETURN), 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', __('common.error_msg'));
@@ -468,6 +475,23 @@ class LocationController extends Controller
         }
     }
 
+
+    public function list(Request $request, $companyId)
+    {
+        $companyId = decryptId($companyId);
+        $id = decryptId($request->id);
+        $locations = $this->location->ajaxList($id, $companyId);
+
+        return response()->json($locations);
+    }
+
+    public function alllist(Request $request)
+    {
+        $companyId = decryptId($request->company_id);
+        $locations = $this->location->ajaxallList($companyId);
+
+        return response()->json($locations);
+    }
 
     public function Uniquecheck(Request $request)
     {

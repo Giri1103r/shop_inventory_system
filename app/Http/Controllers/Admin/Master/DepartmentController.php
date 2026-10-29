@@ -21,7 +21,7 @@ use App\Models\Master\Location;
 use App\Models\Master\Unit;
 use App\Models\Master\Department;
 use App\Models\User;
-use App\Models\UploadLog;
+use App\Models\Administration\UploadLog;
 
 
 class DepartmentController extends Controller
@@ -111,11 +111,9 @@ class DepartmentController extends Controller
         try {
             $companyList  = $this->company->getcompany();
             $locationList  = $this->location->getlocation();
-            $unitList  = $this->unit->getunit();
             $data = array(
                 'companyList' => $companyList,
                 'locationList' => $locationList,
-                'unitList' => $unitList,
             );
             return view('admin.master.department.add', $data);
         } catch (Exception $ex) {
@@ -134,14 +132,12 @@ class DepartmentController extends Controller
 
                 'company_id' => 'required',
                 'location_id' => 'required',
-                'unit_id' => 'required',
                 'department_name' => 'required',
             ];
             $messages = [
 
                 'company_id.required' => 'Please Select Company ',
                 'location_id.required' => 'Please Select Location ',
-                'unit_id.required' => 'Please Select Unit',
                 'department_name.required' => 'Please Enter Department Name',
 
             ];
@@ -191,11 +187,9 @@ class DepartmentController extends Controller
 
             $companyList  = $this->company->getcompany();
             $locationList  = $this->location->getlocation();
-            $unitList  = $this->unit->getunit();
             $data = array(
                 'companyList' => $companyList,
                 'locationList' => $locationList,
-                'unitList' => $unitList,
                 'department' => $department,
             );
 
@@ -215,14 +209,12 @@ class DepartmentController extends Controller
                
                 'company_id' => 'required',
                 'location_id' => 'required',
-                'unit_id' => 'required',
                 'department_name' => 'required',
             ];
             $messages = [
 
                 'company_id.required' => 'Please Select Company ',
                 'location_id.required' => 'Please Select Location ',
-                'unit_id.required' => 'Please Select Unit',
                 'department_name.required' => 'Please Enter Department Name',
 
             ];
@@ -295,7 +287,6 @@ class DepartmentController extends Controller
                 __("common.department_id"),
                 __("common.company"),
                 __("common.location"),
-                __("common.unit"),
                 __("common.department"),
                 __("common.status"),
                 __("common.created_by"),
@@ -310,7 +301,6 @@ class DepartmentController extends Controller
                 $export[] =  $data->department_id;
                 $export[] =  $data->company_name;
                 $export[] =  $data->location_name;
-                $export[] =  $data->unit_name;
                 $export[] =  $data->department_name;
                 $export[] =  $data->status == 1 ? 'Active' : 'In-Active';
                 $export[] =  getusername($data->created_by);
@@ -350,7 +340,6 @@ class DepartmentController extends Controller
                 __("common.department_id"),
                 __("common.company"),
                 __("common.location"),
-                __("common.unit"),
                 __("common.department"),
                 __("common.status"),
                 __("common.created_by"),
@@ -365,7 +354,7 @@ class DepartmentController extends Controller
             );
 
             $property = [
-                'tempDir' => 'public/pdf/temp/',
+                'tempDir' => public_path('pdf/temp'),
                 'mode' => 'c',
                 'margin_left' => 10,
                 'margin_right' => 10,
@@ -384,7 +373,14 @@ class DepartmentController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Department Master.pdf";
-            $mpdf->Output($filename, 'D');
+
+            /* Hand the PDF back as a response instead of echoing it: mPDF sends
+               its own Content-Length and then returns, so letting the action fall
+               through made the framework append a second body to the download. */
+            return response($mpdf->Output($filename, \Mpdf\Output\Destination::STRING_RETURN), 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]);
         } catch (Exception $ex) {
 
             report($ex);
@@ -514,20 +510,17 @@ class DepartmentController extends Controller
     public function Uniquecheck(Request $request)
     {
         if ($request->ajax()) {
-            $unit_id = decryptId($request->unit_id);
             $company_id = decryptId($request->company_id);
             $location_id = decryptId($request->location_id);
             $department_name = $request->department_name;
             $id = $request->id;
             if ($id == '') {
 
-                // dd('sdcds');
-                $record = $this->department->uniqueCheck($company_id, $location_id, $unit_id, $department_name);
+                $record = $this->department->uniqueCheck($company_id, $location_id, $department_name);
             } else {
 
-                // dd('sdcgsed');
                 $id = decryptId($id);
-                $record = $this->department->ExistuniqueCheck($company_id, $location_id, $unit_id, $department_name, $id);
+                $record = $this->department->ExistuniqueCheck($company_id, $location_id, $department_name, $id);
             }
             if ($record->count()) {
                 return Response::json(false);

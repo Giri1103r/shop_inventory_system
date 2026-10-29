@@ -2,8 +2,8 @@
 
 namespace App\Jobs;
 
-use App\Models\UploadLog;
-use App\Models\UploadLogError;
+use App\Models\Administration\UploadLog;
+use App\Models\Administration\UploadLogError;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Queue\InteractsWithQueue;

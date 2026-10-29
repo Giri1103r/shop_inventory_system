@@ -202,6 +202,18 @@ class Company extends Model
         return Company::where('trash', 'NO')->where('status', 1)->get();
     }
 
+    public function locations()
+    {
+        return $this->hasMany(Location::class, 'company_id', 'id');
+    }
+
+    public function departments()
+    {
+        return $this->hasMany(Department::class, 'company_id', 'id');
+    }
+
+    
+
     public function getApiKeyToken()
     {
         return Company::where('trash', 'NO')

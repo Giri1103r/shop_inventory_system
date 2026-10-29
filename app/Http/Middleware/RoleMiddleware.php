@@ -6,9 +6,9 @@ use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\LeftMenu;
-use App\Models\UserPermission;
+use App\Models\Administration\UserPermission;
 
-use App\Models\Master\UserRole;
+use App\Models\Administration\UserRole;
 
 class RoleMiddleware
 {

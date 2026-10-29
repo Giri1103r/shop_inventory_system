@@ -196,6 +196,7 @@ class Location extends Model
     {
 
         $data = $this->select('masters_location.*')
+            ->with('company')
             ->where('masters_location.id', $id)
             ->first();
 
@@ -208,6 +209,63 @@ class Location extends Model
     public function getlocation(){
         $data = $this->where('status',1)->get();
         return $data;
+    }
+
+    public function ajaxList($locationId, $companyId = '')
+    {
+        $query = $this->select('id', 'location_name')->where('status', 1);
+
+        if ($companyId != '') {
+            $query->where('company_id', $companyId);
+        }
+        if (!empty($companyId) && !empty($locationId)) {
+            $query = $query->where('company_id', $companyId)->where('status', 1)->orWhere(function ($query) use ($locationId, $companyId) {
+                $query->where('company_id', $companyId)->where('id', $locationId);
+            });
+        }
+        $datas = $query->get();
+
+        $list = [];
+        foreach ($datas as $data) {
+            $listvalue = [];
+            $listvalue['id'] = encryptId($data->id);
+            $listvalue['name'] = $data->location_name;
+            $list[] = $listvalue;
+        }
+
+        return $list;
+    }
+
+    public function ajaxallList($companyId = '')
+    {
+        $query = $this->select('id', 'location_name')->where('status', 1);
+
+        if ($companyId != '') {
+
+            $query = $query->where('company_id', $companyId);
+        }
+
+        $datas = $query->get();
+
+        $list = [];
+        foreach ($datas as $data) {
+            $listvalue = [];
+            $listvalue['id'] = encryptId($data->id);
+            $listvalue['name'] = $data->location_name;
+            $list[] = $listvalue;
+        }
+        return $list;
+    }
+
+    // masters_location.company_id holds master_company.id (not the CMP-xxxxx company code)
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id', 'id');
+    }
+
+    public function department()
+    {
+        return $this->hasMany(Department::class, 'location_id', 'id');
     }
 
     protected static function booted()

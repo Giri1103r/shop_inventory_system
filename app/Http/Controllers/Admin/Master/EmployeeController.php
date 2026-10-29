@@ -27,8 +27,8 @@ use App\Models\Master\Location;
 use App\Models\Master\Unit;
 use App\Models\Master\Department;
 use App\Models\User;
-use App\Models\UploadLog;
-use App\Models\Master\UserRole;
+use App\Models\Administration\UploadLog;
+use App\Models\Administration\UserRole;
 use Illuminate\Contracts\Session\Session as SessionSession;
 use Illuminate\Support\Facades\Session as FacadesSession;
 
@@ -122,7 +122,7 @@ class EmployeeController extends Controller
             'companyList' => $companyList,
             'unit' => $unit,
         );
-        return view('master.employee.list', $data);
+        return view('admin.master.employee.list', $data);
     }
 
     public function View(Request $request)
@@ -139,7 +139,7 @@ class EmployeeController extends Controller
                     'userrole' => $userrole,
                 );
             }
-            return view('master.employee.view', $data);
+            return view('admin.master.employee.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -163,7 +163,7 @@ class EmployeeController extends Controller
             );
 
 
-            return view('master.employee.edit', $data);
+            return view('admin.master.employee.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
         }
@@ -229,7 +229,7 @@ class EmployeeController extends Controller
                 'userrole' => $userrole,
             );
 
-            return view('master.employee.passwordupdate', $data);
+            return view('admin.master.employee.passwordupdate', $data);
         } catch (Exception $error) {
 
             report($error);
@@ -372,7 +372,7 @@ class EmployeeController extends Controller
             );
 
             $property = [
-                'tempDir' => 'public/pdf/temp/',
+                'tempDir' => public_path('pdf/temp'),
                 'mode' => 'c',
                 'margin_left' => 10,
                 'margin_right' => 10,
@@ -383,7 +383,7 @@ class EmployeeController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('master.employee.pdf', $data);
+            $view = view('admin.master.employee.pdf', $data);
             $html = $view->render();
 
 
@@ -391,7 +391,14 @@ class EmployeeController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Employee Master.pdf";
-            $mpdf->Output($filename, 'D');
+
+            /* Hand the PDF back as a response instead of echoing it: mPDF sends
+               its own Content-Length and then returns, so letting the action fall
+               through made the framework append a second body to the download. */
+            return response($mpdf->Output($filename, \Mpdf\Output\Destination::STRING_RETURN), 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]);
         } catch (Exception $ex) {
 
           report($ex);

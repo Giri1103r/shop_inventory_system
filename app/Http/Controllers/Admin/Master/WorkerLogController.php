@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Master;
+namespace App\Http\Controllers\Admin\Master;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -53,7 +53,7 @@ class WorkerLogController extends Controller
 
         $data = array();
 
-        return view('master.workerlog.list', $data);
+        return view('admin.adminitration.workerlog.list', $data);
     }
 
  

@@ -8,9 +8,9 @@ use Illuminate\Foundation\Queue\Queueable;
 use App\Models\Master\Department;
 use App\Models\Master\Employee;
 use App\Models\Master\Unit;
-use App\Models\UploadLog;
+use App\Models\Administration\UploadLog;
 use Shuchkin\SimpleXLSX;
-use App\Models\UploadLogError;
+use App\Models\Administration\UploadLogError;
 use Illuminate\Support\Facades\Session;
 class ImportCurrentNewExtCodeDailingJob implements ShouldQueue
 // class ImportCurrentNewExtCodeDailingJob

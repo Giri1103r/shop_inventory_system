@@ -121,6 +121,8 @@ return [
     'unit' => 'Unit',
     'department_id' => 'Department Id',
     'department' => 'Department',
+    'designation_id' => 'Designation Id',
+    'designation' => 'Designation',
     'file' => 'File',
 
     // title
@@ -128,6 +130,7 @@ return [
     'location_details' => 'Location Details',
     'unit_details' => 'Unit Details',
     'department_details' => 'Department Details',
+    'designation_details' => 'Designation Details',
     'employee_details' => 'Employee Details',
 
 

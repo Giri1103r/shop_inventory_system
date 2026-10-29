@@ -99,16 +99,16 @@ class Department extends Model
         return $datas;
     }
 
-    public function UniqueCheck($company_id, $location_id, $unit_id, $department_name)
+    public function UniqueCheck($company_id, $location_id, $department_name)
     {
 
-        return $this->where('company_id', $company_id)->where('location_id', $location_id)->where('unit_id', $unit_id)->where('department_name', $department_name)->get();
+        return $this->where('company_id', $company_id)->where('location_id', $location_id)->where('department_name', $department_name)->get();
     }
 
-    public function ExistuniqueCheck($company_id, $location_id, $unit_id, $department_name, $id)
+    public function ExistuniqueCheck($company_id, $location_id, $department_name, $id)
     {
 
-        return $this->where('company_id', $company_id)->where('location_id', $location_id)->where('unit_id', $unit_id)->where('department_name', $department_name)
+        return $this->where('company_id', $company_id)->where('location_id', $location_id)->where('department_name', $department_name)
             ->where('id', '!=', $id)
             ->get();
     }
@@ -121,7 +121,6 @@ class Department extends Model
             'department_id' => $request->department_id,
             'location_id' => decryptId($request->location_id),
             'company_id' => decryptId($request->company_id),
-            'unit_id' => decryptId($request->unit_id),
             'department_name' => $request->department_name,
             'created_by' => Auth::id()
         );
@@ -137,7 +136,6 @@ class Department extends Model
             'department_id' => $request->department_id,
             'location_id' => decryptId($request->location_id),
             'company_id' => decryptId($request->company_id),
-            'unit_id' => decryptId($request->unit_id),
             'department_name' => $request->department_name,
             'updated_by' => Auth::id()
         );
@@ -251,6 +249,7 @@ class Department extends Model
         $query = $query->leftJoin('master_company', 'masters_department.company_id', '=', 'master_company.id');
         $query = $query->leftJoin('masters_location', 'masters_department.location_id', '=', 'masters_location.id');
         $query = $query->leftJoin('masters_unit', 'masters_department.unit_id', '=', 'masters_unit.id');
+
         if ($request->search != null || $request->search != '') {
             $search = $request->search;
 
@@ -291,6 +290,8 @@ class Department extends Model
 
         $data = $this->select('masters_department.*', 'master_company.company_name',  'masters_location.location_name', 'masters_unit.unit_name')->leftJoin('master_company', 'masters_department.company_id', '=', 'master_company.id')->leftJoin('masters_location', 'masters_department.location_id', '=', 'masters_location.id')->leftJoin('masters_unit', 'masters_department.unit_id', '=', 'masters_unit.id')
             ->where('masters_department.id', $id)
+            ->with('company')
+            ->with('location')
             ->first();
 
         return $data;
@@ -334,6 +335,16 @@ class Department extends Model
             $uniqueId = 'DEP-' . str_pad($model->id, 5, '0', STR_PAD_LEFT);
             $model->update(['department_id' => $uniqueId]);
         });
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id', 'id');
+    }
+
+    public function location()
+    {
+        return $this->belongsTo(Location::class, 'location_id', 'id');
     }
 
     public function getunitwiseDepartment()

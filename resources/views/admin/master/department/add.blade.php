@@ -68,16 +68,7 @@
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div class="col-md-4 mb-2">
-                                                <div class="form-group form-input">
-                                                    <label class="form-label require">Unit Name</label>
-                                                    <select name="unit_id" id="unit_id"
-                                                        class=" form-control single-select" style="width: 100%">
-                                                        <option value="">Select Unit Name</option>
-
-                                                    </select>
-                                                </div>
-                                            </div>
+                                            
                                             <div class="col-md-4 mb-2">
                                                 <div class="form-group form-input">
                                                     <label class="form-label require">Department Name</label>
@@ -143,31 +134,6 @@
             }
         });
 
-        $(document).on('change', '#location_id', function() {
-            var locationId = $(this).val();
-            if (locationId) {
-                $.ajax({
-                    url: "{{ admin_url('unit/ajax-list') }}/" + locationId + "/0",
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function(data) {
-                        $('#unit_id').empty().append('<option value="">Select Unit</option>');
-                        $.each(data, function(key, value) {
-                            $('#unit_id').append('<option value="' + value.id + '">' + value
-                                .name + '</option>');
-                        });
-                        $('#unit_id').trigger('change.');
-                    },
-                    error: function(xhr) {
-                        alert('Error fetching unit. Please try again.');
-                    }
-                });
-            } else {
-                $('#unit_id').empty().append('<option value="">Select Unit</option>');
-                $('#unit_id').trigger('change.');
-            }
-        });
-
 
         $(function() {
             $('#departmentadd').validate({
@@ -176,9 +142,6 @@
                         required: true,
                     },
                     location_id: {
-                        required: true,
-                    },
-                    unit_id: {
                         required: true,
                     },
                     department_name: {
@@ -195,9 +158,6 @@
                                 location_id: function() {
                                     return $('#location_id').val();
                                 },
-                                unit_id: function() {
-                                    return $('#unit_id').val();
-                                },
                                 department_name: function() {
                                     return $('#department_name').val();
                                 },
@@ -212,10 +172,6 @@
                     },
                     location_id: {
                         required: "{{ __('Location Name is Required') }}",
-                    },
-                    unit_id: {
-                        required: "{{ __('Unit Name is Required') }}",
-                        minlength: "{{ __('common.validate_min_length') }}",
                     },
                     department_name: {
                         required: "{{ __('Department  Name is Required') }}",

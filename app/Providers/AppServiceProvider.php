@@ -16,10 +16,10 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Response;
 
-use App\Models\Notification;
-use App\Models\NotificationLog;
+use App\Models\Administration\Notification;
+use App\Models\Administration\NotificationLog;
 use App\Models\Language;
-use App\Models\Master\UserRole;
+use App\Models\Administration\UserRole;
 use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
@@ -93,6 +93,14 @@ class AppServiceProvider extends ServiceProvider
       
 
         View::composer('*', function ($view) {
+
+            // Everything below is shared with View::share(), so build it once per request
+            // instead of again for every partial that gets rendered.
+            static $shared = false;
+            if ($shared) {
+                return;
+            }
+            $shared = true;
 
             /**
              * Left Menu Function

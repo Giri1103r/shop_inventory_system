@@ -7,14 +7,20 @@ use App\Models\Master\Unit;
 use App\Models\Master\Work;
 use Illuminate\Support\Str;
 use App\Models\Master\Topic;
-use App\Models\Notification;
+use App\Models\Administration\Notification;
 use App\Models\Master\Company;
 use App\Models\IMS\Master\Hira;
 use App\Models\Master\Employee;
 use App\Models\Master\Location;
 
-use App\Models\Master\UserRole;
+use App\Models\Administration\UserRole;
 use App\Models\Master\Department;
+use App\Models\Master\Designation;
+use App\Models\Master\Shift;
+use App\Models\Master\Bloodgroup;
+use App\Models\Employee\Master\Document;
+use App\Models\Employee\Master\EmployeeType;
+use App\Models\Employee\Master\EmployeeStatus;
 use App\Models\Master\PpeRequest;
 use Illuminate\Support\Facades\DB;
 use App\Models\Master\PpeExemption;
@@ -206,6 +212,36 @@ if (!function_exists('getsequence')) {
                 $count = Department::withoutGlobalScopes()->count();
                 $count = $count + 1;
                 $sequence = 'DEP-' . getautogen($count);
+                break;
+            case 'designation':
+                $count = Designation::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'DES-' . getautogen($count);
+                break;
+            case 'shift':
+                $count = Shift::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'SHF-' . getautogen($count);
+                break;
+            case 'bloodgroup':
+                $count = Bloodgroup::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'BG-' . getautogen($count);
+                break;
+            case 'employeestatus':
+                $count = EmployeeStatus::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'EST-' . getautogen($count);
+                break;
+            case 'employeetype':
+                $count = EmployeeType::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'ETY-' . getautogen($count);
+                break;
+            case 'document':
+                $count = Document::withoutGlobalScopes()->count();
+                $count = $count + 1;
+                $sequence = 'DOC-' . getautogen($count);
                 break;
             case 'role':
                 $count = UserRole::withoutGlobalScopes()->count();

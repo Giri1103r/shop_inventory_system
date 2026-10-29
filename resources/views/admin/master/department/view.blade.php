@@ -1,6 +1,6 @@
 @extends('admin.layouts.admin')
 @section('title', 'Department Master')
-@section('pageurl', admin_url('department/list'))
+@section('pageurl', admin_url('master/department/list'))
 
 
 @section('content')
@@ -23,7 +23,7 @@
                             <div class="card-header">
                                 {{-- <h4 class="card-title">{{ __('master.company_add') }}</h4> --}}
                                 <div class="align-back-btc d-flex justify-content-end align-items-center">
-                                    <x-button-back href="{{ admin_url('department/list') }}"></x-button-back>
+                                    <x-button-back href="{{ admin_url('master/department/list') }}"></x-button-back>
 
                                 </div>
                             </div>
@@ -33,7 +33,7 @@
 
                                 <div class="row">
                                     <div class="card-header-inner">
-                                        <h4 class="text-white"></h4>
+                                        <h4 class="text-white">Department Details</h4>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -56,12 +56,7 @@
                                             {{ isset($department->location_name) ? $department->location_name : '' }}
                                         </div>
                                     </div>
-                                    <div class="mb-3 col-md-4 form-input">
-                                        <label class="form-label view_label">{{ __('Unit Name') }}</label>
-                                        <div class="view_data">
-                                            {{ isset($department->unit_name) ? $department->unit_name : '' }}
-                                        </div>
-                                    </div>
+                                   
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('Department Name') }}</label>
                                         <div class="view_data">

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Master;
+namespace App\Http\Controllers\Admin\Master;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -53,7 +53,7 @@ class EmployeeLogController extends Controller
 
         $data = array();
 
-        return view('master.employeelog.list', $data);
+        return view('admin.master.employeelog.list', $data);
     }
 
  

@@ -4,10 +4,10 @@ namespace App\Jobs;
 
 use App\Models\Inspection\Fire\FireExtinguisherType;
 use Shuchkin\SimpleXLSX;
-use App\Models\UploadLog;
+use App\Models\Administration\UploadLog;
 use Illuminate\Bus\Queueable;
 use App\Models\Master\Factory;
-use App\Models\UploadLogError;
+use App\Models\Administration\UploadLogError;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;

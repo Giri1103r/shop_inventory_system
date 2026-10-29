@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Master;
+namespace App\Http\Controllers\Admin\Master;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -62,7 +62,7 @@ class UserLogController extends Controller
             'userdetails' =>  $userdetails ,
         );
 
-        return view('master.userlog.list', $data);
+        return view('admin.adminitration.userlog.list', $data);
     }
 
 

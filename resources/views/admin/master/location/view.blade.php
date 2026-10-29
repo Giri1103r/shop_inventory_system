@@ -47,7 +47,7 @@
                                     <div class="mb-3 col-md-4 form-input">
                                         <label class="form-label view_label">{{ __('common.company') }}</label>
                                         <div class="view_data">
-                                            {{ isset($location->company_name) ? $location->company_name : '' }}
+                                            {{ $location->company?->company_name ?? '' }}
                                         </div>
                                     </div>
                                     <div class="mb-3 col-md-4 form-input">

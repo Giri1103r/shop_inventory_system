@@ -6,10 +6,10 @@ use App\Models\Inspection\Ohc\Master\FirstAidEquipment;
 use App\Models\OhcManagement\Master\Medicine;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use App\Models\UploadLog;
+use App\Models\Administration\UploadLog;
 use Shuchkin\SimpleXLSX;
 use Illuminate\Support\Facades\Session;
-use App\Models\UploadLogError;
+use App\Models\Administration\UploadLogError;
 
 // class ImportFirstAidEquipmentJob implements ShouldQueue
 class ImportFirstAidEquipmentJob

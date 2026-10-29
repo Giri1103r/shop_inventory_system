@@ -605,14 +605,30 @@
             return formattedDate;
         }
 
-        function timepickercall() {
+        /*
+         * Round clock time picker. Add the "clockpicker" class to any text input
+         * to use it. Per input overrides: data-twelvehour, data-placement,
+         * data-align, data-default.
+         */
 
-            $(".clockpicker").clockpicker({
-                twelvehour: true,
-                placement: 'bottom',
-                autoclose: true,
-                donetext: 'Done',
-                'default': 'now'
+        function timepickercall(container) {
+
+            $(container || document).find(".clockpicker").each(function() {
+
+                var input = $(this);
+
+                if (input.data('clockpicker')) {
+                    return;
+                }
+
+                input.attr('autocomplete', 'off').clockpicker({
+                    twelvehour: input.data('twelvehour') ? true : false,
+                    placement: input.data('placement') || 'bottom',
+                    align: input.data('align') || 'left',
+                    autoclose: true,
+                    donetext: 'Done',
+                    'default': input.data('default') || 'now'
+                });
             });
         }
 
@@ -719,6 +735,7 @@
             callsingleselect();
             callmultipleselect();
             calltooltip();
+            timepickercall();
 
         });
 
@@ -728,6 +745,7 @@
             setTimeout(function() {
                 callpopupsingleselect();
                 callpopupmultipleselect();
+                timepickercall('#popupwindowmodal');
             }, 500);
 
         });
@@ -735,6 +753,10 @@
         /*
          * Menu Active dynamically
          */
+
+        $(document).on('click', '.input-group-text', function() {
+            $(this).closest('.input-group').find('.clockpicker').trigger('focus');
+        });
 
         $('.button-menu-mobile').on('click', function() {
             $('body').toggleClass('sidebar-mini');

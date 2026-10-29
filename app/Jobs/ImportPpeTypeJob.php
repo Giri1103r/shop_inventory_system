@@ -3,8 +3,8 @@
 namespace App\Jobs;
 
 use App\Models\Master\PpeType;
-use App\Models\UploadLog;
-use App\Models\UploadLogError;
+use App\Models\Administration\UploadLog;
+use App\Models\Administration\UploadLogError;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;

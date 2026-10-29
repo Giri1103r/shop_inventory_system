@@ -24,7 +24,7 @@ use App\Models\Master\Location;
 use App\Models\Master\Unit;
 use App\Models\Master\Department;
 use App\Models\User;
-use App\Models\UploadLog;
+use App\Models\Administration\UploadLog;
 
 
 class WorkController extends Controller
@@ -99,7 +99,7 @@ class WorkController extends Controller
         $data = array(
             'companyList' => $companyList,
         );
-        return view('master.work.list', $data);
+        return view('admin.master.work.list', $data);
     }
 
     public function View(Request $request)
@@ -113,7 +113,7 @@ class WorkController extends Controller
                     'work' => $Work,
                 );
             }
-            return view('master.work.view', $data);
+            return view('admin.master.work.view', $data);
         } catch (Exception $ex) {
             report($ex);
         }
@@ -133,7 +133,7 @@ class WorkController extends Controller
                 'work' => $work,
             );
 
-            return view('master.work.edit', $data);
+            return view('admin.master.work.edit', $data);
         } catch (Exception $error) {
             report($error->getMessage());
         }
@@ -282,7 +282,7 @@ class WorkController extends Controller
             );
 
             $property = [
-                'tempDir' => 'public/pdf/temp/',
+                'tempDir' => public_path('pdf/temp'),
                 'mode' => 'c',
                 'margin_left' => 10,
                 'margin_right' => 10,
@@ -293,7 +293,7 @@ class WorkController extends Controller
             $mpdf = new \Mpdf\Mpdf($property);
             $mpdf->setAutoTopMargin = 'stretch';
 
-            $view = view('master.work.pdf', $data);
+            $view = view('admin.master.work.pdf', $data);
             $html = $view->render();
 
 
@@ -301,7 +301,14 @@ class WorkController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Worker Master.pdf";
-            $mpdf->Output($filename, 'D');
+
+            /* Hand the PDF back as a response instead of echoing it: mPDF sends
+               its own Content-Length and then returns, so letting the action fall
+               through made the framework append a second body to the download. */
+            return response($mpdf->Output($filename, \Mpdf\Output\Destination::STRING_RETURN), 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]);
         } catch (Exception $ex) {
 
             report($ex);

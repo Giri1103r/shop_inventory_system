@@ -15,8 +15,8 @@ use Illuminate\Support\Facades\Validator;
 use Shuchkin\SimpleXLSX;
 
 use App\Models\User;
-use App\Models\UploadLog;
-use App\Models\UploadLogError;
+use App\Models\Administration\UploadLog;
+use App\Models\Administration\UploadLogError;
 use App\Models\Master\Checklist;
 use Illuminate\Support\Facades\Session;
 

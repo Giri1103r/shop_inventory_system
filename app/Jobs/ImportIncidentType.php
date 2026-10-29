@@ -4,9 +4,9 @@ namespace App\Jobs;
 
 use App\Models\IMS\Master\IncidentType;
 use Shuchkin\SimpleXLSX;
-use App\Models\UploadLog;
+use App\Models\Administration\UploadLog;
 use App\Models\Master\Company;
-use App\Models\UploadLogError;
+use App\Models\Administration\UploadLogError;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Queue\InteractsWithQueue;

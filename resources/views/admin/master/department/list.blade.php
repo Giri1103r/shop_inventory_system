@@ -98,7 +98,7 @@
                                         <th>{{__('common.department_id')}}</th>
                                         <th>{{__('common.company')}}</th>
                                         <th>Location Name</th>
-                                        <th>Unit Name</th>
+                                   
                                         <th>Department Name</th>
                                         <th>{{ __('common.status') }}</th>
                                         <th>{{ __('common.created_by') }}</th>
@@ -238,10 +238,7 @@
                             data: 'location_name',
                             name: 'location_name'
                         },
-                        {
-                            data: 'unit_name',
-                            name: 'unit_name'
-                        },
+                      
                         {
                             data: 'department_name',
                             name: 'department_name'

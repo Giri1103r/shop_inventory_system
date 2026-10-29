@@ -140,3 +140,30 @@ h3 {
     overflow-y: auto;
     max-height: 400px;
 }
+
+/* Round clock time picker (clockpicker) on Bootstrap 5 */
+.clockpicker-popover {
+    width: 224px;
+    padding: 0;
+    display: block;
+}
+
+.clockpicker-popover .popover-title {
+    padding: 8px 14px;
+    border-bottom: 1px solid #f0f0f0;
+    border-top-left-radius: calc(0.5rem - 1px);
+    border-top-right-radius: calc(0.5rem - 1px);
+}
+
+.clockpicker-popover .popover-content {
+    border-bottom-left-radius: calc(0.5rem - 1px);
+    border-bottom-right-radius: calc(0.5rem - 1px);
+}
+
+.clockpicker-popover > .arrow {
+    display: none;
+}
+
+.input-group .clockpicker + .input-group-text {
+    cursor: pointer;
+}

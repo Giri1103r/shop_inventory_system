@@ -16,7 +16,7 @@ use App\Models\Master\Unit;
 use App\Models\Master\Location;
 use App\Models\Master\Department;
 use App\Models\User;
-use App\Models\UploadLog;
+use App\Models\Administration\UploadLog;
 use App\Jobs\ImportCompanyJob;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
@@ -452,7 +452,7 @@ class CompanyController extends Controller
             );
 
             $property = [
-                'tempDir' => 'public/pdf/temp/',
+                'tempDir' => public_path('pdf/temp'),
                 'mode' => 'c',
                 'margin_left' => 10,
                 'margin_right' => 10,
@@ -471,7 +471,14 @@ class CompanyController extends Controller
             $mpdf->WriteHTML($html);
 
             $filename = "Company Master.pdf";
-            $mpdf->Output($filename, 'D');
+
+            /* Hand the PDF back as a response instead of echoing it: mPDF sends
+               its own Content-Length and then returns, so letting the action fall
+               through made the framework append a second body to the download. */
+            return response($mpdf->Output($filename, \Mpdf\Output\Destination::STRING_RETURN), 200, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ]);
         } catch (Exception $ex) {
             report($ex);
             Session::flash('error', __('common.error_msg'));

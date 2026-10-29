@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Master\WorkController;
 
 
 use App\Http\Controllers\Admin\Master\CompanyController;
+use App\Http\Controllers\Admin\Master\DesignationController;
 
 use App\Http\Controllers\Admin\Master\EmployeeController;
 use App\Http\Controllers\Admin\Master\LocationController;
@@ -20,7 +21,11 @@ use App\Http\Controllers\Admin\Master\WorkerLogController;
 use App\Http\Controllers\Admin\Master\DepartmentController;
 use App\Http\Controllers\Admin\Master\EmployeeLogController;
 
-
+use App\Http\Controllers\Admin\Master\ShiftController;
+use App\Http\Controllers\Admin\Master\BloodGroupController;
+use App\Http\Controllers\Admin\Employee\Master\DocumentController;
+use App\Http\Controllers\Admin\Employee\Master\EmployeeTypeController;
+use App\Http\Controllers\Admin\Employee\Master\EmployeeStatusController;
 
 
 
@@ -29,8 +34,9 @@ use App\Http\Controllers\Admin\Master\EmployeeLogController;
 
 use App\Http\Controllers\{SettingsController, LocalizationController, TestController};
 
-use App\Http\Controllers\Admin\{LoginController, NotificationController, AdminController, BlockedController};
-use App\Http\Controllers\Master\{UserLogController, UserPermissionController, UploadLogController, UserController, UserRoleController};
+use App\Http\Controllers\Admin\{LoginController, AdminController, BlockedController};
+use App\Http\Controllers\Admin\Master\{UserLogController, UserController};
+use App\Http\Controllers\Admin\Administration\{UserPermissionController, UserRoleController, UploadLogController, NotificationController};
 use App\Http\Controllers\PWAController;
 
 
@@ -270,6 +276,12 @@ Route::middleware(['securityheader'])->group(function () {
             Route::get('notification/view/{id}', [NotificationController::class, 'notificationView']);
 
             /**
+             * Dependent dropdowns
+             */
+            Route::get('location/ajax-list/{companyId}/{id}', [LocationController::class, 'list']);
+            Route::get('location/all-ajax-list', [LocationController::class, 'alllist']);
+
+            /**
              *  master
              */
             Route::group(['prefix' => 'master/'], function () {
@@ -445,16 +457,231 @@ Route::middleware(['securityheader'])->group(function () {
 
                         Route::get('sampledownload', 'DownloadSample');
                     });
-            });
+
+                     Route::controller(DesignationController::class)
+                    ->prefix('designation')
+                    ->group(function () {
+
+                        Route::get('list', 'index');
+                        Route::post('list', 'index');
+
+                        Route::get('add', 'add');
+                        Route::post('add/submit', 'store');
+
+                        Route::get('edit/{id}', 'edit');
+                        Route::post('edit/submit', 'update');
+
+                        Route::get('view/{id}', 'view');
+
+                        Route::post('delete', 'delete');
+
+                        Route::get('export/excel', 'exportExcel');
+                        Route::get('export/pdf', 'exportPdf');
+
+                        Route::get('import', 'import');
+                        Route::post('import/submit', 'importSubmit');
+
+                        Route::post('status', 'statusChange');
+                        Route::post('unique', 'Uniquecheck');
+
+                        Route::get('sampledownload', 'DownloadSample');
+                    });
+
+                     Route::controller(BloodGroupController::class)
+                    ->prefix('blood-group')
+                    ->group(function () {
+
+                        Route::get('list', 'index');
+                        Route::post('list', 'index');
+
+                        Route::get('add', 'add');
+                        Route::post('add/submit', 'store');
+
+                        Route::get('edit/{id}', 'edit');
+                        Route::post('edit/submit', 'update');
+
+                        Route::get('view/{id}', 'view');
+
+                        Route::post('delete', 'delete');
+
+                        Route::get('export/excel', 'exportExcel');
+                        Route::get('export/pdf', 'exportPdf');
 
 
+                        Route::post('status', 'statusChange');
+                        Route::post('unique', 'Uniquecheck');
+
+                    });
+
+                     Route::controller(ShiftController::class)
+                    ->prefix('shift')
+                    ->group(function () {
+
+                        Route::get('list', 'index');
+                        Route::post('list', 'index');
+
+                        Route::get('add', 'add');
+                        Route::post('add/submit', 'store');
+
+                        Route::get('edit/{id}', 'edit');
+                        Route::post('edit/submit', 'update');
+
+                        Route::get('view/{id}', 'view');
+
+                        Route::post('delete', 'delete');
+
+                        Route::get('export/excel', 'exportExcel');
+                        Route::get('export/pdf', 'exportPdf');
 
 
+                        Route::post('status', 'statusChange');
+                        Route::post('unique', 'Uniquecheck');
+
+                    });
+                });
 
 
             /**
-             * Topic master
+             *  employee management
              */
+            Route::group(['prefix' => 'employee-management/'], function () {
+
+                Route::group(['prefix' => 'master/'], function () {
+
+                    Route::controller(EmployeeStatusController::class)
+                        ->prefix('employee-status')
+                        ->group(function () {
+
+                            Route::get('list', 'index');
+                            Route::post('list', 'index');
+
+                            Route::get('add', 'add');
+                            Route::post('add/submit', 'store');
+
+                            Route::get('edit/{id}', 'edit');
+                            Route::post('edit/submit', 'update');
+
+                            Route::get('view/{id}', 'view');
+
+                            Route::post('delete', 'delete');
+
+                            Route::get('export/excel', 'exportExcel');
+                            Route::get('export/pdf', 'exportPdf');
+
+                            Route::post('status', 'statusChange');
+                            Route::post('unique', 'Uniquecheck');
+                        });
+
+                    Route::controller(EmployeeTypeController::class)
+                        ->prefix('employee-type')
+                        ->group(function () {
+
+                            Route::get('list', 'index');
+                            Route::post('list', 'index');
+
+                            Route::get('add', 'add');
+                            Route::post('add/submit', 'store');
+
+                            Route::get('edit/{id}', 'edit');
+                            Route::post('edit/submit', 'update');
+
+                            Route::get('view/{id}', 'view');
+
+                            Route::post('delete', 'delete');
+
+                            Route::get('export/excel', 'exportExcel');
+                            Route::get('export/pdf', 'exportPdf');
+
+                            Route::post('status', 'statusChange');
+                            Route::post('unique', 'Uniquecheck');
+                        });
+
+                    Route::controller(DocumentController::class)
+                        ->prefix('document-type')
+                        ->group(function () {
+
+                            Route::get('list', 'index');
+                            Route::post('list', 'index');
+
+                            Route::get('add', 'add');
+                            Route::post('add/submit', 'store');
+
+                            Route::get('edit/{id}', 'edit');
+                            Route::post('edit/submit', 'update');
+
+                            Route::get('view/{id}', 'view');
+
+                            Route::post('delete', 'delete');
+
+                            Route::get('export/excel', 'exportExcel');
+                            Route::get('export/pdf', 'exportPdf');
+
+                            Route::post('status', 'statusChange');
+                            Route::post('unique', 'Uniquecheck');
+                        });
+                });
+            });
+
+                Route::group(['prefix' => 'administration/'], function () {
+                     Route::controller(UserPermissionController::class)
+                    ->prefix('permission')
+                    ->group(function () {
+
+                        Route::get('list', 'index');
+                        Route::post('list', 'index');
+
+                        Route::get('add', 'add');
+                        Route::post('add/submit', 'store');
+
+                        Route::get('edit/{id}', 'edit');
+                        Route::post('edit/submit', 'update');
+
+                        Route::get('view/{id}', 'view');
+
+                        Route::post('delete', 'delete');
+
+                        Route::get('export/excel', 'exportExcel');
+                        Route::get('export/pdf', 'exportPdf');
+
+                        Route::get('import', 'import');
+                        Route::post('import/submit', 'importSubmit');
+
+                        Route::post('status', 'statusChange');
+                        Route::post('unique', 'Uniquecheck');
+
+                        Route::get('sampledownload', 'DownloadSample');
+                    });
+
+
+                     Route::controller(UserRoleController::class)
+                    ->prefix('role')
+                    ->group(function () {
+
+                        Route::get('list', 'index');
+                        Route::post('list', 'index');
+
+                        Route::get('add', 'add');
+                        Route::post('add/submit', 'store');
+
+                        Route::get('edit/{id}', 'edit');
+                        Route::post('edit/submit', 'update');
+
+                        Route::get('view/{id}', 'view');
+
+                        Route::post('delete', 'delete');
+
+                        Route::get('export/excel', 'exportExcel');
+                        Route::get('export/pdf', 'exportPdf');
+
+                        Route::get('import', 'import');
+                        Route::post('import/submit', 'importSubmit');
+
+                        Route::post('status', 'statusChange');
+                        Route::post('unique', 'Uniquecheck');
+
+                        Route::get('sampledownload', 'DownloadSample');
+                    });
+                });
 
 
 
@@ -484,7 +711,14 @@ Route::middleware(['securityheader'])->group(function () {
 
 
 
-            // OHC Management
+
+
+
+
+
+
+
+          
 
 
 
@@ -504,6 +738,8 @@ Route::middleware(['securityheader'])->group(function () {
 
 
 
-        });
+        
+                });
+        
     });
 });

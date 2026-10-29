@@ -4,10 +4,10 @@ namespace App\Jobs\Ohc;
 
 use Mpdf\Tag\Tr;
 use Shuchkin\SimpleXLSX;
-use App\Models\UploadLog;
+use App\Models\Administration\UploadLog;
 use App\Models\Master\Unit;
 use App\Models\Master\Work;
-use App\Models\UploadLogError;
+use App\Models\Administration\UploadLogError;
 use App\Models\Master\Employee;
 use App\Models\Master\Department;
 use Illuminate\Support\Facades\DB;
